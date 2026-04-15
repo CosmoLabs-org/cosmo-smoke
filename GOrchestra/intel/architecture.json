@@ -1,0 +1,32 @@
+{
+  "version": "1.0",
+  "generated_at": "2026-04-15T09:33:38.818484-03:00",
+  "generated_by": "GLM-4.7",
+  "expires_at": "2026-04-16T09:33:38.818484-03:00",
+  "last_analyzed_commit": "13fbbd361fddcc2e4791e087e0a0320469648e5a",
+  "summary": "A Go-based smoke testing framework that detects conditions, runs assertions and prerequisites, and reports results to the terminal.",
+  "architecture": "monolith",
+  "primary_language": "go",
+  "hot_files": [
+    "internal/runner/assertion_test.go",
+    "internal/detector/detector_test.go",
+    "internal/schema/validate_test.go",
+    "internal/reporter/terminal.go",
+    "internal/detector/templates.go"
+  ],
+  "patterns": [
+    "command pattern",
+    "separation of concerns",
+    "template method"
+  ],
+  "concerns": [
+    "untracked file in git status indicates incomplete commit hygiene",
+    "early bootstrap phase with potential for unstable interfaces",
+    "lack of integration tests visible in key files"
+  ],
+  "suggestions": [
+    "commit or gitignore the untracked file",
+    "add integration tests to complement the unit tests",
+    "document the schema and configuration format in .gorchestra/"
+  ]
+}

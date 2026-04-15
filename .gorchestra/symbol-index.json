@@ -1,0 +1,1643 @@
+{
+  "project_path": "/Users/gab/PROJECTS/cosmo-smoke",
+  "version": 1,
+  "hash": "",
+  "files": {
+    "cmd/root.go": {
+      "path": "cmd/root.go",
+      "mod_time": 1776256193,
+      "hash": "",
+      "language": "go",
+      "symbols": [
+        {
+          "name": "banner",
+          "kind": "const",
+          "line": 10,
+          "exported": false
+        },
+        {
+          "name": "Execute",
+          "kind": "func",
+          "signature": "func Execute() {",
+          "line": 28,
+          "exported": true,
+          "returns": "{"
+        }
+      ]
+    },
+    "internal/detector/detector.go": {
+      "path": "internal/detector/detector.go",
+      "mod_time": 1776256331,
+      "hash": "",
+      "language": "go",
+      "symbols": [
+        {
+          "name": "exists",
+          "kind": "func",
+          "signature": "func exists(dir, name string) bool {",
+          "line": 20,
+          "exported": false,
+          "parameters": [
+            "dir",
+            "name string"
+          ],
+          "returns": "bool {"
+        },
+        {
+          "name": "Detect",
+          "kind": "func",
+          "signature": "func Detect(dir string) []ProjectType {",
+          "line": 26,
+          "exported": true,
+          "parameters": [
+            "dir string"
+          ],
+          "returns": "[]ProjectType {"
+        },
+        {
+          "name": "HasBun",
+          "kind": "func",
+          "signature": "func HasBun(dir string) bool {",
+          "line": 49,
+          "exported": true,
+          "parameters": [
+            "dir string"
+          ],
+          "returns": "bool {"
+        }
+      ]
+    },
+    "internal/detector/detector_test.go": {
+      "path": "internal/detector/detector_test.go",
+      "mod_time": 1776256376,
+      "hash": "",
+      "language": "go",
+      "symbols": [
+        {
+          "name": "touch",
+          "kind": "func",
+          "signature": "func touch(t *testing.T, dir, name string) {",
+          "line": 10,
+          "exported": false,
+          "parameters": [
+            "t *testing.T",
+            "dir",
+            "name string"
+          ],
+          "returns": "{"
+        },
+        {
+          "name": "TestDetect_Empty",
+          "kind": "func",
+          "signature": "func TestDetect_Empty(t *testing.T) {",
+          "line": 19,
+          "exported": true,
+          "parameters": [
+            "t *testing.T"
+          ],
+          "returns": "{"
+        },
+        {
+          "name": "TestDetect_Go",
+          "kind": "func",
+          "signature": "func TestDetect_Go(t *testing.T) {",
+          "line": 27,
+          "exported": true,
+          "parameters": [
+            "t *testing.T"
+          ],
+          "returns": "{"
+        },
+        {
+          "name": "TestDetect_NodeBun",
+          "kind": "func",
+          "signature": "func TestDetect_NodeBun(t *testing.T) {",
+          "line": 36,
+          "exported": true,
+          "parameters": [
+            "t *testing.T"
+          ],
+          "returns": "{"
+        },
+        {
+          "name": "TestDetect_NodeNpm",
+          "kind": "func",
+          "signature": "func TestDetect_NodeNpm(t *testing.T) {",
+          "line": 49,
+          "exported": true,
+          "parameters": [
+            "t *testing.T"
+          ],
+          "returns": "{"
+        },
+        {
+          "name": "TestDetect_PythonPyproject",
+          "kind": "func",
+          "signature": "func TestDetect_PythonPyproject(t *testing.T) {",
+          "line": 62,
+          "exported": true,
+          "parameters": [
+            "t *testing.T"
+          ],
+          "returns": "{"
+        },
+        {
+          "name": "TestDetect_PythonRequirements",
+          "kind": "func",
+          "signature": "func TestDetect_PythonRequirements(t *testing.T) {",
+          "line": 71,
+          "exported": true,
+          "parameters": [
+            "t *testing.T"
+          ],
+          "returns": "{"
+        },
+        {
+          "name": "TestDetect_PythonSetup",
+          "kind": "func",
+          "signature": "func TestDetect_PythonSetup(t *testing.T) {",
+          "line": 80,
+          "exported": true,
+          "parameters": [
+            "t *testing.T"
+          ],
+          "returns": "{"
+        },
+        {
+          "name": "TestDetect_Docker",
+          "kind": "func",
+          "signature": "func TestDetect_Docker(t *testing.T) {",
+          "line": 89,
+          "exported": true,
+          "parameters": [
+            "t *testing.T"
+          ],
+          "returns": "{"
+        },
+        {
+          "name": "TestDetect_DockerCompose",
+          "kind": "func",
+          "signature": "func TestDetect_DockerCompose(t *testing.T) {",
+          "line": 98,
+          "exported": true,
+          "parameters": [
+            "t *testing.T"
+          ],
+          "returns": "{"
+        },
+        {
+          "name": "TestDetect_Rust",
+          "kind": "func",
+          "signature": "func TestDetect_Rust(t *testing.T) {",
+          "line": 107,
+          "exported": true,
+          "parameters": [
+            "t *testing.T"
+          ],
+          "returns": "{"
+        },
+        {
+          "name": "TestDetect_MultipleTypes",
+          "kind": "func",
+          "signature": "func TestDetect_MultipleTypes(t *testing.T) {",
+          "line": 116,
+          "exported": true,
+          "parameters": [
+            "t *testing.T"
+          ],
+          "returns": "{"
+        },
+        {
+          "name": "TestGenerateConfig_Go",
+          "kind": "func",
+          "signature": "func TestGenerateConfig_Go(t *testing.T) {",
+          "line": 135,
+          "exported": true,
+          "parameters": [
+            "t *testing.T"
+          ],
+          "returns": "{"
+        },
+        {
+          "name": "TestGenerateConfig_NodeBun",
+          "kind": "func",
+          "signature": "func TestGenerateConfig_NodeBun(t *testing.T) {",
+          "line": 171,
+          "exported": true,
+          "parameters": [
+            "t *testing.T"
+          ],
+          "returns": "{"
+        },
+        {
+          "name": "TestGenerateConfig_NodeNpm",
+          "kind": "func",
+          "signature": "func TestGenerateConfig_NodeNpm(t *testing.T) {",
+          "line": 185,
+          "exported": true,
+          "parameters": [
+            "t *testing.T"
+          ],
+          "returns": "{"
+        },
+        {
+          "name": "TestGenerateConfig_NodeWithLint",
+          "kind": "func",
+          "signature": "func TestGenerateConfig_NodeWithLint(t *testing.T) {",
+          "line": 198,
+          "exported": true,
+          "parameters": [
+            "t *testing.T"
+          ],
+          "returns": "{"
+        },
+        {
+          "name": "TestGenerateConfig_NodeNoLint",
+          "kind": "func",
+          "signature": "func TestGenerateConfig_NodeNoLint(t *testing.T) {",
+          "line": 216,
+          "exported": true,
+          "parameters": [
+            "t *testing.T"
+          ],
+          "returns": "{"
+        },
+        {
+          "name": "TestGenerateConfig_Python",
+          "kind": "func",
+          "signature": "func TestGenerateConfig_Python(t *testing.T) {",
+          "line": 230,
+          "exported": true,
+          "parameters": [
+            "t *testing.T"
+          ],
+          "returns": "{"
+        },
+        {
+          "name": "TestGenerateConfig_Docker",
+          "kind": "func",
+          "signature": "func TestGenerateConfig_Docker(t *testing.T) {",
+          "line": 243,
+          "exported": true,
+          "parameters": [
+            "t *testing.T"
+          ],
+          "returns": "{"
+        },
+        {
+          "name": "TestGenerateConfig_Rust",
+          "kind": "func",
+          "signature": "func TestGenerateConfig_Rust(t *testing.T) {",
+          "line": 256,
+          "exported": true,
+          "parameters": [
+            "t *testing.T"
+          ],
+          "returns": "{"
+        },
+        {
+          "name": "TestGenerateConfig_MultipleTypes",
+          "kind": "func",
+          "signature": "func TestGenerateConfig_MultipleTypes(t *testing.T) {",
+          "line": 272,
+          "exported": true,
+          "parameters": [
+            "t *testing.T"
+          ],
+          "returns": "{"
+        },
+        {
+          "name": "TestGenerateConfig_Empty",
+          "kind": "func",
+          "signature": "func TestGenerateConfig_Empty(t *testing.T) {",
+          "line": 287,
+          "exported": true,
+          "parameters": [
+            "t *testing.T"
+          ],
+          "returns": "{"
+        }
+      ]
+    },
+    "internal/detector/templates.go": {
+      "path": "internal/detector/templates.go",
+      "mod_time": 1776256345,
+      "hash": "",
+      "language": "go",
+      "symbols": [
+        {
+          "name": "intPtr",
+          "kind": "func",
+          "signature": "func intPtr(n int) *int { return \u0026n }",
+          "line": 13,
+          "exported": false,
+          "parameters": [
+            "n int"
+          ],
+          "returns": "*int { return \u0026n }"
+        },
+        {
+          "name": "hasPkgScript",
+          "kind": "func",
+          "signature": "func hasPkgScript(dir, script string) bool {",
+          "line": 19,
+          "exported": false,
+          "parameters": [
+            "dir",
+            "script string"
+          ],
+          "returns": "bool {"
+        },
+        {
+          "name": "GenerateConfig",
+          "kind": "func",
+          "signature": "func GenerateConfig(dir string, types []ProjectType) *schema.SmokeConfig {",
+          "line": 36,
+          "exported": true,
+          "parameters": [
+            "dir string",
+            "types []ProjectType"
+          ],
+          "returns": "*schema.SmokeConfig {"
+        }
+      ]
+    },
+    "internal/reporter/json.go": {
+      "path": "internal/reporter/json.go",
+      "mod_time": 1776256357,
+      "hash": "",
+      "language": "go",
+      "symbols": [
+        {
+          "name": "JSON",
+          "kind": "struct",
+          "line": 9,
+          "exported": true
+        },
+        {
+          "name": "NewJSON",
+          "kind": "func",
+          "signature": "func NewJSON(w io.Writer) *JSON {",
+          "line": 16,
+          "exported": true,
+          "parameters": [
+            "w io.Writer"
+          ],
+          "returns": "*JSON {"
+        },
+        {
+          "name": "PrereqStart",
+          "kind": "method",
+          "signature": "func (j *JSON) PrereqStart(_ string) {}",
+          "line": 20,
+          "exported": true,
+          "parent": "JSON",
+          "parameters": [
+            "_ string"
+          ],
+          "returns": "{}"
+        },
+        {
+          "name": "PrereqResult",
+          "kind": "method",
+          "signature": "func (j *JSON) PrereqResult(r PrereqResultData) {",
+          "line": 22,
+          "exported": true,
+          "parent": "JSON",
+          "parameters": [
+            "r PrereqResultData"
+          ],
+          "returns": "{"
+        },
+        {
+          "name": "TestStart",
+          "kind": "method",
+          "signature": "func (j *JSON) TestStart(_ string) {}",
+          "line": 26,
+          "exported": true,
+          "parent": "JSON",
+          "parameters": [
+            "_ string"
+          ],
+          "returns": "{}"
+        },
+        {
+          "name": "TestResult",
+          "kind": "method",
+          "signature": "func (j *JSON) TestResult(r TestResultData) {",
+          "line": 28,
+          "exported": true,
+          "parent": "JSON",
+          "parameters": [
+            "r TestResultData"
+          ],
+          "returns": "{"
+        },
+        {
+          "name": "jsonPrereq",
+          "kind": "struct",
+          "line": 32,
+          "exported": false
+        },
+        {
+          "name": "jsonTest",
+          "kind": "struct",
+          "line": 40,
+          "exported": false
+        },
+        {
+          "name": "jsonOutput",
+          "kind": "struct",
+          "line": 49,
+          "exported": false
+        },
+        {
+          "name": "Summary",
+          "kind": "method",
+          "signature": "func (j *JSON) Summary(s SuiteResultData) {",
+          "line": 60,
+          "exported": true,
+          "parent": "JSON",
+          "parameters": [
+            "s SuiteResultData"
+          ],
+          "returns": "{"
+        }
+      ]
+    },
+    "internal/reporter/json_test.go": {
+      "path": "internal/reporter/json_test.go",
+      "mod_time": 1776256384,
+      "hash": "",
+      "language": "go",
+      "symbols": [
+        {
+          "name": "TestJSON_ValidOutput",
+          "kind": "func",
+          "signature": "func TestJSON_ValidOutput(t *testing.T) {",
+          "line": 11,
+          "exported": true,
+          "parameters": [
+            "t *testing.T"
+          ],
+          "returns": "{"
+        },
+        {
+          "name": "TestJSON_EmptyResults",
+          "kind": "func",
+          "signature": "func TestJSON_EmptyResults(t *testing.T) {",
+          "line": 86,
+          "exported": true,
+          "parameters": [
+            "t *testing.T"
+          ],
+          "returns": "{"
+        },
+        {
+          "name": "TestJSON_PrereqHint",
+          "kind": "func",
+          "signature": "func TestJSON_PrereqHint(t *testing.T) {",
+          "line": 100,
+          "exported": true,
+          "parameters": [
+            "t *testing.T"
+          ],
+          "returns": "{"
+        }
+      ]
+    },
+    "internal/reporter/reporter.go": {
+      "path": "internal/reporter/reporter.go",
+      "mod_time": 1776256329,
+      "hash": "",
+      "language": "go",
+      "symbols": [
+        {
+          "name": "Reporter",
+          "kind": "interface",
+          "line": 6,
+          "exported": true
+        },
+        {
+          "name": "PrereqResultData",
+          "kind": "struct",
+          "line": 15,
+          "exported": true
+        },
+        {
+          "name": "AssertionDetail",
+          "kind": "struct",
+          "line": 24,
+          "exported": true
+        },
+        {
+          "name": "TestResultData",
+          "kind": "struct",
+          "line": 32,
+          "exported": true
+        },
+        {
+          "name": "SuiteResultData",
+          "kind": "struct",
+          "line": 42,
+          "exported": true
+        }
+      ]
+    },
+    "internal/reporter/terminal.go": {
+      "path": "internal/reporter/terminal.go",
+      "mod_time": 1776256346,
+      "hash": "",
+      "language": "go",
+      "symbols": [
+        {
+          "name": "Terminal",
+          "kind": "struct",
+          "line": 22,
+          "exported": true
+        },
+        {
+          "name": "NewTerminal",
+          "kind": "func",
+          "signature": "func NewTerminal(w io.Writer) *Terminal {",
+          "line": 27,
+          "exported": true,
+          "parameters": [
+            "w io.Writer"
+          ],
+          "returns": "*Terminal {"
+        },
+        {
+          "name": "PrereqStart",
+          "kind": "method",
+          "signature": "func (t *Terminal) PrereqStart(name string) {",
+          "line": 31,
+          "exported": true,
+          "parent": "Terminal",
+          "parameters": [
+            "name string"
+          ],
+          "returns": "{"
+        },
+        {
+          "name": "PrereqResult",
+          "kind": "method",
+          "signature": "func (t *Terminal) PrereqResult(r PrereqResultData) {",
+          "line": 35,
+          "exported": true,
+          "parent": "Terminal",
+          "parameters": [
+            "r PrereqResultData"
+          ],
+          "returns": "{"
+        },
+        {
+          "name": "TestStart",
+          "kind": "method",
+          "signature": "func (t *Terminal) TestStart(name string) {",
+          "line": 50,
+          "exported": true,
+          "parent": "Terminal",
+          "parameters": [
+            "name string"
+          ],
+          "returns": "{"
+        },
+        {
+          "name": "TestResult",
+          "kind": "method",
+          "signature": "func (t *Terminal) TestResult(r TestResultData) {",
+          "line": 54,
+          "exported": true,
+          "parent": "Terminal",
+          "parameters": [
+            "r TestResultData"
+          ],
+          "returns": "{"
+        },
+        {
+          "name": "Summary",
+          "kind": "method",
+          "signature": "func (t *Terminal) Summary(s SuiteResultData) {",
+          "line": 80,
+          "exported": true,
+          "parent": "Terminal",
+          "parameters": [
+            "s SuiteResultData"
+          ],
+          "returns": "{"
+        },
+        {
+          "name": "formatDuration",
+          "kind": "func",
+          "signature": "func formatDuration(d time.Duration) string {",
+          "line": 100,
+          "exported": false,
+          "parameters": [
+            "d time.Duration"
+          ],
+          "returns": "string {"
+        }
+      ]
+    },
+    "internal/reporter/terminal_test.go": {
+      "path": "internal/reporter/terminal_test.go",
+      "mod_time": 1776256373,
+      "hash": "",
+      "language": "go",
+      "symbols": [
+        {
+          "name": "TestTerminal_PrereqPass",
+          "kind": "func",
+          "signature": "func TestTerminal_PrereqPass(t *testing.T) {",
+          "line": 10,
+          "exported": true,
+          "parameters": [
+            "t *testing.T"
+          ],
+          "returns": "{"
+        },
+        {
+          "name": "TestTerminal_PrereqFail",
+          "kind": "func",
+          "signature": "func TestTerminal_PrereqFail(t *testing.T) {",
+          "line": 24,
+          "exported": true,
+          "parameters": [
+            "t *testing.T"
+          ],
+          "returns": "{"
+        },
+        {
+          "name": "TestTerminal_TestPass",
+          "kind": "func",
+          "signature": "func TestTerminal_TestPass(t *testing.T) {",
+          "line": 38,
+          "exported": true,
+          "parameters": [
+            "t *testing.T"
+          ],
+          "returns": "{"
+        },
+        {
+          "name": "TestTerminal_TestFail",
+          "kind": "func",
+          "signature": "func TestTerminal_TestFail(t *testing.T) {",
+          "line": 56,
+          "exported": true,
+          "parameters": [
+            "t *testing.T"
+          ],
+          "returns": "{"
+        },
+        {
+          "name": "TestTerminal_TestSkipped",
+          "kind": "func",
+          "signature": "func TestTerminal_TestSkipped(t *testing.T) {",
+          "line": 74,
+          "exported": true,
+          "parameters": [
+            "t *testing.T"
+          ],
+          "returns": "{"
+        },
+        {
+          "name": "TestTerminal_Summary",
+          "kind": "func",
+          "signature": "func TestTerminal_Summary(t *testing.T) {",
+          "line": 85,
+          "exported": true,
+          "parameters": [
+            "t *testing.T"
+          ],
+          "returns": "{"
+        },
+        {
+          "name": "TestFormatDuration",
+          "kind": "func",
+          "signature": "func TestFormatDuration(t *testing.T) {",
+          "line": 107,
+          "exported": true,
+          "parameters": [
+            "t *testing.T"
+          ],
+          "returns": "{"
+        }
+      ]
+    },
+    "internal/runner/assertion.go": {
+      "path": "internal/runner/assertion.go",
+      "mod_time": 1776256307,
+      "hash": "",
+      "language": "go",
+      "symbols": [
+        {
+          "name": "AssertionResult",
+          "kind": "struct",
+          "line": 12,
+          "exported": true
+        },
+        {
+          "name": "CheckExitCode",
+          "kind": "func",
+          "signature": "func CheckExitCode(actual int, expected int) AssertionResult {",
+          "line": 20,
+          "exported": true,
+          "parameters": [
+            "actual int",
+            "expected int"
+          ],
+          "returns": "AssertionResult {"
+        },
+        {
+          "name": "CheckStdoutContains",
+          "kind": "func",
+          "signature": "func CheckStdoutContains(stdout, substr string) AssertionResult {",
+          "line": 30,
+          "exported": true,
+          "parameters": [
+            "stdout",
+            "substr string"
+          ],
+          "returns": "AssertionResult {"
+        },
+        {
+          "name": "CheckStdoutMatches",
+          "kind": "func",
+          "signature": "func CheckStdoutMatches(stdout, pattern string) AssertionResult {",
+          "line": 41,
+          "exported": true,
+          "parameters": [
+            "stdout",
+            "pattern string"
+          ],
+          "returns": "AssertionResult {"
+        },
+        {
+          "name": "CheckStderrContains",
+          "kind": "func",
+          "signature": "func CheckStderrContains(stderr, substr string) AssertionResult {",
+          "line": 60,
+          "exported": true,
+          "parameters": [
+            "stderr",
+            "substr string"
+          ],
+          "returns": "AssertionResult {"
+        },
+        {
+          "name": "CheckFileExists",
+          "kind": "func",
+          "signature": "func CheckFileExists(path, configDir string) AssertionResult {",
+          "line": 71,
+          "exported": true,
+          "parameters": [
+            "path",
+            "configDir string"
+          ],
+          "returns": "AssertionResult {"
+        }
+      ]
+    },
+    "internal/runner/assertion_test.go": {
+      "path": "internal/runner/assertion_test.go",
+      "mod_time": 1776256339,
+      "hash": "",
+      "language": "go",
+      "symbols": [
+        {
+          "name": "TestCheckExitCode_Pass",
+          "kind": "func",
+          "signature": "func TestCheckExitCode_Pass(t *testing.T) {",
+          "line": 13,
+          "exported": true,
+          "parameters": [
+            "t *testing.T"
+          ],
+          "returns": "{"
+        },
+        {
+          "name": "TestCheckExitCode_Fail",
+          "kind": "func",
+          "signature": "func TestCheckExitCode_Fail(t *testing.T) {",
+          "line": 23,
+          "exported": true,
+          "parameters": [
+            "t *testing.T"
+          ],
+          "returns": "{"
+        },
+        {
+          "name": "TestCheckExitCode_NonZeroExpected",
+          "kind": "func",
+          "signature": "func TestCheckExitCode_NonZeroExpected(t *testing.T) {",
+          "line": 33,
+          "exported": true,
+          "parameters": [
+            "t *testing.T"
+          ],
+          "returns": "{"
+        },
+        {
+          "name": "TestCheckExitCode_LargeCode",
+          "kind": "func",
+          "signature": "func TestCheckExitCode_LargeCode(t *testing.T) {",
+          "line": 40,
+          "exported": true,
+          "parameters": [
+            "t *testing.T"
+          ],
+          "returns": "{"
+        },
+        {
+          "name": "TestCheckStdoutContains_Pass",
+          "kind": "func",
+          "signature": "func TestCheckStdoutContains_Pass(t *testing.T) {",
+          "line": 51,
+          "exported": true,
+          "parameters": [
+            "t *testing.T"
+          ],
+          "returns": "{"
+        },
+        {
+          "name": "TestCheckStdoutContains_Fail",
+          "kind": "func",
+          "signature": "func TestCheckStdoutContains_Fail(t *testing.T) {",
+          "line": 61,
+          "exported": true,
+          "parameters": [
+            "t *testing.T"
+          ],
+          "returns": "{"
+        },
+        {
+          "name": "TestCheckStdoutContains_EmptyStdout",
+          "kind": "func",
+          "signature": "func TestCheckStdoutContains_EmptyStdout(t *testing.T) {",
+          "line": 68,
+          "exported": true,
+          "parameters": [
+            "t *testing.T"
+          ],
+          "returns": "{"
+        },
+        {
+          "name": "TestCheckStdoutContains_EmptySubstr",
+          "kind": "func",
+          "signature": "func TestCheckStdoutContains_EmptySubstr(t *testing.T) {",
+          "line": 75,
+          "exported": true,
+          "parameters": [
+            "t *testing.T"
+          ],
+          "returns": "{"
+        },
+        {
+          "name": "TestCheckStdoutContains_BothEmpty",
+          "kind": "func",
+          "signature": "func TestCheckStdoutContains_BothEmpty(t *testing.T) {",
+          "line": 83,
+          "exported": true,
+          "parameters": [
+            "t *testing.T"
+          ],
+          "returns": "{"
+        },
+        {
+          "name": "TestCheckStdoutContains_Multiline",
+          "kind": "func",
+          "signature": "func TestCheckStdoutContains_Multiline(t *testing.T) {",
+          "line": 90,
+          "exported": true,
+          "parameters": [
+            "t *testing.T"
+          ],
+          "returns": "{"
+        },
+        {
+          "name": "TestCheckStdoutContains_ExactMatch",
+          "kind": "func",
+          "signature": "func TestCheckStdoutContains_ExactMatch(t *testing.T) {",
+          "line": 98,
+          "exported": true,
+          "parameters": [
+            "t *testing.T"
+          ],
+          "returns": "{"
+        },
+        {
+          "name": "TestCheckStdoutMatches_Pass",
+          "kind": "func",
+          "signature": "func TestCheckStdoutMatches_Pass(t *testing.T) {",
+          "line": 109,
+          "exported": true,
+          "parameters": [
+            "t *testing.T"
+          ],
+          "returns": "{"
+        },
+        {
+          "name": "TestCheckStdoutMatches_Fail",
+          "kind": "func",
+          "signature": "func TestCheckStdoutMatches_Fail(t *testing.T) {",
+          "line": 119,
+          "exported": true,
+          "parameters": [
+            "t *testing.T"
+          ],
+          "returns": "{"
+        },
+        {
+          "name": "TestCheckStdoutMatches_EmptyStdout",
+          "kind": "func",
+          "signature": "func TestCheckStdoutMatches_EmptyStdout(t *testing.T) {",
+          "line": 126,
+          "exported": true,
+          "parameters": [
+            "t *testing.T"
+          ],
+          "returns": "{"
+        },
+        {
+          "name": "TestCheckStdoutMatches_EmptyStdoutMatchesEmptyPattern",
+          "kind": "func",
+          "signature": "func TestCheckStdoutMatches_EmptyStdoutMatchesEmptyPattern(t *testing.T) {",
+          "line": 133,
+          "exported": true,
+          "parameters": [
+            "t *testing.T"
+          ],
+          "returns": "{"
+        },
+        {
+          "name": "TestCheckStdoutMatches_InvalidRegex",
+          "kind": "func",
+          "signature": "func TestCheckStdoutMatches_InvalidRegex(t *testing.T) {",
+          "line": 140,
+          "exported": true,
+          "parameters": [
+            "t *testing.T"
+          ],
+          "returns": "{"
+        },
+        {
+          "name": "TestCheckStdoutMatches_AnchoredPattern",
+          "kind": "func",
+          "signature": "func TestCheckStdoutMatches_AnchoredPattern(t *testing.T) {",
+          "line": 151,
+          "exported": true,
+          "parameters": [
+            "t *testing.T"
+          ],
+          "returns": "{"
+        },
+        {
+          "name": "TestCheckStdoutMatches_AnchoredPatternFail",
+          "kind": "func",
+          "signature": "func TestCheckStdoutMatches_AnchoredPatternFail(t *testing.T) {",
+          "line": 158,
+          "exported": true,
+          "parameters": [
+            "t *testing.T"
+          ],
+          "returns": "{"
+        },
+        {
+          "name": "TestCheckStdoutMatches_CaseInsensitiveNotDefault",
+          "kind": "func",
+          "signature": "func TestCheckStdoutMatches_CaseInsensitiveNotDefault(t *testing.T) {",
+          "line": 165,
+          "exported": true,
+          "parameters": [
+            "t *testing.T"
+          ],
+          "returns": "{"
+        },
+        {
+          "name": "TestCheckStdoutMatches_CaseFlagOverride",
+          "kind": "func",
+          "signature": "func TestCheckStdoutMatches_CaseFlagOverride(t *testing.T) {",
+          "line": 173,
+          "exported": true,
+          "parameters": [
+            "t *testing.T"
+          ],
+          "returns": "{"
+        },
+        {
+          "name": "TestCheckStderrContains_Pass",
+          "kind": "func",
+          "signature": "func TestCheckStderrContains_Pass(t *testing.T) {",
+          "line": 184,
+          "exported": true,
+          "parameters": [
+            "t *testing.T"
+          ],
+          "returns": "{"
+        },
+        {
+          "name": "TestCheckStderrContains_Fail",
+          "kind": "func",
+          "signature": "func TestCheckStderrContains_Fail(t *testing.T) {",
+          "line": 194,
+          "exported": true,
+          "parameters": [
+            "t *testing.T"
+          ],
+          "returns": "{"
+        },
+        {
+          "name": "TestCheckStderrContains_EmptyStderr",
+          "kind": "func",
+          "signature": "func TestCheckStderrContains_EmptyStderr(t *testing.T) {",
+          "line": 201,
+          "exported": true,
+          "parameters": [
+            "t *testing.T"
+          ],
+          "returns": "{"
+        },
+        {
+          "name": "TestCheckStderrContains_EmptySubstr",
+          "kind": "func",
+          "signature": "func TestCheckStderrContains_EmptySubstr(t *testing.T) {",
+          "line": 208,
+          "exported": true,
+          "parameters": [
+            "t *testing.T"
+          ],
+          "returns": "{"
+        },
+        {
+          "name": "TestCheckFileExists_AbsolutePathExists",
+          "kind": "func",
+          "signature": "func TestCheckFileExists_AbsolutePathExists(t *testing.T) {",
+          "line": 219,
+          "exported": true,
+          "parameters": [
+            "t *testing.T"
+          ],
+          "returns": "{"
+        },
+        {
+          "name": "TestCheckFileExists_AbsolutePathMissing",
+          "kind": "func",
+          "signature": "func TestCheckFileExists_AbsolutePathMissing(t *testing.T) {",
+          "line": 236,
+          "exported": true,
+          "parameters": [
+            "t *testing.T"
+          ],
+          "returns": "{"
+        },
+        {
+          "name": "TestCheckFileExists_RelativePathExists",
+          "kind": "func",
+          "signature": "func TestCheckFileExists_RelativePathExists(t *testing.T) {",
+          "line": 243,
+          "exported": true,
+          "parameters": [
+            "t *testing.T"
+          ],
+          "returns": "{"
+        },
+        {
+          "name": "TestCheckFileExists_RelativePathMissing",
+          "kind": "func",
+          "signature": "func TestCheckFileExists_RelativePathMissing(t *testing.T) {",
+          "line": 261,
+          "exported": true,
+          "parameters": [
+            "t *testing.T"
+          ],
+          "returns": "{"
+        },
+        {
+          "name": "TestCheckFileExists_RelativeSubdirExists",
+          "kind": "func",
+          "signature": "func TestCheckFileExists_RelativeSubdirExists(t *testing.T) {",
+          "line": 269,
+          "exported": true,
+          "parameters": [
+            "t *testing.T"
+          ],
+          "returns": "{"
+        },
+        {
+          "name": "TestCheckFileExists_AbsolutePathIgnoresConfigDir",
+          "kind": "func",
+          "signature": "func TestCheckFileExists_AbsolutePathIgnoresConfigDir(t *testing.T) {",
+          "line": 286,
+          "exported": true,
+          "parameters": [
+            "t *testing.T"
+          ],
+          "returns": "{"
+        },
+        {
+          "name": "TestCheckFileExists_EmptyConfigDir",
+          "kind": "func",
+          "signature": "func TestCheckFileExists_EmptyConfigDir(t *testing.T) {",
+          "line": 304,
+          "exported": true,
+          "parameters": [
+            "t *testing.T"
+          ],
+          "returns": "{"
+        }
+      ]
+    },
+    "internal/runner/prereq.go": {
+      "path": "internal/runner/prereq.go",
+      "mod_time": 1776256317,
+      "hash": "",
+      "language": "go",
+      "symbols": [
+        {
+          "name": "PrereqResult",
+          "kind": "struct",
+          "line": 15,
+          "exported": true
+        },
+        {
+          "name": "CheckPrerequisites",
+          "kind": "func",
+          "signature": "func CheckPrerequisites(prereqs []schema.Prerequisite, timeout time.Duration) []PrereqResult {",
+          "line": 25,
+          "exported": true,
+          "parameters": [
+            "prereqs []schema.Prerequisite",
+            "timeout time.Duration"
+          ],
+          "returns": "[]PrereqResult {"
+        },
+        {
+          "name": "runPrereq",
+          "kind": "func",
+          "signature": "func runPrereq(p schema.Prerequisite, timeout time.Duration) PrereqResult {",
+          "line": 36,
+          "exported": false,
+          "parameters": [
+            "p schema.Prerequisite",
+            "timeout time.Duration"
+          ],
+          "returns": "PrereqResult {"
+        }
+      ]
+    },
+    "internal/runner/prereq_test.go": {
+      "path": "internal/runner/prereq_test.go",
+      "mod_time": 1776256340,
+      "hash": "",
+      "language": "go",
+      "symbols": [
+        {
+          "name": "shortTimeout",
+          "kind": "const",
+          "line": 11,
+          "exported": false
+        },
+        {
+          "name": "prereq",
+          "kind": "func",
+          "signature": "func prereq(name, check, hint string) schema.Prerequisite {",
+          "line": 13,
+          "exported": false,
+          "parameters": [
+            "name",
+            "check",
+            "hint string"
+          ],
+          "returns": "schema.Prerequisite {"
+        },
+        {
+          "name": "TestCheckPrerequisites_Empty",
+          "kind": "func",
+          "signature": "func TestCheckPrerequisites_Empty(t *testing.T) {",
+          "line": 18,
+          "exported": true,
+          "parameters": [
+            "t *testing.T"
+          ],
+          "returns": "{"
+        },
+        {
+          "name": "TestCheckPrerequisites_Passing",
+          "kind": "func",
+          "signature": "func TestCheckPrerequisites_Passing(t *testing.T) {",
+          "line": 31,
+          "exported": true,
+          "parameters": [
+            "t *testing.T"
+          ],
+          "returns": "{"
+        },
+        {
+          "name": "TestCheckPrerequisites_Failing",
+          "kind": "func",
+          "signature": "func TestCheckPrerequisites_Failing(t *testing.T) {",
+          "line": 49,
+          "exported": true,
+          "parameters": [
+            "t *testing.T"
+          ],
+          "returns": "{"
+        },
+        {
+          "name": "TestCheckPrerequisites_OutputCapture",
+          "kind": "func",
+          "signature": "func TestCheckPrerequisites_OutputCapture(t *testing.T) {",
+          "line": 67,
+          "exported": true,
+          "parameters": [
+            "t *testing.T"
+          ],
+          "returns": "{"
+        },
+        {
+          "name": "TestCheckPrerequisites_OutputTrimmed",
+          "kind": "func",
+          "signature": "func TestCheckPrerequisites_OutputTrimmed(t *testing.T) {",
+          "line": 85,
+          "exported": true,
+          "parameters": [
+            "t *testing.T"
+          ],
+          "returns": "{"
+        },
+        {
+          "name": "TestCheckPrerequisites_NoOutput",
+          "kind": "func",
+          "signature": "func TestCheckPrerequisites_NoOutput(t *testing.T) {",
+          "line": 100,
+          "exported": true,
+          "parameters": [
+            "t *testing.T"
+          ],
+          "returns": "{"
+        },
+        {
+          "name": "TestCheckPrerequisites_Timeout",
+          "kind": "func",
+          "signature": "func TestCheckPrerequisites_Timeout(t *testing.T) {",
+          "line": 115,
+          "exported": true,
+          "parameters": [
+            "t *testing.T"
+          ],
+          "returns": "{"
+        },
+        {
+          "name": "TestCheckPrerequisites_HintPassthrough",
+          "kind": "func",
+          "signature": "func TestCheckPrerequisites_HintPassthrough(t *testing.T) {",
+          "line": 133,
+          "exported": true,
+          "parameters": [
+            "t *testing.T"
+          ],
+          "returns": "{"
+        },
+        {
+          "name": "TestCheckPrerequisites_HintOnFailure",
+          "kind": "func",
+          "signature": "func TestCheckPrerequisites_HintOnFailure(t *testing.T) {",
+          "line": 146,
+          "exported": true,
+          "parameters": [
+            "t *testing.T"
+          ],
+          "returns": "{"
+        },
+        {
+          "name": "TestCheckPrerequisites_NamePreserved",
+          "kind": "func",
+          "signature": "func TestCheckPrerequisites_NamePreserved(t *testing.T) {",
+          "line": 162,
+          "exported": true,
+          "parameters": [
+            "t *testing.T"
+          ],
+          "returns": "{"
+        },
+        {
+          "name": "TestCheckPrerequisites_AllRun",
+          "kind": "func",
+          "signature": "func TestCheckPrerequisites_AllRun(t *testing.T) {",
+          "line": 174,
+          "exported": true,
+          "parameters": [
+            "t *testing.T"
+          ],
+          "returns": "{"
+        },
+        {
+          "name": "TestCheckPrerequisites_OrderPreserved",
+          "kind": "func",
+          "signature": "func TestCheckPrerequisites_OrderPreserved(t *testing.T) {",
+          "line": 197,
+          "exported": true,
+          "parameters": [
+            "t *testing.T"
+          ],
+          "returns": "{"
+        }
+      ]
+    },
+    "internal/schema/schema.go": {
+      "path": "internal/schema/schema.go",
+      "mod_time": 1776256230,
+      "hash": "",
+      "language": "go",
+      "symbols": [
+        {
+          "name": "SmokeConfig",
+          "kind": "struct",
+          "line": 12,
+          "exported": true
+        },
+        {
+          "name": "Settings",
+          "kind": "struct",
+          "line": 22,
+          "exported": true
+        },
+        {
+          "name": "Prerequisite",
+          "kind": "struct",
+          "line": 29,
+          "exported": true
+        },
+        {
+          "name": "Test",
+          "kind": "struct",
+          "line": 36,
+          "exported": true
+        },
+        {
+          "name": "Expect",
+          "kind": "struct",
+          "line": 46,
+          "exported": true
+        },
+        {
+          "name": "Duration",
+          "kind": "struct",
+          "line": 55,
+          "exported": true
+        },
+        {
+          "name": "UnmarshalYAML",
+          "kind": "method",
+          "signature": "func (d *Duration) UnmarshalYAML(value *yaml.Node) error {",
+          "line": 59,
+          "exported": true,
+          "parent": "Duration",
+          "parameters": [
+            "value *yaml.Node"
+          ],
+          "returns": "error {"
+        },
+        {
+          "name": "MarshalYAML",
+          "kind": "method",
+          "signature": "func (d Duration) MarshalYAML() (interface{}, error) {",
+          "line": 72,
+          "exported": true,
+          "parent": "Duration",
+          "returns": "(interface{}, error) {"
+        },
+        {
+          "name": "Load",
+          "kind": "func",
+          "signature": "func Load(path string) (*SmokeConfig, error) {",
+          "line": 77,
+          "exported": true,
+          "parameters": [
+            "path string"
+          ],
+          "returns": "(*SmokeConfig, error) {"
+        },
+        {
+          "name": "Parse",
+          "kind": "func",
+          "signature": "func Parse(data []byte) (*SmokeConfig, error) {",
+          "line": 86,
+          "exported": true,
+          "parameters": [
+            "data []byte"
+          ],
+          "returns": "(*SmokeConfig, error) {"
+        },
+        {
+          "name": "LoadDefault",
+          "kind": "func",
+          "signature": "func LoadDefault() (*SmokeConfig, error) {",
+          "line": 95,
+          "exported": true,
+          "returns": "(*SmokeConfig, error) {"
+        }
+      ]
+    },
+    "internal/schema/schema_test.go": {
+      "path": "internal/schema/schema_test.go",
+      "mod_time": 1776256255,
+      "hash": "",
+      "language": "go",
+      "symbols": [
+        {
+          "name": "TestParse_ValidConfig",
+          "kind": "func",
+          "signature": "func TestParse_ValidConfig(t *testing.T) {",
+          "line": 8,
+          "exported": true,
+          "parameters": [
+            "t *testing.T"
+          ],
+          "returns": "{"
+        },
+        {
+          "name": "TestParse_MinimalConfig",
+          "kind": "func",
+          "signature": "func TestParse_MinimalConfig(t *testing.T) {",
+          "line": 82,
+          "exported": true,
+          "parameters": [
+            "t *testing.T"
+          ],
+          "returns": "{"
+        },
+        {
+          "name": "TestParse_InvalidYAML",
+          "kind": "func",
+          "signature": "func TestParse_InvalidYAML(t *testing.T) {",
+          "line": 101,
+          "exported": true,
+          "parameters": [
+            "t *testing.T"
+          ],
+          "returns": "{"
+        },
+        {
+          "name": "TestParse_AllAssertionTypes",
+          "kind": "func",
+          "signature": "func TestParse_AllAssertionTypes(t *testing.T) {",
+          "line": 108,
+          "exported": true,
+          "parameters": [
+            "t *testing.T"
+          ],
+          "returns": "{"
+        },
+        {
+          "name": "TestDuration_Unmarshal",
+          "kind": "func",
+          "signature": "func TestDuration_Unmarshal(t *testing.T) {",
+          "line": 144,
+          "exported": true,
+          "parameters": [
+            "t *testing.T"
+          ],
+          "returns": "{"
+        }
+      ]
+    },
+    "internal/schema/validate.go": {
+      "path": "internal/schema/validate.go",
+      "mod_time": 1776256234,
+      "hash": "",
+      "language": "go",
+      "symbols": [
+        {
+          "name": "ValidationError",
+          "kind": "struct",
+          "line": 9,
+          "exported": true
+        },
+        {
+          "name": "Error",
+          "kind": "method",
+          "signature": "func (e *ValidationError) Error() string {",
+          "line": 13,
+          "exported": true,
+          "parent": "ValidationError",
+          "returns": "string {"
+        },
+        {
+          "name": "Validate",
+          "kind": "func",
+          "signature": "func Validate(cfg *SmokeConfig) error {",
+          "line": 19,
+          "exported": true,
+          "parameters": [
+            "cfg *SmokeConfig"
+          ],
+          "returns": "error {"
+        }
+      ]
+    },
+    "internal/schema/validate_test.go": {
+      "path": "internal/schema/validate_test.go",
+      "mod_time": 1776256264,
+      "hash": "",
+      "language": "go",
+      "symbols": [
+        {
+          "name": "TestValidate_ValidConfig",
+          "kind": "func",
+          "signature": "func TestValidate_ValidConfig(t *testing.T) {",
+          "line": 8,
+          "exported": true,
+          "parameters": [
+            "t *testing.T"
+          ],
+          "returns": "{"
+        },
+        {
+          "name": "TestValidate_MissingProject",
+          "kind": "func",
+          "signature": "func TestValidate_MissingProject(t *testing.T) {",
+          "line": 22,
+          "exported": true,
+          "parameters": [
+            "t *testing.T"
+          ],
+          "returns": "{"
+        },
+        {
+          "name": "TestValidate_InvalidVersion",
+          "kind": "func",
+          "signature": "func TestValidate_InvalidVersion(t *testing.T) {",
+          "line": 39,
+          "exported": true,
+          "parameters": [
+            "t *testing.T"
+          ],
+          "returns": "{"
+        },
+        {
+          "name": "TestValidate_NoTests",
+          "kind": "func",
+          "signature": "func TestValidate_NoTests(t *testing.T) {",
+          "line": 57,
+          "exported": true,
+          "parameters": [
+            "t *testing.T"
+          ],
+          "returns": "{"
+        },
+        {
+          "name": "TestValidate_TestMissingName",
+          "kind": "func",
+          "signature": "func TestValidate_TestMissingName(t *testing.T) {",
+          "line": 72,
+          "exported": true,
+          "parameters": [
+            "t *testing.T"
+          ],
+          "returns": "{"
+        },
+        {
+          "name": "TestValidate_TestMissingRun",
+          "kind": "func",
+          "signature": "func TestValidate_TestMissingRun(t *testing.T) {",
+          "line": 89,
+          "exported": true,
+          "parameters": [
+            "t *testing.T"
+          ],
+          "returns": "{"
+        },
+        {
+          "name": "TestValidate_MultipleErrors",
+          "kind": "func",
+          "signature": "func TestValidate_MultipleErrors(t *testing.T) {",
+          "line": 106,
+          "exported": true,
+          "parameters": [
+            "t *testing.T"
+          ],
+          "returns": "{"
+        }
+      ]
+    },
+    "main.go": {
+      "path": "main.go",
+      "mod_time": 1776256188,
+      "hash": "",
+      "language": "go",
+      "symbols": [
+        {
+          "name": "main",
+          "kind": "func",
+          "signature": "func main() {",
+          "line": 5,
+          "exported": false,
+          "returns": "{"
+        }
+      ]
+    }
+  },
+  "updated_at": "2026-04-15T09:33:31.658302-03:00"
+}

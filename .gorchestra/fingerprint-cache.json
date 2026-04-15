@@ -1,0 +1,25 @@
+{
+  "hash": "926be34eb7debf848934b1ab14fa2a978fbd8a6f6318feeb6217c31f1208c605",
+  "project_name": "cosmo-smoke",
+  "language": "go",
+  "framework": "cli",
+  "directories": [
+    "cmd",
+    "internal"
+  ],
+  "dependencies": [
+    "ansi",
+    "cellbuf",
+    "cobra",
+    "colorprofile",
+    "go-colorful",
+    "go-isatty",
+    "go-runewidth",
+    "lipgloss",
+    "mousetrap",
+    "pflag"
+  ],
+  "has_tests": false,
+  "has_ci": false,
+  "generated_at": "2026-04-15T09:33:31.631663-03:00"
+}
