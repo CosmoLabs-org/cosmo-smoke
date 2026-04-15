@@ -1,32 +1,33 @@
 {
   "version": "1.0",
-  "generated_at": "2026-04-15T09:33:38.818484-03:00",
+  "generated_at": "2026-04-15T09:35:43.355371-03:00",
   "generated_by": "GLM-4.7",
-  "expires_at": "2026-04-16T09:33:38.818484-03:00",
-  "last_analyzed_commit": "13fbbd361fddcc2e4791e087e0a0320469648e5a",
-  "summary": "A Go-based smoke testing framework that detects conditions, runs assertions and prerequisites, and reports results to the terminal.",
+  "expires_at": "2026-04-16T09:35:43.355371-03:00",
+  "last_analyzed_commit": "eac82983cf8adfd5bc9010ec60f99db412a32624",
+  "summary": "A Go-based CLI tool for defining, detecting, and running smoke tests with assertions and prerequisites.",
   "architecture": "monolith",
-  "primary_language": "go",
+  "primary_language": "Go",
   "hot_files": [
-    "internal/runner/assertion_test.go",
-    "internal/detector/detector_test.go",
+    "internal/runner/runner.go",
+    "internal/detector/templates.go",
     "internal/schema/validate_test.go",
-    "internal/reporter/terminal.go",
-    "internal/detector/templates.go"
+    "internal/runner/assertion_test.go",
+    "internal/detector/detector_test.go"
   ],
   "patterns": [
-    "command pattern",
-    "separation of concerns",
-    "template method"
+    "Standard Go project layout",
+    "CLI command pattern",
+    "Template method pattern",
+    "Separation of concerns (detector/runner/reporter/schema)"
   ],
   "concerns": [
-    "untracked file in git status indicates incomplete commit hygiene",
-    "early bootstrap phase with potential for unstable interfaces",
-    "lack of integration tests visible in key files"
+    "No implementation files visible in key directories (only tests and templates)",
+    "Unclear purpose of nested GOrchestra/intel/ config directory",
+    "Missing documentation for the .gorchestra/ configuration format"
   ],
   "suggestions": [
-    "commit or gitignore the untracked file",
-    "add integration tests to complement the unit tests",
-    "document the schema and configuration format in .gorchestra/"
+    "Add implementation files for core logic if tests are currently failing or stubbed",
+    "Consolidate configuration directories (.gorchestra/ and GOrchestra/intel/)",
+    "Add README and usage examples for the CLI commands (run/init/version)"
   ]
 }

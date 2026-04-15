@@ -189,7 +189,9 @@ func (r *Runner) runTest(t schema.Test, opts RunOptions) TestResult {
 		defer func() {
 			ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 			defer cancel()
-			exec.CommandContext(ctx, "sh", "-c", t.Cleanup).Run()
+			c := exec.CommandContext(ctx, "sh", "-c", t.Cleanup)
+			c.Dir = r.ConfigDir
+			c.Run()
 		}()
 	}
 
@@ -198,6 +200,7 @@ func (r *Runner) runTest(t schema.Test, opts RunOptions) TestResult {
 	defer cancel()
 
 	cmd := exec.CommandContext(ctx, "sh", "-c", t.Run)
+	cmd.Dir = r.ConfigDir
 	var stdout, stderr bytes.Buffer
 	cmd.Stdout = &stdout
 	cmd.Stderr = &stderr
