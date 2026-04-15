@@ -1,33 +1,47 @@
 # cosmo-smoke
 
-Universal smoke test runner. Reads `.smoke.yaml` from any project root and runs lightweight smoke tests.
+Universal smoke test runner. Define lightweight "does it turn on?" checks in `.smoke.yaml` and run them with a single command — on any project, in any language.
 
 ## Install
 
+**Go install:**
 ```bash
 go install github.com/CosmoLabs-org/cosmo-smoke@latest
+```
+
+**Build from source:**
+```bash
+git clone https://github.com/CosmoLabs-org/cosmo-smoke
+cd cosmo-smoke
+go build -o smoke .
 ```
 
 ## Quick Start
 
 ```bash
-smoke init        # Auto-detect project type, generate .smoke.yaml
-smoke run         # Run all smoke tests
-smoke run --tag build   # Run only build-tagged tests
-smoke run --format json # JSON output for CI
+# 1. Generate a config for your project
+smoke init
+
+# 2. Run all tests
+smoke run
+
+# 3. Run only tagged tests
+smoke run --tag build
+
+# 4. CI-friendly JSON output
+smoke run --format json
 ```
 
-## Config Schema
+## Example .smoke.yaml
 
 ```yaml
 version: 1
-project: my-app
-description: "Smoke tests for my app"
+project: my-api
+description: "Smoke tests for my-api"
 
 settings:
-  timeout: 30s       # Default per-test timeout
-  fail_fast: true    # Stop on first failure
-  parallel: false    # Run tests concurrently
+  timeout: 30s
+  fail_fast: true
 
 prerequisites:
   - name: "Go installed"
@@ -36,27 +50,28 @@ prerequisites:
 
 tests:
   - name: "Compiles"
-    run: "go build ./..."
+    run: "go build -o ./bin/api ./..."
     expect:
       exit_code: 0
     tags: [build]
     timeout: 60s
-    cleanup: "rm -f ./binary"
+    cleanup: "rm -f ./bin/api"
 
-  - name: "Help output"
-    run: "./binary --help"
+  - name: "Help flag works"
+    run: "./bin/api --help"
     expect:
       exit_code: 0
       stdout_contains: "usage"
-      stdout_matches: "^Usage:"
     tags: [runtime]
 
-  - name: "Error handling"
-    run: "./binary --invalid 2>&1"
+  - name: "Rejects bad flags"
+    run: "./bin/api --invalid-flag"
     expect:
+      exit_code: 1
       stderr_contains: "unknown flag"
+    tags: [runtime]
 
-  - name: "Config exists"
+  - name: "Config file exists"
     run: "echo check"
     expect:
       file_exists: "config.yaml"
@@ -65,44 +80,54 @@ tests:
 
 ## Assertion Types
 
-| Type | Description |
-|------|-------------|
-| `exit_code` | Process exit code (integer) |
-| `stdout_contains` | Substring match on stdout |
-| `stdout_matches` | Regex match on stdout |
-| `stderr_contains` | Substring match on stderr |
-| `file_exists` | File exists (relative to config dir) |
+All assertions are optional and combinable within a single `expect` block.
+
+| Type | Field | Description |
+|------|-------|-------------|
+| Exit code | `exit_code: <int>` | Exact process exit code match |
+| Stdout substring | `stdout_contains: <string>` | Substring present in stdout |
+| Stdout regex | `stdout_matches: <string>` | Go regex match against stdout |
+| Stderr substring | `stderr_contains: <string>` | Substring present in stderr |
+| File existence | `file_exists: <path>` | Path exists relative to config file directory |
 
 ## CLI Reference
 
 ```
 smoke run [flags]
-  -f, --file string       Config file path (default ".smoke.yaml")
-      --tag strings       Include only tests with these tags
-      --exclude-tag strings  Exclude tests with these tags
-      --format string     Output format: terminal|json (default "terminal")
-      --fail-fast         Stop on first failure
-      --timeout string    Per-test timeout override (e.g. "30s")
-      --dry-run           List tests without running
+  -f, --file string          Config file (default ".smoke.yaml")
+      --tag strings          Run only tests with these tags
+      --exclude-tag strings  Skip tests with these tags
+      --format string        Output format: terminal|json (default "terminal")
+      --fail-fast            Stop on first failure
+      --timeout string       Per-test timeout override (e.g. "30s")
+      --dry-run              List matching tests without running them
 
 smoke init [flags]
-  -f, --force             Overwrite existing .smoke.yaml
+  -f, --force                Overwrite existing .smoke.yaml
 
 smoke version
 ```
 
 ## Auto-Detection
 
-`smoke init` detects project types and generates appropriate tests:
+`smoke init` inspects the current directory and generates a starter config:
 
-| Marker | Type | Tests Generated |
-|--------|------|-----------------|
-| `go.mod` | Go | build, test |
-| `package.json` | Node | install, lint (if available) |
-| `pyproject.toml` | Python | import check |
+| Marker file | Detected type | Tests generated |
+|-------------|---------------|-----------------|
+| `go.mod` | Go | build, vet, short tests |
+| `package.json` | Node | install, lint (if script exists) |
+| `pyproject.toml` / `requirements.txt` | Python | import check |
 | `Cargo.toml` | Rust | build, test |
 | `Dockerfile` | Docker | docker build |
 
+## Exit Codes
+
+| Code | Meaning |
+|------|---------|
+| `0` | All tests passed |
+| `1` | One or more tests failed |
+| `2` | Config error or invalid arguments |
+
 ## License
 
-MIT - CosmoLabs
+MIT
