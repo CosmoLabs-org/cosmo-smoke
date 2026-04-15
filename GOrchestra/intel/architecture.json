@@ -1,10 +1,10 @@
 {
   "version": "1.0",
-  "generated_at": "2026-04-15T09:35:43.355371-03:00",
+  "generated_at": "2026-04-15T09:38:37.136945-03:00",
   "generated_by": "GLM-4.7",
-  "expires_at": "2026-04-16T09:35:43.355371-03:00",
-  "last_analyzed_commit": "eac82983cf8adfd5bc9010ec60f99db412a32624",
-  "summary": "A Go-based CLI tool for defining, detecting, and running smoke tests with assertions and prerequisites.",
+  "expires_at": "2026-04-16T09:38:37.136945-03:00",
+  "last_analyzed_commit": "18bb519cc78791ff53341a99114303df9b6adb75",
+  "summary": "A Go-based CLI tool for orchestrating and running smoke tests with schema validation, prerequisite checking, and assertion reporting.",
   "architecture": "monolith",
   "primary_language": "Go",
   "hot_files": [
@@ -16,18 +16,17 @@
   ],
   "patterns": [
     "Standard Go project layout",
-    "CLI command pattern",
-    "Template method pattern",
-    "Separation of concerns (detector/runner/reporter/schema)"
+    "Separation of concerns (detector, reporter, runner, schema)",
+    "Test-driven development"
   ],
   "concerns": [
-    "No implementation files visible in key directories (only tests and templates)",
-    "Unclear purpose of nested GOrchestra/intel/ config directory",
-    "Missing documentation for the .gorchestra/ configuration format"
+    "Scattered configuration directories (.gorchestra/ and GOrchestra/intel/)",
+    "No production code files listed in hot files, only tests and templates",
+    "Early bootstrap phase with potential for unstable APIs"
   ],
   "suggestions": [
-    "Add implementation files for core logic if tests are currently failing or stubbed",
-    "Consolidate configuration directories (.gorchestra/ and GOrchestra/intel/)",
-    "Add README and usage examples for the CLI commands (run/init/version)"
+    "Consolidate configuration into a single standard directory",
+    "Add integration tests beyond the self-smoke config",
+    "Document the schema and CLI usage in the root/ docs folder"
   ]
 }
