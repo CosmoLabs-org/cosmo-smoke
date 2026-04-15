@@ -18,3 +18,4 @@ vendor/
 # Test
 coverage.out
 *.test
+plugins/internal
