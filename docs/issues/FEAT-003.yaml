@@ -1,0 +1,10 @@
+id: FEAT-003
+type: feature
+created_at: 2026-04-15T17:36:31.67282-03:00
+updated_at: 2026-04-15T17:36:31.673753-03:00
+source: local
+status: open
+origin:
+    roadmap_id: ROAD-004
+title: JUnit XML output format
+description: Add --format junit for CI integration. Most CI systems (GitHub Actions, Jenkins, CircleCI) can parse JUnit XML for test reporting.

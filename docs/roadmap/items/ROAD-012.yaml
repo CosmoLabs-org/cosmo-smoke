@@ -1,0 +1,11 @@
+id: ROAD-012
+created_at: 2026-04-15T17:36:21.657703-03:00
+updated_at: 2026-04-15T17:36:21.659468-03:00
+title: Retry with backoff
+description: 'Retry failed tests N times with exponential backoff. Syntax: retry: 3, backoff: 1s. Handles transient failures.'
+status: captured
+priority: 35
+tags:
+    - v2.0
+    - feature
+    - resilience

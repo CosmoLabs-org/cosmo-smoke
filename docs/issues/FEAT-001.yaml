@@ -1,0 +1,10 @@
+id: FEAT-001
+type: feature
+created_at: 2026-04-15T17:36:28.855578-03:00
+updated_at: 2026-04-15T17:36:28.862393-03:00
+source: local
+status: open
+origin:
+    roadmap_id: ROAD-001
+title: stderr_matches assertion type
+description: Add regex matching for stderr, parity with stdout_matches. Simple copy of CheckStdoutMatches logic.

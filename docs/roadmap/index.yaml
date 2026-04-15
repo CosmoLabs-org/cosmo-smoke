@@ -1,0 +1,56 @@
+version: "1.0"
+project: cosmo-smoke
+last_updated: 2026-04-15T17:36:31.67434-03:00
+next_id: 13
+items:
+    - id: ROAD-012
+      title: Retry with backoff
+      status: captured
+      created_at: 2026-04-15T17:36:21.657703-03:00
+    - id: ROAD-011
+      title: TAP output format
+      status: captured
+      created_at: 2026-04-15T17:36:20.655481-03:00
+    - id: ROAD-010
+      title: Monorepo sub-config support
+      status: captured
+      created_at: 2026-04-15T17:36:19.334069-03:00
+    - id: ROAD-009
+      title: allow_failure for flaky tests
+      status: captured
+      created_at: 2026-04-15T17:36:13.727026-03:00
+    - id: ROAD-008
+      title: Conditional test execution
+      status: captured
+      created_at: 2026-04-15T17:36:12.22819-03:00
+    - id: ROAD-007
+      title: JSON field assertions
+      status: captured
+      created_at: 2026-04-15T17:36:11.328946-03:00
+    - id: ROAD-006
+      title: HTTP endpoint assertions
+      status: captured
+      created_at: 2026-04-15T17:36:08.980852-03:00
+    - id: ROAD-005
+      title: GitHub Actions reusable workflow
+      status: captured
+      created_at: 2026-04-15T17:36:03.870495-03:00
+    - id: ROAD-004
+      title: JUnit XML output format
+      status: promoted
+      promoted_to: FEAT-003
+      created_at: 2026-04-15T17:36:02.23498-03:00
+    - id: ROAD-003
+      title: Watch mode for development (--watch)
+      status: captured
+      created_at: 2026-04-15T17:36:00.274911-03:00
+    - id: ROAD-002
+      title: env_check assertion type
+      status: promoted
+      promoted_to: FEAT-002
+      created_at: 2026-04-15T17:35:56.209343-03:00
+    - id: ROAD-001
+      title: stderr_matches assertion type
+      status: promoted
+      promoted_to: FEAT-001
+      created_at: 2026-04-15T17:35:55.360951-03:00

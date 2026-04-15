@@ -1,10 +1,10 @@
 {
   "version": "1.0",
-  "generated_at": "2026-04-15T09:38:37.136945-03:00",
+  "generated_at": "2026-04-15T17:31:52.847294-03:00",
   "generated_by": "GLM-4.7",
-  "expires_at": "2026-04-16T09:38:37.136945-03:00",
-  "last_analyzed_commit": "18bb519cc78791ff53341a99114303df9b6adb75",
-  "summary": "A Go-based CLI tool for orchestrating and running smoke tests with schema validation, prerequisite checking, and assertion reporting.",
+  "expires_at": "2026-04-16T17:31:52.847294-03:00",
+  "last_analyzed_commit": "dab12c83fe4121e114f0075ff5acf2e01f284093",
+  "summary": "A Go-based CLI tool that detects code patterns and runs schema-validated test assertions using a plugin architecture.",
   "architecture": "monolith",
   "primary_language": "Go",
   "hot_files": [
@@ -15,18 +15,21 @@
     "internal/detector/detector_test.go"
   ],
   "patterns": [
-    "Standard Go project layout",
-    "Separation of concerns (detector, reporter, runner, schema)",
-    "Test-driven development"
+    "plugin architecture",
+    "template method",
+    "CLI command pattern",
+    "schema validation"
   ],
   "concerns": [
-    "Scattered configuration directories (.gorchestra/ and GOrchestra/intel/)",
-    "No production code files listed in hot files, only tests and templates",
-    "Early bootstrap phase with potential for unstable APIs"
+    "untracked and modified files in working directory indicate instability",
+    "docs directory is fragmented across multiple locations (docs/, root/, GOrchestra/)",
+    "config directories are scattered (.gorchestra/, GOrchestra/intel/)",
+    "early stage project with no production source files listed, only tests and templates"
   ],
   "suggestions": [
-    "Consolidate configuration into a single standard directory",
-    "Add integration tests beyond the self-smoke config",
-    "Document the schema and CLI usage in the root/ docs folder"
+    "consolidate documentation into a single docs/ directory",
+    "unify configuration paths to reduce confusion",
+    "focus on completing the core detector and runner implementations",
+    "commit or stash current working directory changes to establish a clean baseline"
   ]
 }

@@ -1,0 +1,11 @@
+id: ROAD-007
+created_at: 2026-04-15T17:36:11.328946-03:00
+updated_at: 2026-04-15T17:36:11.329927-03:00
+title: JSON field assertions
+description: 'Parse stdout as JSON and assert on fields. Syntax: json_field: ''.version'', equals: ''1.0.0''. Uses gjson or similar.'
+status: captured
+priority: 50
+tags:
+    - v2.0
+    - assertion
+    - api

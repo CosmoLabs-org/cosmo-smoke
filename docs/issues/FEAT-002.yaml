@@ -1,0 +1,10 @@
+id: FEAT-002
+type: feature
+created_at: 2026-04-15T17:36:29.038509-03:00
+updated_at: 2026-04-15T17:36:29.038866-03:00
+source: local
+status: open
+origin:
+    roadmap_id: ROAD-002
+title: env_check assertion type
+description: Assert environment variable exists and optionally matches value. Useful for smoke tests that depend on API keys or config vars.

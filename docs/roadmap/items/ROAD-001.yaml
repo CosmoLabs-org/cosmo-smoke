@@ -1,0 +1,12 @@
+id: ROAD-001
+created_at: 2026-04-15T17:35:55.360951-03:00
+updated_at: 2026-04-15T17:36:28.863339-03:00
+title: stderr_matches assertion type
+description: Add regex matching for stderr, parity with stdout_matches. Simple copy of CheckStdoutMatches logic.
+status: promoted
+priority: 80
+tags:
+    - v1.1
+    - assertion
+    - quick-win
+promoted_to: FEAT-001

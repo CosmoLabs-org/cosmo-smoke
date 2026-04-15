@@ -1,0 +1,12 @@
+id: ROAD-002
+created_at: 2026-04-15T17:35:56.209343-03:00
+updated_at: 2026-04-15T17:36:29.03907-03:00
+title: env_check assertion type
+description: Assert environment variable exists and optionally matches value. Useful for smoke tests that depend on API keys or config vars.
+status: promoted
+priority: 70
+tags:
+    - v1.1
+    - assertion
+    - quick-win
+promoted_to: FEAT-002
