@@ -5,9 +5,9 @@ status: conflict
 created: 2026-04-16
 archived: 2026-04-16
 commits: 4
-files_changed: 15
-lines_added: 1290
-lines_removed: 146
+files_changed: 25
+lines_added: 378
+lines_removed: 1196
 review_status: passed
 ---
 
@@ -16,7 +16,7 @@ review_status: passed
 ## Summary
 
 Branch merged via `ccs merg` on 2026-04-16.
-4 commits, 15 files changed (+1290/-146).
+4 commits, 25 files changed (+378/-1196).
 
 ## Commits
 
@@ -30,18 +30,28 @@ Branch merged via `ccs merg` on 2026-04-16.
 ```
 .ccsession.json                                    |  10 +-
  .review.json                                       |   8 +-
- GOrchestra/intel/architecture.json                 |  24 +-
- GOrchestra/intel/status.json                       |   6 +-
+ .version-registry.json                             |   6 +-
+ GOrchestra/intel/architecture.json                 |  27 +-
+ GOrchestra/intel/status.json                       |   4 +-
  GOrchestra/sessions/agent-abe5a065/.ccsession.json |  18 -
  GOrchestra/sessions/agent-abe5a065/.review.json    |  11 -
- GOrchestra/sessions/agent-abe5a065/HISTORY.md      |  38 -
- GOrchestra/sessions/agent-abe5a065/session.json    |  33 -
+ GOrchestra/sessions/agent-abe5a065/HISTORY.md      |  47 --
+ GOrchestra/sessions/agent-abe5a065/session.json    |  39 -
+ GOrchestra/worktree-history.yaml                   |  48 --
+ GOrchestra/worktrees/agent-a83d2001/session.json   |  11 -
+ GOrchestra/worktrees/agent-a90fc8e9/session.json   |  11 -
+ GOrchestra/worktrees/agent-abe5a065/session.json   |  11 -
+ GOrchestra/worktrees/agent-ac12314e/session.json   |  11 -
+ GOrchestra/worktrees/agent-ac5ce913/session.json   |  11 -
+ GOrchestra/worktrees/agent-af5e20bc/session.json   |  11 -
+ GOrchestra/worktrees/agent-afa452c4/session.json   |  11 -
  cmd/run.go                                         |   4 +-
  docs/changelog/unreleased.yaml                     |  12 -
- .../2026-04-16_111624_fbe4200e.md                  | 999 ++++++++++++++++++++-
+ .../2026-04-16_111624_fbe4200e.md                  |  84 +-
  docs/issues.yaml                                   |   4 +-
  docs/issues/FEAT-005.yaml                          |   4 +-
+ ...4-16_fbe4200e-2cea-4fd9-9de7-0968ac40806e.jsonl | 906 ---------------------
  internal/reporter/prometheus.go                    | 101 +++
  internal/reporter/prometheus_test.go               | 164 ++++
- 15 files changed, 1290 insertions(+), 146 deletions(-)
+ 25 files changed, 378 insertions(+), 1196 deletions(-)
 ```
