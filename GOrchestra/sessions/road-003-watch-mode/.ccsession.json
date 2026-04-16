@@ -1,0 +1,18 @@
+{
+  "version": "1.0.0",
+  "id": "road-003-watch-mode",
+  "name": "road-003-watch-mode",
+  "dependencies": [],
+  "dependents": [],
+  "status": "working",
+  "timestamps": {
+    "created": "2026-04-16T19:28:13.44683-03:00",
+    "lastActivity": "2026-04-16T19:28:13.44862-03:00"
+  },
+  "merge": {
+    "order": 0,
+    "readyToMerge": false,
+    "baseBranch": "master"
+  },
+  "origin": "human"
+}

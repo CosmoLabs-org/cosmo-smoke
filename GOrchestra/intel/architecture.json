@@ -1,34 +1,33 @@
 {
   "version": "1.0",
-  "generated_at": "2026-04-16T19:08:38.762112-03:00",
+  "generated_at": "2026-04-16T19:09:38.018247-03:00",
   "generated_by": "GLM-4.7",
-  "expires_at": "2026-04-17T19:08:38.762112-03:00",
-  "last_analyzed_commit": "c91870b080e8051678d53aaaa67e584af5ada7e8",
-  "summary": "A Go-based modular orchestration tool with a plugin system that detects, runs, and reports on assertions, featuring Kubernetes integration and JUnit output.",
-  "architecture": "modular monolith",
+  "expires_at": "2026-04-17T19:09:38.018247-03:00",
+  "last_analyzed_commit": "9f727b8b21687a4095625d938b5724390f13e69c",
+  "summary": "A Go-based CLI tool that orchestrates schema validation, detection, and assertion running with plugin support.",
+  "architecture": "modular-cli",
   "primary_language": "Go",
   "hot_files": [
     "internal/runner/runner.go",
     "internal/runner/assertion.go",
+    "internal/schema/schema.go",
     "internal/detector/detector_test.go",
-    "internal/schema/schema_test.go",
-    "internal/reporter/junit_test.go"
+    "internal/runner/runner_test.go"
   ],
   "patterns": [
-    "separation of concerns",
-    "plugin architecture",
-    "test-driven development",
-    "pipeline pattern"
+    "plugin-architecture",
+    "runner-executor",
+    "schema-validation",
+    "assertion-testing"
   ],
   "concerns": [
-    "uncommitted changes (2 modified, 1 staged, 4 untracked)",
-    "cluttered recent commit history with automated session metadata archives",
-    "key hot files are primarily tests, suggesting possible missing implementation files or logic living inside tests"
+    "uncommitted changes (3 modified, 1 staged, 4 untracked) indicate instability",
+    "recent commits are dominated by automated agent session archival rather than feature work",
+    "examples/kubernetes suggests potential complexity in deployment not reflected in core code"
   ],
   "suggestions": [
-    "commit or stash the working tree changes to maintain a clean state",
-    "review if core logic in assertion.go and runner.go is properly separated from test logic",
-    "configure CI to squash or ignore automated session metadata commits",
-    "investigate the 4 untracked files to determine if they should be added or gitignored"
+    "commit or stash the working tree changes to establish a clean baseline",
+    "clarify the relationship between the detector, runner, and reporter modules",
+    "document the plugin interface and expected schema format"
   ]
 }

@@ -1,0 +1,21 @@
+{
+  "branch": "road-003-watch-mode",
+  "base_branch": "master",
+  "status": "conflict",
+  "created": "2026-04-16T19:30:24-03:00",
+  "archived": "2026-04-16T19:30:34.511369-03:00",
+  "commits": [
+    {
+      "hash": "482a515",
+      "author": "GΛB",
+      "message": "feat(run): add --watch mode for continuous testing",
+      "date": 1776378624
+    }
+  ],
+  "total_commits": 1,
+  "files_changed": 8,
+  "lines_added": 127,
+  "lines_removed": 228,
+  "diff_stat": "CLAUDE.md                                          |   3 +-\n cmd/run.go                                         |  93 +++++++--\n cmd/watch.go                                       |   8 +\n cmd/watch_test.go                                  |  30 +++\n .../2026-04-16-goss-migration-tool-design.md       | 214 ---------------------\n .../2026-04-16-cosmo-smoke-v0.4-continuation.md    |   4 +-\n go.mod                                             |   1 +\n go.sum                                             |   2 +\n 8 files changed, 127 insertions(+), 228 deletions(-)",
+  "review_status": "passed"
+}
