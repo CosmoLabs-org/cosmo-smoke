@@ -1,34 +1,34 @@
 {
   "version": "1.0",
-  "generated_at": "2026-04-16T09:28:26.951599-03:00",
+  "generated_at": "2026-04-16T11:11:20.265536-03:00",
   "generated_by": "GLM-4.7",
-  "expires_at": "2026-04-17T09:28:26.951599-03:00",
-  "last_analyzed_commit": "969ccfc47dd7174997329efc4c05ab461f25cdbd",
-  "summary": "A Go-based CLI/server tool that detects, runs, and reports on schema assertions with plugin support and Kubernetes integration.",
-  "architecture": "monolith",
+  "expires_at": "2026-04-17T11:11:20.265536-03:00",
+  "last_analyzed_commit": "a559f71e424f5967a5a3b04611edd91e75fed8fe",
+  "summary": "A Go-based modular testing framework with plugin support that detects, runs, and reports on schema assertions, recently expanded with HTTP endpoint validation and config inheritance.",
+  "architecture": "modular monolith",
   "primary_language": "Go",
   "hot_files": [
     "internal/runner/runner.go",
     "internal/runner/assertion.go",
     "internal/detector/detector_test.go",
-    "cmd/serve.go",
+    "internal/schema/schema_test.go",
     "internal/reporter/junit_test.go"
   ],
   "patterns": [
-    "Standard Go project layout",
-    "Test-driven development",
-    "Plugin architecture",
-    "Separation of concerns (detector/runner/reporter)"
+    "plugin architecture",
+    "separation of concerns (detector/runner/reporter)",
+    "test-driven development",
+    "config inheritance with includes"
   ],
   "concerns": [
-    "AI-generated session artifacts (.claude, GOrchestra) cluttering the repository",
-    "Uncommitted changes in the working directory",
-    "Heavy reliance on test files to understand core logic indicates possible lack of inline documentation"
+    "uncommitted changes (3 modified, 2 untracked) suggest instability",
+    "deeply nested session directories could become unmanageable",
+    "scattered config locations (.claude/, .gorchestra/, GOrchestra/)"
   ],
   "suggestions": [
-    "Add .claude and GOrchestra/sessions to .gitignore to keep the repo clean",
-    "Commit or stash the current working directory changes",
-    "Add package and exported function documentation",
-    "Focus on understanding the runner and assertion packages as they appear to be the core domain"
+    "consolidate configuration into a single standard location",
+    "commit or stash the current working tree changes",
+    "flatten or archive old session directories",
+    "add integration tests for the new HTTP and JSON field assertions"
   ]
 }

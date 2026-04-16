@@ -1,10 +1,12 @@
 {
-  "hash": "b1c51dcbe96331f9137947d2d2f9e789cbb2c9919dc6d6b08610a00a54be0f89",
+  "hash": "2298b3b160d5bf22a01e3a0f58f191215970d7e0ff48f41f0fbc93fd708f6aac",
   "project_name": "cosmo-smoke",
   "language": "go",
   "framework": "cli",
   "directories": [
+    "ClaudeDesktop",
     "GOrchestra",
+    "GeminiAI",
     "cmd",
     "docs",
     "examples",
@@ -16,14 +18,14 @@
     "cellbuf",
     "cobra",
     "colorprofile",
+    "gjson",
     "go-colorful",
     "go-isatty",
     "go-runewidth",
     "lipgloss",
-    "mousetrap",
-    "pflag"
+    "match"
   ],
   "has_tests": true,
   "has_ci": true,
-  "generated_at": "2026-04-16T09:05:08.535427-03:00"
+  "generated_at": "2026-04-16T11:04:29.051592-03:00"
 }
