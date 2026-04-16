@@ -1,8 +1,14 @@
 {
   "version": "1.0",
+<<<<<<< HEAD
   "updated_at": "2026-04-16T09:09:56.921511-03:00",
   "expires_at": "2026-04-16T10:09:56.921511-03:00",
   "project_path": "/Users/gab/PROJECTS/cosmo-smoke",
+=======
+  "updated_at": "2026-04-16T08:59:18.232734-03:00",
+  "expires_at": "2026-04-16T09:59:18.232734-03:00",
+  "project_path": "/Users/gab/PROJECTS/cosmo-smoke-worktrees/_glm-agent-0001-schema-assertion-runner-tests",
+>>>>>>> _glm-agent-0001-schema-assertion-runner-tests
   "context": "",
   "glm_enhanced": true
 }

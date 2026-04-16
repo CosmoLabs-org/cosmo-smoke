@@ -1,6 +1,6 @@
 {
   "version": "2.0.0",
-  "synced": "2026-04-15T17:33:42-03:00",
+  "synced": "2026-04-16T08:59:17-03:00",
   "source": "ClaudeCodeSetup",
   "seeded_files": {
     "docs/FEATURES.md": {
@@ -30,8 +30,8 @@
     },
     "docs/brainstorming/SOPs/README.md": {
       "version": "1.0.0",
-      "seeded_at": "2026-04-15T17:33:42-03:00",
-      "original_hash": "aa956741fdd21fe0"
+      "seeded_at": "2026-04-16T08:59:17-03:00",
+      "original_hash": "c18e71df063ab2c1"
     },
     "docs/brainstorming/collaborative-template.md": {
       "version": "1.0.0",

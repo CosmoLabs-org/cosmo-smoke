@@ -5,9 +5,9 @@ status: conflict
 created: 2026-04-16
 archived: 2026-04-16
 commits: 2
-files_changed: 79
-lines_added: 620
-lines_removed: 4993
+files_changed: 81
+lines_added: 610
+lines_removed: 5130
 review_status: passed
 ---
 
@@ -16,7 +16,7 @@ review_status: passed
 ## Summary
 
 Branch merged via `ccs merg` on 2026-04-16.
-2 commits, 79 files changed (+620/-4993).
+2 commits, 81 files changed (+610/-5130).
 
 ## Commits
 
@@ -30,11 +30,13 @@ Branch merged via `ccs merg` on 2026-04-16.
  .github/workflows/smoke.yml                        |   87 -
  .glm-agent-counter                                 |    1 -
  .gorchestra/fingerprint-cache.json                 |   11 +-
- .review.json                                       |   11 +
+ .../.review.json => .review.json                   |    0
  .version-registry.json                             |    6 +-
  CLAUDE.md                                          |    2 +-
- GOrchestra/intel/architecture.json                 |   36 +-
+ GOrchestra/intel/architecture.json                 |   38 +-
  GOrchestra/intel/status.json                       |    8 +-
+ .../HISTORY.md                                     |  109 --
+ .../session.json                                   |   27 -
  SPEC.md                                            |   34 -
  USAGE.md                                           |    5 +-
  cmd/run.go                                         |    4 +-
@@ -105,5 +107,5 @@ Branch merged via `ccs merg` on 2026-04-16.
  internal/runner/assertion_test.go                  |   85 +-
  internal/runner/runner.go                          |   16 +-
  internal/schema/schema.go                          |   10 +-
- 79 files changed, 620 insertions(+), 4993 deletions(-)
+ 81 files changed, 610 insertions(+), 5130 deletions(-)
 ```

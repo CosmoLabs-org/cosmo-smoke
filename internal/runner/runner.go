@@ -274,6 +274,14 @@ func (r *Runner) runTest(t schema.Test, opts RunOptions) TestResult {
 			allPassed = false
 		}
 	}
+	if t.Expect.PortListening != nil {
+		p := t.Expect.PortListening
+		a := CheckPortListening(p.Port, p.Protocol, p.Host)
+		assertions = append(assertions, a)
+		if !a.Passed {
+			allPassed = false
+		}
+	}
 
 	tr := TestResult{
 		Name:       t.Name,

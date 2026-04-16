@@ -50,7 +50,15 @@ type Expect struct {
 	StderrContains string `yaml:"stderr_contains,omitempty"`
 	StderrMatches  string `yaml:"stderr_matches,omitempty"`
 	FileExists     string `yaml:"file_exists,omitempty"`
-	EnvExists      string `yaml:"env_exists,omitempty"`
+	EnvExists      string     `yaml:"env_exists,omitempty"`
+	PortListening  *PortCheck `yaml:"port_listening,omitempty"`
+}
+
+// PortCheck defines parameters for checking if a port is open and listening.
+type PortCheck struct {
+	Port     int    `yaml:"port"`
+	Protocol string `yaml:"protocol,omitempty"`
+	Host     string `yaml:"host,omitempty"`
 }
 
 // Duration wraps time.Duration for YAML unmarshaling from strings like "5s".

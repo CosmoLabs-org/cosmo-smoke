@@ -1,33 +1,33 @@
 {
   "version": "1.0",
-  "generated_at": "2026-04-16T09:11:58.395787-03:00",
+  "generated_at": "2026-04-16T09:12:41.208902-03:00",
   "generated_by": "GLM-4.7",
-  "expires_at": "2026-04-17T09:11:58.395787-03:00",
-  "last_analyzed_commit": "05a7b8bd6f55c98623eb7883835a5c8be7036867",
-  "summary": "A Go-based modular orchestration tool with a plugin system, currently in early planning and documentation phases.",
+  "expires_at": "2026-04-17T09:12:41.208902-03:00",
+  "last_analyzed_commit": "2ae873da36a2c971848152f8ed786000fef5a0be",
+  "summary": "A Go-based modular orchestration tool that detects schemas, runs assertions, and reports results via a plugin-extensible architecture.",
   "architecture": "modular monolith",
   "primary_language": "Go",
   "hot_files": [
     "internal/runner/runner.go",
     "internal/detector/detector_test.go",
-    "internal/schema/schema_test.go",
+    "internal/runner/assertion_test.go",
     "cmd/serve.go",
-    "internal/runner/assertion_test.go"
+    "internal/schema/schema_test.go"
   ],
   "patterns": [
     "separation of concerns",
     "plugin architecture",
     "test-driven development",
-    "standard go project layout"
+    "orchestration pattern"
   ],
   "concerns": [
-    "uncommitted changes (2 modified, 1 staged, 1 untracked) suggest instability",
-    "recent commits are mostly chores/docs rather than feature progression",
-    "heavy reliance on test files to understand core logic indicates missing documentation"
+    "uncommitted staged and untracked files in working directory",
+    "recent commits are entirely chore/metadata updates indicating possible stalled feature development",
+    "deeply nested session directories in GOrchestra/intel/ could become unmanageable"
   ],
   "suggestions": [
-    "commit or stash the working tree changes to establish a clean baseline",
-    "add inline documentation and architectural diagrams to the docs folder",
-    "shift focus from planning artifacts to core feature implementation"
+    "commit or stash the pending working directory changes",
+    "shift focus from metadata management back to core feature development",
+    "document the plugin interface and expected contracts"
   ]
 }

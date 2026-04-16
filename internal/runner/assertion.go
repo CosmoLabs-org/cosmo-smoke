@@ -2,10 +2,12 @@ package runner
 
 import (
 	"fmt"
+	"net"
 	"os"
 	"path/filepath"
 	"regexp"
 	"strings"
+	"time"
 )
 
 // AssertionResult holds the outcome of a single assertion check.
@@ -95,6 +97,23 @@ func CheckEnvExists(name string) AssertionResult {
 		Actual:   value,
 		Passed:   value != "",
 	}
+}
+
+// CheckPortListening verifies that a port is open and accepting connections.
+func CheckPortListening(port int, protocol, host string) AssertionResult {
+	if protocol == "" {
+		protocol = "tcp"
+	}
+	if host == "" {
+		host = "localhost"
+	}
+	addr := fmt.Sprintf("%s:%d", host, port)
+	conn, err := net.DialTimeout(protocol, addr, 5*time.Second)
+	if err != nil {
+		return AssertionResult{Type: "port_listening", Expected: addr, Actual: err.Error(), Passed: false}
+	}
+	conn.Close()
+	return AssertionResult{Type: "port_listening", Expected: addr, Actual: "open", Passed: true}
 }
 
 // CheckFileExists verifies that a file exists at the given path.

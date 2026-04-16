@@ -395,3 +395,17 @@ func TestCheckEnvExists_EmptyValue(t *testing.T) {
 		t.Errorf("expected fail: empty string should count as not set")
 	}
 }
+
+// ---------------------------------------------------------------------------
+// CheckPortListening
+// ---------------------------------------------------------------------------
+
+func TestCheckPortListening_Fail(t *testing.T) {
+	r := CheckPortListening(59999, "tcp", "localhost")
+	if r.Passed {
+		t.Errorf("expected fail for closed port")
+	}
+	if r.Type != "port_listening" {
+		t.Errorf("expected type 'port_listening', got %q", r.Type)
+	}
+}
