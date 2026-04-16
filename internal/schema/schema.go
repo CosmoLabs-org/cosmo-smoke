@@ -60,6 +60,7 @@ type Expect struct {
 	ProcessRunning string          `yaml:"process_running,omitempty"`
 	HTTP           *HTTPCheck      `yaml:"http,omitempty"`
 	JSONField      *JSONFieldCheck `yaml:"json_field,omitempty"`
+	ResponseTimeMs *int            `yaml:"response_time_ms,omitempty"` // Fail if test duration exceeds this many ms
 }
 
 // PortCheck defines parameters for checking if a port is open and listening.

@@ -157,6 +157,16 @@ func CheckProcessRunning(name string) AssertionResult {
 	return AssertionResult{Type: "process_running", Expected: name, Actual: strings.TrimSpace(string(out)), Passed: true}
 }
 
+// CheckResponseTime fails if actual duration exceeds the threshold.
+func CheckResponseTime(actualMs, thresholdMs int) AssertionResult {
+	return AssertionResult{
+		Type:     "response_time_ms",
+		Expected: fmt.Sprintf("<= %dms", thresholdMs),
+		Actual:   fmt.Sprintf("%dms", actualMs),
+		Passed:   actualMs <= thresholdMs,
+	}
+}
+
 // CheckFileExists verifies that a file exists at the given path.
 // Relative paths are resolved against configDir using filepath.Join.
 func CheckFileExists(path, configDir string) AssertionResult {

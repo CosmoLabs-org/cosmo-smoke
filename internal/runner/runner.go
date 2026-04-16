@@ -316,11 +316,21 @@ func (r *Runner) runTest(t schema.Test, opts RunOptions) TestResult {
 		}
 	}
 
+	duration := time.Since(start)
+
+	if t.Expect.ResponseTimeMs != nil {
+		a := CheckResponseTime(int(duration.Milliseconds()), *t.Expect.ResponseTimeMs)
+		assertions = append(assertions, a)
+		if !a.Passed {
+			allPassed = false
+		}
+	}
+
 	tr := TestResult{
 		Name:           t.Name,
 		Passed:         allPassed,
 		AllowedFailure: !allPassed && t.AllowFailure,
-		Duration:       time.Since(start),
+		Duration:       duration,
 		Assertions:     assertions,
 	}
 	r.Reporter.TestResult(toReporterResult(tr))

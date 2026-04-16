@@ -774,3 +774,37 @@ func TestCheckJSONField_MultipleChecks(t *testing.T) {
 		}
 	}
 }
+
+// ---------------------------------------------------------------------------
+// CheckResponseTime
+// ---------------------------------------------------------------------------
+
+func TestCheckResponseTime_PassUnder(t *testing.T) {
+	r := CheckResponseTime(50, 100)
+	if !r.Passed {
+		t.Errorf("expected pass when actual(50ms) < threshold(100ms): actual=%s expected=%s", r.Actual, r.Expected)
+	}
+	if r.Type != "response_time_ms" {
+		t.Errorf("expected type 'response_time_ms', got %q", r.Type)
+	}
+}
+
+func TestCheckResponseTime_PassEqual(t *testing.T) {
+	r := CheckResponseTime(100, 100)
+	if !r.Passed {
+		t.Errorf("expected pass when actual(100ms) == threshold(100ms): actual=%s expected=%s", r.Actual, r.Expected)
+	}
+}
+
+func TestCheckResponseTime_FailOver(t *testing.T) {
+	r := CheckResponseTime(200, 100)
+	if r.Passed {
+		t.Errorf("expected fail when actual(200ms) > threshold(100ms)")
+	}
+	if r.Actual != "200ms" {
+		t.Errorf("expected actual='200ms', got %q", r.Actual)
+	}
+	if r.Expected != "<= 100ms" {
+		t.Errorf("expected expected='<= 100ms', got %q", r.Expected)
+	}
+}
