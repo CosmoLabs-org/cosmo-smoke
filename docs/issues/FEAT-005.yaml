@@ -1,10 +1,13 @@
 id: FEAT-005
 type: feature
 created_at: 2026-04-16T08:57:03.386359-03:00
-updated_at: 2026-04-16T08:57:03.386943-03:00
+updated_at: 2026-04-16T15:57:31.474117-03:00
 source: local
-status: open
+status: fixed
 origin:
     roadmap_id: ROAD-022
 title: Process running assertion
 description: 'New assertion: process_running. Check if process exists by name or pattern. Syntax: process_running: ''nginx''. For daemon/service smoke tests.'
+resolution:
+    notes: Shipped in commits a778725 + 2023700 (hardened after Opus review)
+    resolved_at: 2026-04-16T15:57:31.474109-03:00
