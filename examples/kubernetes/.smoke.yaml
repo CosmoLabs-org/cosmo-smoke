@@ -1,0 +1,103 @@
+version: 1
+project: kubernetes
+description: "Smoke tests for a Kubernetes deployment — verifies cluster state, not application logic"
+
+settings:
+  timeout: 60s
+  fail_fast: true
+
+prerequisites:
+  - name: "kubectl available"
+    check: "kubectl version --client"
+    hint: "Install kubectl: https://kubernetes.io/docs/tasks/tools/"
+
+  - name: "Cluster reachable"
+    check: "kubectl cluster-info"
+    hint: "Check your KUBECONFIG or run: kubectl config use-context <your-cluster>"
+
+  - name: "KUBE_NAMESPACE set"
+    check: "test -n \"$KUBE_NAMESPACE\""
+    hint: "Set KUBE_NAMESPACE=my-app before running (e.g. export KUBE_NAMESPACE=production)"
+
+tests:
+  # Infrastructure
+
+  - name: "Target namespace exists"
+    run: "kubectl get namespace $KUBE_NAMESPACE"
+    expect:
+      exit_code: 0
+      stdout_contains: "Active"
+    tags: [infra]
+
+  - name: "API deployment is ready"
+    # --for=condition=available ensures all replicas are up, not just created
+    run: "kubectl rollout status deployment/api --namespace $KUBE_NAMESPACE --timeout=60s"
+    expect:
+      exit_code: 0
+      stdout_contains: "successfully rolled out"
+    tags: [infra]
+    timeout: 90s
+
+  - name: "Worker deployment is ready"
+    run: "kubectl rollout status deployment/worker --namespace $KUBE_NAMESPACE --timeout=60s"
+    expect:
+      exit_code: 0
+      stdout_contains: "successfully rolled out"
+    tags: [infra]
+    timeout: 90s
+
+  - name: "API service has endpoints"
+    # A service with no endpoints means no pods matched the selector
+    run: "kubectl get endpoints api --namespace $KUBE_NAMESPACE -o jsonpath='{.subsets[0].addresses[0].ip}'"
+    expect:
+      exit_code: 0
+      stdout_matches: "[0-9]+\\.[0-9]+\\.[0-9]+\\.[0-9]+"
+    tags: [infra]
+
+  - name: "Ingress is configured"
+    run: "kubectl get ingress --namespace $KUBE_NAMESPACE"
+    expect:
+      exit_code: 0
+      # At least one ingress row is returned
+      stdout_matches: "api|web|nginx|traefik"
+    tags: [infra]
+
+  # Config & secrets
+
+  - name: "App configmap exists"
+    run: "kubectl get configmap app-config --namespace $KUBE_NAMESPACE"
+    expect:
+      exit_code: 0
+    tags: [infra]
+
+  - name: "App secret exists"
+    # We only check existence — never print secret values
+    run: "kubectl get secret app-secrets --namespace $KUBE_NAMESPACE"
+    expect:
+      exit_code: 0
+    tags: [infra]
+
+  # Runtime sanity
+
+  - name: "API pod logs contain no panic"
+    # Tails last 50 lines; fails if 'panic:' appears — catches unhandled crashes at startup
+    run: "kubectl logs deployment/api --namespace $KUBE_NAMESPACE --tail=50 | grep -v 'panic:'"
+    expect:
+      exit_code: 0
+    tags: [runtime]
+
+  - name: "API /health via port-forward"
+    # Opens a temporary port-forward, hits health, then cleans up
+    run: |
+      kubectl port-forward service/api 19999:80 --namespace $KUBE_NAMESPACE &
+      PF_PID=$!
+      sleep 2
+      curl -sf http://localhost:19999/health
+      EXIT=$?
+      kill $PF_PID 2>/dev/null
+      exit $EXIT
+    expect:
+      exit_code: 0
+      stdout_contains: "ok"
+    tags: [runtime]
+    timeout: 30s

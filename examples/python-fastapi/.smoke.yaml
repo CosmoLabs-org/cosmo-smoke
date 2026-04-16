@@ -1,0 +1,89 @@
+version: 1
+project: python-fastapi
+description: "Smoke tests for a Python FastAPI service"
+
+settings:
+  timeout: 60s
+  fail_fast: false
+
+prerequisites:
+  - name: "Python 3.11+"
+    check: "python3 --version"
+    hint: "Install Python 3.11+ from https://python.org or via pyenv"
+
+  - name: "pip available"
+    check: "pip --version || pip3 --version"
+    hint: "pip should ship with Python. Try: python3 -m ensurepip --upgrade"
+
+  - name: "Poetry installed (optional, used if pyproject.toml exists)"
+    check: "poetry --version || echo 'poetry not installed, using pip'"
+    # Non-blocking: projects may use plain pip instead of Poetry
+
+tests:
+  # Install
+
+  - name: "Dependencies install cleanly"
+    # Works for both poetry and plain pip projects
+    run: "poetry install --no-root 2>/dev/null || pip install -r requirements.txt -q"
+    expect:
+      exit_code: 0
+    tags: [build]
+    timeout: 120s
+
+  # Lint
+
+  - name: "Ruff lint passes"
+    run: "ruff check ."
+    expect:
+      exit_code: 0
+    tags: [lint]
+
+  - name: "Ruff format check"
+    run: "ruff format --check ."
+    expect:
+      exit_code: 0
+    tags: [lint]
+
+  # Type check
+
+  - name: "Mypy type check passes"
+    run: "mypy app/ --ignore-missing-imports"
+    expect:
+      exit_code: 0
+    tags: [lint]
+    timeout: 60s
+
+  # Test
+
+  - name: "Pytest discovers tests"
+    # --collect-only verifies test discovery without executing tests
+    run: "pytest --collect-only -q"
+    expect:
+      exit_code: 0
+      stdout_contains: "test session starts"
+    tags: [test]
+
+  - name: "Unit tests pass"
+    run: "pytest tests/unit/ -q --tb=short"
+    expect:
+      exit_code: 0
+    tags: [test]
+    timeout: 120s
+
+  # Runtime
+
+  - name: "Uvicorn starts and serves /healthz"
+    # --workers 1 for faster startup; PORT env var allows customization
+    run: |
+      uvicorn app.main:app --host 127.0.0.1 --port 8000 --workers 1 &
+      APP_PID=$!
+      sleep 3
+      curl -sf http://127.0.0.1:8000/healthz
+      EXIT=$?
+      kill $APP_PID 2>/dev/null
+      exit $EXIT
+    expect:
+      exit_code: 0
+      stdout_contains: "healthy"
+    tags: [runtime]
+    timeout: 30s

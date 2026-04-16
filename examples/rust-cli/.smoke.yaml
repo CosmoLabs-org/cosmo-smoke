@@ -1,0 +1,77 @@
+version: 1
+project: rust-cli
+description: "Smoke tests for a Rust CLI tool"
+
+settings:
+  timeout: 120s
+  fail_fast: false
+
+prerequisites:
+  - name: "Rust toolchain installed"
+    check: "cargo --version"
+    hint: "Install Rust via rustup: curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh"
+
+  - name: "Cargo clippy available"
+    check: "cargo clippy --version"
+    hint: "Install clippy: rustup component add clippy"
+
+tests:
+  # Build (check-only, no artifact)
+
+  - name: "Cargo check passes"
+    # Faster than a full build — validates code compiles without producing binaries
+    run: "cargo check"
+    expect:
+      exit_code: 0
+    tags: [build]
+
+  # Lint
+
+  - name: "Clippy passes (no warnings)"
+    # -D warnings treats all warnings as errors
+    run: "cargo clippy -- -D warnings"
+    expect:
+      exit_code: 0
+    tags: [lint]
+
+  - name: "Formatting is correct"
+    run: "cargo fmt --check"
+    expect:
+      exit_code: 0
+    tags: [lint]
+
+  # Test (compile only, no run — faster smoke signal)
+
+  - name: "Tests compile"
+    # --no-run verifies test code is valid without executing; much faster in CI
+    run: "cargo test --no-run"
+    expect:
+      exit_code: 0
+    tags: [test]
+    timeout: 180s
+
+  - name: "Unit tests pass"
+    run: "cargo test --lib"
+    expect:
+      exit_code: 0
+    tags: [test]
+    timeout: 120s
+
+  # Runtime
+
+  - name: "Binary --help works"
+    # Builds in debug mode and runs --help — fastest functional smoke check
+    run: "cargo run -- --help"
+    expect:
+      exit_code: 0
+      stdout_contains: "Usage"
+    tags: [runtime]
+    timeout: 60s
+
+  - name: "Version flag outputs semver"
+    run: "cargo run -- --version"
+    expect:
+      exit_code: 0
+      stdout_matches: "[0-9]+\\.[0-9]+\\.[0-9]+"
+    tags: [runtime]
+    timeout: 60s

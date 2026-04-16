@@ -1,0 +1,110 @@
+version: 1
+project: monorepo
+description: "Smoke tests for a monorepo with api, web, and shared packages"
+
+settings:
+  timeout: 60s
+  fail_fast: false
+
+prerequisites:
+  - name: "Node.js installed"
+    check: "node --version"
+    hint: "Install Node.js 18+ from https://nodejs.org"
+
+  - name: "Bun installed"
+    check: "bun --version"
+    hint: "Install bun: curl -fsSL https://bun.sh/install | bash"
+
+  - name: "Go installed (required for api package)"
+    check: "go version"
+    hint: "Install Go from https://go.dev/dl/"
+
+tests:
+  # shared package — no tags needed to run, always verified first
+
+  - name: "[shared] Types compile"
+    run: "cd packages/shared && bun run typecheck"
+    expect:
+      exit_code: 0
+    tags: [shared, build]
+
+  - name: "[shared] Unit tests pass"
+    run: "cd packages/shared && bun test"
+    expect:
+      exit_code: 0
+    tags: [shared, test]
+
+  - name: "[shared] Build artifact produced"
+    run: "cd packages/shared && bun run build"
+    expect:
+      exit_code: 0
+      file_exists: packages/shared/dist/index.js
+    tags: [shared, build]
+    cleanup: "rm -rf packages/shared/dist"
+
+  # api package (Go)
+
+  - name: "[api] Compiles"
+    run: "cd packages/api && go build ./..."
+    expect:
+      exit_code: 0
+    tags: [api, build]
+    timeout: 120s
+
+  - name: "[api] Vet passes"
+    run: "cd packages/api && go vet ./..."
+    expect:
+      exit_code: 0
+    tags: [api, lint]
+
+  - name: "[api] Short tests pass"
+    run: "cd packages/api && go test -short ./..."
+    expect:
+      exit_code: 0
+    tags: [api, test]
+    timeout: 120s
+
+  - name: "[api] Health endpoint responds"
+    run: |
+      cd packages/api && go run . serve &
+      API_PID=$!
+      sleep 2
+      curl -sf http://localhost:8080/health
+      EXIT=$?
+      kill $API_PID 2>/dev/null
+      exit $EXIT
+    expect:
+      exit_code: 0
+      stdout_contains: "ok"
+    tags: [api, runtime]
+    timeout: 30s
+
+  # web package (React)
+
+  - name: "[web] Dependencies installed"
+    run: "cd packages/web && bun install --frozen-lockfile"
+    expect:
+      exit_code: 0
+    tags: [web, build]
+    timeout: 120s
+
+  - name: "[web] Lint passes"
+    run: "cd packages/web && bun run lint"
+    expect:
+      exit_code: 0
+    tags: [web, lint]
+
+  - name: "[web] Type check passes"
+    run: "cd packages/web && bun run typecheck"
+    expect:
+      exit_code: 0
+    tags: [web, lint]
+
+  - name: "[web] Production build succeeds"
+    run: "cd packages/web && bun run build"
+    expect:
+      exit_code: 0
+      file_exists: packages/web/dist/index.html
+    tags: [web, build]
+    timeout: 120s
+    cleanup: "rm -rf packages/web/dist"

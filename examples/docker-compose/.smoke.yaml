@@ -1,0 +1,90 @@
+version: 1
+project: docker-compose
+description: "Smoke tests for a multi-container Docker Compose stack"
+
+settings:
+  # Compose up + health checks can take 60-90s on cold start
+  timeout: 120s
+  fail_fast: true
+
+prerequisites:
+  - name: "Docker daemon running"
+    check: "docker info"
+    hint: "Start Docker Desktop (macOS/Windows) or run: sudo systemctl start docker"
+
+  - name: "docker compose available"
+    # Supports both 'docker compose' (plugin) and 'docker-compose' (standalone)
+    check: "docker compose version 2>/dev/null || docker-compose version"
+    hint: "Install Docker Compose: https://docs.docker.com/compose/install/"
+
+tests:
+  # Build
+
+  - name: "Images build successfully"
+    run: "docker compose build --no-cache"
+    expect:
+      exit_code: 0
+    tags: [build]
+    timeout: 300s
+
+  # Infra
+
+  - name: "Stack starts cleanly"
+    run: "docker compose up -d --wait"
+    expect:
+      exit_code: 0
+    tags: [infra]
+    timeout: 120s
+    # Cleanup handled by explicit 'Stack tears down' test below
+
+  - name: "API service is healthy"
+    # docker inspect exits 1 if the container isn't healthy
+    run: "docker inspect --format='{{.State.Health.Status}}' $(docker compose ps -q api) | grep -q healthy"
+    expect:
+      exit_code: 0
+    tags: [infra]
+
+  - name: "Database service is healthy"
+    run: "docker inspect --format='{{.State.Health.Status}}' $(docker compose ps -q db) | grep -q healthy"
+    expect:
+      exit_code: 0
+    tags: [infra]
+
+  - name: "Cache service is healthy"
+    run: "docker inspect --format='{{.State.Health.Status}}' $(docker compose ps -q redis) | grep -q healthy"
+    expect:
+      exit_code: 0
+    tags: [infra]
+
+  # Service-level checks
+
+  - name: "API /health endpoint returns 200"
+    run: "curl -sf http://localhost:8080/health"
+    expect:
+      exit_code: 0
+      stdout_contains: "ok"
+    tags: [runtime]
+
+  - name: "Database accepts connections"
+    # Uses pg_isready inside the db container — avoids needing psql locally
+    run: "docker compose exec db pg_isready -U postgres"
+    expect:
+      exit_code: 0
+      stdout_contains: "accepting connections"
+    tags: [runtime]
+
+  - name: "Redis responds to PING"
+    run: "docker compose exec redis redis-cli PING"
+    expect:
+      exit_code: 0
+      stdout_contains: "PONG"
+    tags: [runtime]
+
+  # Cleanup
+
+  - name: "Stack tears down cleanly"
+    run: "docker compose down --volumes --remove-orphans"
+    expect:
+      exit_code: 0
+    tags: [infra]
+    timeout: 60s

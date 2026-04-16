@@ -1,0 +1,78 @@
+version: 1
+project: node-fullstack
+description: "Smoke tests for a Node.js fullstack app (React frontend + Express backend)"
+
+settings:
+  timeout: 60s
+  fail_fast: false
+
+prerequisites:
+  - name: "Node.js installed"
+    check: "node --version"
+    hint: "Install Node.js 18+ from https://nodejs.org or via nvm"
+
+  - name: "Bun installed"
+    check: "bun --version"
+    hint: "Install bun: curl -fsSL https://bun.sh/install | bash"
+
+tests:
+  # Dependencies
+
+  - name: "Install dependencies"
+    run: "bun install --frozen-lockfile"
+    expect:
+      exit_code: 0
+    tags: [build]
+    timeout: 120s
+
+  # Lint
+
+  - name: "Lint passes"
+    run: "bun run lint"
+    expect:
+      exit_code: 0
+    tags: [lint]
+
+  - name: "Type check passes"
+    run: "bun run typecheck"
+    expect:
+      exit_code: 0
+    tags: [lint]
+
+  # Build
+
+  - name: "Frontend builds"
+    run: "bun run build:web"
+    expect:
+      exit_code: 0
+      # Vite/webpack emits to dist/
+      file_exists: dist/index.html
+    tags: [build]
+    timeout: 120s
+    cleanup: "rm -rf dist"
+
+  - name: "Backend builds"
+    run: "bun run build:server"
+    expect:
+      exit_code: 0
+      file_exists: dist-server/index.js
+    tags: [build]
+    timeout: 60s
+    cleanup: "rm -rf dist-server"
+
+  # Runtime
+
+  - name: "Server starts and accepts connections"
+    # Starts Express server in background, waits, checks root, tears down
+    run: |
+      node dist-server/index.js &
+      SERVER_PID=$!
+      sleep 2
+      curl -sf -o /dev/null http://localhost:3000/
+      EXIT=$?
+      kill $SERVER_PID 2>/dev/null
+      exit $EXIT
+    expect:
+      exit_code: 0
+    tags: [runtime]
+    timeout: 30s

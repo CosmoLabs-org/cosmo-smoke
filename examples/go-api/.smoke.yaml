@@ -1,0 +1,76 @@
+version: 1
+project: go-api
+description: "Smoke tests for a Go backend REST API"
+
+settings:
+  timeout: 60s
+  fail_fast: false
+
+prerequisites:
+  - name: "Go installed"
+    check: "go version"
+    hint: "Install Go from https://go.dev/dl/ (requires 1.21+)"
+
+  - name: "DATABASE_URL set"
+    check: "test -n \"$DATABASE_URL\""
+    hint: "Set DATABASE_URL=postgres://user:pass@localhost:5432/mydb before running"
+
+tests:
+  # Build
+
+  - name: "Compiles"
+    run: "go build -o /tmp/go-api-smoke-bin ./..."
+    expect:
+      exit_code: 0
+      file_exists: /tmp/go-api-smoke-bin
+    tags: [build]
+    timeout: 120s
+    cleanup: "rm -f /tmp/go-api-smoke-bin"
+
+  - name: "No vet errors"
+    run: "go vet ./..."
+    expect:
+      exit_code: 0
+    tags: [build]
+
+  # Test
+
+  - name: "Short tests pass"
+    # -short skips integration tests that require a live database
+    run: "go test -short -count=1 ./..."
+    expect:
+      exit_code: 0
+    tags: [test]
+    timeout: 120s
+
+  # Runtime
+
+  - name: "Binary responds to --help"
+    run: "go run . --help"
+    expect:
+      exit_code: 0
+      stdout_contains: "Usage"
+    tags: [runtime]
+
+  - name: "Version flag works"
+    run: "go run . version"
+    expect:
+      exit_code: 0
+      stdout_matches: "^v?[0-9]+\\.[0-9]+\\.[0-9]+"
+    tags: [runtime]
+
+  - name: "/health endpoint reachable"
+    # Starts server in background, waits for it, hits health endpoint, then tears down
+    run: |
+      go run . serve &
+      SERVER_PID=$!
+      sleep 2
+      curl -sf http://localhost:8080/health
+      EXIT=$?
+      kill $SERVER_PID 2>/dev/null
+      exit $EXIT
+    expect:
+      exit_code: 0
+      stdout_contains: "ok"
+    tags: [runtime]
+    timeout: 30s
