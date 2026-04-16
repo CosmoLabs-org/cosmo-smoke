@@ -1124,6 +1124,166 @@ func TestCheckGRPCHealth_SpecificServiceNotServing(t *testing.T) {
 	}
 }
 
+// ---------------------------------------------------------------------------
+// Helpers: fake Postgres and MySQL TCP servers
+// ---------------------------------------------------------------------------
+
+// startFakePostgres listens once, reads the SSLRequest, replies with a single byte.
+func startFakePostgres(t *testing.T, reply byte) (string, int) {
+	t.Helper()
+	lis, err := net.Listen("tcp", "127.0.0.1:0")
+	if err != nil {
+		t.Fatal(err)
+	}
+	t.Cleanup(func() { lis.Close() })
+	go func() {
+		conn, err := lis.Accept()
+		if err != nil {
+			return
+		}
+		defer conn.Close()
+		buf := make([]byte, 8)
+		conn.Read(buf)            //nolint:errcheck
+		conn.Write([]byte{reply}) //nolint:errcheck
+	}()
+	host, portStr, _ := net.SplitHostPort(lis.Addr().String())
+	port, _ := strconv.Atoi(portStr)
+	return host, port
+}
+
+// startFakeMySQL listens once and immediately writes a handshake packet.
+func startFakeMySQL(t *testing.T, protocolVersion byte) (string, int) {
+	t.Helper()
+	lis, err := net.Listen("tcp", "127.0.0.1:0")
+	if err != nil {
+		t.Fatal(err)
+	}
+	t.Cleanup(func() { lis.Close() })
+	go func() {
+		conn, err := lis.Accept()
+		if err != nil {
+			return
+		}
+		defer conn.Close()
+		// 3-byte len, 1-byte seq, 1-byte protocol version + padding
+		pkt := []byte{0x0a, 0x00, 0x00, 0x00, protocolVersion, 0x00, 0x00, 0x00, 0x00, 0x00}
+		conn.Write(pkt) //nolint:errcheck
+	}()
+	host, portStr, _ := net.SplitHostPort(lis.Addr().String())
+	port, _ := strconv.Atoi(portStr)
+	return host, port
+}
+
+// ---------------------------------------------------------------------------
+// CheckPostgresPing
+// ---------------------------------------------------------------------------
+
+func TestCheckPostgresPing_Pass_SSLSupported(t *testing.T) {
+	host, port := startFakePostgres(t, 'S')
+	r := CheckPostgresPing(&schema.PostgresCheck{Host: host, Port: port})
+	if !r.Passed {
+		t.Errorf("expected pass, got fail: actual=%s", r.Actual)
+	}
+	if r.Type != "postgres_ping" {
+		t.Errorf("expected type 'postgres_ping', got %q", r.Type)
+	}
+	if r.Actual != "S" {
+		t.Errorf("expected Actual='S', got %q", r.Actual)
+	}
+}
+
+func TestCheckPostgresPing_Pass_SSLNotSupported(t *testing.T) {
+	host, port := startFakePostgres(t, 'N')
+	r := CheckPostgresPing(&schema.PostgresCheck{Host: host, Port: port})
+	if !r.Passed {
+		t.Errorf("expected pass, got fail: actual=%s", r.Actual)
+	}
+	if r.Actual != "N" {
+		t.Errorf("expected Actual='N', got %q", r.Actual)
+	}
+}
+
+func TestCheckPostgresPing_Pass_ErrorReply(t *testing.T) {
+	host, port := startFakePostgres(t, 'E')
+	r := CheckPostgresPing(&schema.PostgresCheck{Host: host, Port: port})
+	if !r.Passed {
+		t.Errorf("expected pass for 'E' reply, got fail: actual=%s", r.Actual)
+	}
+	if r.Actual != "E" {
+		t.Errorf("expected Actual='E', got %q", r.Actual)
+	}
+}
+
+func TestCheckPostgresPing_GarbageReply(t *testing.T) {
+	host, port := startFakePostgres(t, 0xff)
+	r := CheckPostgresPing(&schema.PostgresCheck{Host: host, Port: port})
+	if r.Passed {
+		t.Errorf("expected fail for garbage reply, got pass")
+	}
+	if !strings.Contains(r.Actual, "0xff") {
+		t.Errorf("expected Actual to contain '0xff', got %q", r.Actual)
+	}
+}
+
+func TestCheckPostgresPing_Unreachable(t *testing.T) {
+	lis, err := net.Listen("tcp", "127.0.0.1:0")
+	if err != nil {
+		t.Fatal(err)
+	}
+	_, portStr, _ := net.SplitHostPort(lis.Addr().String())
+	port, _ := strconv.Atoi(portStr)
+	lis.Close()
+
+	r := CheckPostgresPing(&schema.PostgresCheck{Host: "127.0.0.1", Port: port})
+	if r.Passed {
+		t.Errorf("expected fail for unreachable address, got pass")
+	}
+}
+
+// ---------------------------------------------------------------------------
+// CheckMySQLPing
+// ---------------------------------------------------------------------------
+
+func TestCheckMySQLPing_Pass_V10(t *testing.T) {
+	host, port := startFakeMySQL(t, 0x0a)
+	r := CheckMySQLPing(&schema.MySQLCheck{Host: host, Port: port})
+	if !r.Passed {
+		t.Errorf("expected pass, got fail: actual=%s", r.Actual)
+	}
+	if r.Type != "mysql_ping" {
+		t.Errorf("expected type 'mysql_ping', got %q", r.Type)
+	}
+	if r.Actual != "v10" {
+		t.Errorf("expected Actual='v10', got %q", r.Actual)
+	}
+}
+
+func TestCheckMySQLPing_WrongProtocolVersion(t *testing.T) {
+	host, port := startFakeMySQL(t, 0x09)
+	r := CheckMySQLPing(&schema.MySQLCheck{Host: host, Port: port})
+	if r.Passed {
+		t.Errorf("expected fail for protocol version 0x09, got pass")
+	}
+	if !strings.Contains(r.Actual, "0x09") {
+		t.Errorf("expected Actual to contain '0x09', got %q", r.Actual)
+	}
+}
+
+func TestCheckMySQLPing_Unreachable(t *testing.T) {
+	lis, err := net.Listen("tcp", "127.0.0.1:0")
+	if err != nil {
+		t.Fatal(err)
+	}
+	_, portStr, _ := net.SplitHostPort(lis.Addr().String())
+	port, _ := strconv.Atoi(portStr)
+	lis.Close()
+
+	r := CheckMySQLPing(&schema.MySQLCheck{Host: "127.0.0.1", Port: port})
+	if r.Passed {
+		t.Errorf("expected fail for unreachable address, got pass")
+	}
+}
+
 func TestCheckGRPCHealth_DialFailure(t *testing.T) {
 	result := CheckGRPCHealth(&schema.GRPCHealthCheck{
 		Address: "127.0.0.1:1",
