@@ -1,15 +1,19 @@
 id: ROAD-029
 created_at: 2026-04-16T16:14:47.242592-03:00
-updated_at: 2026-04-16T16:14:55.084297-03:00
+updated_at: 2026-04-16T16:38:53.456217-03:00
 title: Prometheus metrics output format
 description: |-
     # Prometheus metrics output format
 
     Goss supports Prometheus output for scraping. Add --format prometheus to expose test results as metrics. Enables Grafana dashboards for smoke test trends.
-status: captured
+status: completed
 priority: 75
 effort: small
 tags:
     - reporter
+notes:
+    - Shipped via parallel agent dispatch
+completed_in: v0.2.0
+completed_at: 2026-04-16T16:38:53.456212-03:00
 origin:
     idea_slug: 2026-04-16-prometheus-metrics-output-format

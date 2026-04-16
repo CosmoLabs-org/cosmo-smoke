@@ -1,15 +1,19 @@
 id: ROAD-028
 created_at: 2026-04-16T16:14:47.175673-03:00
-updated_at: 2026-04-16T16:14:55.016145-03:00
+updated_at: 2026-04-16T16:38:53.383808-03:00
 title: gRPC health check assertion
 description: |-
     # gRPC health check assertion
 
     Native gRPC health check protocol support. Connect to gRPC service, call health.Check(), verify SERVING status.
-status: captured
+status: completed
 priority: 70
 effort: small
 tags:
     - assertion
+notes:
+    - Shipped via parallel agent dispatch
+completed_in: v0.2.0
+completed_at: 2026-04-16T16:38:53.383802-03:00
 origin:
     idea_slug: 2026-04-16-grpc-health-check-assertion

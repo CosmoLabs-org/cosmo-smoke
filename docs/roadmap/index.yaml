@@ -1,37 +1,42 @@
 version: "1.0"
 project: cosmo-smoke
-last_updated: 2026-04-16T16:14:55.087775-03:00
+last_updated: 2026-04-16T16:38:53.456461-03:00
 next_id: 30
 items:
     - id: ROAD-029
       title: Prometheus metrics output format
-      status: captured
+      status: completed
       priority: 75
       effort: small
+      completed_in: v0.2.0
       created_at: 2026-04-16T16:14:47.242592-03:00
     - id: ROAD-028
       title: gRPC health check assertion
-      status: captured
+      status: completed
       priority: 70
       effort: small
+      completed_in: v0.2.0
       created_at: 2026-04-16T16:14:47.175673-03:00
     - id: ROAD-027
       title: Redis/Memcached connectivity assertion
-      status: captured
+      status: completed
       priority: 80
       effort: small
+      completed_in: v0.2.0
       created_at: 2026-04-16T16:14:47.123606-03:00
     - id: ROAD-026
       title: SSL certificate validation assertion
-      status: captured
+      status: completed
       priority: 90
       effort: small
+      completed_in: v0.2.0
       created_at: 2026-04-16T16:14:47.070575-03:00
     - id: ROAD-025
       title: Response time threshold assertion
-      status: captured
+      status: completed
       priority: 85
       effort: small
+      completed_in: v0.2.0
       created_at: 2026-04-16T16:14:47.003976-03:00
     - id: ROAD-024
       title: Goss migration tool
