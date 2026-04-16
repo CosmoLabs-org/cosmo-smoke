@@ -6,7 +6,9 @@ import (
 	"os"
 	"os/exec"
 	"path/filepath"
+	"runtime"
 	"testing"
+	"time"
 
 	"github.com/CosmoLabs-org/cosmo-smoke/internal/schema"
 )
@@ -420,15 +422,21 @@ func TestCheckPortListening_Fail(t *testing.T) {
 // ---------------------------------------------------------------------------
 
 func TestCheckProcessRunning_ExistingProcess(t *testing.T) {
-	// Spawn a long-running process we can reliably detect, then kill it after.
-	cmd := exec.Command("sleep", "10")
+	if runtime.GOOS == "windows" {
+		t.Skip("pgrep not available on Windows; tasklist path covered via manual verification")
+	}
+	// Spawn a long-running 'sleep' process so we have a predictable target
+	// for pgrep -x. Both macOS and Linux ship /bin/sleep.
+	cmd := exec.Command("sleep", "30")
 	if err := cmd.Start(); err != nil {
 		t.Fatalf("failed to start helper process: %v", err)
 	}
-	defer cmd.Process.Kill() //nolint
+	t.Cleanup(func() { _ = cmd.Process.Kill() })
+	// Give the OS a moment to register the process in the process table.
+	time.Sleep(50 * time.Millisecond)
 	r := CheckProcessRunning("sleep")
 	if !r.Passed {
-		t.Errorf("expected pass for running process 'sleep', got actual=%s", r.Actual)
+		t.Errorf("expected pass for running 'sleep' process, got actual=%s", r.Actual)
 	}
 	if r.Type != "process_running" {
 		t.Errorf("expected type 'process_running', got %q", r.Type)
