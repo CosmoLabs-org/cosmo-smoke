@@ -1,9 +1,9 @@
 {
   "repository": {
     "version": "0.3.0",
-    "build": 106,
+    "build": 109,
     "name": "cosmo-smoke",
-    "lastUpdated": "2026-04-16T20:13:17Z",
+    "lastUpdated": "2026-04-16T22:08:22Z",
     "derived_from": "git tag"
   },
   "metadata": {
@@ -11,6 +11,25 @@
     "sync_method": "git_history_analysis"
   },
   "releaseContext": {
+    "pendingFeatures": [
+      {
+        "branch": "agent-a1e42bae",
+        "title": "Agent a1e42bae",
+        "commits": 2,
+        "suggestedBump": "patch",
+        "mergedAt": "2026-04-16T19:08:22-03:00",
+        "files": [
+          ".review.json",
+          "CLAUDE.md",
+          "internal/runner/runner.go",
+          "internal/runner/runner_test.go",
+          "internal/schema/schema.go",
+          "internal/schema/schema_test.go",
+          "internal/schema/validate.go",
+          "internal/schema/validate_test.go"
+        ]
+      }
+    ],
     "lastRelease": {
       "version": "0.3.0",
       "date": "2026-04-16",
