@@ -3,8 +3,26 @@
   "base_branch": "master",
   "status": "conflict",
   "created": "2026-04-16T19:30:24-03:00",
-  "archived": "2026-04-16T19:37:43.536602-03:00",
+  "archived": "2026-04-16T19:38:51.958134-03:00",
   "commits": [
+    {
+      "hash": "b2d8142",
+      "author": "GΛB",
+      "message": "chore: update version registry",
+      "date": 1776379114
+    },
+    {
+      "hash": "9f65d51",
+      "author": "GΛB",
+      "message": "chore: mark worktree ready for merge",
+      "date": 1776379099
+    },
+    {
+      "hash": "02ef7a3",
+      "author": "GΛB",
+      "message": "chore: update version registry",
+      "date": 1776379072
+    },
     {
       "hash": "816ecee",
       "author": "GΛB",
@@ -36,10 +54,10 @@
       "date": 1776378624
     }
   ],
-  "total_commits": 5,
+  "total_commits": 8,
   "files_changed": 18,
-  "lines_added": 165,
-  "lines_removed": 398,
-  "diff_stat": ".ccsession.json                                    |  24 +--\n .gorchestra/fingerprint-cache.json                 |  11 +-\n .review.json                                       |  10 +-\n .version-registry.json                             |   6 +-\n CLAUDE.md                                          |   3 +-\n GOrchestra/intel/architecture.json                 |  33 ++--\n GOrchestra/intel/status.json                       |   6 +-\n .../sessions/road-003-watch-mode/.ccsession.json   |  18 --\n .../sessions/road-003-watch-mode/.review.json      |  11 --\n GOrchestra/sessions/road-003-watch-mode/HISTORY.md |  50 -----\n .../sessions/road-003-watch-mode/session.json      |  39 ----\n cmd/run.go                                         |  93 +++++++--\n cmd/watch.go                                       |   8 +\n cmd/watch_test.go                                  |  30 +++\n .../2026-04-16-goss-migration-tool-design.md       | 214 ---------------------\n .../2026-04-16-cosmo-smoke-v0.4-continuation.md    |   4 +-\n go.mod                                             |   1 +\n go.sum                                             |   2 +\n 18 files changed, 165 insertions(+), 398 deletions(-)",
+  "lines_added": 166,
+  "lines_removed": 406,
+  "diff_stat": ".ccsession.json                                    |  29 +--\n .gorchestra/fingerprint-cache.json                 |  11 +-\n .review.json                                       |  10 +-\n .version-registry.json                             |   6 +-\n CLAUDE.md                                          |   3 +-\n GOrchestra/intel/architecture.json                 |  30 +--\n GOrchestra/intel/status.json                       |   6 +-\n .../sessions/road-003-watch-mode/.ccsession.json   |  18 --\n .../sessions/road-003-watch-mode/.review.json      |  11 --\n GOrchestra/sessions/road-003-watch-mode/HISTORY.md |  51 -----\n .../sessions/road-003-watch-mode/session.json      |  45 -----\n cmd/run.go                                         |  93 +++++++--\n cmd/watch.go                                       |   8 +\n cmd/watch_test.go                                  |  30 +++\n .../2026-04-16-goss-migration-tool-design.md       | 214 ---------------------\n .../2026-04-16-cosmo-smoke-v0.4-continuation.md    |   4 +-\n go.mod                                             |   1 +\n go.sum                                             |   2 +\n 18 files changed, 166 insertions(+), 406 deletions(-)",
   "review_status": "passed"
 }
