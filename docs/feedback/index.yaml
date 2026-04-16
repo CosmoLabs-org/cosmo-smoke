@@ -1,0 +1,15 @@
+version: "1.0"
+next_id: 1
+last_updated: "2026-04-16"
+stats:
+    total: 1
+    pending: 1
+    implemented: 0
+    rejected: 0
+    converted: 0
+entries:
+    - id: FB-001
+      title: makefile init missing Go ldflags version injection
+      status: pending
+      from_project: cosmo-smoke
+      created: "2026-04-16T09:29:01.672619-03:00"
