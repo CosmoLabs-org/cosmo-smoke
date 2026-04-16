@@ -60,6 +60,8 @@ type Expect struct {
 	ProcessRunning string          `yaml:"process_running,omitempty"`
 	HTTP           *HTTPCheck      `yaml:"http,omitempty"`
 	JSONField      *JSONFieldCheck `yaml:"json_field,omitempty"`
+	Redis          *RedisCheck     `yaml:"redis_ping,omitempty"`
+	Memcached      *MemcachedCheck `yaml:"memcached_version,omitempty"`
 }
 
 // PortCheck defines parameters for checking if a port is open and listening.
@@ -67,6 +69,19 @@ type PortCheck struct {
 	Port     int    `yaml:"port"`
 	Protocol string `yaml:"protocol,omitempty"`
 	Host     string `yaml:"host,omitempty"`
+}
+
+// RedisCheck pings a Redis server with PING and verifies PONG reply.
+type RedisCheck struct {
+	Host     string `yaml:"host,omitempty"`     // default "localhost"
+	Port     int    `yaml:"port,omitempty"`     // default 6379
+	Password string `yaml:"password,omitempty"` // optional AUTH
+}
+
+// MemcachedCheck issues `version` to a Memcached server and expects a VERSION reply.
+type MemcachedCheck struct {
+	Host string `yaml:"host,omitempty"` // default "localhost"
+	Port int    `yaml:"port,omitempty"` // default 11211
 }
 
 // HTTPCheck defines parameters for HTTP endpoint assertions.

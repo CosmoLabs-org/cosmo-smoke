@@ -1,12 +1,15 @@
 package runner
 
 import (
+	"net"
 	"net/http"
 	"net/http/httptest"
 	"os"
 	"os/exec"
 	"path/filepath"
 	"runtime"
+	"strconv"
+	"strings"
 	"testing"
 	"time"
 
@@ -772,5 +775,147 @@ func TestCheckJSONField_MultipleChecks(t *testing.T) {
 		if !r.Passed {
 			t.Errorf("result %d (%s) failed", i, r.Type)
 		}
+	}
+}
+
+// ---------------------------------------------------------------------------
+// Helpers: fake TCP servers
+// ---------------------------------------------------------------------------
+
+// startFakeRedis spins up a TCP listener that reads one request and replies
+// with the given bytes. Returns host and port separately so callers can
+// construct a RedisCheck without re-parsing the combined addr string.
+func startFakeRedis(t *testing.T, reply string) (string, int) {
+	t.Helper()
+	lis, err := net.Listen("tcp", "127.0.0.1:0")
+	if err != nil {
+		t.Fatal(err)
+	}
+	t.Cleanup(func() { lis.Close() })
+	go func() {
+		conn, err := lis.Accept()
+		if err != nil {
+			return
+		}
+		defer conn.Close()
+		buf := make([]byte, 256)
+		conn.Read(buf) //nolint:errcheck
+		conn.Write([]byte(reply)) //nolint:errcheck
+	}()
+	host, portStr, _ := net.SplitHostPort(lis.Addr().String())
+	port, _ := strconv.Atoi(portStr)
+	return host, port
+}
+
+// startFakeMemcached spins up a TCP listener that reads one request and
+// replies with the given bytes.
+func startFakeMemcached(t *testing.T, reply string) (string, int) {
+	t.Helper()
+	lis, err := net.Listen("tcp", "127.0.0.1:0")
+	if err != nil {
+		t.Fatal(err)
+	}
+	t.Cleanup(func() { lis.Close() })
+	go func() {
+		conn, err := lis.Accept()
+		if err != nil {
+			return
+		}
+		defer conn.Close()
+		buf := make([]byte, 256)
+		conn.Read(buf) //nolint:errcheck
+		conn.Write([]byte(reply)) //nolint:errcheck
+	}()
+	host, portStr, _ := net.SplitHostPort(lis.Addr().String())
+	port, _ := strconv.Atoi(portStr)
+	return host, port
+}
+
+// ---------------------------------------------------------------------------
+// CheckRedisPing
+// ---------------------------------------------------------------------------
+
+func TestCheckRedisPing_Pass(t *testing.T) {
+	host, port := startFakeRedis(t, "+PONG\r\n")
+	r := CheckRedisPing(&schema.RedisCheck{Host: host, Port: port})
+	if !r.Passed {
+		t.Errorf("expected pass, got fail: actual=%s", r.Actual)
+	}
+	if r.Type != "redis_ping" {
+		t.Errorf("expected type 'redis_ping', got %q", r.Type)
+	}
+	if r.Actual != "PONG" {
+		t.Errorf("expected Actual='PONG', got %q", r.Actual)
+	}
+}
+
+func TestCheckRedisPing_WrongReply(t *testing.T) {
+	host, port := startFakeRedis(t, "-ERR unknown\r\n")
+	r := CheckRedisPing(&schema.RedisCheck{Host: host, Port: port})
+	if r.Passed {
+		t.Errorf("expected fail, got pass")
+	}
+	if !strings.Contains(r.Actual, "ERR") {
+		t.Errorf("expected actual to contain 'ERR', got %q", r.Actual)
+	}
+}
+
+func TestCheckRedisPing_Unreachable(t *testing.T) {
+	// Use a port that nothing is listening on (bind then close immediately).
+	lis, err := net.Listen("tcp", "127.0.0.1:0")
+	if err != nil {
+		t.Fatal(err)
+	}
+	_, portStr, _ := net.SplitHostPort(lis.Addr().String())
+	port, _ := strconv.Atoi(portStr)
+	lis.Close() // close before CheckRedisPing dials
+
+	r := CheckRedisPing(&schema.RedisCheck{Host: "127.0.0.1", Port: port})
+	if r.Passed {
+		t.Errorf("expected fail for unreachable address, got pass")
+	}
+}
+
+// ---------------------------------------------------------------------------
+// CheckMemcachedVersion
+// ---------------------------------------------------------------------------
+
+func TestCheckMemcachedVersion_Pass(t *testing.T) {
+	host, port := startFakeMemcached(t, "VERSION 1.6.0\r\n")
+	r := CheckMemcachedVersion(&schema.MemcachedCheck{Host: host, Port: port})
+	if !r.Passed {
+		t.Errorf("expected pass, got fail: actual=%s", r.Actual)
+	}
+	if r.Type != "memcached_version" {
+		t.Errorf("expected type 'memcached_version', got %q", r.Type)
+	}
+	if !strings.HasPrefix(r.Actual, "VERSION") {
+		t.Errorf("expected Actual to start with 'VERSION', got %q", r.Actual)
+	}
+}
+
+func TestCheckMemcachedVersion_GarbageReply(t *testing.T) {
+	host, port := startFakeMemcached(t, "NOPE garbage\r\n")
+	r := CheckMemcachedVersion(&schema.MemcachedCheck{Host: host, Port: port})
+	if r.Passed {
+		t.Errorf("expected fail, got pass")
+	}
+	if r.Expected != "VERSION ..." {
+		t.Errorf("expected Expected='VERSION ...', got %q", r.Expected)
+	}
+}
+
+func TestCheckMemcachedVersion_Unreachable(t *testing.T) {
+	lis, err := net.Listen("tcp", "127.0.0.1:0")
+	if err != nil {
+		t.Fatal(err)
+	}
+	_, portStr, _ := net.SplitHostPort(lis.Addr().String())
+	port, _ := strconv.Atoi(portStr)
+	lis.Close()
+
+	r := CheckMemcachedVersion(&schema.MemcachedCheck{Host: "127.0.0.1", Port: port})
+	if r.Passed {
+		t.Errorf("expected fail for unreachable address, got pass")
 	}
 }
