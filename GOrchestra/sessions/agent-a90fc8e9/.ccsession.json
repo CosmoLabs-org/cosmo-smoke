@@ -1,0 +1,18 @@
+{
+  "version": "1.0.0",
+  "id": "agent-a90fc8e9",
+  "name": "agent-a90fc8e9",
+  "dependencies": [],
+  "dependents": [],
+  "status": "working",
+  "timestamps": {
+    "created": "2026-04-16T16:17:58.264794-03:00",
+    "lastActivity": "2026-04-16T16:17:58.264808-03:00"
+  },
+  "merge": {
+    "order": 0,
+    "readyToMerge": false,
+    "baseBranch": "master"
+  },
+  "branch": "agent-a90fc8e9"
+}
