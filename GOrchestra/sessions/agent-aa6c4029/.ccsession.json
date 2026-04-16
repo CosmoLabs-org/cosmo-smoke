@@ -1,0 +1,18 @@
+{
+  "version": "1.0.0",
+  "id": "agent-aa6c4029",
+  "name": "agent-aa6c4029",
+  "dependencies": [],
+  "dependents": [],
+  "status": "working",
+  "timestamps": {
+    "created": "2026-04-16T19:28:48.665055-03:00",
+    "lastActivity": "2026-04-16T19:28:48.665062-03:00"
+  },
+  "merge": {
+    "order": 0,
+    "readyToMerge": false,
+    "baseBranch": "master"
+  },
+  "branch": "agent-aa6c4029"
+}

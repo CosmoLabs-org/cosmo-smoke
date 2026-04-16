@@ -1,0 +1,14 @@
+{
+  "branch": "agent-ace1a370",
+  "base_branch": "master",
+  "status": "killed",
+  "created": "0001-01-01T00:00:00Z",
+  "archived": "2026-04-16T19:35:13.334658-03:00",
+  "commits": null,
+  "total_commits": 0,
+  "files_changed": 8,
+  "lines_added": 19,
+  "lines_removed": 327,
+  "diff_stat": "GOrchestra/intel/architecture.json                 |  33 ++--\n GOrchestra/intel/status.json                       |   2 +-\n .../sessions/road-003-watch-mode/.ccsession.json   |  18 --\n .../sessions/road-003-watch-mode/.review.json      |  11 --\n GOrchestra/sessions/road-003-watch-mode/HISTORY.md |  43 -----\n .../sessions/road-003-watch-mode/session.json      |  21 --\n .../2026-04-16-goss-migration-tool-design.md       | 214 ---------------------\n .../2026-04-16-cosmo-smoke-v0.4-continuation.md    |   4 +-\n 8 files changed, 19 insertions(+), 327 deletions(-)",
+  "review_status": "passed"
+}

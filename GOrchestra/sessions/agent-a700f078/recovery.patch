@@ -1,0 +1,72 @@
+From 300cc764db9c36fe5ca85c76e8bfb5ffdbce0ba0 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?G=CE=9BB?= <Gab@CosmoLabs.org>
+Date: Thu, 16 Apr 2026 19:42:38 -0300
+Subject: [PATCH] ccs kill: auto-commit 2 uncommitted files before removal
+
+---
+ .ccsession.json        | 24 +++++-------------------
+ .version-registry.json |  4 ++--
+ 2 files changed, 7 insertions(+), 21 deletions(-)
+
+diff --git a/.ccsession.json b/.ccsession.json
+index 7e8a55f..5b7426d 100644
+--- a/.ccsession.json
++++ b/.ccsession.json
+@@ -1,32 +1,18 @@
+ {
+   "version": "1.0.0",
+-<<<<<<< HEAD
+-  "id": "agent-abe5a065",
+-  "name": "agent-abe5a065",
+-=======
+-  "id": "agent-a90fc8e9",
+-  "name": "agent-a90fc8e9",
+->>>>>>> agent-a90fc8e9
++  "id": "agent-a700f078",
++  "name": "agent-a700f078",
+   "dependencies": [],
+   "dependents": [],
+   "status": "working",
+   "timestamps": {
+-<<<<<<< HEAD
+-    "created": "2026-04-16T16:18:17.424356-03:00",
+-    "lastActivity": "2026-04-16T16:18:17.424363-03:00"
+-=======
+-    "created": "2026-04-16T16:17:58.264794-03:00",
+-    "lastActivity": "2026-04-16T16:17:58.264808-03:00"
+->>>>>>> agent-a90fc8e9
++    "created": "2026-04-16T19:35:53.213312-03:00",
++    "lastActivity": "2026-04-16T19:35:53.213321-03:00"
+   },
+   "merge": {
+     "order": 0,
+     "readyToMerge": false,
+     "baseBranch": "master"
+   },
+-<<<<<<< HEAD
+-  "branch": "agent-abe5a065"
+-=======
+-  "branch": "agent-a90fc8e9"
+->>>>>>> agent-a90fc8e9
++  "branch": "agent-a700f078"
+ }
+\ No newline at end of file
+diff --git a/.version-registry.json b/.version-registry.json
+index 74b44db..d72d4ef 100644
+--- a/.version-registry.json
++++ b/.version-registry.json
+@@ -1,9 +1,9 @@
+ {
+   "repository": {
+     "version": "0.3.0",
+-    "build": 109,
++    "build": 110,
+     "name": "cosmo-smoke",
+-    "lastUpdated": "2026-04-16T22:08:22Z",
++    "lastUpdated": "2026-04-16T22:38:26Z",
+     "derived_from": "git tag"
+   },
+   "metadata": {
+-- 
+2.53.0
+

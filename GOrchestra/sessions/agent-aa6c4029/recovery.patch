@@ -1,0 +1,319 @@
+From 3177bb94e66eda47e618222710c6ed8b8f6b5dd8 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?G=CE=9BB?= <Gab@CosmoLabs.org>
+Date: Thu, 16 Apr 2026 19:42:39 -0300
+Subject: [PATCH] ccs kill: auto-commit 7 uncommitted files before removal
+
+---
+ .ccsession.json                   | 24 +++--------
+ internal/runner/assertion.go      | 39 +++++++++++++++++
+ internal/runner/assertion_test.go | 70 +++++++++++++++++++++++++++++++
+ internal/runner/runner.go         | 14 +++++++
+ internal/schema/schema.go         | 18 ++++++--
+ internal/schema/validate.go       |  6 +++
+ internal/schema/validate_test.go  | 40 ++++++++++++++++++
+ 7 files changed, 189 insertions(+), 22 deletions(-)
+
+diff --git a/.ccsession.json b/.ccsession.json
+index 7e8a55f..509e764 100644
+--- a/.ccsession.json
++++ b/.ccsession.json
+@@ -1,32 +1,18 @@
+ {
+   "version": "1.0.0",
+-<<<<<<< HEAD
+-  "id": "agent-abe5a065",
+-  "name": "agent-abe5a065",
+-=======
+-  "id": "agent-a90fc8e9",
+-  "name": "agent-a90fc8e9",
+->>>>>>> agent-a90fc8e9
++  "id": "agent-aa6c4029",
++  "name": "agent-aa6c4029",
+   "dependencies": [],
+   "dependents": [],
+   "status": "working",
+   "timestamps": {
+-<<<<<<< HEAD
+-    "created": "2026-04-16T16:18:17.424356-03:00",
+-    "lastActivity": "2026-04-16T16:18:17.424363-03:00"
+-=======
+-    "created": "2026-04-16T16:17:58.264794-03:00",
+-    "lastActivity": "2026-04-16T16:17:58.264808-03:00"
+->>>>>>> agent-a90fc8e9
++    "created": "2026-04-16T19:28:48.665055-03:00",
++    "lastActivity": "2026-04-16T19:28:48.665062-03:00"
+   },
+   "merge": {
+     "order": 0,
+     "readyToMerge": false,
+     "baseBranch": "master"
+   },
+-<<<<<<< HEAD
+-  "branch": "agent-abe5a065"
+-=======
+-  "branch": "agent-a90fc8e9"
+->>>>>>> agent-a90fc8e9
++  "branch": "agent-aa6c4029"
+ }
+\ No newline at end of file
+diff --git a/internal/runner/assertion.go b/internal/runner/assertion.go
+index 3782e3e..1c8b399 100644
+--- a/internal/runner/assertion.go
++++ b/internal/runner/assertion.go
+@@ -624,3 +624,42 @@ func CheckGRPCHealth(check *schema.GRPCHealthCheck) AssertionResult {
+ 		Passed:   status == "SERVING",
+ 	}
+ }
++
++// CheckDockerContainerRunning passes if a container with the given name is running.
++func CheckDockerContainerRunning(check *schema.DockerContainerCheck) AssertionResult {
++	name := check.Name
++	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
++	defer cancel()
++
++	// docker ps -q -f name=^NAME$  — outputs container ID if running, empty if not
++	cmd := exec.CommandContext(ctx, "docker", "ps", "-q", "-f", "name=^"+name+"$")
++	out, err := cmd.Output()
++	if err != nil {
++		if _, ok := err.(*exec.ExitError); ok {
++			return AssertionResult{Type: "docker_container_running", Expected: name, Actual: "docker error: " + string(out), Passed: false}
++		}
++		return AssertionResult{Type: "docker_container_running", Expected: name, Actual: "exec error: " + err.Error(), Passed: false}
++	}
++	id := strings.TrimSpace(string(out))
++	if id == "" {
++		return AssertionResult{Type: "docker_container_running", Expected: name, Actual: "not running", Passed: false}
++	}
++	return AssertionResult{Type: "docker_container_running", Expected: name, Actual: "running (" + id + ")", Passed: true}
++}
++
++// CheckDockerImageExists passes if the named image is present in the local docker image store.
++func CheckDockerImageExists(check *schema.DockerImageCheck) AssertionResult {
++	image := check.Image
++	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
++	defer cancel()
++
++	cmd := exec.CommandContext(ctx, "docker", "image", "inspect", image)
++	// Discard stdout+stderr; we only care about exit code
++	if err := cmd.Run(); err != nil {
++		if exitErr, ok := err.(*exec.ExitError); ok {
++			return AssertionResult{Type: "docker_image_exists", Expected: image, Actual: fmt.Sprintf("not found (exit %d)", exitErr.ExitCode()), Passed: false}
++		}
++		return AssertionResult{Type: "docker_image_exists", Expected: image, Actual: "exec error: " + err.Error(), Passed: false}
++	}
++	return AssertionResult{Type: "docker_image_exists", Expected: image, Actual: "present", Passed: true}
++}
+diff --git a/internal/runner/assertion_test.go b/internal/runner/assertion_test.go
+index d34dd64..67104e6 100644
+--- a/internal/runner/assertion_test.go
++++ b/internal/runner/assertion_test.go
+@@ -1,6 +1,7 @@
+ package runner
+ 
+ import (
++	"context"
+ 	"fmt"
+ 	"net"
+ 	"net/http"
+@@ -1293,3 +1294,72 @@ func TestCheckGRPCHealth_DialFailure(t *testing.T) {
+ 		t.Errorf("expected fail for non-existent address")
+ 	}
+ }
++
++// isDockerAvailable returns true if the `docker` CLI is on PATH AND the daemon is reachable.
++func isDockerAvailable() bool {
++	if _, err := exec.LookPath("docker"); err != nil {
++		return false
++	}
++	// Quick check: `docker info` returns 0 only when daemon is reachable.
++	ctx, cancel := context.WithTimeout(context.Background(), 2*time.Second)
++	defer cancel()
++	return exec.CommandContext(ctx, "docker", "info").Run() == nil
++}
++
++func TestCheckDockerContainerRunning_NotPresent(t *testing.T) {
++	r := CheckDockerContainerRunning(&schema.DockerContainerCheck{Name: "cosmo-smoke-test-never-exists-zzz"})
++	if r.Passed {
++		t.Errorf("expected fail for nonexistent container, got pass: %+v", r)
++	}
++	if r.Type != "docker_container_running" {
++		t.Errorf("wrong type: %q", r.Type)
++	}
++}
++
++func TestCheckDockerImageExists_NotPresent(t *testing.T) {
++	r := CheckDockerImageExists(&schema.DockerImageCheck{Image: "cosmo-smoke-no-such-image:never"})
++	if r.Passed {
++		t.Errorf("expected fail for nonexistent image, got pass: %+v", r)
++	}
++	if r.Type != "docker_image_exists" {
++		t.Errorf("wrong type: %q", r.Type)
++	}
++}
++
++func TestCheckDockerContainerRunning_RealContainer(t *testing.T) {
++	if !isDockerAvailable() {
++		t.Skip("docker daemon not available")
++	}
++	// Start ephemeral container
++	name := "cosmo-smoke-test-" + fmt.Sprint(time.Now().UnixNano())
++	cmd := exec.Command("docker", "run", "-d", "--rm", "--name", name, "alpine:3.20", "sleep", "30")
++	if err := cmd.Run(); err != nil {
++		t.Skipf("cannot start test container: %v", err)
++	}
++	t.Cleanup(func() {
++		exec.Command("docker", "rm", "-f", name).Run() //nolint:errcheck
++	})
++	// Give docker a moment
++	time.Sleep(200 * time.Millisecond)
++
++	r := CheckDockerContainerRunning(&schema.DockerContainerCheck{Name: name})
++	if !r.Passed {
++		t.Errorf("expected pass for running container, got fail: %+v", r)
++	}
++}
++
++func TestCheckDockerImageExists_RealImage(t *testing.T) {
++	if !isDockerAvailable() {
++		t.Skip("docker daemon not available")
++	}
++	// Ensure the image is present
++	pull := exec.Command("docker", "pull", "alpine:3.20")
++	if err := pull.Run(); err != nil {
++		t.Skipf("cannot pull alpine:3.20: %v", err)
++	}
++
++	r := CheckDockerImageExists(&schema.DockerImageCheck{Image: "alpine:3.20"})
++	if !r.Passed {
++		t.Errorf("expected pass for existing image, got fail: %+v", r)
++	}
++}
+diff --git a/internal/runner/runner.go b/internal/runner/runner.go
+index b10244b..0c0c1ba 100644
+--- a/internal/runner/runner.go
++++ b/internal/runner/runner.go
+@@ -376,6 +376,20 @@ func (r *Runner) runTestOnce(t schema.Test, opts RunOptions) TestResult {
+ 			allPassed = false
+ 		}
+ 	}
++	if t.Expect.DockerContainer != nil {
++		a := CheckDockerContainerRunning(t.Expect.DockerContainer)
++		assertions = append(assertions, a)
++		if !a.Passed {
++			allPassed = false
++		}
++	}
++	if t.Expect.DockerImage != nil {
++		a := CheckDockerImageExists(t.Expect.DockerImage)
++		assertions = append(assertions, a)
++		if !a.Passed {
++			allPassed = false
++		}
++	}
+ 	if t.Expect.GRPCHealth != nil {
+ 		a := CheckGRPCHealth(t.Expect.GRPCHealth)
+ 		assertions = append(assertions, a)
+diff --git a/internal/schema/schema.go b/internal/schema/schema.go
+index d1b0452..4927393 100644
+--- a/internal/schema/schema.go
++++ b/internal/schema/schema.go
+@@ -69,9 +69,11 @@ type Expect struct {
+ 	JSONField      *JSONFieldCheck  `yaml:"json_field,omitempty"`
+ 	ResponseTimeMs *int             `yaml:"response_time_ms,omitempty"` // Fail if test duration exceeds this many ms
+ 	SSLCert        *SSLCertCheck    `yaml:"ssl_cert,omitempty"`
+-	Redis          *RedisCheck      `yaml:"redis_ping,omitempty"`
+-	Memcached      *MemcachedCheck  `yaml:"memcached_version,omitempty"`
+-	Postgres       *PostgresCheck   `yaml:"postgres_ping,omitempty"`
++	Redis           *RedisCheck           `yaml:"redis_ping,omitempty"`
++	Memcached       *MemcachedCheck       `yaml:"memcached_version,omitempty"`
++	DockerContainer *DockerContainerCheck `yaml:"docker_container_running,omitempty"`
++	DockerImage     *DockerImageCheck     `yaml:"docker_image_exists,omitempty"`
++	Postgres        *PostgresCheck        `yaml:"postgres_ping,omitempty"`
+ 	MySQL          *MySQLCheck      `yaml:"mysql_ping,omitempty"`
+ 	GRPCHealth     *GRPCHealthCheck `yaml:"grpc_health,omitempty"`
+ }
+@@ -104,6 +106,16 @@ type MemcachedCheck struct {
+ 	Port int    `yaml:"port,omitempty"` // default 11211
+ }
+ 
++// DockerContainerCheck verifies a named container is running via `docker ps`.
++type DockerContainerCheck struct {
++	Name string `yaml:"name"`
++}
++
++// DockerImageCheck verifies an image exists in the local registry via `docker image inspect`.
++type DockerImageCheck struct {
++	Image string `yaml:"image"`
++}
++
+ // PostgresCheck pings a Postgres server via SSLRequest handshake.
+ type PostgresCheck struct {
+ 	Host string `yaml:"host,omitempty"` // default "localhost"
+diff --git a/internal/schema/validate.go b/internal/schema/validate.go
+index 59fd84f..2f75a6c 100644
+--- a/internal/schema/validate.go
++++ b/internal/schema/validate.go
+@@ -47,6 +47,12 @@ func Validate(cfg *SmokeConfig) error {
+ 				errs = append(errs, fmt.Sprintf("test[%d] retry.backoff must be > 0", i))
+ 			}
+ 		}
++		if t.Expect.DockerContainer != nil && t.Expect.DockerContainer.Name == "" {
++			errs = append(errs, fmt.Sprintf("test[%d] docker_container_running.name is required", i))
++		}
++		if t.Expect.DockerImage != nil && t.Expect.DockerImage.Image == "" {
++			errs = append(errs, fmt.Sprintf("test[%d] docker_image_exists.image is required", i))
++		}
+ 	}
+ 
+ 	if len(errs) > 0 {
+diff --git a/internal/schema/validate_test.go b/internal/schema/validate_test.go
+index 1c451ac..93a56fa 100644
+--- a/internal/schema/validate_test.go
++++ b/internal/schema/validate_test.go
+@@ -177,3 +177,43 @@ func TestValidate_RetryValid(t *testing.T) {
+ 		t.Errorf("unexpected error for valid retry block: %v", err)
+ 	}
+ }
++
++func TestValidate_DockerContainerMissingName(t *testing.T) {
++	cfg := &SmokeConfig{
++		Version: 1,
++		Project: "myapp",
++		Tests: []Test{
++			{
++				Name: "test1", Run: "true",
++				Expect: Expect{DockerContainer: &DockerContainerCheck{Name: ""}},
++			},
++		},
++	}
++	err := Validate(cfg)
++	if err == nil {
++		t.Fatal("expected error for docker_container_running with empty name")
++	}
++	if !strings.Contains(err.Error(), "docker_container_running.name is required") {
++		t.Errorf("error = %q, want mention of docker_container_running.name", err.Error())
++	}
++}
++
++func TestValidate_DockerImageMissingImage(t *testing.T) {
++	cfg := &SmokeConfig{
++		Version: 1,
++		Project: "myapp",
++		Tests: []Test{
++			{
++				Name: "test1", Run: "true",
++				Expect: Expect{DockerImage: &DockerImageCheck{Image: ""}},
++			},
++		},
++	}
++	err := Validate(cfg)
++	if err == nil {
++		t.Fatal("expected error for docker_image_exists with empty image")
++	}
++	if !strings.Contains(err.Error(), "docker_image_exists.image is required") {
++		t.Errorf("error = %q, want mention of docker_image_exists.image", err.Error())
++	}
++}
+-- 
+2.53.0
+

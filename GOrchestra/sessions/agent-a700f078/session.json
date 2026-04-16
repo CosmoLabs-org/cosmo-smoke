@@ -1,0 +1,14 @@
+{
+  "branch": "agent-a700f078",
+  "base_branch": "master",
+  "status": "killed",
+  "created": "0001-01-01T00:00:00Z",
+  "archived": "2026-04-16T19:42:38.812238-03:00",
+  "commits": null,
+  "total_commits": 0,
+  "files_changed": 14,
+  "lines_added": 59,
+  "lines_removed": 228,
+  "diff_stat": ".gitignore                                         |  3 -\n .version-registry.json                             |  6 +-\n CLAUDE.md                                          |  3 +-\n GOrchestra/intel/architecture.json                 | 29 +++----\n GOrchestra/intel/status.json                       |  4 +-\n .../sessions/road-003-watch-mode/.ccsession.json   |  9 +--\n .../sessions/road-003-watch-mode/.review.json      | 10 +--\n GOrchestra/sessions/road-003-watch-mode/HISTORY.md | 35 +++-----\n .../sessions/road-003-watch-mode/session.json      | 54 ++-----------\n cmd/run.go                                         | 93 +++-------------------\n cmd/watch.go                                       |  8 --\n cmd/watch_test.go                                  | 30 -------\n go.mod                                             |  1 -\n go.sum                                             |  2 -\n 14 files changed, 59 insertions(+), 228 deletions(-)",
+  "review_status": "passed"
+}

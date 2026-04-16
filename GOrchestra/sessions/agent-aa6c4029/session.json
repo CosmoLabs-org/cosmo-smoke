@@ -1,0 +1,14 @@
+{
+  "branch": "agent-aa6c4029",
+  "base_branch": "master",
+  "status": "killed",
+  "created": "0001-01-01T00:00:00Z",
+  "archived": "2026-04-16T19:42:39.170579-03:00",
+  "commits": null,
+  "total_commits": 0,
+  "files_changed": 16,
+  "lines_added": 37,
+  "lines_removed": 514,
+  "diff_stat": ".gitignore                                         |   3 -\n .version-registry.json                             |   6 +-\n CLAUDE.md                                          |   3 +-\n GOrchestra/intel/architecture.json                 |  34 ++--\n GOrchestra/intel/status.json                       |   6 +-\n .../sessions/road-003-watch-mode/.ccsession.json   |  19 --\n .../sessions/road-003-watch-mode/.review.json      |  11 --\n GOrchestra/sessions/road-003-watch-mode/HISTORY.md |  54 ------\n .../sessions/road-003-watch-mode/session.json      |  63 ------\n cmd/run.go                                         |  93 ++-------\n cmd/watch.go                                       |   8 -\n cmd/watch_test.go                                  |  30 ---\n .../2026-04-16-goss-migration-tool-design.md       | 214 ---------------------\n .../2026-04-16-cosmo-smoke-v0.4-continuation.md    |   4 +-\n go.mod                                             |   1 -\n go.sum                                             |   2 -\n 16 files changed, 37 insertions(+), 514 deletions(-)",
+  "review_status": "passed"
+}

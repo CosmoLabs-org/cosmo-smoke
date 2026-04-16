@@ -1,0 +1,600 @@
+From 482a515c453d1b3a63c9f4d05f37c5b87e62518d Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?G=CE=9BB?= <Gab@CosmoLabs.org>
+Date: Thu, 16 Apr 2026 19:30:24 -0300
+Subject: [PATCH 1/9] feat(run): add --watch mode for continuous testing
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+New --watch flag keeps smoke resident and re-runs the suite when files
+change in the config dir. Uses fsnotify, 500ms debounce, clean Ctrl+C
+exit. Ignores chmod-only events. Does not exit on test failure while
+watching — prints marker and loops.
+
+Closes ROAD-003.
+---
+ CLAUDE.md         |  3 +-
+ cmd/run.go        | 93 +++++++++++++++++++++++++++++++++++++++++------
+ cmd/watch.go      |  8 ++++
+ cmd/watch_test.go | 30 +++++++++++++++
+ go.mod            |  1 +
+ go.sum            |  2 +
+ 6 files changed, 125 insertions(+), 12 deletions(-)
+ create mode 100644 cmd/watch.go
+ create mode 100644 cmd/watch_test.go
+
+diff --git a/CLAUDE.md b/CLAUDE.md
+index 4c753d7..e05df4a 100644
+--- a/CLAUDE.md
++++ b/CLAUDE.md
+@@ -31,6 +31,7 @@ internal/
+ - **Config-dir-relative**: Commands execute from the config file's directory, not cwd.
+ - **All errors at once**: Validation returns all errors, not just the first.
+ - **Reporter interface**: Terminal and JSON reporters are pluggable via interface.
++- **Watch mode**: `--watch` keeps smoke resident and re-runs on file changes. fsnotify-backed. 500ms debounce.
+ - **Retry**: Opt-in `retry: {count, backoff}` on test level. Exponential backoff. No side effects on pass-first-try.
+ 
+ ## Build & Test
+@@ -45,7 +46,7 @@ go build -ldflags "-s -w -X github.com/CosmoLabs-org/cosmo-smoke/cmd.Version=X.Y
+ ## Commands
+ 
+ ```bash
+-smoke run [--tag X] [--exclude-tag X] [--format terminal|json|junit|tap] [--fail-fast] [--timeout 30s] [-f path] [--dry-run]
++smoke run [--tag X] [--exclude-tag X] [--format terminal|json|junit|tap|prometheus] [--fail-fast] [--timeout 30s] [-f path] [--dry-run] [--watch]
+ smoke init [--force] [--from-running CONTAINER]
+ smoke version
+ ```
+diff --git a/cmd/run.go b/cmd/run.go
+index c43436d..ee33861 100644
+--- a/cmd/run.go
++++ b/cmd/run.go
+@@ -3,12 +3,15 @@ package cmd
+ import (
+ 	"fmt"
+ 	"os"
++	"os/signal"
+ 	"path/filepath"
++	"syscall"
+ 	"time"
+ 
+ 	"github.com/CosmoLabs-org/cosmo-smoke/internal/reporter"
+ 	"github.com/CosmoLabs-org/cosmo-smoke/internal/runner"
+ 	"github.com/CosmoLabs-org/cosmo-smoke/internal/schema"
++	"github.com/fsnotify/fsnotify"
+ 	"github.com/spf13/cobra"
+ )
+ 
+@@ -27,6 +30,7 @@ var (
+ 	failFast    bool
+ 	timeout     string
+ 	dryRun      bool
++	watch       bool
+ )
+ 
+ func init() {
+@@ -38,6 +42,7 @@ func init() {
+ 	runCmd.Flags().BoolVar(&failFast, "fail-fast", false, "Stop on first failure")
+ 	runCmd.Flags().StringVar(&timeout, "timeout", "", "Per-test timeout override (e.g. 30s)")
+ 	runCmd.Flags().BoolVar(&dryRun, "dry-run", false, "List tests without running")
++	runCmd.Flags().BoolVar(&watch, "watch", false, "Re-run tests when files change (Ctrl+C to exit)")
+ }
+ 
+ func runSmoke(cmd *cobra.Command, args []string) error {
+@@ -86,19 +91,85 @@ func runSmoke(cmd *cobra.Command, args []string) error {
+ 		ConfigDir: configDir,
+ 	}
+ 
+-	result, err := r.Run(runner.RunOptions{
+-		Tags:        tags,
+-		ExcludeTags: excludeTags,
+-		FailFast:    failFast,
+-		DryRun:      dryRun,
+-		Timeout:     timeoutDur,
+-	})
++	runOnce := func() error {
++		result, err := r.Run(runner.RunOptions{
++			Tags:        tags,
++			ExcludeTags: excludeTags,
++			FailFast:    failFast,
++			DryRun:      dryRun,
++			Timeout:     timeoutDur,
++		})
++		if err != nil {
++			return err
++		}
++		// In watch mode, don't exit process on failure — print marker and loop
++		if !watch && result.Failed > 0 {
++			os.Exit(1)
++		}
++		return nil
++	}
++
++	if !watch {
++		return runOnce()
++	}
++
++	return runWatch(configDir, configFile, runOnce)
++}
++
++func runWatch(configDir, configFile string, runOnce func() error) error {
++	// Run once immediately
++	if err := runOnce(); err != nil {
++		fmt.Fprintf(os.Stderr, "initial run error: %v\n", err)
++	}
++
++	w, err := fsnotify.NewWatcher()
+ 	if err != nil {
+-		return err
++		return fmt.Errorf("fsnotify: %w", err)
++	}
++	defer w.Close()
++
++	if err := w.Add(configDir); err != nil {
++		return fmt.Errorf("watching %s: %w", configDir, err)
++	}
++
++	fmt.Fprintln(os.Stderr, "👀 watching", configDir, "(Ctrl+C to exit)")
++
++	sigCh := make(chan os.Signal, 1)
++	signal.Notify(sigCh, os.Interrupt, syscall.SIGTERM)
++
++	// Debounce: coalesce rapid events into a single re-run
++	debounce := 500 * time.Millisecond
++	var timer *time.Timer
++
++	trigger := func() {
++		fmt.Fprintln(os.Stderr, "\n🔁 change detected, re-running…")
++		if err := runOnce(); err != nil {
++			fmt.Fprintf(os.Stderr, "run error: %v\n", err)
++		}
+ 	}
+ 
+-	if result.Failed > 0 {
+-		os.Exit(1)
++	for {
++		select {
++		case ev, ok := <-w.Events:
++			if !ok {
++				return nil
++			}
++			// Ignore chmod-only events
++			if !isRelevantEvent(ev.Op) {
++				continue
++			}
++			if timer != nil {
++				timer.Stop()
++			}
++			timer = time.AfterFunc(debounce, trigger)
++		case err, ok := <-w.Errors:
++			if !ok {
++				return nil
++			}
++			fmt.Fprintf(os.Stderr, "watch error: %v\n", err)
++		case <-sigCh:
++			fmt.Fprintln(os.Stderr, "\n✋ stopping watcher")
++			return nil
++		}
+ 	}
+-	return nil
+ }
+diff --git a/cmd/watch.go b/cmd/watch.go
+new file mode 100644
+index 0000000..e20dbc9
+--- /dev/null
++++ b/cmd/watch.go
+@@ -0,0 +1,8 @@
++package cmd
++
++import "github.com/fsnotify/fsnotify"
++
++// isRelevantEvent returns true if the event warrants a re-run.
++func isRelevantEvent(op fsnotify.Op) bool {
++	return op&(fsnotify.Write|fsnotify.Create|fsnotify.Rename|fsnotify.Remove) != 0
++}
+diff --git a/cmd/watch_test.go b/cmd/watch_test.go
+new file mode 100644
+index 0000000..5768339
+--- /dev/null
++++ b/cmd/watch_test.go
+@@ -0,0 +1,30 @@
++package cmd
++
++import (
++	"testing"
++
++	"github.com/fsnotify/fsnotify"
++)
++
++func TestIsRelevantEvent(t *testing.T) {
++	tests := []struct {
++		name string
++		op   fsnotify.Op
++		want bool
++	}{
++		{"write", fsnotify.Write, true},
++		{"create", fsnotify.Create, true},
++		{"rename", fsnotify.Rename, true},
++		{"remove", fsnotify.Remove, true},
++		{"chmod only", fsnotify.Chmod, false},
++		{"write+chmod", fsnotify.Write | fsnotify.Chmod, true},
++		{"zero", 0, false},
++	}
++	for _, tt := range tests {
++		t.Run(tt.name, func(t *testing.T) {
++			if got := isRelevantEvent(tt.op); got != tt.want {
++				t.Errorf("isRelevantEvent(%v) = %v, want %v", tt.op, got, tt.want)
++			}
++		})
++	}
++}
+diff --git a/go.mod b/go.mod
+index b78933e..5fb4026 100644
+--- a/go.mod
++++ b/go.mod
+@@ -4,6 +4,7 @@ go 1.26.2
+ 
+ require (
+ 	github.com/charmbracelet/lipgloss v1.1.0
++	github.com/fsnotify/fsnotify v1.9.0
+ 	github.com/spf13/cobra v1.10.2
+ 	github.com/tidwall/gjson v1.18.0
+ 	google.golang.org/grpc v1.80.0
+diff --git a/go.sum b/go.sum
+index 6f637a2..2b15f02 100644
+--- a/go.sum
++++ b/go.sum
+@@ -13,6 +13,8 @@ github.com/charmbracelet/x/cellbuf v0.0.13-0.20250311204145-2c3ea96c31dd/go.mod
+ github.com/charmbracelet/x/term v0.2.1 h1:AQeHeLZ1OqSXhrAWpYUtZyX1T3zVxfpZuEQMIQaGIAQ=
+ github.com/charmbracelet/x/term v0.2.1/go.mod h1:oQ4enTYFV7QN4m0i9mzHrViD7TQKvNEEkHUMCmsxdUg=
+ github.com/cpuguy83/go-md2man/v2 v2.0.6/go.mod h1:oOW0eioCTA6cOiMLiUPZOpcVxMig6NIQQ7OS05n1F4g=
++github.com/fsnotify/fsnotify v1.9.0 h1:2Ml+OJNzbYCTzsxtv8vKSFD9PbJjmhYF14k/jKC7S9k=
++github.com/fsnotify/fsnotify v1.9.0/go.mod h1:8jBTzvmWwFyi3Pb8djgCCO5IBqzKJ/Jwo8TRcHyHii0=
+ github.com/go-logr/logr v1.4.3 h1:CjnDlHq8ikf6E492q6eKboGOC0T8CDaOvkHCIg8idEI=
+ github.com/go-logr/logr v1.4.3/go.mod h1:9T104GzyrTigFIr8wt5mBrctHMim0Nb2HLGrmQ40KvY=
+ github.com/go-logr/stdr v1.2.2 h1:hSWxHoqTgW2S2qGc0LTAI563KZ5YKYRhT3MFKZMbjag=
+-- 
+2.53.0
+
+
+From 7c0736d8fabf17c1fd4d7bb4b1008e239afcf346 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?G=CE=9BB?= <Gab@CosmoLabs.org>
+Date: Thu, 16 Apr 2026 19:36:55 -0300
+Subject: [PATCH 2/9] chore: add quality review results
+
+---
+ .review.json | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
+
+diff --git a/.review.json b/.review.json
+index 5fdd4b1..a63ee5c 100644
+--- a/.review.json
++++ b/.review.json
+@@ -1,11 +1,11 @@
+ {
+-  "score": 8,
++  "score": 7,
+   "passed": true,
+-  "reviewed_at": "2026-04-16T22:09:03Z",
++  "reviewed_at": "2026-04-16T22:36:55Z",
+   "reviewer": "opus",
+-  "origin": "unknown",
++  "origin": "human",
+   "iterations": 0,
+   "fixes_applied": 0,
+-  "issues_remaining": 3,
+-  "summary": "Score 8/10, 3 issues"
++  "issues_remaining": 4,
++  "summary": "Score 7/10, 4 issues"
+ }
+\ No newline at end of file
+-- 
+2.53.0
+
+
+From ad247d145102ff0efd79030933ac5d0e1ef5a4ac Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?G=CE=9BB?= <Gab@CosmoLabs.org>
+Date: Thu, 16 Apr 2026 19:37:18 -0300
+Subject: [PATCH 3/9] chore: update session tracking metadata
+
+---
+ .ccsession.json                    | 24 +++++-------------------
+ .gorchestra/fingerprint-cache.json | 11 +++++------
+ .version-registry.json             |  6 +++---
+ 3 files changed, 13 insertions(+), 28 deletions(-)
+
+diff --git a/.ccsession.json b/.ccsession.json
+index 7e8a55f..878a45e 100644
+--- a/.ccsession.json
++++ b/.ccsession.json
+@@ -1,32 +1,18 @@
+ {
+   "version": "1.0.0",
+-<<<<<<< HEAD
+-  "id": "agent-abe5a065",
+-  "name": "agent-abe5a065",
+-=======
+-  "id": "agent-a90fc8e9",
+-  "name": "agent-a90fc8e9",
+->>>>>>> agent-a90fc8e9
++  "id": "road-003-watch-mode",
++  "name": "road-003-watch-mode",
+   "dependencies": [],
+   "dependents": [],
+   "status": "working",
+   "timestamps": {
+-<<<<<<< HEAD
+-    "created": "2026-04-16T16:18:17.424356-03:00",
+-    "lastActivity": "2026-04-16T16:18:17.424363-03:00"
+-=======
+-    "created": "2026-04-16T16:17:58.264794-03:00",
+-    "lastActivity": "2026-04-16T16:17:58.264808-03:00"
+->>>>>>> agent-a90fc8e9
++    "created": "2026-04-16T19:35:59.752293-03:00",
++    "lastActivity": "2026-04-16T19:35:59.752812-03:00"
+   },
+   "merge": {
+     "order": 0,
+     "readyToMerge": false,
+     "baseBranch": "master"
+   },
+-<<<<<<< HEAD
+-  "branch": "agent-abe5a065"
+-=======
+-  "branch": "agent-a90fc8e9"
+->>>>>>> agent-a90fc8e9
++  "origin": "human"
+ }
+\ No newline at end of file
+diff --git a/.gorchestra/fingerprint-cache.json b/.gorchestra/fingerprint-cache.json
+index 6479e4d..de04384 100644
+--- a/.gorchestra/fingerprint-cache.json
++++ b/.gorchestra/fingerprint-cache.json
+@@ -1,13 +1,12 @@
+ {
+-  "hash": "7f211dfc71d89bc39b55d4fc922d2765f9cd99f242bee8f22f6e92a3f9cd622b",
+-  "project_name": "cosmo-smoke",
++  "hash": "d4e08cf833f1c6161b72dbdec795376bd43358cc81fe7efbcde120fcfdd80b05",
++  "project_name": "road-003-watch-mode",
+   "language": "go",
+   "framework": "cli",
+   "directories": [
+     "ClaudeDesktop",
+     "GOrchestra",
+     "GeminiAI",
+-    "bin",
+     "cmd",
+     "docs",
+     "examples",
+@@ -19,14 +18,14 @@
+     "cellbuf",
+     "cobra",
+     "colorprofile",
++    "fsnotify",
+     "gjson",
+     "go-colorful",
+     "go-isatty",
+     "go-runewidth",
+-    "grpc",
+-    "lipgloss"
++    "grpc"
+   ],
+   "has_tests": true,
+   "has_ci": true,
+-  "generated_at": "2026-04-16T16:47:36.077797-03:00"
++  "generated_at": "2026-04-16T19:36:08.107951-03:00"
+ }
+\ No newline at end of file
+diff --git a/.version-registry.json b/.version-registry.json
+index 74b44db..e99b7a0 100644
+--- a/.version-registry.json
++++ b/.version-registry.json
+@@ -1,13 +1,13 @@
+ {
+   "repository": {
+     "version": "0.3.0",
+-    "build": 109,
++    "build": 119,
+     "name": "cosmo-smoke",
+-    "lastUpdated": "2026-04-16T22:08:22Z",
++    "lastUpdated": "2026-04-16T22:30:24Z",
+     "derived_from": "git tag"
+   },
+   "metadata": {
+-    "last_synced": "2026-04-16T19:21:43Z",
++    "last_synced": "2026-04-16T22:36:12Z",
+     "sync_method": "git_history_analysis"
+   },
+   "releaseContext": {
+-- 
+2.53.0
+
+
+From e5ebadd9821c582ae116b22b65351266f5062e24 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?G=CE=9BB?= <Gab@CosmoLabs.org>
+Date: Thu, 16 Apr 2026 19:37:29 -0300
+Subject: [PATCH 4/9] chore: update version registry
+
+---
+ .version-registry.json | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/.version-registry.json b/.version-registry.json
+index e99b7a0..c05de84 100644
+--- a/.version-registry.json
++++ b/.version-registry.json
+@@ -1,9 +1,9 @@
+ {
+   "repository": {
+     "version": "0.3.0",
+-    "build": 119,
++    "build": 120,
+     "name": "cosmo-smoke",
+-    "lastUpdated": "2026-04-16T22:30:24Z",
++    "lastUpdated": "2026-04-16T22:37:18Z",
+     "derived_from": "git tag"
+   },
+   "metadata": {
+-- 
+2.53.0
+
+
+From 816ecee703c0e17fd02959e7d1967243541c9fde Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?G=CE=9BB?= <Gab@CosmoLabs.org>
+Date: Thu, 16 Apr 2026 19:37:43 -0300
+Subject: [PATCH 5/9] chore: update version registry
+
+---
+ .version-registry.json | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/.version-registry.json b/.version-registry.json
+index c05de84..15a2576 100644
+--- a/.version-registry.json
++++ b/.version-registry.json
+@@ -1,9 +1,9 @@
+ {
+   "repository": {
+     "version": "0.3.0",
+-    "build": 120,
++    "build": 121,
+     "name": "cosmo-smoke",
+-    "lastUpdated": "2026-04-16T22:37:18Z",
++    "lastUpdated": "2026-04-16T22:37:29Z",
+     "derived_from": "git tag"
+   },
+   "metadata": {
+-- 
+2.53.0
+
+
+From 02ef7a31413fac3a298ea5dd6fca4a183ee8ff94 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?G=CE=9BB?= <Gab@CosmoLabs.org>
+Date: Thu, 16 Apr 2026 19:37:52 -0300
+Subject: [PATCH 6/9] chore: update version registry
+
+---
+ .version-registry.json | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/.version-registry.json b/.version-registry.json
+index 15a2576..d484741 100644
+--- a/.version-registry.json
++++ b/.version-registry.json
+@@ -1,9 +1,9 @@
+ {
+   "repository": {
+     "version": "0.3.0",
+-    "build": 121,
++    "build": 122,
+     "name": "cosmo-smoke",
+-    "lastUpdated": "2026-04-16T22:37:29Z",
++    "lastUpdated": "2026-04-16T22:37:43Z",
+     "derived_from": "git tag"
+   },
+   "metadata": {
+-- 
+2.53.0
+
+
+From 9f65d51f24ed534f03e48a64cf1eb73251908263 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?G=CE=9BB?= <Gab@CosmoLabs.org>
+Date: Thu, 16 Apr 2026 19:38:19 -0300
+Subject: [PATCH 7/9] chore: mark worktree ready for merge
+
+---
+ .ccsession.json        | 7 ++++---
+ .version-registry.json | 4 ++--
+ 2 files changed, 6 insertions(+), 5 deletions(-)
+
+diff --git a/.ccsession.json b/.ccsession.json
+index 878a45e..701ccac 100644
+--- a/.ccsession.json
++++ b/.ccsession.json
+@@ -4,14 +4,15 @@
+   "name": "road-003-watch-mode",
+   "dependencies": [],
+   "dependents": [],
+-  "status": "working",
++  "status": "finished",
+   "timestamps": {
+     "created": "2026-04-16T19:35:59.752293-03:00",
+-    "lastActivity": "2026-04-16T19:35:59.752812-03:00"
++    "lastActivity": "2026-04-16T19:38:11.261684-03:00",
++    "finished": "2026-04-16T19:38:11.261683-03:00"
+   },
+   "merge": {
+     "order": 0,
+-    "readyToMerge": false,
++    "readyToMerge": true,
+     "baseBranch": "master"
+   },
+   "origin": "human"
+diff --git a/.version-registry.json b/.version-registry.json
+index d484741..db1e198 100644
+--- a/.version-registry.json
++++ b/.version-registry.json
+@@ -1,9 +1,9 @@
+ {
+   "repository": {
+     "version": "0.3.0",
+-    "build": 122,
++    "build": 123,
+     "name": "cosmo-smoke",
+-    "lastUpdated": "2026-04-16T22:37:43Z",
++    "lastUpdated": "2026-04-16T22:37:52Z",
+     "derived_from": "git tag"
+   },
+   "metadata": {
+-- 
+2.53.0
+
+
+From b2d8142a03c64d012fcb4514ac80b96917bcd5d5 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?G=CE=9BB?= <Gab@CosmoLabs.org>
+Date: Thu, 16 Apr 2026 19:38:34 -0300
+Subject: [PATCH 8/9] chore: update version registry
+
+---
+ .version-registry.json | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/.version-registry.json b/.version-registry.json
+index db1e198..2423515 100644
+--- a/.version-registry.json
++++ b/.version-registry.json
+@@ -1,9 +1,9 @@
+ {
+   "repository": {
+     "version": "0.3.0",
+-    "build": 123,
++    "build": 124,
+     "name": "cosmo-smoke",
+-    "lastUpdated": "2026-04-16T22:37:52Z",
++    "lastUpdated": "2026-04-16T22:38:19Z",
+     "derived_from": "git tag"
+   },
+   "metadata": {
+-- 
+2.53.0
+
+
+From b7aaedf9700cd95237391a405219954e050b6f14 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?G=CE=9BB?= <Gab@CosmoLabs.org>
+Date: Thu, 16 Apr 2026 19:42:38 -0300
+Subject: [PATCH 9/9] ccs kill: auto-commit 1 uncommitted files before removal
+
+---
+ .worktree-origin | 1 +
+ 1 file changed, 1 insertion(+)
+ create mode 100644 .worktree-origin
+
+diff --git a/.worktree-origin b/.worktree-origin
+new file mode 100644
+index 0000000..03d3e61
+--- /dev/null
++++ b/.worktree-origin
+@@ -0,0 +1 @@
++human
+-- 
+2.53.0
+
