@@ -37,13 +37,13 @@ Run `git push origin master --tags` to publish on `CosmoLabs-org/cosmo-smoke`.
 ### [ ] 2. ROAD-024: Goss migration tool (priority 85)
 Parse Goss YAML, emit .smoke.yaml. Goss dev stalled 18+ months — this captures their users. Effort: large. Needs: brainstorm first to spec mapping (Goss's `package:`, `service:`, `process:` → cosmo-smoke's assertions).
 
-### [ ] 3. ROAD-012: Retry with backoff (priority 80)
+### [x] 3. ROAD-012: Retry with backoff (priority 80)
 `retry: {count: 3, backoff: 1s}` on test level. Pairs with allow_failure for flaky-network tests. Small effort. Good Sonnet candidate.
 
 ### [ ] 4. ROAD-015: Docker container smoke tests (priority 75)
 Runner side of `smoke serve`: spin docker container, run smoke tests against it, report. Medium effort. Needs: docker CLI wrapping, test-server lifecycle.
 
-### [ ] 5. ROAD-016 continuation: Postgres/MySQL connectivity (priority 70)
+### [x] 5. ROAD-016 continuation: Postgres/MySQL connectivity (priority 70)
 redis_ping + memcached_version shipped in v0.3. Remaining: postgres_ping, mysql_ping using stdlib net + protocol handshake (no new deps). Small-medium effort. Good Sonnet candidate.
 
 ### [ ] 6. ROAD-003: Watch mode (priority 65)
