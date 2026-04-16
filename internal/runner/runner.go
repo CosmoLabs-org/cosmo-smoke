@@ -336,6 +336,20 @@ func (r *Runner) runTest(t schema.Test, opts RunOptions) TestResult {
 			allPassed = false
 		}
 	}
+	if t.Expect.Postgres != nil {
+		a := CheckPostgresPing(t.Expect.Postgres)
+		assertions = append(assertions, a)
+		if !a.Passed {
+			allPassed = false
+		}
+	}
+	if t.Expect.MySQL != nil {
+		a := CheckMySQLPing(t.Expect.MySQL)
+		assertions = append(assertions, a)
+		if !a.Passed {
+			allPassed = false
+		}
+	}
 	if t.Expect.GRPCHealth != nil {
 		a := CheckGRPCHealth(t.Expect.GRPCHealth)
 		assertions = append(assertions, a)

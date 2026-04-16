@@ -64,6 +64,8 @@ type Expect struct {
 	SSLCert        *SSLCertCheck    `yaml:"ssl_cert,omitempty"`
 	Redis          *RedisCheck      `yaml:"redis_ping,omitempty"`
 	Memcached      *MemcachedCheck  `yaml:"memcached_version,omitempty"`
+	Postgres       *PostgresCheck   `yaml:"postgres_ping,omitempty"`
+	MySQL          *MySQLCheck      `yaml:"mysql_ping,omitempty"`
 	GRPCHealth     *GRPCHealthCheck `yaml:"grpc_health,omitempty"`
 }
 
@@ -93,6 +95,18 @@ type RedisCheck struct {
 type MemcachedCheck struct {
 	Host string `yaml:"host,omitempty"` // default "localhost"
 	Port int    `yaml:"port,omitempty"` // default 11211
+}
+
+// PostgresCheck pings a Postgres server via SSLRequest handshake.
+type PostgresCheck struct {
+	Host string `yaml:"host,omitempty"` // default "localhost"
+	Port int    `yaml:"port,omitempty"` // default 5432
+}
+
+// MySQLCheck verifies a MySQL server sends a valid handshake on connection.
+type MySQLCheck struct {
+	Host string `yaml:"host,omitempty"` // default "localhost"
+	Port int    `yaml:"port,omitempty"` // default 3306
 }
 
 // HTTPCheck defines parameters for HTTP endpoint assertions.

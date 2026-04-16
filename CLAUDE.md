@@ -68,6 +68,8 @@ smoke version
 | ssl_cert | `{host, port?, min_days_remaining?, allow_self_signed?}` | TLS cert valid + expiry threshold |
 | redis_ping | `{host?, port?, password?}` | Redis PING returns +PONG (RESP protocol) |
 | memcached_version | `{host?, port?}` | Memcached `version` command returns VERSION |
+| postgres_ping | `{host?, port?}` | Postgres server SSLRequest handshake returns valid protocol byte |
+| mysql_ping | `{host?, port?}` | MySQL server sends valid v10 handshake packet on connection |
 | grpc_health | `{address, service?, use_tls?, timeout?}` | grpc.health.v1 Health/Check returns SERVING |
 
 Plus `allow_failure: true` on Test for flaky/allowed-failure tests.
