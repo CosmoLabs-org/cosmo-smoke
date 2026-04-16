@@ -4,7 +4,16 @@
 
 version: pending
 entries:
-    added: []
+    added:
+        - description: Add --watch mode for continuous testing with fsnotify and 500ms debounce
+          source: manual
+          date: 2026-04-16T20:14:46.383626-03:00
+        - description: 'Add retry with exponential backoff for flaky tests (retry: {count, backoff})'
+          source: manual
+          date: 2026-04-16T20:14:46.429443-03:00
+        - description: Add postgres_ping and mysql_ping assertions (stdlib net, no new deps)
+          source: manual
+          date: 2026-04-16T20:14:46.481683-03:00
     fixed: []
     changed: []
     deprecated: []

@@ -1,10 +1,10 @@
 {
   "version": "1.0",
-  "generated_at": "2026-04-16T19:41:50.257235-03:00",
+  "generated_at": "2026-04-16T20:14:45.762506-03:00",
   "generated_by": "GLM-4.7",
-  "expires_at": "2026-04-17T19:41:50.257235-03:00",
-  "last_analyzed_commit": "9ce5584a5514265201f7cb0505a62cbdb68f1587",
-  "summary": "A Go-based modular orchestration tool with a plugin system, schema validation, and Kubernetes integration for running assertions and generating reports.",
+  "expires_at": "2026-04-17T20:14:45.762506-03:00",
+  "last_analyzed_commit": "69791d00b26e44422a46d7b47a5e446bb9f37688",
+  "summary": "A Go-based orchestration and assertion testing framework with plugin support and Kubernetes integration.",
   "architecture": "modular monolith",
   "primary_language": "Go",
   "hot_files": [
@@ -15,19 +15,19 @@
     "internal/runner/runner_test.go"
   ],
   "patterns": [
-    "runner-executor",
+    "separation of concerns",
     "plugin architecture",
-    "schema-driven validation",
-    "separation of concerns (detector/reporter/runner)"
+    "test-driven development",
+    "runner-detector-reporter pipeline"
   ],
   "concerns": [
-    "frequent session metadata archiving in commits suggests unstable or manual state management",
-    "uncommitted changes (3 modified, 6 untracked) indicate possible work-in-progress instability",
-    "watch mode (road-003) appears to be a long-running feature effort based on repeated metadata archiving"
+    "session worktree management complexity indicated by frequent archive commits",
+    "staged but uncommitted changes suggesting potential drift",
+    "watch mode feature recently added may lack production maturity"
   ],
   "suggestions": [
-    "automate session metadata cleanup instead of committing archive operations manually",
-    "commit or stash the current working tree changes to maintain a clean baseline",
-    "finalize or document the watch-mode feature to reduce ongoing metadata churn"
+    "commit the staged changes to prevent drift",
+    "add integration tests for the new --watch mode",
+    "consolidate or document the multiple config directories (.claude, .gorchestra, GOrchestra)"
   ]
 }
