@@ -62,6 +62,8 @@ type Expect struct {
 	JSONField      *JSONFieldCheck `yaml:"json_field,omitempty"`
 	ResponseTimeMs *int            `yaml:"response_time_ms,omitempty"` // Fail if test duration exceeds this many ms
 	SSLCert        *SSLCertCheck   `yaml:"ssl_cert,omitempty"`
+	Redis          *RedisCheck     `yaml:"redis_ping,omitempty"`
+	Memcached      *MemcachedCheck `yaml:"memcached_version,omitempty"`
 }
 
 // PortCheck defines parameters for checking if a port is open and listening.
@@ -74,9 +76,22 @@ type PortCheck struct {
 // SSLCertCheck defines parameters for TLS certificate validation.
 type SSLCertCheck struct {
 	Host             string `yaml:"host"`
-	Port             int    `yaml:"port,omitempty"`             // defaults to 443
+	Port             int    `yaml:"port,omitempty"`               // defaults to 443
 	MinDaysRemaining int    `yaml:"min_days_remaining,omitempty"` // 0 = any non-expired cert passes
 	AllowSelfSigned  bool   `yaml:"allow_self_signed,omitempty"`
+}
+
+// RedisCheck pings a Redis server with PING and verifies PONG reply.
+type RedisCheck struct {
+	Host     string `yaml:"host,omitempty"`     // default "localhost"
+	Port     int    `yaml:"port,omitempty"`     // default 6379
+	Password string `yaml:"password,omitempty"` // optional AUTH
+}
+
+// MemcachedCheck issues `version` to a Memcached server and expects a VERSION reply.
+type MemcachedCheck struct {
+	Host string `yaml:"host,omitempty"` // default "localhost"
+	Port int    `yaml:"port,omitempty"` // default 11211
 }
 
 // HTTPCheck defines parameters for HTTP endpoint assertions.

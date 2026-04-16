@@ -424,3 +424,82 @@ func CheckJSONField(jsonStr string, check *schema.JSONFieldCheck) []AssertionRes
 
 	return results
 }
+
+// CheckRedisPing issues a PING to a Redis server and expects +PONG.
+func CheckRedisPing(check *schema.RedisCheck) AssertionResult {
+	host := check.Host
+	if host == "" {
+		host = "localhost"
+	}
+	port := check.Port
+	if port == 0 {
+		port = 6379
+	}
+	addr := fmt.Sprintf("%s:%d", host, port)
+	conn, err := net.DialTimeout("tcp", addr, 5*time.Second)
+	if err != nil {
+		return AssertionResult{Type: "redis_ping", Expected: addr, Actual: err.Error(), Passed: false}
+	}
+	defer conn.Close()
+	conn.SetDeadline(time.Now().Add(5 * time.Second)) //nolint:errcheck
+
+	// Optional AUTH
+	if check.Password != "" {
+		authCmd := fmt.Sprintf("*2\r\n$4\r\nAUTH\r\n$%d\r\n%s\r\n", len(check.Password), check.Password)
+		if _, err := conn.Write([]byte(authCmd)); err != nil {
+			return AssertionResult{Type: "redis_ping", Expected: addr, Actual: "auth write error: " + err.Error(), Passed: false}
+		}
+		buf := make([]byte, 128)
+		n, _ := conn.Read(buf)
+		if !strings.HasPrefix(string(buf[:n]), "+OK") {
+			return AssertionResult{Type: "redis_ping", Expected: "+OK", Actual: strings.TrimSpace(string(buf[:n])), Passed: false}
+		}
+	}
+
+	if _, err := conn.Write([]byte("*1\r\n$4\r\nPING\r\n")); err != nil {
+		return AssertionResult{Type: "redis_ping", Expected: addr, Actual: err.Error(), Passed: false}
+	}
+	buf := make([]byte, 64)
+	n, err := conn.Read(buf)
+	if err != nil {
+		return AssertionResult{Type: "redis_ping", Expected: "+PONG", Actual: err.Error(), Passed: false}
+	}
+	reply := strings.TrimSpace(string(buf[:n]))
+	if !strings.HasPrefix(reply, "+PONG") {
+		return AssertionResult{Type: "redis_ping", Expected: "+PONG", Actual: reply, Passed: false}
+	}
+	return AssertionResult{Type: "redis_ping", Expected: addr, Actual: "PONG", Passed: true}
+}
+
+// CheckMemcachedVersion issues `version` to Memcached and expects a VERSION line.
+func CheckMemcachedVersion(check *schema.MemcachedCheck) AssertionResult {
+	host := check.Host
+	if host == "" {
+		host = "localhost"
+	}
+	port := check.Port
+	if port == 0 {
+		port = 11211
+	}
+	addr := fmt.Sprintf("%s:%d", host, port)
+	conn, err := net.DialTimeout("tcp", addr, 5*time.Second)
+	if err != nil {
+		return AssertionResult{Type: "memcached_version", Expected: addr, Actual: err.Error(), Passed: false}
+	}
+	defer conn.Close()
+	conn.SetDeadline(time.Now().Add(5 * time.Second)) //nolint:errcheck
+
+	if _, err := conn.Write([]byte("version\r\n")); err != nil {
+		return AssertionResult{Type: "memcached_version", Expected: addr, Actual: err.Error(), Passed: false}
+	}
+	buf := make([]byte, 128)
+	n, err := conn.Read(buf)
+	if err != nil {
+		return AssertionResult{Type: "memcached_version", Expected: "VERSION", Actual: err.Error(), Passed: false}
+	}
+	reply := strings.TrimSpace(string(buf[:n]))
+	if !strings.HasPrefix(reply, "VERSION") {
+		return AssertionResult{Type: "memcached_version", Expected: "VERSION ...", Actual: reply, Passed: false}
+	}
+	return AssertionResult{Type: "memcached_version", Expected: addr, Actual: reply, Passed: true}
+}

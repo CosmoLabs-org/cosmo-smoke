@@ -322,6 +322,20 @@ func (r *Runner) runTest(t schema.Test, opts RunOptions) TestResult {
 			allPassed = false
 		}
 	}
+	if t.Expect.Redis != nil {
+		a := CheckRedisPing(t.Expect.Redis)
+		assertions = append(assertions, a)
+		if !a.Passed {
+			allPassed = false
+		}
+	}
+	if t.Expect.Memcached != nil {
+		a := CheckMemcachedVersion(t.Expect.Memcached)
+		assertions = append(assertions, a)
+		if !a.Passed {
+			allPassed = false
+		}
+	}
 
 	duration := time.Since(start)
 
