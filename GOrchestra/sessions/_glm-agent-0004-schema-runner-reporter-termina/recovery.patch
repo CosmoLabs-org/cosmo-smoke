@@ -1,0 +1,153 @@
+From 0006de59ad77de65645e2be7ec32c09b4ea6e29f Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?G=CE=9BB?= <Gab@CosmoLabs.org>
+Date: Thu, 16 Apr 2026 09:14:00 -0300
+Subject: [PATCH] ccs kill: auto-commit 4 uncommitted files before removal
+
+---
+ .gorchestra/fingerprint-cache.json |  7 ++--
+ GOrchestra/intel/status.json       |  6 +--
+ docs/.template-version             |  6 +--
+ docs/brainstorming/SOPs/README.md  | 64 ++++++++++++++++++++++++++++++
+ 4 files changed, 74 insertions(+), 9 deletions(-)
+ create mode 100644 docs/brainstorming/SOPs/README.md
+
+diff --git a/.gorchestra/fingerprint-cache.json b/.gorchestra/fingerprint-cache.json
+index 4ffa4d4..74a1314 100644
+--- a/.gorchestra/fingerprint-cache.json
++++ b/.gorchestra/fingerprint-cache.json
+@@ -1,11 +1,12 @@
+ {
+-  "hash": "ef17fb5324678878347df4d8fa9595ab283c8cfa323ce07f7875dc49c6946feb",
+-  "project_name": "cosmo-smoke",
++  "hash": "18f37775e10d5bc50be92e0c46a180c13eb6bc909a2745ecced2834e82ab8ed3",
++  "project_name": "_glm-agent-0004-schema-runner-reporter-termina",
+   "language": "go",
+   "framework": "cli",
+   "directories": [
+     "GOrchestra",
+     "cmd",
++    "docs",
+     "internal",
+     "plugins"
+   ],
+@@ -23,5 +24,5 @@
+   ],
+   "has_tests": false,
+   "has_ci": false,
+-  "generated_at": "2026-04-15T17:30:21.792791-03:00"
++  "generated_at": "2026-04-16T09:01:48.542466-03:00"
+ }
+\ No newline at end of file
+diff --git a/GOrchestra/intel/status.json b/GOrchestra/intel/status.json
+index dd8f25d..8dffbed 100644
+--- a/GOrchestra/intel/status.json
++++ b/GOrchestra/intel/status.json
+@@ -1,8 +1,8 @@
+ {
+   "version": "1.0",
+-  "updated_at": "2026-04-15T17:33:44.117738-03:00",
+-  "expires_at": "2026-04-15T18:33:44.117738-03:00",
+-  "project_path": "/Users/gab/PROJECTS/cosmo-smoke",
++  "updated_at": "2026-04-16T09:01:54.059238-03:00",
++  "expires_at": "2026-04-16T10:01:54.059238-03:00",
++  "project_path": "/Users/gab/PROJECTS/cosmo-smoke-worktrees/_glm-agent-0004-schema-runner-reporter-termina",
+   "context": "",
+   "glm_enhanced": false
+ }
+\ No newline at end of file
+diff --git a/docs/.template-version b/docs/.template-version
+index b8f721d..7074a15 100644
+--- a/docs/.template-version
++++ b/docs/.template-version
+@@ -1,6 +1,6 @@
+ {
+   "version": "2.0.0",
+-  "synced": "2026-04-15T17:33:42-03:00",
++  "synced": "2026-04-16T09:01:52-03:00",
+   "source": "ClaudeCodeSetup",
+   "seeded_files": {
+     "docs/FEATURES.md": {
+@@ -30,8 +30,8 @@
+     },
+     "docs/brainstorming/SOPs/README.md": {
+       "version": "1.0.0",
+-      "seeded_at": "2026-04-15T17:33:42-03:00",
+-      "original_hash": "aa956741fdd21fe0"
++      "seeded_at": "2026-04-16T09:01:52-03:00",
++      "original_hash": "befed9ca52e16f7b"
+     },
+     "docs/brainstorming/collaborative-template.md": {
+       "version": "1.0.0",
+diff --git a/docs/brainstorming/SOPs/README.md b/docs/brainstorming/SOPs/README.md
+new file mode 100644
+index 0000000..c63f835
+--- /dev/null
++++ b/docs/brainstorming/SOPs/README.md
+@@ -0,0 +1,64 @@
++# _glm-agent-0004-schema-runner-reporter-termina - SOP Brainstorming
++
++Ideas and rough drafts for project-specific SOPs before implementation.
++
++## Workflow
++
++```
++docs/brainstorming/SOPs/    →  Ideas, rough analysis (THIS FOLDER)
++         ↓
++docs/sops/                  →  Implemented project SOPs
++```
++
++## Adding Ideas
++
++When you identify a repeated workflow or process:
++
++1. Create a brainstorm file: `YYYY-MM-DD-sop-idea-name.md`
++2. Document:
++   - What problem it solves
++   - Steps involved
++   - Tools/skills needed
++   - Pain points
++3. When ready, implement in `docs/sops/`
++
++## Template for Brainstorm
++
++```markdown
++# SOP Idea: [Name]
++
++**Date**: YYYY-MM-DD
++**Status**: Idea | Exploring | Ready to Implement
++
++## Problem
++What workflow is this trying to standardize?
++
++## Current Pain Points
++- Issue 1
++- Issue 2
++
++## Proposed Solution
++How would an SOP help?
++
++## Steps Identified
++1. Step 1
++2. Step 2
++
++## Tools/Skills Needed
++- Tool 1
++- Skill 1
++
++## Open Questions
++- Question 1?
++```
++
++## Current Ideas
++
++| Idea | Status | Notes |
++|------|--------|-------|
++| (none yet) | | |
++
++## Related
++
++- Implemented SOPs: `docs/sops/`
++- Global SOPs: `~/.claude/skills/sop-*.md`
+-- 
+2.53.0
+

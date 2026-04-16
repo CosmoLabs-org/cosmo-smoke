@@ -1,33 +1,33 @@
 {
   "version": "1.0",
-  "generated_at": "2026-04-16T09:12:41.208902-03:00",
+  "generated_at": "2026-04-16T09:14:09.590314-03:00",
   "generated_by": "GLM-4.7",
-  "expires_at": "2026-04-17T09:12:41.208902-03:00",
-  "last_analyzed_commit": "2ae873da36a2c971848152f8ed786000fef5a0be",
-  "summary": "A Go-based modular orchestration tool that detects schemas, runs assertions, and reports results via a plugin-extensible architecture.",
+  "expires_at": "2026-04-17T09:14:09.590314-03:00",
+  "last_analyzed_commit": "db28d9279b832c126de792515972a9d74b7d6bb7",
+  "summary": "A Go-based modular testing framework that detects conditions and runs assertions against infrastructure, reporting results in formats like JUnit.",
   "architecture": "modular monolith",
   "primary_language": "Go",
   "hot_files": [
     "internal/runner/runner.go",
+    "internal/runner/assertion.go",
     "internal/detector/detector_test.go",
-    "internal/runner/assertion_test.go",
     "cmd/serve.go",
-    "internal/schema/schema_test.go"
+    "internal/reporter/junit_test.go"
   ],
   "patterns": [
     "separation of concerns",
     "plugin architecture",
-    "test-driven development",
-    "orchestration pattern"
+    "test runner pattern",
+    "pipeline pattern"
   ],
   "concerns": [
-    "uncommitted staged and untracked files in working directory",
-    "recent commits are entirely chore/metadata updates indicating possible stalled feature development",
-    "deeply nested session directories in GOrchestra/intel/ could become unmanageable"
+    "scattered orchestration metadata directories (.gorchestra, GOrchestra/intel)",
+    "archived session folders committed to the main branch",
+    "heavy reliance on auto-commit CI chores cluttering git history"
   ],
   "suggestions": [
-    "commit or stash the pending working directory changes",
-    "shift focus from metadata management back to core feature development",
-    "document the plugin interface and expected contracts"
+    "move .gorchestra and GOrchestra directories to .gitignore",
+    "consolidate CI auto-commit workflows to reduce noise",
+    "add integration tests for the new port_listening assertion"
   ]
 }

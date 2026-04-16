@@ -1,0 +1,358 @@
+From 57a841dd25dba0cbbaac1e3b9ef495e880a8fa7f Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?G=CE=9BB?= <Gab@CosmoLabs.org>
+Date: Thu, 16 Apr 2026 09:14:00 -0300
+Subject: [PATCH] ccs kill: auto-commit 7 uncommitted files before removal
+
+---
+ .gorchestra/fingerprint-cache.json |   7 +-
+ GOrchestra/intel/status.json       |   6 +-
+ cmd/run.go                         |   4 +-
+ docs/.template-version             |   6 +-
+ docs/brainstorming/SOPs/README.md  |  64 +++++++++++++++
+ internal/reporter/tap.go           |  42 ++++++++++
+ internal/reporter/tap_test.go      | 124 +++++++++++++++++++++++++++++
+ 7 files changed, 243 insertions(+), 10 deletions(-)
+ create mode 100644 docs/brainstorming/SOPs/README.md
+ create mode 100644 internal/reporter/tap.go
+ create mode 100644 internal/reporter/tap_test.go
+
+diff --git a/.gorchestra/fingerprint-cache.json b/.gorchestra/fingerprint-cache.json
+index 4ffa4d4..d32bcbe 100644
+--- a/.gorchestra/fingerprint-cache.json
++++ b/.gorchestra/fingerprint-cache.json
+@@ -1,11 +1,12 @@
+ {
+-  "hash": "ef17fb5324678878347df4d8fa9595ab283c8cfa323ce07f7875dc49c6946feb",
+-  "project_name": "cosmo-smoke",
++  "hash": "c8c18b26659f69b525236f10e233ce456ce3bc9cb0028e4e2ff4417ed5cde785",
++  "project_name": "_glm-agent-0003-tap-run-tests",
+   "language": "go",
+   "framework": "cli",
+   "directories": [
+     "GOrchestra",
+     "cmd",
++    "docs",
+     "internal",
+     "plugins"
+   ],
+@@ -23,5 +24,5 @@
+   ],
+   "has_tests": false,
+   "has_ci": false,
+-  "generated_at": "2026-04-15T17:30:21.792791-03:00"
++  "generated_at": "2026-04-16T09:00:54.961713-03:00"
+ }
+\ No newline at end of file
+diff --git a/GOrchestra/intel/status.json b/GOrchestra/intel/status.json
+index dd8f25d..a3248c9 100644
+--- a/GOrchestra/intel/status.json
++++ b/GOrchestra/intel/status.json
+@@ -1,8 +1,8 @@
+ {
+   "version": "1.0",
+-  "updated_at": "2026-04-15T17:33:44.117738-03:00",
+-  "expires_at": "2026-04-15T18:33:44.117738-03:00",
+-  "project_path": "/Users/gab/PROJECTS/cosmo-smoke",
++  "updated_at": "2026-04-16T09:01:00.086127-03:00",
++  "expires_at": "2026-04-16T10:01:00.086127-03:00",
++  "project_path": "/Users/gab/PROJECTS/cosmo-smoke-worktrees/_glm-agent-0003-tap-run-tests",
+   "context": "",
+   "glm_enhanced": false
+ }
+\ No newline at end of file
+diff --git a/cmd/run.go b/cmd/run.go
+index d82716a..d91fc94 100644
+--- a/cmd/run.go
++++ b/cmd/run.go
+@@ -34,7 +34,7 @@ func init() {
+ 	runCmd.Flags().StringVarP(&configFile, "file", "f", ".smoke.yaml", "Config file path")
+ 	runCmd.Flags().StringSliceVar(&tags, "tag", nil, "Include only tests with these tags")
+ 	runCmd.Flags().StringSliceVar(&excludeTags, "exclude-tag", nil, "Exclude tests with these tags")
+-	runCmd.Flags().StringVar(&format, "format", "terminal", "Output format (terminal|json)")
++	runCmd.Flags().StringVar(&format, "format", "terminal", "Output format (terminal|json|tap)")
+ 	runCmd.Flags().BoolVar(&failFast, "fail-fast", false, "Stop on first failure")
+ 	runCmd.Flags().StringVar(&timeout, "timeout", "", "Per-test timeout override (e.g. 30s)")
+ 	runCmd.Flags().BoolVar(&dryRun, "dry-run", false, "List tests without running")
+@@ -61,6 +61,8 @@ func runSmoke(cmd *cobra.Command, args []string) error {
+ 	switch format {
+ 	case "json":
+ 		rep = reporter.NewJSON(os.Stdout)
++	case "tap":
++		rep = reporter.NewTAP(os.Stdout)
+ 	default:
+ 		rep = reporter.NewTerminal(os.Stdout)
+ 	}
+diff --git a/docs/.template-version b/docs/.template-version
+index b8f721d..b06da1a 100644
+--- a/docs/.template-version
++++ b/docs/.template-version
+@@ -1,6 +1,6 @@
+ {
+   "version": "2.0.0",
+-  "synced": "2026-04-15T17:33:42-03:00",
++  "synced": "2026-04-16T09:00:59-03:00",
+   "source": "ClaudeCodeSetup",
+   "seeded_files": {
+     "docs/FEATURES.md": {
+@@ -30,8 +30,8 @@
+     },
+     "docs/brainstorming/SOPs/README.md": {
+       "version": "1.0.0",
+-      "seeded_at": "2026-04-15T17:33:42-03:00",
+-      "original_hash": "aa956741fdd21fe0"
++      "seeded_at": "2026-04-16T09:00:59-03:00",
++      "original_hash": "d8e7c450d74e000f"
+     },
+     "docs/brainstorming/collaborative-template.md": {
+       "version": "1.0.0",
+diff --git a/docs/brainstorming/SOPs/README.md b/docs/brainstorming/SOPs/README.md
+new file mode 100644
+index 0000000..9d6021c
+--- /dev/null
++++ b/docs/brainstorming/SOPs/README.md
+@@ -0,0 +1,64 @@
++# _glm-agent-0003-tap-run-tests - SOP Brainstorming
++
++Ideas and rough drafts for project-specific SOPs before implementation.
++
++## Workflow
++
++```
++docs/brainstorming/SOPs/    →  Ideas, rough analysis (THIS FOLDER)
++         ↓
++docs/sops/                  →  Implemented project SOPs
++```
++
++## Adding Ideas
++
++When you identify a repeated workflow or process:
++
++1. Create a brainstorm file: `YYYY-MM-DD-sop-idea-name.md`
++2. Document:
++   - What problem it solves
++   - Steps involved
++   - Tools/skills needed
++   - Pain points
++3. When ready, implement in `docs/sops/`
++
++## Template for Brainstorm
++
++```markdown
++# SOP Idea: [Name]
++
++**Date**: YYYY-MM-DD
++**Status**: Idea | Exploring | Ready to Implement
++
++## Problem
++What workflow is this trying to standardize?
++
++## Current Pain Points
++- Issue 1
++- Issue 2
++
++## Proposed Solution
++How would an SOP help?
++
++## Steps Identified
++1. Step 1
++2. Step 2
++
++## Tools/Skills Needed
++- Tool 1
++- Skill 1
++
++## Open Questions
++- Question 1?
++```
++
++## Current Ideas
++
++| Idea | Status | Notes |
++|------|--------|-------|
++| (none yet) | | |
++
++## Related
++
++- Implemented SOPs: `docs/sops/`
++- Global SOPs: `~/.claude/skills/sop-*.md`
+diff --git a/internal/reporter/tap.go b/internal/reporter/tap.go
+new file mode 100644
+index 0000000..4f45cdd
+--- /dev/null
++++ b/internal/reporter/tap.go
+@@ -0,0 +1,42 @@
++package reporter
++
++import (
++	"fmt"
++	"io"
++)
++
++// TAP produces Test Anything Protocol v14 output.
++type TAP struct {
++	w       io.Writer
++	results []TestResultData
++	count   int
++}
++
++// NewTAP creates a TAP reporter writing to w.
++func NewTAP(w io.Writer) *TAP { return &TAP{w: w} }
++
++func (t *TAP) PrereqStart(name string)      {}
++func (t *TAP) PrereqResult(data PrereqResultData) {}
++func (t *TAP) TestStart(name string)        { t.count++ }
++func (t *TAP) TestResult(data TestResultData) {
++	t.results = append(t.results, data)
++}
++
++func (t *TAP) Summary(data SuiteResultData) {
++	fmt.Fprintf(t.w, "TAP version 14\n")
++	fmt.Fprintf(t.w, "1..%d\n", len(t.results))
++	for i, r := range t.results {
++		if r.Skipped {
++			fmt.Fprintf(t.w, "ok %d - %s # SKIP\n", i+1, r.Name)
++		} else if r.Passed {
++			fmt.Fprintf(t.w, "ok %d - %s\n", i+1, r.Name)
++		} else {
++			fmt.Fprintf(t.w, "not ok %d - %s\n", i+1, r.Name)
++			for _, a := range r.Assertions {
++				if !a.Passed {
++					fmt.Fprintf(t.w, "# %s: expected %s, got %s\n", a.Type, a.Expected, a.Actual)
++				}
++			}
++		}
++	}
++}
+diff --git a/internal/reporter/tap_test.go b/internal/reporter/tap_test.go
+new file mode 100644
+index 0000000..b9b8c7d
+--- /dev/null
++++ b/internal/reporter/tap_test.go
+@@ -0,0 +1,124 @@
++package reporter
++
++import (
++	"bytes"
++	"strings"
++	"testing"
++	"time"
++)
++
++func TestTAP_PassingTest(t *testing.T) {
++	var buf bytes.Buffer
++	r := NewTAP(&buf)
++
++	r.TestStart("Compiles")
++	r.TestResult(TestResultData{
++		Name:   "Compiles",
++		Passed: true,
++		Assertions: []AssertionDetail{
++			{Type: "exit_code", Expected: "0", Actual: "0", Passed: true},
++		},
++		Duration: 100 * time.Millisecond,
++	})
++
++	r.Summary(SuiteResultData{Total: 1, Passed: 1})
++
++	got := buf.String()
++	if !strings.Contains(got, "TAP version 14") {
++		t.Error("missing TAP version header")
++	}
++	if !strings.Contains(got, "1..1") {
++		t.Error("missing test plan line")
++	}
++	if !strings.Contains(got, "ok 1 - Compiles") {
++		t.Errorf("expected passing test line, got:\n%s", got)
++	}
++}
++
++func TestTAP_FailingTest(t *testing.T) {
++	var buf bytes.Buffer
++	r := NewTAP(&buf)
++
++	r.TestStart("Fails")
++	r.TestResult(TestResultData{
++		Name:   "Fails",
++		Passed: false,
++		Assertions: []AssertionDetail{
++			{Type: "exit_code", Expected: "0", Actual: "1", Passed: false},
++		},
++		Duration: 50 * time.Millisecond,
++	})
++
++	r.Summary(SuiteResultData{Total: 1, Failed: 1})
++
++	got := buf.String()
++	if !strings.Contains(got, "not ok 1 - Fails") {
++		t.Errorf("expected failing test line, got:\n%s", got)
++	}
++	if !strings.Contains(got, "# exit_code: expected 0, got 1") {
++		t.Errorf("expected diagnostic line, got:\n%s", got)
++	}
++}
++
++func TestTAP_SkippedTest(t *testing.T) {
++	var buf bytes.Buffer
++	r := NewTAP(&buf)
++
++	r.TestStart("Skip me")
++	r.TestResult(TestResultData{
++		Name:    "Skip me",
++		Skipped: true,
++	})
++
++	r.Summary(SuiteResultData{Total: 1, Skipped: 1})
++
++	got := buf.String()
++	if !strings.Contains(got, "ok 1 - Skip me # SKIP") {
++		t.Errorf("expected skip line, got:\n%s", got)
++	}
++}
++
++func TestTAP_MultipleTests(t *testing.T) {
++	var buf bytes.Buffer
++	r := NewTAP(&buf)
++
++	r.TestStart("Pass")
++	r.TestResult(TestResultData{Name: "Pass", Passed: true})
++	r.TestStart("Fail")
++	r.TestResult(TestResultData{
++		Name:   "Fail",
++		Passed: false,
++		Assertions: []AssertionDetail{
++			{Type: "stdout_contains", Expected: "hello", Actual: "", Passed: false},
++		},
++	})
++	r.TestStart("Skip")
++	r.TestResult(TestResultData{Name: "Skip", Skipped: true})
++
++	r.Summary(SuiteResultData{Total: 3, Passed: 1, Failed: 1, Skipped: 1})
++
++	got := buf.String()
++	if !strings.Contains(got, "1..3") {
++		t.Error("expected plan 1..3")
++	}
++	if !strings.Contains(got, "ok 1 - Pass") {
++		t.Error("missing ok 1")
++	}
++	if !strings.Contains(got, "not ok 2 - Fail") {
++		t.Error("missing not ok 2")
++	}
++	if !strings.Contains(got, "ok 3 - Skip # SKIP") {
++		t.Error("missing ok 3 SKIP")
++	}
++}
++
++func TestTAP_EmptyResults(t *testing.T) {
++	var buf bytes.Buffer
++	r := NewTAP(&buf)
++	r.Summary(SuiteResultData{})
++
++	got := buf.String()
++	if !strings.Contains(got, "1..0") {
++		t.Errorf("expected empty plan, got:\n%s", got)
++	}
++}
+-- 
+2.53.0
+
