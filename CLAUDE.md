@@ -18,7 +18,7 @@ cmd/
 └── version.go       # smoke version (ldflags-injected)
 internal/
 ├── schema/          # SmokeConfig structs, YAML parsing, validation
-├── runner/          # Assertion engine (10 types), prereq runner, test execution
+├── runner/          # Assertion engine (15 types), prereq runner, test execution
 ├── reporter/        # Terminal (Lipgloss) + JSON reporters
 └── detector/        # Project type detection + template generation
 ```
@@ -26,7 +26,7 @@ internal/
 ## Key Design Decisions
 
 - **Minimal deps**: Cobra + Lipgloss + yaml.v3 + gjson. No Viper, no Bubbletea.
-- **Pure assertions**: All 10 assertion types are pure functions — no side effects.
+- **Pure assertions**: All 15 assertion types are pure functions — no side effects.
 - **Config inheritance**: `includes:` directive + Go templates (`{{ .Env.FOO }}`).
 - **Config-dir-relative**: Commands execute from the config file's directory, not cwd.
 - **All errors at once**: Validation returns all errors, not just the first.
@@ -61,8 +61,20 @@ smoke version
 | file_exists | `string` | File exists relative to config dir |
 | env_exists | `string` | Environment variable exists |
 | port_listening | `{port, protocol?, host?}` | TCP/UDP port is open |
+| process_running | `string` | Named process currently running (pgrep -x / tasklist) |
 | http | `{url, method?, status_code?, body_contains?, body_matches?, header_contains?}` | HTTP endpoint check |
 | json_field | `{path, equals?, contains?, matches?}` | JSONPath assertion on stdout |
+| response_time_ms | `*int` | Test duration must not exceed this threshold |
+| ssl_cert | `{host, port?, min_days_remaining?, allow_self_signed?}` | TLS cert valid + expiry threshold |
+| redis_ping | `{host?, port?, password?}` | Redis PING returns +PONG (RESP protocol) |
+| memcached_version | `{host?, port?}` | Memcached `version` command returns VERSION |
+| grpc_health | `{address, service?, use_tls?, timeout?}` | grpc.health.v1 Health/Check returns SERVING |
+
+Plus `allow_failure: true` on Test for flaky/allowed-failure tests.
+
+## Output Formats
+
+`smoke run --format X` supports: `terminal` (default), `json`, `junit`, `tap`, `prometheus`.
 
 ## Detected Project Types
 
