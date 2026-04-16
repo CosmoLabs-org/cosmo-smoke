@@ -30,21 +30,23 @@ type AssertionDetail struct {
 
 // TestResultData holds the outcome of a single test.
 type TestResultData struct {
-	Name       string            `json:"name"`
-	Passed     bool              `json:"passed"`
-	Skipped    bool              `json:"skipped"`
-	Duration   time.Duration     `json:"duration"`
-	Assertions []AssertionDetail `json:"assertions"`
-	Error      error             `json:"-"`
+	Name           string            `json:"name"`
+	Passed         bool              `json:"passed"`
+	Skipped        bool              `json:"skipped"`
+	AllowedFailure bool              `json:"allowed_failure,omitempty"`
+	Duration       time.Duration     `json:"duration"`
+	Assertions     []AssertionDetail `json:"assertions"`
+	Error          error             `json:"-"`
 }
 
 // SuiteResultData holds the aggregate results.
 type SuiteResultData struct {
-	Project  string           `json:"project"`
-	Total    int              `json:"total"`
-	Passed   int              `json:"passed"`
-	Failed   int              `json:"failed"`
-	Skipped  int              `json:"skipped"`
-	Duration time.Duration    `json:"duration"`
-	Tests    []TestResultData `json:"tests"`
+	Project         string           `json:"project"`
+	Total           int              `json:"total"`
+	Passed          int              `json:"passed"`
+	Failed          int              `json:"failed"`
+	Skipped         int              `json:"skipped"`
+	AllowedFailures int              `json:"allowed_failures"`
+	Duration        time.Duration    `json:"duration"`
+	Tests           []TestResultData `json:"tests"`
 }

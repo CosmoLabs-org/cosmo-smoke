@@ -38,12 +38,13 @@ type Prerequisite struct {
 
 // Test defines a single smoke test.
 type Test struct {
-	Name    string   `yaml:"name"`
-	Run     string   `yaml:"run"`
-	Expect  Expect   `yaml:"expect"`
-	Tags    []string `yaml:"tags,omitempty"`
-	Timeout Duration `yaml:"timeout,omitempty"`
-	Cleanup string   `yaml:"cleanup,omitempty"`
+	Name         string   `yaml:"name"`
+	Run          string   `yaml:"run"`
+	Expect       Expect   `yaml:"expect"`
+	Tags         []string `yaml:"tags,omitempty"`
+	Timeout      Duration `yaml:"timeout,omitempty"`
+	Cleanup      string   `yaml:"cleanup,omitempty"`
+	AllowFailure bool     `yaml:"allow_failure,omitempty"`
 }
 
 // Expect defines the assertions for a test.

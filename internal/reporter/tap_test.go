@@ -122,3 +122,29 @@ func TestTAP_EmptyResults(t *testing.T) {
 		t.Errorf("expected empty plan, got:\n%s", got)
 	}
 }
+
+func TestTAP_AllowedFailureTest(t *testing.T) {
+	var buf bytes.Buffer
+	r := NewTAP(&buf)
+
+	r.TestStart("flaky network")
+	r.TestResult(TestResultData{
+		Name:           "flaky network",
+		Passed:         false,
+		AllowedFailure: true,
+		Assertions: []AssertionDetail{
+			{Type: "exit_code", Expected: "0", Actual: "1", Passed: false},
+		},
+		Duration: 50 * time.Millisecond,
+	})
+
+	r.Summary(SuiteResultData{Total: 1, AllowedFailures: 1})
+
+	got := buf.String()
+	if !strings.Contains(got, "not ok 1 - flaky network # TODO allow_failure") {
+		t.Errorf("expected allowed-failure TAP line, got:\n%s", got)
+	}
+	if !strings.Contains(got, "# exit_code: expected 0, got 1") {
+		t.Errorf("expected diagnostic line, got:\n%s", got)
+	}
+}

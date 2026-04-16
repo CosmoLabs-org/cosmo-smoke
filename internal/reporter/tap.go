@@ -30,6 +30,13 @@ func (t *TAP) Summary(data SuiteResultData) {
 			fmt.Fprintf(t.w, "ok %d - %s # SKIP\n", i+1, r.Name)
 		} else if r.Passed {
 			fmt.Fprintf(t.w, "ok %d - %s\n", i+1, r.Name)
+		} else if r.AllowedFailure {
+			fmt.Fprintf(t.w, "not ok %d - %s # TODO allow_failure\n", i+1, r.Name)
+			for _, a := range r.Assertions {
+				if !a.Passed {
+					fmt.Fprintf(t.w, "# %s: expected %s, got %s\n", a.Type, a.Expected, a.Actual)
+				}
+			}
 		} else {
 			fmt.Fprintf(t.w, "not ok %d - %s\n", i+1, r.Name)
 			for _, a := range r.Assertions {

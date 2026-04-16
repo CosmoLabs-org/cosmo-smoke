@@ -24,23 +24,25 @@ type RunOptions struct {
 
 // SuiteResult holds the aggregate outcome.
 type SuiteResult struct {
-	Project  string
-	Total    int
-	Passed   int
-	Failed   int
-	Skipped  int
-	Duration time.Duration
-	Tests    []TestResult
+	Project         string
+	Total           int
+	Passed          int
+	Failed          int
+	Skipped         int
+	AllowedFailures int
+	Duration        time.Duration
+	Tests           []TestResult
 }
 
 // TestResult holds one test's outcome.
 type TestResult struct {
-	Name       string
-	Passed     bool
-	Skipped    bool
-	Duration   time.Duration
-	Assertions []AssertionResult
-	Error      error
+	Name           string
+	Passed         bool
+	Skipped        bool
+	AllowedFailure bool // true if test failed but allow_failure was set
+	Duration       time.Duration
+	Assertions     []AssertionResult
+	Error          error
 }
 
 // Runner executes smoke tests from a config.
@@ -99,12 +101,13 @@ func (r *Runner) Run(opts RunOptions) (*SuiteResult, error) {
 
 	// Report summary
 	r.Reporter.Summary(reporter.SuiteResultData{
-		Project:  suite.Project,
-		Total:    suite.Total,
-		Passed:   suite.Passed,
-		Failed:   suite.Failed,
-		Skipped:  suite.Skipped,
-		Duration: suite.Duration,
+		Project:         suite.Project,
+		Total:           suite.Total,
+		Passed:          suite.Passed,
+		Failed:          suite.Failed,
+		Skipped:         suite.Skipped,
+		AllowedFailures: suite.AllowedFailures,
+		Duration:        suite.Duration,
 	})
 
 	return suite, nil
@@ -128,6 +131,8 @@ func (r *Runner) runSequential(tests []schema.Test, opts RunOptions, suite *Suit
 			suite.Passed++
 		} else if tr.Skipped {
 			suite.Skipped++
+		} else if tr.AllowedFailure {
+			suite.AllowedFailures++
 		} else {
 			suite.Failed++
 			if failFast {
@@ -156,6 +161,8 @@ func (r *Runner) runParallel(tests []schema.Test, opts RunOptions, suite *SuiteR
 			suite.Passed++
 		} else if tr.Skipped {
 			suite.Skipped++
+		} else if tr.AllowedFailure {
+			suite.AllowedFailures++
 		} else {
 			suite.Failed++
 		}
@@ -212,9 +219,10 @@ func (r *Runner) runTest(t schema.Test, opts RunOptions) TestResult {
 			exitCode = exitErr.ExitCode()
 		} else {
 			tr := TestResult{
-				Name:     t.Name,
-				Duration: time.Since(start),
-				Error:    err,
+				Name:           t.Name,
+				AllowedFailure: t.AllowFailure,
+				Duration:       time.Since(start),
+				Error:          err,
 			}
 			r.Reporter.TestResult(toReporterResult(tr))
 			return tr
@@ -302,10 +310,11 @@ func (r *Runner) runTest(t schema.Test, opts RunOptions) TestResult {
 	}
 
 	tr := TestResult{
-		Name:       t.Name,
-		Passed:     allPassed,
-		Duration:   time.Since(start),
-		Assertions: assertions,
+		Name:           t.Name,
+		Passed:         allPassed,
+		AllowedFailure: !allPassed && t.AllowFailure,
+		Duration:       time.Since(start),
+		Assertions:     assertions,
 	}
 	r.Reporter.TestResult(toReporterResult(tr))
 	return tr
@@ -322,12 +331,13 @@ func toReporterResult(tr TestResult) reporter.TestResultData {
 		})
 	}
 	return reporter.TestResultData{
-		Name:       tr.Name,
-		Passed:     tr.Passed,
-		Skipped:    tr.Skipped,
-		Duration:   tr.Duration,
-		Assertions: assertions,
-		Error:      tr.Error,
+		Name:           tr.Name,
+		Passed:         tr.Passed,
+		Skipped:        tr.Skipped,
+		AllowedFailure: tr.AllowedFailure,
+		Duration:       tr.Duration,
+		Assertions:     assertions,
+		Error:          tr.Error,
 	}
 }
 

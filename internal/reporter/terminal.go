@@ -61,6 +61,19 @@ func (t *Terminal) TestResult(r TestResultData) {
 
 	if r.Passed {
 		fmt.Fprintf(t.w, "\r  %s %s %s\n", passStyle.Render("✓"), r.Name, dimStyle.Render(dur))
+	} else if r.AllowedFailure {
+		fmt.Fprintf(t.w, "\r  %s %s %s\n", skipStyle.Render("~"), r.Name, dimStyle.Render(dur+" allowed"))
+		for _, a := range r.Assertions {
+			if !a.Passed {
+				fmt.Fprintf(t.w, "    %s expected %s, got %s\n",
+					skipStyle.Render(a.Type+":"),
+					a.Expected,
+					a.Actual)
+			}
+		}
+		if r.Error != nil {
+			fmt.Fprintf(t.w, "    %s %s\n", skipStyle.Render("error:"), r.Error)
+		}
 	} else {
 		fmt.Fprintf(t.w, "\r  %s %s %s\n", failStyle.Render("✗"), r.Name, dimStyle.Render(dur))
 		for _, a := range r.Assertions {
@@ -91,6 +104,9 @@ func (t *Terminal) Summary(s SuiteResultData) {
 	}
 	if s.Skipped > 0 {
 		parts = append(parts, skipStyle.Render(fmt.Sprintf("%d skipped", s.Skipped)))
+	}
+	if s.AllowedFailures > 0 {
+		parts = append(parts, dimStyle.Render(fmt.Sprintf("%d allowed-failure", s.AllowedFailures)))
 	}
 	parts = append(parts, dimStyle.Render(formatDuration(s.Duration)))
 

@@ -281,3 +281,33 @@ tests: []
 		t.Error("expected error for circular includes")
 	}
 }
+
+func TestParse_AllowFailure(t *testing.T) {
+	yaml := `
+version: 1
+project: allow-failure-test
+tests:
+  - name: "flaky"
+    run: "exit 1"
+    allow_failure: true
+    expect:
+      exit_code: 0
+  - name: "strict"
+    run: "echo ok"
+    expect:
+      exit_code: 0
+`
+	cfg, err := Parse([]byte(yaml))
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+	if len(cfg.Tests) != 2 {
+		t.Fatalf("expected 2 tests, got %d", len(cfg.Tests))
+	}
+	if !cfg.Tests[0].AllowFailure {
+		t.Error("expected Tests[0].AllowFailure = true")
+	}
+	if cfg.Tests[1].AllowFailure {
+		t.Error("expected Tests[1].AllowFailure = false (default)")
+	}
+}
