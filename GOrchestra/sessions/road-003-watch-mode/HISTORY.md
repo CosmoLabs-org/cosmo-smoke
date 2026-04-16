@@ -6,8 +6,8 @@ created: 2026-04-16
 archived: 2026-04-16
 commits: 8
 files_changed: 18
-lines_added: 166
-lines_removed: 406
+lines_added: 167
+lines_removed: 428
 review_status: passed
 ---
 
@@ -16,7 +16,7 @@ review_status: passed
 ## Summary
 
 Branch merged via `ccs merg` on 2026-04-16.
-8 commits, 18 files changed (+166/-406).
+8 commits, 18 files changed (+167/-428).
 
 ## Commits
 
@@ -37,12 +37,12 @@ Branch merged via `ccs merg` on 2026-04-16.
  .review.json                                       |  10 +-
  .version-registry.json                             |   6 +-
  CLAUDE.md                                          |   3 +-
- GOrchestra/intel/architecture.json                 |  30 +--
+ GOrchestra/intel/architecture.json                 |  31 +--
  GOrchestra/intel/status.json                       |   6 +-
- .../sessions/road-003-watch-mode/.ccsession.json   |  18 --
+ .../sessions/road-003-watch-mode/.ccsession.json   |  19 --
  .../sessions/road-003-watch-mode/.review.json      |  11 --
- GOrchestra/sessions/road-003-watch-mode/HISTORY.md |  51 -----
- .../sessions/road-003-watch-mode/session.json      |  45 -----
+ GOrchestra/sessions/road-003-watch-mode/HISTORY.md |  54 ------
+ .../sessions/road-003-watch-mode/session.json      |  63 ------
  cmd/run.go                                         |  93 +++++++--
  cmd/watch.go                                       |   8 +
  cmd/watch_test.go                                  |  30 +++
@@ -50,5 +50,5 @@ Branch merged via `ccs merg` on 2026-04-16.
  .../2026-04-16-cosmo-smoke-v0.4-continuation.md    |   4 +-
  go.mod                                             |   1 +
  go.sum                                             |   2 +
- 18 files changed, 166 insertions(+), 406 deletions(-)
+ 18 files changed, 167 insertions(+), 428 deletions(-)
 ```
