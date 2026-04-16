@@ -19,3 +19,4 @@ vendor/
 coverage.out
 *.test
 plugins/internal
+.claude/
