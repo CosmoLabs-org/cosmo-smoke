@@ -3,7 +3,7 @@
   "base_branch": "master",
   "status": "conflict",
   "created": "2026-04-16T19:05:39-03:00",
-  "archived": "2026-04-16T19:08:00.486548-03:00",
+  "archived": "2026-04-16T19:08:06.186724-03:00",
   "commits": [
     {
       "hash": "5dcecd4",
@@ -19,9 +19,9 @@
     }
   ],
   "total_commits": 2,
-  "files_changed": 9,
-  "lines_added": 277,
-  "lines_removed": 16,
-  "diff_stat": ".review.json                                       |  12 +--\n CLAUDE.md                                          |   1 +\n .../2026-04-16-cosmo-smoke-v0.4-continuation.md    |   2 +-\n internal/runner/runner.go                          |  26 ++++++\n internal/runner/runner_test.go                     | 101 +++++++++++++++++++++\n internal/schema/schema.go                          |  21 +++--\n internal/schema/schema_test.go                     |  66 ++++++++++++++\n internal/schema/validate.go                        |   8 ++\n internal/schema/validate_test.go                   |  56 ++++++++++++\n 9 files changed, 277 insertions(+), 16 deletions(-)",
+  "files_changed": 15,
+  "lines_added": 294,
+  "lines_removed": 129,
+  "diff_stat": ".review.json                                       |  12 +--\n CLAUDE.md                                          |   1 +\n GOrchestra/intel/architecture.json                 |  29 +++---\n GOrchestra/intel/status.json                       |   6 +-\n GOrchestra/sessions/agent-a1e42bae/.ccsession.json |  18 ----\n GOrchestra/sessions/agent-a1e42bae/.review.json    |  11 ---\n GOrchestra/sessions/agent-a1e42bae/HISTORY.md      |  39 --------\n GOrchestra/sessions/agent-a1e42bae/session.json    |  27 ------\n .../2026-04-16-cosmo-smoke-v0.4-continuation.md    |   2 +-\n internal/runner/runner.go                          |  26 ++++++\n internal/runner/runner_test.go                     | 101 +++++++++++++++++++++\n internal/schema/schema.go                          |  21 +++--\n internal/schema/schema_test.go                     |  66 ++++++++++++++\n internal/schema/validate.go                        |   8 ++\n internal/schema/validate_test.go                   |  56 ++++++++++++\n 15 files changed, 294 insertions(+), 129 deletions(-)",
   "review_status": "passed"
 }
