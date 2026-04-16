@@ -1,15 +1,11 @@
 {
-  "score": 7,
+  "score": 8,
   "passed": true,
-<<<<<<< HEAD
-  "reviewed_at": "2026-04-16T19:29:22Z",
-=======
-  "reviewed_at": "2026-04-16T19:28:10Z",
->>>>>>> agent-a90fc8e9
+  "reviewed_at": "2026-04-16T22:09:03Z",
   "reviewer": "opus",
   "origin": "unknown",
   "iterations": 0,
   "fixes_applied": 0,
-  "issues_remaining": 4,
-  "summary": "Score 7/10, 4 issues"
+  "issues_remaining": 3,
+  "summary": "Score 8/10, 3 issues"
 }
