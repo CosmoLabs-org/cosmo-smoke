@@ -1,10 +1,10 @@
 {
   "version": "1.0",
-  "generated_at": "2026-04-16T19:39:25.150688-03:00",
+  "generated_at": "2026-04-16T19:39:30.304839-03:00",
   "generated_by": "GLM-4.7",
-  "expires_at": "2026-04-17T19:39:25.150688-03:00",
-  "last_analyzed_commit": "3484a571439dbcfefcdb1f46493b81451f80c368",
-  "summary": "A Go-based modular orchestration and detection framework with plugin support and Kubernetes integration.",
+  "expires_at": "2026-04-17T19:39:30.304839-03:00",
+  "last_analyzed_commit": "59f32145d19663ea5d8f4876adfb68407292dbf3",
+  "summary": "A Go-based modular orchestration tool with a plugin system, schema validation, and Kubernetes integration.",
   "architecture": "modular monolith",
   "primary_language": "Go",
   "hot_files": [
@@ -15,19 +15,20 @@
     "internal/runner/runner_test.go"
   ],
   "patterns": [
-    "separation of concerns",
-    "plugin architecture",
-    "test-driven development",
-    "standard go project layout"
+    "runner-executor",
+    "plugin-architecture",
+    "schema-driven",
+    "separation-of-concerns"
   ],
   "concerns": [
-    "repeated session metadata archival commits suggest possible automation loop or flaky workflow",
-    "uncommitted changes (3 modified, 6 untracked) indicate work-in-progress state",
-    "missing detector implementation file (only test present in key files)"
+    "repeated identical commits suggest automated or flawed commit workflow",
+    "uncommitted changes and untracked files indicate unstable working state",
+    "watch-mode feature appears incomplete or abandoned based on archived metadata"
   ],
   "suggestions": [
-    "investigate and stabilize the watch-mode session archival workflow",
-    "commit or stash current working changes to establish a clean baseline",
-    "verify detector implementation coverage given its prominence in tests"
+    "investigate and fix the repetitive commit generation process",
+    "clean up the working directory and commit or stash pending changes",
+    "clarify the status of the watch-mode feature",
+    "add documentation for the plugin system"
   ]
 }
