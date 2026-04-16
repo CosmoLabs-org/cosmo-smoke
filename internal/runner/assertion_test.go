@@ -1,6 +1,7 @@
 package runner
 
 import (
+	"net"
 	"net/http"
 	"net/http/httptest"
 	"os"
@@ -11,6 +12,9 @@ import (
 	"time"
 
 	"github.com/CosmoLabs-org/cosmo-smoke/internal/schema"
+	"google.golang.org/grpc"
+	"google.golang.org/grpc/health"
+	healthpb "google.golang.org/grpc/health/grpc_health_v1"
 )
 
 // ---------------------------------------------------------------------------
@@ -772,5 +776,82 @@ func TestCheckJSONField_MultipleChecks(t *testing.T) {
 		if !r.Passed {
 			t.Errorf("result %d (%s) failed", i, r.Type)
 		}
+	}
+}
+
+// ---------------------------------------------------------------------------
+// CheckGRPCHealth
+// ---------------------------------------------------------------------------
+
+// startTestGRPCServer starts an in-process gRPC server on a random port,
+// registers the health service, and returns the address and a stop function.
+func startTestGRPCServer(t *testing.T) (addr string, healthSrv *health.Server, stop func()) {
+	t.Helper()
+	lis, err := net.Listen("tcp", "127.0.0.1:0")
+	if err != nil {
+		t.Fatalf("failed to listen: %v", err)
+	}
+	srv := grpc.NewServer()
+	healthSrv = health.NewServer()
+	healthpb.RegisterHealthServer(srv, healthSrv)
+	go func() { _ = srv.Serve(lis) }()
+	return lis.Addr().String(), healthSrv, func() { srv.Stop() }
+}
+
+func TestCheckGRPCHealth_OverallServing(t *testing.T) {
+	addr, healthSrv, stop := startTestGRPCServer(t)
+	defer stop()
+	healthSrv.SetServingStatus("", healthpb.HealthCheckResponse_SERVING)
+
+	result := CheckGRPCHealth(&schema.GRPCHealthCheck{
+		Address: addr,
+		Service: "",
+	})
+	if !result.Passed {
+		t.Errorf("expected pass, got actual=%q", result.Actual)
+	}
+	if result.Actual != "SERVING" {
+		t.Errorf("expected Actual=SERVING, got %q", result.Actual)
+	}
+}
+
+func TestCheckGRPCHealth_SpecificServiceServing(t *testing.T) {
+	addr, healthSrv, stop := startTestGRPCServer(t)
+	defer stop()
+	healthSrv.SetServingStatus("my.Service", healthpb.HealthCheckResponse_SERVING)
+
+	result := CheckGRPCHealth(&schema.GRPCHealthCheck{
+		Address: addr,
+		Service: "my.Service",
+	})
+	if !result.Passed {
+		t.Errorf("expected pass, got actual=%q", result.Actual)
+	}
+}
+
+func TestCheckGRPCHealth_SpecificServiceNotServing(t *testing.T) {
+	addr, healthSrv, stop := startTestGRPCServer(t)
+	defer stop()
+	healthSrv.SetServingStatus("bad.Service", healthpb.HealthCheckResponse_NOT_SERVING)
+
+	result := CheckGRPCHealth(&schema.GRPCHealthCheck{
+		Address: addr,
+		Service: "bad.Service",
+	})
+	if result.Passed {
+		t.Errorf("expected fail, service is NOT_SERVING")
+	}
+	if result.Actual != "NOT_SERVING" {
+		t.Errorf("expected Actual=NOT_SERVING, got %q", result.Actual)
+	}
+}
+
+func TestCheckGRPCHealth_DialFailure(t *testing.T) {
+	result := CheckGRPCHealth(&schema.GRPCHealthCheck{
+		Address: "127.0.0.1:1", // port 1 is reserved and will refuse connections
+		Timeout: schema.Duration{Duration: 500 * time.Millisecond},
+	})
+	if result.Passed {
+		t.Errorf("expected fail for non-existent address")
 	}
 }

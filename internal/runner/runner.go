@@ -315,6 +315,13 @@ func (r *Runner) runTest(t schema.Test, opts RunOptions) TestResult {
 			}
 		}
 	}
+	if t.Expect.GRPCHealth != nil {
+		a := CheckGRPCHealth(t.Expect.GRPCHealth)
+		assertions = append(assertions, a)
+		if !a.Passed {
+			allPassed = false
+		}
+	}
 
 	tr := TestResult{
 		Name:           t.Name,
