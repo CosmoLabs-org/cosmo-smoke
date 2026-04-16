@@ -1,0 +1,33 @@
+{
+  "branch": "agent-afa452c4",
+  "base_branch": "master",
+  "status": "conflict",
+  "created": "2026-04-16T15:46:29-03:00",
+  "archived": "2026-04-16T15:55:23.127627-03:00",
+  "commits": [
+    {
+      "hash": "2061a51",
+      "author": "GΛB",
+      "message": "chore: add quality review results",
+      "date": 1776365706
+    },
+    {
+      "hash": "2023700",
+      "author": "GΛB",
+      "message": "fix(assertions): harden process_running after Opus review",
+      "date": 1776365678
+    },
+    {
+      "hash": "a778725",
+      "author": "GΛB",
+      "message": "feat(assertions): add process_running assertion type",
+      "date": 1776365189
+    }
+  ],
+  "total_commits": 3,
+  "files_changed": 7,
+  "lines_added": 103,
+  "lines_removed": 7,
+  "diff_stat": ".review.json                      | 10 ++++----\n docs/issues.yaml                  |  2 +-\n docs/issues/FEAT-006.yaml         |  2 +-\n internal/runner/assertion.go      | 36 +++++++++++++++++++++++++++\n internal/runner/assertion_test.go | 52 +++++++++++++++++++++++++++++++++++++++\n internal/runner/runner.go         |  7 ++++++\n internal/schema/schema.go         |  1 +\n 7 files changed, 103 insertions(+), 7 deletions(-)",
+  "review_status": "passed"
+}
