@@ -61,6 +61,7 @@ type Expect struct {
 	HTTP           *HTTPCheck      `yaml:"http,omitempty"`
 	JSONField      *JSONFieldCheck `yaml:"json_field,omitempty"`
 	ResponseTimeMs *int            `yaml:"response_time_ms,omitempty"` // Fail if test duration exceeds this many ms
+	SSLCert        *SSLCertCheck   `yaml:"ssl_cert,omitempty"`
 }
 
 // PortCheck defines parameters for checking if a port is open and listening.
@@ -68,6 +69,14 @@ type PortCheck struct {
 	Port     int    `yaml:"port"`
 	Protocol string `yaml:"protocol,omitempty"`
 	Host     string `yaml:"host,omitempty"`
+}
+
+// SSLCertCheck defines parameters for TLS certificate validation.
+type SSLCertCheck struct {
+	Host             string `yaml:"host"`
+	Port             int    `yaml:"port,omitempty"`             // defaults to 443
+	MinDaysRemaining int    `yaml:"min_days_remaining,omitempty"` // 0 = any non-expired cert passes
+	AllowSelfSigned  bool   `yaml:"allow_self_signed,omitempty"`
 }
 
 // HTTPCheck defines parameters for HTTP endpoint assertions.

@@ -2,6 +2,7 @@ package runner
 
 import (
 	"context"
+	"crypto/tls"
 	"fmt"
 	"io"
 	"net"
@@ -301,6 +302,57 @@ func CheckHTTP(check *schema.HTTPCheck) []AssertionResult {
 	}
 
 	return results
+}
+
+// CheckSSLCert dials host:port over TLS and validates the certificate chain,
+// expiry, and days-remaining threshold.
+func CheckSSLCert(check *schema.SSLCertCheck) AssertionResult {
+	port := check.Port
+	if port == 0 {
+		port = 443
+	}
+	addr := fmt.Sprintf("%s:%d", check.Host, port)
+	conf := &tls.Config{
+		ServerName:         check.Host,
+		InsecureSkipVerify: check.AllowSelfSigned, //nolint:gosec -- opt-in per AllowSelfSigned flag
+	}
+	dialer := &net.Dialer{Timeout: 10 * time.Second}
+	conn, err := tls.DialWithDialer(dialer, "tcp", addr, conf)
+	if err != nil {
+		return AssertionResult{Type: "ssl_cert", Expected: addr, Actual: err.Error(), Passed: false}
+	}
+	defer conn.Close()
+	certs := conn.ConnectionState().PeerCertificates
+	if len(certs) == 0 {
+		return AssertionResult{Type: "ssl_cert", Expected: addr, Actual: "no peer certificate", Passed: false}
+	}
+	leaf := certs[0]
+	now := time.Now()
+	if now.After(leaf.NotAfter) {
+		return AssertionResult{
+			Type:     "ssl_cert",
+			Expected: "valid cert",
+			Actual:   "expired on " + leaf.NotAfter.Format("2006-01-02"),
+			Passed:   false,
+		}
+	}
+	if check.MinDaysRemaining > 0 {
+		daysLeft := int(leaf.NotAfter.Sub(now).Hours() / 24)
+		if daysLeft < check.MinDaysRemaining {
+			return AssertionResult{
+				Type:     "ssl_cert",
+				Expected: fmt.Sprintf(">= %d days", check.MinDaysRemaining),
+				Actual:   fmt.Sprintf("%d days", daysLeft),
+				Passed:   false,
+			}
+		}
+	}
+	return AssertionResult{
+		Type:     "ssl_cert",
+		Expected: addr,
+		Actual:   fmt.Sprintf("valid, expires %s", leaf.NotAfter.Format("2006-01-02")),
+		Passed:   true,
+	}
 }
 
 // CheckJSONField extracts a field from JSON and validates it against equals/contains/matches.

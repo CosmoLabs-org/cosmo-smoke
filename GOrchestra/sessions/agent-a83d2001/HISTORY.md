@@ -4,10 +4,10 @@ base: master
 status: conflict
 created: 2026-04-16
 archived: 2026-04-16
-commits: 2
-files_changed: 33
-lines_added: 192
-lines_removed: 2547
+commits: 3
+files_changed: 37
+lines_added: 303
+lines_removed: 1754
 review_status: passed
 ---
 
@@ -16,10 +16,11 @@ review_status: passed
 ## Summary
 
 Branch merged via `ccs merg` on 2026-04-16.
-2 commits, 33 files changed (+192/-2547).
+3 commits, 37 files changed (+303/-1754).
 
 ## Commits
 
+- `34a04c3` chore(tracking): update worktree metadata
 - `1c6612f` chore: add quality review results
 - `1ddd788` feat(assertions): add ssl_cert assertion for TLS certificate validation
 
@@ -29,8 +30,12 @@ Branch merged via `ccs merg` on 2026-04-16.
 .ccsession.json                                    |  10 +-
  .review.json                                       |   8 +-
  .version-registry.json                             |   6 +-
- GOrchestra/intel/architecture.json                 |  30 +-
+ GOrchestra/intel/architecture.json                 |  31 +-
  GOrchestra/intel/status.json                       |   4 +-
+ GOrchestra/sessions/agent-a83d2001/.ccsession.json |  18 -
+ GOrchestra/sessions/agent-a83d2001/.review.json    |  11 -
+ GOrchestra/sessions/agent-a83d2001/HISTORY.md      |  63 --
+ GOrchestra/sessions/agent-a83d2001/session.json    |  27 -
  GOrchestra/sessions/agent-abe5a065/.ccsession.json |  18 -
  GOrchestra/sessions/agent-abe5a065/.review.json    |  11 -
  GOrchestra/sessions/agent-abe5a065/HISTORY.md      |  57 --
@@ -49,15 +54,15 @@ Branch merged via `ccs merg` on 2026-04-16.
  GOrchestra/worktrees/agent-afa452c4/session.json   |  11 -
  cmd/run.go                                         |   4 +-
  docs/changelog/unreleased.yaml                     |  12 -
- .../2026-04-16_111624_fbe4200e.md                  | 921 +--------------------
+ .../2026-04-16_111624_fbe4200e.md                  | 119 ++-
  docs/issues.yaml                                   |   4 +-
  docs/issues/FEAT-005.yaml                          |   4 +-
- ...4-16_fbe4200e-2cea-4fd9-9de7-0968ac40806e.jsonl | 906 --------------------
+ ...4-16_fbe4200e-2cea-4fd9-9de7-0968ac40806e.jsonl | 906 ---------------------
  internal/reporter/prometheus.go                    | 101 ---
  internal/reporter/prometheus_test.go               | 164 ----
  internal/runner/assertion.go                       |  62 +-
  internal/runner/assertion_test.go                  | 108 ++-
  internal/runner/runner.go                          |   9 +-
  internal/schema/schema.go                          |  10 +-
- 33 files changed, 192 insertions(+), 2547 deletions(-)
+ 37 files changed, 303 insertions(+), 1754 deletions(-)
 ```

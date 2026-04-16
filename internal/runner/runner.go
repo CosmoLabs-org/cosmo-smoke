@@ -315,6 +315,13 @@ func (r *Runner) runTest(t schema.Test, opts RunOptions) TestResult {
 			}
 		}
 	}
+	if t.Expect.SSLCert != nil {
+		a := CheckSSLCert(t.Expect.SSLCert)
+		assertions = append(assertions, a)
+		if !a.Passed {
+			allPassed = false
+		}
+	}
 
 	duration := time.Since(start)
 

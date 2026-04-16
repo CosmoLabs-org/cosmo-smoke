@@ -1,6 +1,8 @@
 package runner
 
 import (
+	"fmt"
+	"net"
 	"net/http"
 	"net/http/httptest"
 	"os"
@@ -806,5 +808,108 @@ func TestCheckResponseTime_FailOver(t *testing.T) {
 	}
 	if r.Expected != "<= 100ms" {
 		t.Errorf("expected expected='<= 100ms', got %q", r.Expected)
+	}
+}
+
+// ---------------------------------------------------------------------------
+// CheckSSLCert
+// ---------------------------------------------------------------------------
+
+// TestCheckSSLCert_Pass_AllowSelfSigned starts a local TLS test server (self-signed)
+// and verifies that CheckSSLCert passes when AllowSelfSigned is true.
+func TestCheckSSLCert_Pass_AllowSelfSigned(t *testing.T) {
+	srv := httptest.NewTLSServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.WriteHeader(http.StatusOK)
+	}))
+	defer srv.Close()
+
+	host, portStr, err := net.SplitHostPort(srv.Listener.Addr().String())
+	if err != nil {
+		t.Fatalf("failed to parse test server addr: %v", err)
+	}
+	port := 0
+	if _, err := fmt.Sscanf(portStr, "%d", &port); err != nil {
+		t.Fatalf("failed to parse port: %v", err)
+	}
+
+	r := CheckSSLCert(&schema.SSLCertCheck{
+		Host:            host,
+		Port:            port,
+		AllowSelfSigned: true,
+	})
+	if !r.Passed {
+		t.Errorf("expected pass with AllowSelfSigned=true, got fail: actual=%s", r.Actual)
+	}
+	if r.Type != "ssl_cert" {
+		t.Errorf("expected type 'ssl_cert', got %q", r.Type)
+	}
+}
+
+// TestCheckSSLCert_Fail_SelfSignedRejected verifies that a self-signed cert is rejected
+// when AllowSelfSigned is false (the default).
+func TestCheckSSLCert_Fail_SelfSignedRejected(t *testing.T) {
+	srv := httptest.NewTLSServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.WriteHeader(http.StatusOK)
+	}))
+	defer srv.Close()
+
+	host, portStr, err := net.SplitHostPort(srv.Listener.Addr().String())
+	if err != nil {
+		t.Fatalf("failed to parse test server addr: %v", err)
+	}
+	port := 0
+	if _, err := fmt.Sscanf(portStr, "%d", &port); err != nil {
+		t.Fatalf("failed to parse port: %v", err)
+	}
+
+	r := CheckSSLCert(&schema.SSLCertCheck{
+		Host:            host,
+		Port:            port,
+		AllowSelfSigned: false,
+	})
+	if r.Passed {
+		t.Errorf("expected fail for self-signed cert without AllowSelfSigned, got pass")
+	}
+}
+
+// TestCheckSSLCert_Fail_UnreachableHost verifies that a connection failure returns a failed result.
+func TestCheckSSLCert_Fail_UnreachableHost(t *testing.T) {
+	r := CheckSSLCert(&schema.SSLCertCheck{
+		Host:            "127.0.0.1",
+		Port:            19999,
+		AllowSelfSigned: true,
+	})
+	if r.Passed {
+		t.Errorf("expected fail for unreachable host, got pass")
+	}
+	if r.Type != "ssl_cert" {
+		t.Errorf("expected type 'ssl_cert', got %q", r.Type)
+	}
+}
+
+// TestCheckSSLCert_Pass_MinDaysRemaining verifies that a long-lived cert satisfies the threshold.
+func TestCheckSSLCert_Pass_MinDaysRemaining(t *testing.T) {
+	srv := httptest.NewTLSServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.WriteHeader(http.StatusOK)
+	}))
+	defer srv.Close()
+
+	host, portStr, err := net.SplitHostPort(srv.Listener.Addr().String())
+	if err != nil {
+		t.Fatalf("failed to parse test server addr: %v", err)
+	}
+	port := 0
+	if _, err := fmt.Sscanf(portStr, "%d", &port); err != nil {
+		t.Fatalf("failed to parse port: %v", err)
+	}
+
+	r := CheckSSLCert(&schema.SSLCertCheck{
+		Host:             host,
+		Port:             port,
+		AllowSelfSigned:  true,
+		MinDaysRemaining: 30,
+	})
+	if !r.Passed {
+		t.Errorf("expected pass with 30-day threshold on long-lived cert, got fail: actual=%s", r.Actual)
 	}
 }
