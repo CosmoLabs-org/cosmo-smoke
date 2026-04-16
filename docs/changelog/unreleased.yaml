@@ -4,7 +4,19 @@
 
 version: pending
 entries:
-    added: []
+    added:
+        - description: |-
+            # FEAT-006: TAP output format
+
+            **Type**: feature
+            **Status**: closed
+            **Created**: 2026-04-16
+
+            ## Description
+
+            Test Anything Protocol output for broader CI compatibility. Simpler than JUnit, widely supported.
+          source: manual
+          date: 2026-04-16T12:54:36.266391-03:00
     fixed: []
     changed: []
     deprecated: []
