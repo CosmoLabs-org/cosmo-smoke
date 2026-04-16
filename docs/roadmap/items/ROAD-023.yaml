@@ -1,11 +1,15 @@
 id: ROAD-023
 created_at: 2026-04-16T08:55:58.388478-03:00
-updated_at: 2026-04-16T08:55:58.389227-03:00
+updated_at: 2026-04-16T12:53:19.694807-03:00
 title: Auto-generate from running container
 description: 'Magic command: ''smoke init --from-running'' or ''smoke autoadd''. Inspect running container/process and generate .smoke.yaml automatically. Goss''s ''autoadd'' is beloved — we need this for adoption.'
-status: captured
+status: completed
 priority: 60
 tags:
     - v2.0
     - dx
     - magic
+notes:
+    - Shipped in commit 47c889a (--from-running)
+completed_in: v0.2.0
+completed_at: 2026-04-16T12:53:19.694804-03:00

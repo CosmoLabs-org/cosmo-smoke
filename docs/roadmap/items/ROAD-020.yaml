@@ -1,11 +1,15 @@
 id: ROAD-020
 created_at: 2026-04-16T08:55:53.417031-03:00
-updated_at: 2026-04-16T08:55:53.418809-03:00
+updated_at: 2026-04-16T12:53:19.635606-03:00
 title: Config inheritance — includes, vars, templates
 description: 'Goss-style config composition: ''includes:'' to import other .smoke.yaml files, ''--vars file.yaml'' for variable injection, Go template support ({{ .Env.FOO }}). Essential for DRY configs across environments.'
-status: captured
+status: completed
 priority: 85
 tags:
     - v1.2
     - config
     - dx
+notes:
+    - Shipped in commit 9ea0581 (config inheritance)
+completed_in: v0.2.0
+completed_at: 2026-04-16T12:53:19.635596-03:00

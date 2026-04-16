@@ -1,11 +1,15 @@
 id: ROAD-006
 created_at: 2026-04-15T17:36:08.980852-03:00
-updated_at: 2026-04-15T17:36:08.98188-03:00
+updated_at: 2026-04-16T12:53:19.47527-03:00
 title: HTTP endpoint assertions
 description: 'Start a server, hit URL, check response status/body. Syntax: http_get: url, expect: status: 200, body_contains: ''OK''. Critical for API smoke tests.'
-status: captured
+status: completed
 priority: 55
 tags:
     - v2.0
     - assertion
     - api
+notes:
+    - Shipped in commit ab31b78 (HTTP endpoint assertions)
+completed_in: v0.2.0
+completed_at: 2026-04-16T12:53:19.475266-03:00
