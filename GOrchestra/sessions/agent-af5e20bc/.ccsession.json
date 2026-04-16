@@ -1,0 +1,18 @@
+{
+  "version": "1.0.0",
+  "id": "agent-af5e20bc",
+  "name": "agent-af5e20bc",
+  "dependencies": [],
+  "dependents": [],
+  "status": "working",
+  "timestamps": {
+    "created": "2026-04-16T15:42:26.059998-03:00",
+    "lastActivity": "2026-04-16T15:42:26.060004-03:00"
+  },
+  "merge": {
+    "order": 0,
+    "readyToMerge": false,
+    "baseBranch": "master"
+  },
+  "branch": "agent-af5e20bc"
+}

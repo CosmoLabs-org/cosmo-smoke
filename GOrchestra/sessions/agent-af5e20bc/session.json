@@ -1,0 +1,27 @@
+{
+  "branch": "agent-af5e20bc",
+  "base_branch": "master",
+  "status": "conflict",
+  "created": "2026-04-16T15:47:20-03:00",
+  "archived": "2026-04-16T15:56:09.849458-03:00",
+  "commits": [
+    {
+      "hash": "0ff0bbc",
+      "author": "GΛB",
+      "message": "chore: add quality review results",
+      "date": 1776365498
+    },
+    {
+      "hash": "4699981",
+      "author": "GΛB",
+      "message": "feat(runner): add allow_failure flag for flaky tests",
+      "date": 1776365240
+    }
+  ],
+  "total_commits": 2,
+  "files_changed": 24,
+  "lines_added": 331,
+  "lines_removed": 352,
+  "diff_stat": ".ccsession.json                                    |  18 ---\n .gopls.json                                        |   5 -\n .review.json                                       |   8 +-\n .version-registry.json                             |  25 +---\n GOrchestra/intel/architecture.json                 |  31 ++---\n GOrchestra/intel/status.json                       |   6 +-\n GOrchestra/sessions/agent-afa452c4/.ccsession.json |  19 ---\n GOrchestra/sessions/agent-afa452c4/.review.json    |  11 --\n GOrchestra/sessions/agent-afa452c4/HISTORY.md      |  40 -------\n GOrchestra/sessions/agent-afa452c4/session.json    |  39 ------\n docs/issues.yaml                                   |   2 +-\n docs/issues/FEAT-006.yaml                          |   2 +-\n internal/reporter/json.go                          |  54 +++++----\n internal/reporter/junit.go                         |   2 +-\n internal/reporter/reporter.go                      |  28 +++--\n internal/reporter/tap.go                           |   7 ++\n internal/reporter/tap_test.go                      |  26 ++++\n internal/reporter/terminal.go                      |  16 +++\n internal/runner/assertion.go                       |  36 ------\n internal/runner/assertion_test.go                  |  52 --------\n internal/runner/runner.go                          |  81 +++++++------\n internal/runner/runner_test.go                     | 131 +++++++++++++++++++++\n internal/schema/schema.go                          |  14 +--\n internal/schema/schema_test.go                     |  30 +++++\n 24 files changed, 331 insertions(+), 352 deletions(-)",
+  "review_status": "passed"
+}
