@@ -253,6 +253,20 @@ func (r *Runner) runTest(t schema.Test, opts RunOptions) TestResult {
 			allPassed = false
 		}
 	}
+	if t.Expect.StderrMatches != "" {
+		a := CheckStderrMatches(stderr.String(), t.Expect.StderrMatches)
+		assertions = append(assertions, a)
+		if !a.Passed {
+			allPassed = false
+		}
+	}
+	if t.Expect.EnvExists != "" {
+		a := CheckEnvExists(t.Expect.EnvExists)
+		assertions = append(assertions, a)
+		if !a.Passed {
+			allPassed = false
+		}
+	}
 	if t.Expect.FileExists != "" {
 		a := CheckFileExists(t.Expect.FileExists, r.ConfigDir)
 		assertions = append(assertions, a)

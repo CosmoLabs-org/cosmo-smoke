@@ -308,3 +308,90 @@ func TestCheckFileExists_EmptyConfigDir(t *testing.T) {
 	// Result depends on whether file exists in cwd, but it must not panic
 	_ = r
 }
+
+// ---------------------------------------------------------------------------
+// CheckStderrMatches
+// ---------------------------------------------------------------------------
+
+func TestCheckStderrMatches_Pass(t *testing.T) {
+	r := CheckStderrMatches("error: line 42: undefined", `line \d+`)
+	if !r.Passed {
+		t.Errorf("expected pass")
+	}
+	if r.Type != "stderr_matches" {
+		t.Errorf("expected type 'stderr_matches', got %q", r.Type)
+	}
+}
+
+func TestCheckStderrMatches_Fail(t *testing.T) {
+	r := CheckStderrMatches("error: unknown", `line \d+`)
+	if r.Passed {
+		t.Errorf("expected fail")
+	}
+}
+
+func TestCheckStderrMatches_InvalidRegex(t *testing.T) {
+	r := CheckStderrMatches("some error", "[invalid(regex")
+	if r.Passed {
+		t.Errorf("expected fail for invalid regex")
+	}
+	if r.Actual == "" {
+		t.Errorf("expected error message in Actual")
+	}
+}
+
+func TestCheckStderrMatches_EmptyStderr(t *testing.T) {
+	r := CheckStderrMatches("", "error")
+	if r.Passed {
+		t.Errorf("expected fail for empty stderr")
+	}
+}
+
+func TestCheckStderrMatches_EmptyPattern(t *testing.T) {
+	r := CheckStderrMatches("some error", "")
+	if !r.Passed {
+		t.Errorf("expected pass: empty pattern matches everything")
+	}
+}
+
+// ---------------------------------------------------------------------------
+// CheckEnvExists
+// ---------------------------------------------------------------------------
+
+func TestCheckEnvExists_Pass(t *testing.T) {
+	os.Setenv("SMOKE_TEST_VAR", "value123")
+	defer os.Unsetenv("SMOKE_TEST_VAR")
+
+	r := CheckEnvExists("SMOKE_TEST_VAR")
+	if !r.Passed {
+		t.Errorf("expected pass for set env var")
+	}
+	if r.Type != "env_exists" {
+		t.Errorf("expected type 'env_exists', got %q", r.Type)
+	}
+	if r.Actual != "value123" {
+		t.Errorf("expected Actual to be 'value123', got %q", r.Actual)
+	}
+}
+
+func TestCheckEnvExists_Fail(t *testing.T) {
+	os.Unsetenv("SMOKE_NONEXISTENT_VAR")
+
+	r := CheckEnvExists("SMOKE_NONEXISTENT_VAR")
+	if r.Passed {
+		t.Errorf("expected fail for unset env var")
+	}
+	if r.Actual != "" {
+		t.Errorf("expected empty Actual for unset var, got %q", r.Actual)
+	}
+}
+
+func TestCheckEnvExists_EmptyValue(t *testing.T) {
+	os.Setenv("SMOKE_EMPTY_VAR", "")
+	defer os.Unsetenv("SMOKE_EMPTY_VAR")
+
+	r := CheckEnvExists("SMOKE_EMPTY_VAR")
+	if r.Passed {
+		t.Errorf("expected fail: empty string should count as not set")
+	}
+}

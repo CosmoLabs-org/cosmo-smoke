@@ -48,7 +48,9 @@ type Expect struct {
 	StdoutContains string `yaml:"stdout_contains,omitempty"`
 	StdoutMatches  string `yaml:"stdout_matches,omitempty"`
 	StderrContains string `yaml:"stderr_contains,omitempty"`
+	StderrMatches  string `yaml:"stderr_matches,omitempty"`
 	FileExists     string `yaml:"file_exists,omitempty"`
+	EnvExists      string `yaml:"env_exists,omitempty"`
 }
 
 // Duration wraps time.Duration for YAML unmarshaling from strings like "5s".
