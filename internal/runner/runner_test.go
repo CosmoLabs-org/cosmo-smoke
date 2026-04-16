@@ -359,3 +359,104 @@ func TestRunner_AllowFailure_TestResultFlag(t *testing.T) {
 		t.Error("expected TestResult.Passed = false (test did fail)")
 	}
 }
+
+func TestRetry_PassesOnFirstAttempt(t *testing.T) {
+	cfg := newConfig([]schema.Test{
+		{
+			Name: "always-passes",
+			Run:  "echo hi",
+			Expect: schema.Expect{ExitCode: intPtr(0)},
+			Retry: &schema.RetryPolicy{
+				Count:   3,
+				Backoff: schema.Duration{Duration: 10 * time.Millisecond},
+			},
+		},
+	})
+	r := &Runner{Config: cfg, Reporter: &noopReporter{}, ConfigDir: t.TempDir()}
+	start := time.Now()
+	result, err := r.Run(RunOptions{})
+	elapsed := time.Since(start)
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+	if result.Passed != 1 {
+		t.Errorf("passed = %d, want 1", result.Passed)
+	}
+	if len(result.Tests) != 1 {
+		t.Fatalf("expected 1 test result, got %d", len(result.Tests))
+	}
+	tr := result.Tests[0]
+	if tr.Attempts != 1 {
+		t.Errorf("Attempts = %d, want 1 (passed on first try)", tr.Attempts)
+	}
+	if elapsed >= 50*time.Millisecond {
+		t.Errorf("elapsed = %v, want < 50ms (no backoff should occur)", elapsed)
+	}
+}
+
+func TestRetry_PassesAfterFailure(t *testing.T) {
+	flagFile := t.TempDir() + "/flag"
+	// First run: flag absent → touch it and exit 1. Second run: flag present → exit 0.
+	cmd := "[ -f " + flagFile + " ] && exit 0 || (touch " + flagFile + " && exit 1)"
+	cfg := newConfig([]schema.Test{
+		{
+			Name: "flaky",
+			Run:  cmd,
+			Expect: schema.Expect{ExitCode: intPtr(0)},
+			Retry: &schema.RetryPolicy{
+				Count:   3,
+				Backoff: schema.Duration{Duration: 10 * time.Millisecond},
+			},
+		},
+	})
+	r := &Runner{Config: cfg, Reporter: &noopReporter{}, ConfigDir: t.TempDir()}
+	result, err := r.Run(RunOptions{})
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+	if result.Passed != 1 {
+		t.Errorf("passed = %d, want 1", result.Passed)
+	}
+	if len(result.Tests) != 1 {
+		t.Fatalf("expected 1 test result, got %d", len(result.Tests))
+	}
+	tr := result.Tests[0]
+	if tr.Attempts != 2 {
+		t.Errorf("Attempts = %d, want 2", tr.Attempts)
+	}
+}
+
+func TestRetry_ExhaustsAllAttempts(t *testing.T) {
+	cfg := newConfig([]schema.Test{
+		{
+			Name: "always-fails",
+			Run:  "exit 1",
+			Expect: schema.Expect{ExitCode: intPtr(0)},
+			Retry: &schema.RetryPolicy{
+				Count:   3,
+				Backoff: schema.Duration{Duration: 10 * time.Millisecond},
+			},
+		},
+	})
+	r := &Runner{Config: cfg, Reporter: &noopReporter{}, ConfigDir: t.TempDir()}
+	start := time.Now()
+	result, err := r.Run(RunOptions{})
+	elapsed := time.Since(start)
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+	if result.Failed != 1 {
+		t.Errorf("failed = %d, want 1", result.Failed)
+	}
+	if len(result.Tests) != 1 {
+		t.Fatalf("expected 1 test result, got %d", len(result.Tests))
+	}
+	tr := result.Tests[0]
+	if tr.Attempts != 3 {
+		t.Errorf("Attempts = %d, want 3", tr.Attempts)
+	}
+	// Two backoffs: 10ms + 20ms = 30ms minimum
+	if elapsed < 30*time.Millisecond {
+		t.Errorf("elapsed = %v, want >= 30ms (two backoffs: 10ms + 20ms)", elapsed)
+	}
+}

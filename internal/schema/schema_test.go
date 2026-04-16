@@ -311,3 +311,69 @@ tests:
 		t.Error("expected Tests[1].AllowFailure = false (default)")
 	}
 }
+
+func TestParse_RetryPolicy(t *testing.T) {
+	tests := []struct {
+		name      string
+		yaml      string
+		wantNil   bool
+		wantCount int
+		wantBackoff time.Duration
+	}{
+		{
+			name: "retry block present",
+			yaml: `
+version: 1
+project: myapp
+tests:
+  - name: "flaky"
+    run: "curl -sf https://example.com"
+    retry:
+      count: 3
+      backoff: 1s
+    expect:
+      exit_code: 0
+`,
+			wantNil:     false,
+			wantCount:   3,
+			wantBackoff: 1 * time.Second,
+		},
+		{
+			name: "retry block absent",
+			yaml: `
+version: 1
+project: myapp
+tests:
+  - name: "normal"
+    run: "echo hi"
+    expect:
+      exit_code: 0
+`,
+			wantNil: true,
+		},
+	}
+	for _, tc := range tests {
+		t.Run(tc.name, func(t *testing.T) {
+			cfg, err := Parse([]byte(tc.yaml))
+			if err != nil {
+				t.Fatalf("unexpected error: %v", err)
+			}
+			got := cfg.Tests[0].Retry
+			if tc.wantNil {
+				if got != nil {
+					t.Errorf("expected Retry == nil, got %+v", got)
+				}
+				return
+			}
+			if got == nil {
+				t.Fatal("expected Retry != nil")
+			}
+			if got.Count != tc.wantCount {
+				t.Errorf("Count = %d, want %d", got.Count, tc.wantCount)
+			}
+			if got.Backoff.Duration != tc.wantBackoff {
+				t.Errorf("Backoff = %v, want %v", got.Backoff.Duration, tc.wantBackoff)
+			}
+		})
+	}
+}

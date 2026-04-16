@@ -121,3 +121,59 @@ func TestValidate_MultipleErrors(t *testing.T) {
 		t.Errorf("expected at least 3 errors, got %d: %v", len(ve.Errors), ve.Errors)
 	}
 }
+
+func TestValidate_RetryCountZero(t *testing.T) {
+	cfg := &SmokeConfig{
+		Version: 1,
+		Project: "myapp",
+		Tests: []Test{
+			{
+				Name: "test1", Run: "echo hi",
+				Retry: &RetryPolicy{Count: 0, Backoff: Duration{Duration: 1e9}},
+			},
+		},
+	}
+	err := Validate(cfg)
+	if err == nil {
+		t.Fatal("expected error for retry.count = 0")
+	}
+	if !strings.Contains(err.Error(), "retry.count must be >= 1") {
+		t.Errorf("error = %q, want mention of retry.count", err.Error())
+	}
+}
+
+func TestValidate_RetryBackoffZero(t *testing.T) {
+	cfg := &SmokeConfig{
+		Version: 1,
+		Project: "myapp",
+		Tests: []Test{
+			{
+				Name: "test1", Run: "echo hi",
+				Retry: &RetryPolicy{Count: 3, Backoff: Duration{Duration: 0}},
+			},
+		},
+	}
+	err := Validate(cfg)
+	if err == nil {
+		t.Fatal("expected error for retry.backoff = 0")
+	}
+	if !strings.Contains(err.Error(), "retry.backoff must be > 0") {
+		t.Errorf("error = %q, want mention of retry.backoff", err.Error())
+	}
+}
+
+func TestValidate_RetryValid(t *testing.T) {
+	cfg := &SmokeConfig{
+		Version: 1,
+		Project: "myapp",
+		Tests: []Test{
+			{
+				Name: "test1", Run: "echo hi",
+				Retry: &RetryPolicy{Count: 3, Backoff: Duration{Duration: 1e9}},
+			},
+		},
+	}
+	if err := Validate(cfg); err != nil {
+		t.Errorf("unexpected error for valid retry block: %v", err)
+	}
+}
