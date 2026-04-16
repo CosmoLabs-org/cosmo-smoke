@@ -1,10 +1,16 @@
 {
   "branch": "agent-afa452c4",
   "base_branch": "master",
-  "status": "conflict",
+  "status": "merged",
   "created": "2026-04-16T15:46:29-03:00",
-  "archived": "2026-04-16T15:55:31.036107-03:00",
+  "archived": "2026-04-16T15:55:50.358976-03:00",
   "commits": [
+    {
+      "hash": "58fd9e0",
+      "author": "GΛB",
+      "message": "chore(tracking): update local tooling metadata",
+      "date": 1776365743
+    },
     {
       "hash": "2061a51",
       "author": "GΛB",
@@ -24,10 +30,10 @@
       "date": 1776365189
     }
   ],
-  "total_commits": 3,
-  "files_changed": 13,
-  "lines_added": 121,
-  "lines_removed": 125,
-  "diff_stat": ".review.json                                       | 10 ++---\n GOrchestra/intel/architecture.json                 | 32 ++++++-------\n GOrchestra/intel/status.json                       |  4 +-\n GOrchestra/sessions/agent-afa452c4/.ccsession.json | 18 --------\n GOrchestra/sessions/agent-afa452c4/.review.json    | 11 -----\n GOrchestra/sessions/agent-afa452c4/HISTORY.md      | 38 ----------------\n GOrchestra/sessions/agent-afa452c4/session.json    | 33 --------------\n docs/issues.yaml                                   |  2 +-\n docs/issues/FEAT-006.yaml                          |  2 +-\n internal/runner/assertion.go                       | 36 +++++++++++++++\n internal/runner/assertion_test.go                  | 52 ++++++++++++++++++++++\n internal/runner/runner.go                          |  7 +++\n internal/schema/schema.go                          |  1 +\n 13 files changed, 121 insertions(+), 125 deletions(-)",
+  "total_commits": 4,
+  "files_changed": 8,
+  "lines_added": 19,
+  "lines_removed": 124,
+  "diff_stat": "GOrchestra/intel/architecture.json                 | 27 ++++++-------\n GOrchestra/intel/status.json                       |  6 +--\n GOrchestra/sessions/agent-afa452c4/.ccsession.json | 18 ---------\n GOrchestra/sessions/agent-afa452c4/.review.json    | 11 ------\n GOrchestra/sessions/agent-afa452c4/HISTORY.md      | 44 ----------------------\n GOrchestra/sessions/agent-afa452c4/session.json    | 33 ----------------\n docs/issues.yaml                                   |  2 +-\n docs/issues/FEAT-006.yaml                          |  2 +-\n 8 files changed, 19 insertions(+), 124 deletions(-)",
   "review_status": "passed"
 }

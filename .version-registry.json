@@ -1,13 +1,34 @@
 {
   "repository": {
     "version": "0.2.0",
-    "build": 49,
+    "build": 54,
     "name": "cosmo-smoke",
-    "lastUpdated": "2026-04-16T18:54:38Z",
+    "lastUpdated": "2026-04-16T18:55:50Z",
     "derived_from": "git tag"
   },
   "metadata": {
     "last_synced": "2026-04-16T12:19:18Z",
     "sync_method": "git_history_analysis"
+  },
+  "releaseContext": {
+    "pendingFeatures": [
+      {
+        "branch": "agent-afa452c4",
+        "title": "Agent afa452c4",
+        "commits": 4,
+        "suggestedBump": "patch",
+        "mergedAt": "2026-04-16T15:55:50-03:00",
+        "files": [
+          ".ccsession.json",
+          ".gopls.json",
+          ".review.json",
+          ".version-registry.json",
+          "internal/runner/assertion.go",
+          "internal/runner/assertion_test.go",
+          "internal/runner/runner.go",
+          "internal/schema/schema.go"
+        ]
+      }
+    ]
   }
 }

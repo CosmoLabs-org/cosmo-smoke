@@ -1,11 +1,11 @@
 {
   "version": "1.0",
-  "generated_at": "2026-04-16T15:55:30.455898-03:00",
+  "generated_at": "2026-04-16T15:55:38.915475-03:00",
   "generated_by": "GLM-4.7",
-  "expires_at": "2026-04-17T15:55:30.455898-03:00",
-  "last_analyzed_commit": "3570de147116a610a5d84391ddc4471c6535e27f",
-  "summary": "A Go-based orchestration and assertion testing framework with plugin support and Kubernetes integration.",
-  "architecture": "modular monolith",
+  "expires_at": "2026-04-17T15:55:38.915475-03:00",
+  "last_analyzed_commit": "f8be1e80138ab71a5b81f3711295d5206aef625e",
+  "summary": "A Go-based testing and validation framework featuring detection, assertion running, and JUnit reporting with Kubernetes and plugin support.",
+  "architecture": "monolith",
   "primary_language": "Go",
   "hot_files": [
     "internal/runner/runner.go",
@@ -15,19 +15,19 @@
     "internal/reporter/junit_test.go"
   ],
   "patterns": [
-    "plugin architecture",
-    "runner-executor pattern",
-    "separation of concerns (detector/reporter/runner/schema)",
-    "test-driven development"
+    "Standard Go project layout",
+    "Test-driven development",
+    "Plugin architecture",
+    "Pipeline pattern (detect, run, report)"
   ],
   "concerns": [
-    "excessive auto-commit session metadata cluttering git history",
-    "version injection via ldflags requires strict build process adherence",
-    "untracked files and staged changes indicate incomplete commits"
+    "High frequency of automated session metadata commits cluttering git history",
+    "Untracked files in working directory",
+    "Key hot files are primarily tests, suggesting core logic may be under-documented or fragmented"
   ],
   "suggestions": [
-    "add session metadata to .gitignore to reduce commit noise",
-    "consolidate or document the multiple config directories (.claude, .gorchestra, GOrchestra)",
-    "focus on the runner and detector modules as they contain the core logic"
+    "Add .gitignore rules for automated session metadata files to reduce commit noise",
+    "Commit or ignore the 3 untracked files to clean up the working tree",
+    "Focus on core implementation files (e.g., detector.go, schema.go) rather than just tests for deeper understanding"
   ]
 }
