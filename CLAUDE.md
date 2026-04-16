@@ -45,7 +45,7 @@ go build -ldflags "-s -w -X github.com/CosmoLabs-org/cosmo-smoke/cmd.Version=X.Y
 
 ```bash
 smoke run [--tag X] [--exclude-tag X] [--format terminal|json|junit|tap] [--fail-fast] [--timeout 30s] [-f path] [--dry-run]
-smoke init [--force]
+smoke init [--force] [--from-running CONTAINER]
 smoke version
 ```
 

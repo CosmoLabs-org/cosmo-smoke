@@ -5,9 +5,9 @@ import (
 	"os"
 
 	"github.com/CosmoLabs-org/cosmo-smoke/internal/detector"
-	"gopkg.in/yaml.v3"
-
+	"github.com/CosmoLabs-org/cosmo-smoke/internal/schema"
 	"github.com/spf13/cobra"
+	"gopkg.in/yaml.v3"
 )
 
 var initCmd = &cobra.Command{
@@ -17,11 +17,15 @@ var initCmd = &cobra.Command{
 	RunE:  runInit,
 }
 
-var forceOverwrite bool
+var (
+	forceOverwrite bool
+	fromRunning    string
+)
 
 func init() {
 	rootCmd.AddCommand(initCmd)
 	initCmd.Flags().BoolVarP(&forceOverwrite, "force", "f", false, "Overwrite existing .smoke.yaml")
+	initCmd.Flags().StringVar(&fromRunning, "from-running", "", "Generate config by inspecting a running Docker container")
 }
 
 func runInit(cmd *cobra.Command, args []string) error {
@@ -29,23 +33,37 @@ func runInit(cmd *cobra.Command, args []string) error {
 		return fmt.Errorf(".smoke.yaml already exists (use --force to overwrite)")
 	}
 
-	cwd, err := os.Getwd()
-	if err != nil {
-		return fmt.Errorf("getting working directory: %w", err)
-	}
+	var cfg *schema.SmokeConfig
 
-	types := detector.Detect(cwd)
-	if len(types) == 0 {
-		fmt.Println("No project type detected. Creating a minimal .smoke.yaml")
-	} else {
-		names := make([]string, len(types))
-		for i, t := range types {
-			names[i] = string(t)
+	if fromRunning != "" {
+		// Inspect running container
+		fmt.Printf("Inspecting container: %s\n", fromRunning)
+		var err error
+		cfg, err = detector.InspectContainer(fromRunning)
+		if err != nil {
+			return fmt.Errorf("inspecting container: %w", err)
 		}
-		fmt.Printf("Detected: %v\n", names)
-	}
+		fmt.Printf("Found: %d ports, %d processes\n", len(cfg.Tests), countProcessTests(cfg))
+	} else {
+		// Auto-detect from filesystem
+		cwd, err := os.Getwd()
+		if err != nil {
+			return fmt.Errorf("getting working directory: %w", err)
+		}
 
-	cfg := detector.GenerateConfig(cwd, types)
+		types := detector.Detect(cwd)
+		if len(types) == 0 {
+			fmt.Println("No project type detected. Creating a minimal .smoke.yaml")
+		} else {
+			names := make([]string, len(types))
+			for i, t := range types {
+				names[i] = string(t)
+			}
+			fmt.Printf("Detected: %v\n", names)
+		}
+
+		cfg = detector.GenerateConfig(cwd, types)
+	}
 
 	data, err := yaml.Marshal(cfg)
 	if err != nil {
@@ -58,4 +76,14 @@ func runInit(cmd *cobra.Command, args []string) error {
 
 	fmt.Println("Created .smoke.yaml")
 	return nil
+}
+
+func countProcessTests(cfg *schema.SmokeConfig) int {
+	count := 0
+	for _, t := range cfg.Tests {
+		if t.Expect.PortListening != nil {
+			count++
+		}
+	}
+	return count
 }
