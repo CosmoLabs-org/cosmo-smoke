@@ -1,11 +1,11 @@
 {
   "version": "1.0",
-  "generated_at": "2026-04-16T19:09:38.018247-03:00",
+  "generated_at": "2026-04-16T19:30:37.302768-03:00",
   "generated_by": "GLM-4.7",
-  "expires_at": "2026-04-17T19:09:38.018247-03:00",
-  "last_analyzed_commit": "9f727b8b21687a4095625d938b5724390f13e69c",
-  "summary": "A Go-based CLI tool that orchestrates schema validation, detection, and assertion running with plugin support.",
-  "architecture": "modular-cli",
+  "expires_at": "2026-04-17T19:30:37.302768-03:00",
+  "last_analyzed_commit": "432442a148a6032bf446eaaebe4c9dc5869dce4e",
+  "summary": "A Go-based modular orchestration tool with a plugin system that detects, runs, and reports on schema-defined assertions, primarily targeting Kubernetes environments.",
+  "architecture": "modular monolith",
   "primary_language": "Go",
   "hot_files": [
     "internal/runner/runner.go",
@@ -15,19 +15,21 @@
     "internal/runner/runner_test.go"
   ],
   "patterns": [
-    "plugin-architecture",
     "runner-executor",
-    "schema-validation",
-    "assertion-testing"
+    "plugin architecture",
+    "separation of concerns (detector/reporter/runner/schema)",
+    "test-driven development"
   ],
   "concerns": [
-    "uncommitted changes (3 modified, 1 staged, 4 untracked) indicate instability",
-    "recent commits are dominated by automated agent session archival rather than feature work",
-    "examples/kubernetes suggests potential complexity in deployment not reflected in core code"
+    "uncommitted changes (5 modified, 6 untracked) indicate instability",
+    "automated session metadata commits cluttering git history",
+    "recent commits are mostly merge and chore operations, lacking feature work",
+    "examples limited to kubernetes, suggesting narrow scope or early maturity"
   ],
   "suggestions": [
-    "commit or stash the working tree changes to establish a clean baseline",
-    "clarify the relationship between the detector, runner, and reporter modules",
-    "document the plugin interface and expected schema format"
+    "commit or stash the current working tree changes to stabilize the branch",
+    "configure .gitignore or CI to prevent automated metadata commits from polluting history",
+    "add documentation for the plugin system to clarify extension points",
+    "expand examples beyond kubernetes to demonstrate broader capabilities"
   ]
 }
