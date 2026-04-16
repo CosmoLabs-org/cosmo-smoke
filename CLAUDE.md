@@ -43,7 +43,7 @@ go build -ldflags "-s -w -X github.com/CosmoLabs-org/cosmo-smoke/cmd.Version=X.Y
 ## Commands
 
 ```bash
-smoke run [--tag X] [--exclude-tag X] [--format json] [--fail-fast] [--timeout 30s] [-f path] [--dry-run]
+smoke run [--tag X] [--exclude-tag X] [--format terminal|json|junit|tap] [--fail-fast] [--timeout 30s] [-f path] [--dry-run]
 smoke init [--force]
 smoke version
 ```
@@ -56,7 +56,10 @@ smoke version
 | stdout_contains | `string` | Substring match on stdout |
 | stdout_matches | `string` | Regex match on stdout |
 | stderr_contains | `string` | Substring match on stderr |
+| stderr_matches | `string` | Regex match on stderr |
 | file_exists | `string` | File exists relative to config dir |
+| env_exists | `string` | Environment variable exists |
+| port_listening | `{port, protocol?, host?}` | TCP/UDP port is open |
 
 ## Detected Project Types
 
