@@ -1,11 +1,11 @@
 {
-  "score": 7,
+  "score": 9,
   "passed": true,
-  "reviewed_at": "2026-04-16T12:11:41Z",
+  "reviewed_at": "2026-04-16T18:51:38Z",
   "reviewer": "opus",
-  "origin": "glm-agent",
+  "origin": "unknown",
   "iterations": 0,
   "fixes_applied": 0,
-  "issues_remaining": 6,
-  "summary": "Score 7/10, 6 issues"
+  "issues_remaining": 0,
+  "summary": "Score 9/10, 0 issues"
 }
