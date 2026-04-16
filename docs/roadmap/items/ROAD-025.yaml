@@ -1,0 +1,15 @@
+id: ROAD-025
+created_at: 2026-04-16T16:14:47.003976-03:00
+updated_at: 2026-04-16T16:14:54.809274-03:00
+title: Response time threshold assertion
+description: |-
+    # Response time threshold assertion
+
+    Assert command/HTTP completes within N milliseconds. Performance smoke: 'API responds in <500ms'. Catch regressions early.
+status: captured
+priority: 85
+effort: small
+tags:
+    - assertion
+origin:
+    idea_slug: 2026-04-16-response-time-threshold-assertion

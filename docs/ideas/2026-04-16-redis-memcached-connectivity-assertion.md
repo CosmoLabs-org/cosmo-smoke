@@ -2,9 +2,12 @@
 id: IDEA-MO1FBY19
 title: Redis/Memcached connectivity assertion
 created: "2026-04-16T08:56:43.917796-03:00"
-status: seed
+status: harvested
 source: human
+promoted_to: ROAD-027
 ---
+
+# Redis/Memcached connectivity assertion
 
 # Redis/Memcached connectivity assertion
 

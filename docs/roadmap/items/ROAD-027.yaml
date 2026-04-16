@@ -1,0 +1,15 @@
+id: ROAD-027
+created_at: 2026-04-16T16:14:47.123606-03:00
+updated_at: 2026-04-16T16:14:54.947801-03:00
+title: Redis/Memcached connectivity assertion
+description: |-
+    # Redis/Memcached connectivity assertion
+
+    Cache connectivity smoke: PING Redis, verify response. Essential for stateful backends.
+status: captured
+priority: 80
+effort: small
+tags:
+    - assertion
+origin:
+    idea_slug: 2026-04-16-redis-memcached-connectivity-assertion

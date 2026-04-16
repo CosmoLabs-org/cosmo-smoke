@@ -1,0 +1,15 @@
+id: ROAD-026
+created_at: 2026-04-16T16:14:47.070575-03:00
+updated_at: 2026-04-16T16:14:54.884636-03:00
+title: SSL certificate validation assertion
+description: |-
+    # SSL certificate validation assertion
+
+    Check SSL cert validity, expiry date, issuer. Alert if cert expires within N days. Prevent outages.
+status: captured
+priority: 90
+effort: small
+tags:
+    - assertion
+origin:
+    idea_slug: 2026-04-16-ssl-certificate-validation-assertion

@@ -2,9 +2,12 @@
 id: IDEA-MO1FC0DP
 title: SSL certificate validation assertion
 created: "2026-04-16T08:56:46.957967-03:00"
-status: seed
+status: harvested
 source: human
+promoted_to: ROAD-026
 ---
+
+# SSL certificate validation assertion
 
 # SSL certificate validation assertion
 
