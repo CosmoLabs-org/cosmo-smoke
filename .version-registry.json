@@ -1,7 +1,7 @@
 {
   "repository": {
     "version": "0.1.0",
-    "build": 26,
+    "build": 27,
     "name": "cosmo-smoke",
     "lastUpdated": "2026-04-16T12:20:35Z",
     "derived_from": "git tag"
