@@ -31,7 +31,7 @@ The session proved a repeatable multi-agent workflow: Opus brief → Sonnet agen
 
 ## Goals (6 total, from v0.4-tagged roadmap)
 
-### [ ] 1. Push v0.3.0 to GitHub
+### [x] 1. Push v0.3.0 to GitHub
 Run `git push origin master --tags` to publish on `CosmoLabs-org/cosmo-smoke`.
 
 ### [ ] 2. ROAD-024: Goss migration tool (priority 85)
