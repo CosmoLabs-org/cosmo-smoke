@@ -1,11 +1,13 @@
 {
-  "hash": "ef17fb5324678878347df4d8fa9595ab283c8cfa323ce07f7875dc49c6946feb",
+  "hash": "b1c51dcbe96331f9137947d2d2f9e789cbb2c9919dc6d6b08610a00a54be0f89",
   "project_name": "cosmo-smoke",
   "language": "go",
   "framework": "cli",
   "directories": [
     "GOrchestra",
     "cmd",
+    "docs",
+    "examples",
     "internal",
     "plugins"
   ],
@@ -21,7 +23,7 @@
     "mousetrap",
     "pflag"
   ],
-  "has_tests": false,
-  "has_ci": false,
-  "generated_at": "2026-04-15T17:30:21.792791-03:00"
+  "has_tests": true,
+  "has_ci": true,
+  "generated_at": "2026-04-16T09:05:08.535427-03:00"
 }

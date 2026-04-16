@@ -1,35 +1,33 @@
 {
   "version": "1.0",
-  "generated_at": "2026-04-15T17:31:52.847294-03:00",
+  "generated_at": "2026-04-16T09:05:27.712892-03:00",
   "generated_by": "GLM-4.7",
-  "expires_at": "2026-04-16T17:31:52.847294-03:00",
-  "last_analyzed_commit": "dab12c83fe4121e114f0075ff5acf2e01f284093",
-  "summary": "A Go-based CLI tool that detects code patterns and runs schema-validated test assertions using a plugin architecture.",
+  "expires_at": "2026-04-17T09:05:27.712892-03:00",
+  "last_analyzed_commit": "bddc019bdc18b7593b416b0f8e5e27011dc1eef1",
+  "summary": "GOrchestra is an early-stage Go-based orchestration tool with a plugin system, Kubernetes integrations, and a test-driven core architecture.",
   "architecture": "monolith",
   "primary_language": "Go",
   "hot_files": [
     "internal/runner/runner.go",
-    "internal/detector/templates.go",
-    "internal/schema/validate_test.go",
-    "internal/runner/assertion_test.go",
-    "internal/detector/detector_test.go"
+    "internal/detector/detector_test.go",
+    "internal/schema/schema_test.go",
+    "cmd/serve.go",
+    "internal/reporter/junit_test.go"
   ],
   "patterns": [
     "plugin architecture",
-    "template method",
-    "CLI command pattern",
-    "schema validation"
+    "test-driven development",
+    "separation of concerns (detector/runner/reporter/schema)",
+    "standard Go project layout"
   ],
   "concerns": [
-    "untracked and modified files in working directory indicate instability",
-    "docs directory is fragmented across multiple locations (docs/, root/, GOrchestra/)",
-    "config directories are scattered (.gorchestra/, GOrchestra/intel/)",
-    "early stage project with no production source files listed, only tests and templates"
+    "project is in early scaffolding phase with uncommitted changes",
+    "lack of implementation files (only tests and serve.go visible in key files)",
+    "potential over-engineering with plugins and kubernetes examples before core maturity"
   ],
   "suggestions": [
-    "consolidate documentation into a single docs/ directory",
-    "unify configuration paths to reduce confusion",
-    "focus on completing the core detector and runner implementations",
-    "commit or stash current working directory changes to establish a clean baseline"
+    "commit or stash the 11 modified and 6 untracked files to stabilize the branch",
+    "focus on completing the core detector, runner, and reporter implementations",
+    "ensure the HTTP health endpoint added in the latest commit has corresponding tests"
   ]
 }
