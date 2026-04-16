@@ -20,3 +20,6 @@ coverage.out
 *.test
 plugins/internal
 .claude/
+
+# CCS worktree metadata (untracked, not project files)
+.worktree-origin
