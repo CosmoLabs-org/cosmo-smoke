@@ -1,0 +1,27 @@
+{
+  "branch": "agent-ac12314e",
+  "base_branch": "master",
+  "status": "conflict",
+  "created": "2026-04-16T16:21:02-03:00",
+  "archived": "2026-04-16T16:32:54.042502-03:00",
+  "commits": [
+    {
+      "hash": "dad61cf",
+      "author": "GΛB",
+      "message": "chore: add quality review results",
+      "date": 1776367667
+    },
+    {
+      "hash": "ec48110",
+      "author": "GΛB",
+      "message": "feat(assertions): add redis_ping and memcached_version assertions",
+      "date": 1776367262
+    }
+  ],
+  "total_commits": 2,
+  "files_changed": 37,
+  "lines_added": 238,
+  "lines_removed": 2819,
+  "diff_stat": ".ccsession.json                                    |  10 +-\n .review.json                                       |   6 +-\n .version-registry.json                             |   6 +-\n GOrchestra/intel/architecture.json                 |  30 +-\n GOrchestra/intel/status.json                       |   4 +-\n GOrchestra/sessions/agent-a83d2001/.ccsession.json |  18 -\n GOrchestra/sessions/agent-a83d2001/.review.json    |  11 -\n GOrchestra/sessions/agent-a83d2001/HISTORY.md      |  68 --\n GOrchestra/sessions/agent-a83d2001/session.json    |  33 -\n GOrchestra/sessions/agent-abe5a065/.ccsession.json |  18 -\n GOrchestra/sessions/agent-abe5a065/.review.json    |  11 -\n GOrchestra/sessions/agent-abe5a065/HISTORY.md      |  57 --\n GOrchestra/sessions/agent-abe5a065/session.json    |  39 -\n GOrchestra/sessions/agent-ac5ce913/.ccsession.json |  18 -\n GOrchestra/sessions/agent-ac5ce913/.review.json    |  11 -\n GOrchestra/sessions/agent-ac5ce913/HISTORY.md      |  64 --\n GOrchestra/sessions/agent-ac5ce913/session.json    |  33 -\n GOrchestra/worktree-history.yaml                   |  48 --\n GOrchestra/worktrees/agent-a83d2001/session.json   |  11 -\n GOrchestra/worktrees/agent-a90fc8e9/session.json   |  11 -\n GOrchestra/worktrees/agent-abe5a065/session.json   |  11 -\n GOrchestra/worktrees/agent-ac12314e/session.json   |  11 -\n GOrchestra/worktrees/agent-ac5ce913/session.json   |  11 -\n GOrchestra/worktrees/agent-af5e20bc/session.json   |  11 -\n GOrchestra/worktrees/agent-afa452c4/session.json   |  11 -\n cmd/run.go                                         |   4 +-\n docs/changelog/unreleased.yaml                     |  12 -\n .../2026-04-16_111624_fbe4200e.md                  | 921 +--------------------\n docs/issues.yaml                                   |   4 +-\n docs/issues/FEAT-005.yaml                          |   4 +-\n ...4-16_fbe4200e-2cea-4fd9-9de7-0968ac40806e.jsonl | 906 --------------------\n internal/reporter/prometheus.go                    | 101 ---\n internal/reporter/prometheus_test.go               | 164 ----\n internal/runner/assertion.go                       | 141 ++--\n internal/runner/assertion_test.go                  | 204 ++---\n internal/runner/runner.go                          |  13 +-\n internal/schema/schema.go                          |  21 +-\n 37 files changed, 238 insertions(+), 2819 deletions(-)",
+  "review_status": "passed"
+}
