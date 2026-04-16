@@ -18,15 +18,16 @@ cmd/
 └── version.go       # smoke version (ldflags-injected)
 internal/
 ├── schema/          # SmokeConfig structs, YAML parsing, validation
-├── runner/          # Assertion engine (5 types), prereq runner, test execution
+├── runner/          # Assertion engine (10 types), prereq runner, test execution
 ├── reporter/        # Terminal (Lipgloss) + JSON reporters
 └── detector/        # Project type detection + template generation
 ```
 
 ## Key Design Decisions
 
-- **Minimal deps**: Cobra + Lipgloss + yaml.v3. No Viper, no Bubbletea.
-- **Pure assertions**: All 5 assertion types are pure functions — no side effects.
+- **Minimal deps**: Cobra + Lipgloss + yaml.v3 + gjson. No Viper, no Bubbletea.
+- **Pure assertions**: All 10 assertion types are pure functions — no side effects.
+- **Config inheritance**: `includes:` directive + Go templates (`{{ .Env.FOO }}`).
 - **Config-dir-relative**: Commands execute from the config file's directory, not cwd.
 - **All errors at once**: Validation returns all errors, not just the first.
 - **Reporter interface**: Terminal and JSON reporters are pluggable via interface.
@@ -60,6 +61,8 @@ smoke version
 | file_exists | `string` | File exists relative to config dir |
 | env_exists | `string` | Environment variable exists |
 | port_listening | `{port, protocol?, host?}` | TCP/UDP port is open |
+| http | `{url, method?, status_code?, body_contains?, body_matches?, header_contains?}` | HTTP endpoint check |
+| json_field | `{path, equals?, contains?, matches?}` | JSONPath assertion on stdout |
 
 ## Detected Project Types
 
