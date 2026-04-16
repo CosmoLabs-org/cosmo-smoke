@@ -4,10 +4,10 @@ base: master
 status: conflict
 created: 2026-04-16
 archived: 2026-04-16
-commits: 2
-files_changed: 43
+commits: 3
+files_changed: 47
 lines_added: 192
-lines_removed: 3215
+lines_removed: 3344
 review_status: passed
 ---
 
@@ -16,10 +16,11 @@ review_status: passed
 ## Summary
 
 Branch merged via `ccs merg` on 2026-04-16.
-2 commits, 43 files changed (+192/-3215).
+3 commits, 47 files changed (+192/-3344).
 
 ## Commits
 
+- `c536f27` chore(tracking): update worktree metadata
 - `fe69a98` chore: add quality review results
 - `6753293` feat(assertions): add grpc_health assertion via standard health protocol
 
@@ -35,6 +36,10 @@ Branch merged via `ccs merg` on 2026-04-16.
  GOrchestra/sessions/agent-a83d2001/.review.json    |  11 -
  GOrchestra/sessions/agent-a83d2001/HISTORY.md      |  68 --
  GOrchestra/sessions/agent-a83d2001/session.json    |  33 -
+ GOrchestra/sessions/agent-a90fc8e9/.ccsession.json |  18 -
+ GOrchestra/sessions/agent-a90fc8e9/.review.json    |  11 -
+ GOrchestra/sessions/agent-a90fc8e9/HISTORY.md      |  73 --
+ GOrchestra/sessions/agent-a90fc8e9/session.json    |  27 -
  GOrchestra/sessions/agent-abe5a065/.ccsession.json |  18 -
  GOrchestra/sessions/agent-abe5a065/.review.json    |  11 -
  GOrchestra/sessions/agent-abe5a065/HISTORY.md      |  57 --
@@ -69,5 +74,5 @@ Branch merged via `ccs merg` on 2026-04-16.
  internal/runner/assertion_test.go                  | 308 ++-----
  internal/runner/runner.go                          |  30 +-
  internal/schema/schema.go                          |  34 +-
- 43 files changed, 192 insertions(+), 3215 deletions(-)
+ 47 files changed, 192 insertions(+), 3344 deletions(-)
 ```

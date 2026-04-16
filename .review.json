@@ -1,7 +1,11 @@
 {
   "score": 7,
   "passed": true,
+<<<<<<< HEAD
   "reviewed_at": "2026-04-16T19:29:22Z",
+=======
+  "reviewed_at": "2026-04-16T19:28:10Z",
+>>>>>>> agent-a90fc8e9
   "reviewer": "opus",
   "origin": "unknown",
   "iterations": 0,

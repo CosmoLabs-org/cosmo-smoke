@@ -336,6 +336,13 @@ func (r *Runner) runTest(t schema.Test, opts RunOptions) TestResult {
 			allPassed = false
 		}
 	}
+	if t.Expect.GRPCHealth != nil {
+		a := CheckGRPCHealth(t.Expect.GRPCHealth)
+		assertions = append(assertions, a)
+		if !a.Passed {
+			allPassed = false
+		}
+	}
 
 	duration := time.Since(start)
 

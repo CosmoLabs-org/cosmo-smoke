@@ -46,3 +46,27 @@
   branch: agent-abe5a065
   base: master
   outcome: 
+- name: agent-abe5a065
+  created: '2026-04-16T16:30:31-03:00'
+  status: killed
+  branch: agent-abe5a065
+  base: master
+  outcome: archived
+- name: agent-ac5ce913
+  created: '2026-04-16T16:30:58-03:00'
+  status: killed
+  branch: agent-ac5ce913
+  base: master
+  outcome: archived
+- name: agent-a83d2001
+  created: '2026-04-16T16:32:49-03:00'
+  status: killed
+  branch: agent-a83d2001
+  base: master
+  outcome: archived
+- name: agent-ac12314e
+  created: '2026-04-16T16:35:11-03:00'
+  status: killed
+  branch: agent-ac12314e
+  base: master
+  outcome: archived

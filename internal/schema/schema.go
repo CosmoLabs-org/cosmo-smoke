@@ -59,11 +59,12 @@ type Expect struct {
 	PortListening  *PortCheck      `yaml:"port_listening,omitempty"`
 	ProcessRunning string          `yaml:"process_running,omitempty"`
 	HTTP           *HTTPCheck      `yaml:"http,omitempty"`
-	JSONField      *JSONFieldCheck `yaml:"json_field,omitempty"`
-	ResponseTimeMs *int            `yaml:"response_time_ms,omitempty"` // Fail if test duration exceeds this many ms
-	SSLCert        *SSLCertCheck   `yaml:"ssl_cert,omitempty"`
-	Redis          *RedisCheck     `yaml:"redis_ping,omitempty"`
-	Memcached      *MemcachedCheck `yaml:"memcached_version,omitempty"`
+	JSONField      *JSONFieldCheck  `yaml:"json_field,omitempty"`
+	ResponseTimeMs *int             `yaml:"response_time_ms,omitempty"` // Fail if test duration exceeds this many ms
+	SSLCert        *SSLCertCheck    `yaml:"ssl_cert,omitempty"`
+	Redis          *RedisCheck      `yaml:"redis_ping,omitempty"`
+	Memcached      *MemcachedCheck  `yaml:"memcached_version,omitempty"`
+	GRPCHealth     *GRPCHealthCheck `yaml:"grpc_health,omitempty"`
 }
 
 // PortCheck defines parameters for checking if a port is open and listening.
@@ -105,6 +106,14 @@ type HTTPCheck struct {
 	BodyContains   string            `yaml:"body_contains,omitempty"`
 	BodyMatches    string            `yaml:"body_matches,omitempty"`
 	HeaderContains map[string]string `yaml:"header_contains,omitempty"`
+}
+
+// GRPCHealthCheck queries the grpc.health.v1.Health/Check endpoint.
+type GRPCHealthCheck struct {
+	Address string   `yaml:"address"`           // host:port
+	Service string   `yaml:"service,omitempty"` // "" = overall server health
+	UseTLS  bool     `yaml:"use_tls,omitempty"` // default false (insecure)
+	Timeout Duration `yaml:"timeout,omitempty"` // default 5s
 }
 
 // JSONFieldCheck defines parameters for asserting on JSON fields in stdout.
