@@ -1,11 +1,11 @@
 {
   "version": "1.0",
-  "generated_at": "2026-04-16T19:30:37.302768-03:00",
+  "generated_at": "2026-04-16T19:30:52.313977-03:00",
   "generated_by": "GLM-4.7",
-  "expires_at": "2026-04-17T19:30:37.302768-03:00",
-  "last_analyzed_commit": "432442a148a6032bf446eaaebe4c9dc5869dce4e",
-  "summary": "A Go-based modular orchestration tool with a plugin system that detects, runs, and reports on schema-defined assertions, primarily targeting Kubernetes environments.",
-  "architecture": "modular monolith",
+  "expires_at": "2026-04-17T19:30:52.313977-03:00",
+  "last_analyzed_commit": "d80e727d538ffa2defd9a41e60ccb2d1504935d7",
+  "summary": "A Go-based CLI tool with a plugin system that detects, runs, and reports on schema-defined assertions, with Kubernetes integration.",
+  "architecture": "modular-cli",
   "primary_language": "Go",
   "hot_files": [
     "internal/runner/runner.go",
@@ -16,20 +16,18 @@
   ],
   "patterns": [
     "runner-executor",
-    "plugin architecture",
-    "separation of concerns (detector/reporter/runner/schema)",
-    "test-driven development"
+    "plugin-architecture",
+    "schema-driven",
+    "separation-of-concerns"
   ],
   "concerns": [
-    "uncommitted changes (5 modified, 6 untracked) indicate instability",
-    "automated session metadata commits cluttering git history",
-    "recent commits are mostly merge and chore operations, lacking feature work",
-    "examples limited to kubernetes, suggesting narrow scope or early maturity"
+    "automated session metadata commits polluting git history",
+    "untracked files and unstaged changes in working directory",
+    "watch mode feature appears incomplete or abandoned"
   ],
   "suggestions": [
-    "commit or stash the current working tree changes to stabilize the branch",
-    "configure .gitignore or CI to prevent automated metadata commits from polluting history",
-    "add documentation for the plugin system to clarify extension points",
-    "expand examples beyond kubernetes to demonstrate broader capabilities"
+    "add session metadata to .gitignore to prevent auto-commit noise",
+    "clean up working directory and commit or discard untracked files",
+    "finalize or remove the archived watch-mode session metadata"
   ]
 }
