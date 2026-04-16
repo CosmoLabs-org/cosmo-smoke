@@ -4,6 +4,7 @@ go 1.26.2
 
 require (
 	github.com/charmbracelet/lipgloss v1.1.0
+	github.com/fsnotify/fsnotify v1.9.0
 	github.com/spf13/cobra v1.10.2
 	github.com/tidwall/gjson v1.18.0
 	google.golang.org/grpc v1.80.0

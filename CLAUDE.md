@@ -31,6 +31,7 @@ internal/
 - **Config-dir-relative**: Commands execute from the config file's directory, not cwd.
 - **All errors at once**: Validation returns all errors, not just the first.
 - **Reporter interface**: Terminal and JSON reporters are pluggable via interface.
+- **Watch mode**: `--watch` keeps smoke resident and re-runs on file changes. fsnotify-backed. 500ms debounce.
 - **Retry**: Opt-in `retry: {count, backoff}` on test level. Exponential backoff. No side effects on pass-first-try.
 
 ## Build & Test
@@ -45,7 +46,7 @@ go build -ldflags "-s -w -X github.com/CosmoLabs-org/cosmo-smoke/cmd.Version=X.Y
 ## Commands
 
 ```bash
-smoke run [--tag X] [--exclude-tag X] [--format terminal|json|junit|tap] [--fail-fast] [--timeout 30s] [-f path] [--dry-run]
+smoke run [--tag X] [--exclude-tag X] [--format terminal|json|junit|tap|prometheus] [--fail-fast] [--timeout 30s] [-f path] [--dry-run] [--watch]
 smoke init [--force] [--from-running CONTAINER]
 smoke version
 ```
