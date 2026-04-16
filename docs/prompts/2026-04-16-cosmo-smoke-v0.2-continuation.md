@@ -72,7 +72,7 @@ When goals involve dispatching subagents:
 
 ## Goals
 
-### [ ] 1. Recover and complete timed-out GLM work
+### [x] 1. Recover and complete timed-out GLM work
 Recovery patches saved in:
 - `GOrchestra/sessions/_glm-agent-0002-*/recovery.patch` — Process running assertion (FEAT-005)
 - `GOrchestra/sessions/_glm-agent-0003-*/recovery.patch` — TAP output format (FEAT-006)  
@@ -80,33 +80,33 @@ Recovery patches saved in:
 
 Apply patches or re-dispatch with enriched prompts.
 
-### [ ] 2. Push to GitHub
+### [x] 2. Push to GitHub
 Run `/move-to-github` to create CosmoLabs-org/cosmo-smoke and push all work.
 
-### [ ] 3. Implement HTTP endpoint assertions (ROAD-006)
+### [x] 3. Implement HTTP endpoint assertions (ROAD-006)
 The most requested feature. Add:
 - `http` assertion type with status, headers, body, JSONPath matching
 - Support for GET/POST methods
 - Timeout configuration
 
-### [ ] 4. Add config inheritance (ROAD-020)
+### [x] 4. Add config inheritance (ROAD-020)
 Goss-style config composition:
 - `includes:` to import other .smoke.yaml files
 - `--vars file.yaml` for variable injection
 - Go template support `{{ .Env.FOO }}`
 
-### [ ] 5. Implement JSON field assertions (ROAD-007)
+### [x] 5. Implement JSON field assertions (ROAD-007)
 Parse stdout as JSON and assert on fields:
 - `json_field: '.version'` with `equals:`, `contains:`, `matches:`
 - Use gjson or similar for JSONPath
 
-### [ ] 6. Add auto-generate magic (ROAD-023)
+### [x] 6. Add auto-generate magic (ROAD-023)
 `smoke init --from-running` to inspect running container and generate .smoke.yaml automatically. This is Goss's beloved `autoadd` feature.
 
-### [ ] 7. Update CLAUDE.md assertion table
+### [x] 7. Update CLAUDE.md assertion table
 Add the new assertion types (env_exists, stderr_matches, port_listening) to the documentation table.
 
-### [ ] 8. Run full test suite and self-smoke
+### [x] 8. Run full test suite and self-smoke
 Verify everything works: `go test ./...` + `smoke run`
 
 ## Carry-Over Tasks
