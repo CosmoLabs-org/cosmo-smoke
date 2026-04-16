@@ -31,6 +31,7 @@ internal/
 - **Config-dir-relative**: Commands execute from the config file's directory, not cwd.
 - **All errors at once**: Validation returns all errors, not just the first.
 - **Reporter interface**: Terminal and JSON reporters are pluggable via interface.
+- **Retry**: Opt-in `retry: {count, backoff}` on test level. Exponential backoff. No side effects on pass-first-try.
 
 ## Build & Test
 

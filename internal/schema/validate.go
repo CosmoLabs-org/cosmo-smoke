@@ -39,6 +39,14 @@ func Validate(cfg *SmokeConfig) error {
 		if t.Run == "" {
 			errs = append(errs, fmt.Sprintf("%s: run command is required", prefix))
 		}
+		if t.Retry != nil {
+			if t.Retry.Count < 1 {
+				errs = append(errs, fmt.Sprintf("test[%d] retry.count must be >= 1", i))
+			}
+			if t.Retry.Backoff.Duration <= 0 {
+				errs = append(errs, fmt.Sprintf("test[%d] retry.backoff must be > 0", i))
+			}
+		}
 	}
 
 	if len(errs) > 0 {

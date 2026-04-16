@@ -43,6 +43,7 @@ type TestResult struct {
 	Duration       time.Duration
 	Assertions     []AssertionResult
 	Error          error
+	Attempts       int // number of attempts made (1 = no retry)
 }
 
 // Runner executes smoke tests from a config.
@@ -170,6 +171,31 @@ func (r *Runner) runParallel(tests []schema.Test, opts RunOptions, suite *SuiteR
 }
 
 func (r *Runner) runTest(t schema.Test, opts RunOptions) TestResult {
+	if t.Retry == nil || t.Retry.Count <= 1 {
+		res := r.runTestOnce(t, opts)
+		if res.Attempts == 0 {
+			res.Attempts = 1
+		}
+		return res
+	}
+	var last TestResult
+	backoff := t.Retry.Backoff.Duration
+	for attempt := 1; attempt <= t.Retry.Count; attempt++ {
+		last = r.runTestOnce(t, opts)
+		if last.Passed {
+			last.Attempts = attempt
+			return last
+		}
+		if attempt < t.Retry.Count {
+			time.Sleep(backoff)
+			backoff *= 2
+		}
+	}
+	last.Attempts = t.Retry.Count
+	return last
+}
+
+func (r *Runner) runTestOnce(t schema.Test, opts RunOptions) TestResult {
 	r.Reporter.TestStart(t.Name)
 	start := time.Now()
 
