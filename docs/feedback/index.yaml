@@ -1,9 +1,9 @@
 version: "1.0"
-next_id: 4
+next_id: 6
 last_updated: "2026-04-16"
 stats:
-    total: 4
-    pending: 4
+    total: 6
+    pending: 6
     implemented: 0
     rejected: 0
     converted: 0
@@ -28,3 +28,13 @@ entries:
       status: pending
       from_project: cosmo-smoke
       created: "2026-04-16T17:12:51.901448-03:00"
+    - id: FB-005
+      title: Auto-spawned road-<id>-<slug> worktrees conflict with Agent-tool Sonnet dispatch
+      status: pending
+      from_project: cosmo-smoke
+      created: "2026-04-16T20:43:17.618689-03:00"
+    - id: FB-006
+      title: Agent worktree merge hits predictable .review.json + .ccsession.json friction
+      status: pending
+      from_project: cosmo-smoke
+      created: "2026-04-16T20:43:28.041057-03:00"
