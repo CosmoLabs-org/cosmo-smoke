@@ -1,0 +1,87 @@
+# Reusable workflow — run cosmo-smoke in any repo.
+#
+# Usage in another repo:
+#
+#   jobs:
+#     smoke:
+#       uses: CosmoLabs-org/cosmo-smoke/.github/workflows/smoke.yml@v1
+#       with:
+#         smoke-version: latest
+#         working-directory: .
+#         tags: smoke
+#         fail-fast: true
+
+on:
+  workflow_call:
+    inputs:
+      smoke-version:
+        description: "cosmo-smoke version to install (e.g. v1.0.0 or 'latest')"
+        type: string
+        default: "latest"
+      working-directory:
+        description: "Directory that contains .smoke.yaml (relative to repo root)"
+        type: string
+        default: "."
+      tags:
+        description: "Comma-separated tag filter passed to --tag (leave empty to run all)"
+        type: string
+        default: ""
+      fail-fast:
+        description: "Stop on first test failure"
+        type: boolean
+        default: true
+
+jobs:
+  smoke:
+    name: Smoke tests
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          # cosmo-smoke targets Go 1.22+; 1.23 is widely available on runners
+          go-version: "1.23"
+          cache: false  # nothing to cache — we only install a binary
+
+      - name: Install smoke
+        env:
+          SMOKE_VERSION: ${{ inputs.smoke-version }}
+        run: |
+          if [ "$SMOKE_VERSION" = "latest" ]; then
+            go install github.com/CosmoLabs-org/cosmo-smoke@latest
+          else
+            go install "github.com/CosmoLabs-org/cosmo-smoke@${SMOKE_VERSION}"
+          fi
+
+      - name: Run smoke tests
+        id: smoke_run
+        working-directory: ${{ inputs.working-directory }}
+        env:
+          SMOKE_TAGS: ${{ inputs.tags }}
+          SMOKE_FAIL_FAST: ${{ inputs.fail-fast }}
+        run: |
+          ARGS=""
+          if [ -n "$SMOKE_TAGS" ]; then
+            ARGS="$ARGS --tag $SMOKE_TAGS"
+          fi
+          if [ "$SMOKE_FAIL_FAST" = "true" ]; then
+            ARGS="$ARGS --fail-fast"
+          fi
+
+          # Write JSON results for the artifact step; exit code carries pass/fail
+          # shellcheck disable=SC2086
+          smoke run --format json $ARGS | tee smoke-results.json
+          # Propagate smoke's exit code, not tee's
+          exit "${PIPESTATUS[0]}"
+
+      - name: Upload results artifact
+        if: always()  # upload even on failure — useful for diagnostics
+        uses: actions/upload-artifact@v4
+        with:
+          name: smoke-results
+          path: ${{ inputs.working-directory }}/smoke-results.json
+          if-no-files-found: ignore  # graceful if smoke exits before writing the file

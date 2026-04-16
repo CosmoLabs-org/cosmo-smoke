@@ -1,0 +1,36 @@
+# CI for cosmo-smoke itself: build, test, self-smoke.
+# Runs on every push and PR targeting master.
+
+on:
+  push:
+    branches: [master]
+  pull_request:
+    branches: [master]
+
+jobs:
+  ci:
+    name: Build & test
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version-file: go.mod  # honours the go directive in go.mod
+          cache: true
+
+      - name: Build
+        run: go build ./...
+
+      - name: Unit tests
+        run: go test ./...
+
+      - name: Install smoke (self)
+        run: go install .
+
+      - name: Self-smoke
+        # Runs the .smoke.yaml in the repo root — verifies the binary works end-to-end
+        run: smoke run
