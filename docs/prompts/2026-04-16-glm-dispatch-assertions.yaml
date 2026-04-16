@@ -1,3 +1,10 @@
+---
+completed: "2026-04-16"
+created: "2026-04-16"
+status: COMPLETED
+title: 'GLM Dispatch Manifest: New Assertions & Features'
+---
+
 # GLM Dispatch Manifest: New Assertions & Features
 # Generated: 2026-04-16
 # Usage: ccs glm-agent exec-batch docs/prompts/2026-04-16-glm-dispatch-assertions.yaml
