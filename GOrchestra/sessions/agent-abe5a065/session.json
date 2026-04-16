@@ -1,0 +1,33 @@
+{
+  "branch": "agent-abe5a065",
+  "base_branch": "master",
+  "status": "conflict",
+  "created": "2026-04-16T16:19:56-03:00",
+  "archived": "2026-04-16T16:29:32.655337-03:00",
+  "commits": [
+    {
+      "hash": "cd40af4",
+      "author": "GΛB",
+      "message": "chore: add quality review results",
+      "date": 1776367762
+    },
+    {
+      "hash": "23f4523",
+      "author": "GΛB",
+      "message": "chore: add quality review results",
+      "date": 1776367737
+    },
+    {
+      "hash": "e1912cd",
+      "author": "GΛB",
+      "message": "feat(reporter): add prometheus text-format output",
+      "date": 1776367196
+    }
+  ],
+  "total_commits": 3,
+  "files_changed": 7,
+  "lines_added": 276,
+  "lines_removed": 21,
+  "diff_stat": ".review.json                         |   8 +-\n cmd/run.go                           |   4 +-\n docs/changelog/unreleased.yaml       |  12 ---\n docs/issues.yaml                     |   4 +-\n docs/issues/FEAT-005.yaml            |   4 +-\n internal/reporter/prometheus.go      | 101 +++++++++++++++++++++\n internal/reporter/prometheus_test.go | 164 +++++++++++++++++++++++++++++++++++\n 7 files changed, 276 insertions(+), 21 deletions(-)",
+  "review_status": "passed"
+}
