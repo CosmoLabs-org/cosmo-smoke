@@ -1,0 +1,27 @@
+{
+  "branch": "agent-a1e42bae",
+  "base_branch": "master",
+  "status": "conflict",
+  "created": "2026-04-16T19:05:39-03:00",
+  "archived": "2026-04-16T19:08:00.486548-03:00",
+  "commits": [
+    {
+      "hash": "5dcecd4",
+      "author": "GΛB",
+      "message": "chore: add quality review results",
+      "date": 1776377272
+    },
+    {
+      "hash": "032738e",
+      "author": "GΛB",
+      "message": "feat(runner): add retry with exponential backoff",
+      "date": 1776377139
+    }
+  ],
+  "total_commits": 2,
+  "files_changed": 9,
+  "lines_added": 277,
+  "lines_removed": 16,
+  "diff_stat": ".review.json                                       |  12 +--\n CLAUDE.md                                          |   1 +\n .../2026-04-16-cosmo-smoke-v0.4-continuation.md    |   2 +-\n internal/runner/runner.go                          |  26 ++++++\n internal/runner/runner_test.go                     | 101 +++++++++++++++++++++\n internal/schema/schema.go                          |  21 +++--\n internal/schema/schema_test.go                     |  66 ++++++++++++++\n internal/schema/validate.go                        |   8 ++\n internal/schema/validate_test.go                   |  56 ++++++++++++\n 9 files changed, 277 insertions(+), 16 deletions(-)",
+  "review_status": "passed"
+}
