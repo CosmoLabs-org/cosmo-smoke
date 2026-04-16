@@ -29,6 +29,8 @@ port: ## Show assigned port for this project
 .PHONY: install dev build test lint clean fresh
 
 BINARY_NAME := $(PROJECT_NAME)
+VERSION ?= $(shell git describe --tags --always --dirty 2>/dev/null || echo "dev")
+LDFLAGS := -s -w -X github.com/CosmoLabs-org/cosmo-smoke/cmd.Version=$(VERSION)
 
 install: ## Download Go module dependencies
 	go mod download
@@ -42,9 +44,9 @@ dev: ## Run in development mode (uses air if available, otherwise go run)
 		go run .; \
 	fi
 
-build: ## Build production binary
+build: ## Build production binary with version injection
 	@mkdir -p bin
-	go build -o bin/$(BINARY_NAME) .
+	go build -ldflags "$(LDFLAGS)" -o bin/$(BINARY_NAME) .
 
 test: ## Run all Go tests
 	go test -v ./...
@@ -60,7 +62,7 @@ clean: ## Clean build artifacts
 	rm -rf bin/
 
 fresh: clean install ## Clean build from scratch
-	go build -o bin/$(BINARY_NAME) .
+	go build -ldflags "$(LDFLAGS)" -o bin/$(BINARY_NAME) .
 
 # --- quality.mk ---
 # Quality gates: lint, type-check, test, build (sequential)

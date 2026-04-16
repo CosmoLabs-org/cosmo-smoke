@@ -2,7 +2,7 @@
 id: FB-001
 title: makefile init missing Go ldflags version injection
 type: idea
-status: pending
+status: implemented
 priority: medium
 complexity: ""
 from_project: cosmo-smoke
@@ -10,7 +10,7 @@ from_path: /Users/gab/PROJECTS/cosmo-smoke
 to_project: cosmo-smoke
 to_target: self
 created: "2026-04-16T09:29:01.672619-03:00"
-updated: "2026-04-16T09:29:01.672619-03:00"
+updated: "2026-04-16T15:36:10.742569-03:00"
 suggested_conversion: feature
 converted_to: null
 related_issues: []
