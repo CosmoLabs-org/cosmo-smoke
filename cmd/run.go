@@ -34,7 +34,7 @@ func init() {
 	runCmd.Flags().StringVarP(&configFile, "file", "f", ".smoke.yaml", "Config file path")
 	runCmd.Flags().StringSliceVar(&tags, "tag", nil, "Include only tests with these tags")
 	runCmd.Flags().StringSliceVar(&excludeTags, "exclude-tag", nil, "Exclude tests with these tags")
-	runCmd.Flags().StringVar(&format, "format", "terminal", "Output format (terminal|json|junit|tap)")
+	runCmd.Flags().StringVar(&format, "format", "terminal", "Output format (terminal|json|junit|tap|prometheus)")
 	runCmd.Flags().BoolVar(&failFast, "fail-fast", false, "Stop on first failure")
 	runCmd.Flags().StringVar(&timeout, "timeout", "", "Per-test timeout override (e.g. 30s)")
 	runCmd.Flags().BoolVar(&dryRun, "dry-run", false, "List tests without running")
@@ -65,6 +65,8 @@ func runSmoke(cmd *cobra.Command, args []string) error {
 		rep = reporter.NewJUnit(os.Stdout)
 	case "tap":
 		rep = reporter.NewTAP(os.Stdout)
+	case "prometheus":
+		rep = reporter.NewPrometheus(os.Stdout)
 	default:
 		rep = reporter.NewTerminal(os.Stdout)
 	}
