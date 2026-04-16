@@ -1,11 +1,13 @@
 id: ROAD-005
 created_at: 2026-04-15T17:36:03.870495-03:00
-updated_at: 2026-04-15T17:36:03.871022-03:00
+updated_at: 2026-04-16T09:54:12.92263-03:00
 title: GitHub Actions reusable workflow
 description: 'Publish a reusable workflow that runs smoke tests. Projects just add: uses: CosmoLabs-org/cosmo-smoke/.github/workflows/smoke.yml@v1'
-status: captured
+status: completed
 priority: 65
 tags:
     - v1.2
     - ci
     - dx
+completed_in: v0.1.0
+completed_at: 2026-04-16T09:54:12.922626-03:00

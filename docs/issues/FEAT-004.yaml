@@ -1,9 +1,9 @@
 id: FEAT-004
 type: feature
 created_at: 2026-04-16T08:57:03.335668-03:00
-updated_at: 2026-04-16T08:57:03.336493-03:00
+updated_at: 2026-04-16T09:54:09.507033-03:00
 source: local
-status: open
+status: done
 origin:
     roadmap_id: ROAD-021
 title: Port listening assertion
