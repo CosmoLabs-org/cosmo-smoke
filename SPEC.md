@@ -226,6 +226,40 @@ Prerequisites always run sequentially before tests. If any prerequisite exits no
 
 ---
 
+## Output Formats
+
+Controlled via `--format`. All formats write to stdout.
+
+| Format | Flag | Description |
+|--------|------|-------------|
+| `terminal` | `--format terminal` | Human-readable colored output (default) |
+| `json` | `--format json` | Machine-readable JSON — includes prerequisites, tests, assertions, and durations |
+| `junit` | `--format junit` | JUnit XML — compatible with GitHub Actions, Jenkins, GitLab CI, and any tool that consumes the standard JUnit XML schema |
+
+### JUnit XML Schema
+
+The JUnit output follows the standard schema:
+
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites name="smoke" tests="6" failures="1" time="2.300">
+  <testsuite name="project-name" tests="6" failures="1" skipped="0" time="2.300">
+    <testcase name="Compiles" time="0.800"/>
+    <testcase name="CLI works" time="0.500">
+      <failure message="stdout_contains: expected &quot;Usage&quot; not found in &quot;error: unknown command&quot;">
+        stdout_contains:
+          Expected: Usage
+          Actual:   error: unknown command
+      </failure>
+    </testcase>
+  </testsuite>
+</testsuites>
+```
+
+Skipped tests include a `<skipped/>` element. Prerequisite results are not included in JUnit output (only test cases).
+
+---
+
 ## Exit Codes
 
 | Code | Meaning |

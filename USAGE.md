@@ -10,6 +10,7 @@ Runs lightweight smoke tests defined in `.smoke.yaml` to verify a project is fun
 | `smoke run --tag <tag>` | Run only tests matching the given tag |
 | `smoke run --exclude-tag <tag>` | Run all tests except those with the given tag |
 | `smoke run --format json` | Output results as JSON (for CI pipelines) |
+| `smoke run --format junit` | Output results as JUnit XML (for CI test reporting) |
 | `smoke run --fail-fast` | Stop immediately on the first failure |
 | `smoke run --timeout <dur>` | Override per-test timeout (e.g. `60s`, `2m`) |
 | `smoke run --dry-run` | List matching tests without executing them |
@@ -24,7 +25,7 @@ Runs lightweight smoke tests defined in `.smoke.yaml` to verify a project is fun
 2. Edit the generated config — add real commands, adjust timeouts, tag tests.
 3. Run `smoke run` to execute all tests.
 4. Use `--tag` to run focused subsets (e.g. `--tag build` in CI, `--tag runtime` locally).
-5. Use `--format json` to integrate results into CI pipelines or monitoring systems.
+5. Use `--format json` to integrate results into CI pipelines or monitoring systems. Use `--format junit` for CI systems that consume JUnit XML (GitHub Actions, Jenkins, GitLab CI).
 
 ## Flags Reference
 
@@ -35,7 +36,7 @@ Runs lightweight smoke tests defined in `.smoke.yaml` to verify a project is fun
 | `-f, --file` | string | `.smoke.yaml` | Config file path |
 | `--tag` | string (repeatable) | — | Include only tests with this tag |
 | `--exclude-tag` | string (repeatable) | — | Exclude tests with this tag |
-| `--format` | string | `terminal` | Output format: `terminal` or `json` |
+| `--format` | string | `terminal` | Output format: `terminal`, `json`, or `junit` |
 | `--fail-fast` | bool | `false` | Stop on first failure |
 | `--timeout` | duration | _(from config)_ | Per-test timeout override |
 | `--dry-run` | bool | `false` | List tests without running |
