@@ -2,12 +2,17 @@ package runner
 
 import (
 	"fmt"
+	"io"
 	"net"
+	"net/http"
 	"os"
 	"path/filepath"
 	"regexp"
 	"strings"
 	"time"
+
+	"github.com/CosmoLabs-org/cosmo-smoke/internal/schema"
+	"github.com/tidwall/gjson"
 )
 
 // AssertionResult holds the outcome of a single assertion check.
@@ -133,4 +138,191 @@ func CheckFileExists(path, configDir string) AssertionResult {
 		Actual:   resolved,
 		Passed:   passed,
 	}
+}
+
+// CheckHTTP performs an HTTP request and returns assertion results for status, body, and headers.
+func CheckHTTP(check *schema.HTTPCheck) []AssertionResult {
+	var results []AssertionResult
+
+	// Default method to GET
+	method := check.Method
+	if method == "" {
+		method = "GET"
+	}
+
+	// Set timeout (default 10s)
+	timeout := 10 * time.Second
+	if check.Timeout.Duration > 0 {
+		timeout = check.Timeout.Duration
+	}
+
+	client := &http.Client{Timeout: timeout}
+
+	// Build request
+	var bodyReader io.Reader
+	if check.Body != "" {
+		bodyReader = strings.NewReader(check.Body)
+	}
+
+	req, err := http.NewRequest(method, check.URL, bodyReader)
+	if err != nil {
+		return []AssertionResult{{
+			Type:     "http_request",
+			Expected: check.URL,
+			Actual:   fmt.Sprintf("invalid request: %v", err),
+			Passed:   false,
+		}}
+	}
+
+	// Add headers
+	for k, v := range check.Headers {
+		req.Header.Set(k, v)
+	}
+
+	// Execute request
+	resp, err := client.Do(req)
+	if err != nil {
+		return []AssertionResult{{
+			Type:     "http_request",
+			Expected: check.URL,
+			Actual:   fmt.Sprintf("request failed: %v", err),
+			Passed:   false,
+		}}
+	}
+	defer resp.Body.Close()
+
+	// Read body
+	body, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return []AssertionResult{{
+			Type:     "http_body",
+			Expected: "readable body",
+			Actual:   fmt.Sprintf("failed to read body: %v", err),
+			Passed:   false,
+		}}
+	}
+	bodyStr := string(body)
+
+	// Check status code
+	if check.StatusCode != nil {
+		results = append(results, AssertionResult{
+			Type:     "http_status",
+			Expected: fmt.Sprintf("%d", *check.StatusCode),
+			Actual:   fmt.Sprintf("%d", resp.StatusCode),
+			Passed:   resp.StatusCode == *check.StatusCode,
+		})
+	}
+
+	// Check body contains
+	if check.BodyContains != "" {
+		results = append(results, AssertionResult{
+			Type:     "http_body_contains",
+			Expected: check.BodyContains,
+			Actual:   bodyStr,
+			Passed:   strings.Contains(bodyStr, check.BodyContains),
+		})
+	}
+
+	// Check body matches regex
+	if check.BodyMatches != "" {
+		matched, err := regexp.MatchString(check.BodyMatches, bodyStr)
+		if err != nil {
+			results = append(results, AssertionResult{
+				Type:     "http_body_matches",
+				Expected: check.BodyMatches,
+				Actual:   fmt.Sprintf("invalid regex: %v", err),
+				Passed:   false,
+			})
+		} else {
+			results = append(results, AssertionResult{
+				Type:     "http_body_matches",
+				Expected: check.BodyMatches,
+				Actual:   bodyStr,
+				Passed:   matched,
+			})
+		}
+	}
+
+	// Check header contains
+	for k, v := range check.HeaderContains {
+		actual := resp.Header.Get(k)
+		results = append(results, AssertionResult{
+			Type:     "http_header_contains",
+			Expected: fmt.Sprintf("%s: %s", k, v),
+			Actual:   fmt.Sprintf("%s: %s", k, actual),
+			Passed:   strings.Contains(actual, v),
+		})
+	}
+
+	return results
+}
+
+// CheckJSONField extracts a field from JSON and validates it against equals/contains/matches.
+func CheckJSONField(jsonStr string, check *schema.JSONFieldCheck) []AssertionResult {
+	var results []AssertionResult
+
+	// Check if JSON is valid
+	if !gjson.Valid(jsonStr) {
+		return []AssertionResult{{
+			Type:     "json_field",
+			Expected: check.Path,
+			Actual:   "invalid JSON",
+			Passed:   false,
+		}}
+	}
+
+	// Extract the field value
+	result := gjson.Get(jsonStr, check.Path)
+	if !result.Exists() {
+		return []AssertionResult{{
+			Type:     "json_field",
+			Expected: check.Path,
+			Actual:   "field not found",
+			Passed:   false,
+		}}
+	}
+
+	actual := result.String()
+
+	// Check equals
+	if check.Equals != "" {
+		results = append(results, AssertionResult{
+			Type:     "json_field_equals",
+			Expected: check.Equals,
+			Actual:   actual,
+			Passed:   actual == check.Equals,
+		})
+	}
+
+	// Check contains
+	if check.Contains != "" {
+		results = append(results, AssertionResult{
+			Type:     "json_field_contains",
+			Expected: check.Contains,
+			Actual:   actual,
+			Passed:   strings.Contains(actual, check.Contains),
+		})
+	}
+
+	// Check matches
+	if check.Matches != "" {
+		matched, err := regexp.MatchString(check.Matches, actual)
+		if err != nil {
+			results = append(results, AssertionResult{
+				Type:     "json_field_matches",
+				Expected: check.Matches,
+				Actual:   fmt.Sprintf("invalid regex: %v", err),
+				Passed:   false,
+			})
+		} else {
+			results = append(results, AssertionResult{
+				Type:     "json_field_matches",
+				Expected: check.Matches,
+				Actual:   actual,
+				Passed:   matched,
+			})
+		}
+	}
+
+	return results
 }

@@ -282,6 +282,24 @@ func (r *Runner) runTest(t schema.Test, opts RunOptions) TestResult {
 			allPassed = false
 		}
 	}
+	if t.Expect.HTTP != nil {
+		httpResults := CheckHTTP(t.Expect.HTTP)
+		for _, a := range httpResults {
+			assertions = append(assertions, a)
+			if !a.Passed {
+				allPassed = false
+			}
+		}
+	}
+	if t.Expect.JSONField != nil {
+		jsonResults := CheckJSONField(stdout.String(), t.Expect.JSONField)
+		for _, a := range jsonResults {
+			assertions = append(assertions, a)
+			if !a.Passed {
+				allPassed = false
+			}
+		}
+	}
 
 	tr := TestResult{
 		Name:       t.Name,

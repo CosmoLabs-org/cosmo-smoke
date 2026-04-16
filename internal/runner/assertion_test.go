@@ -1,9 +1,13 @@
 package runner
 
 import (
+	"net/http"
+	"net/http/httptest"
 	"os"
 	"path/filepath"
 	"testing"
+
+	"github.com/CosmoLabs-org/cosmo-smoke/internal/schema"
 )
 
 // ---------------------------------------------------------------------------
@@ -407,5 +411,314 @@ func TestCheckPortListening_Fail(t *testing.T) {
 	}
 	if r.Type != "port_listening" {
 		t.Errorf("expected type 'port_listening', got %q", r.Type)
+	}
+}
+
+// ---------------------------------------------------------------------------
+// CheckHTTP
+// ---------------------------------------------------------------------------
+
+func TestCheckHTTP_StatusCode(t *testing.T) {
+	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.WriteHeader(http.StatusOK)
+	}))
+	defer srv.Close()
+
+	status := 200
+	results := CheckHTTP(&schema.HTTPCheck{
+		URL:        srv.URL,
+		StatusCode: &status,
+	})
+
+	if len(results) != 1 {
+		t.Fatalf("expected 1 result, got %d", len(results))
+	}
+	if !results[0].Passed {
+		t.Errorf("expected status check to pass")
+	}
+	if results[0].Type != "http_status" {
+		t.Errorf("expected type 'http_status', got %q", results[0].Type)
+	}
+}
+
+func TestCheckHTTP_StatusCode_Fail(t *testing.T) {
+	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.WriteHeader(http.StatusNotFound)
+	}))
+	defer srv.Close()
+
+	status := 200
+	results := CheckHTTP(&schema.HTTPCheck{
+		URL:        srv.URL,
+		StatusCode: &status,
+	})
+
+	if len(results) != 1 {
+		t.Fatalf("expected 1 result, got %d", len(results))
+	}
+	if results[0].Passed {
+		t.Errorf("expected status check to fail for 404")
+	}
+}
+
+func TestCheckHTTP_BodyContains(t *testing.T) {
+	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.Write([]byte(`{"status":"healthy"}`))
+	}))
+	defer srv.Close()
+
+	results := CheckHTTP(&schema.HTTPCheck{
+		URL:          srv.URL,
+		BodyContains: "healthy",
+	})
+
+	if len(results) != 1 {
+		t.Fatalf("expected 1 result, got %d", len(results))
+	}
+	if !results[0].Passed {
+		t.Errorf("expected body_contains to pass")
+	}
+}
+
+func TestCheckHTTP_BodyMatches(t *testing.T) {
+	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.Write([]byte(`version: 1.2.3`))
+	}))
+	defer srv.Close()
+
+	results := CheckHTTP(&schema.HTTPCheck{
+		URL:         srv.URL,
+		BodyMatches: `version: \d+\.\d+\.\d+`,
+	})
+
+	if len(results) != 1 {
+		t.Fatalf("expected 1 result, got %d", len(results))
+	}
+	if !results[0].Passed {
+		t.Errorf("expected body_matches to pass")
+	}
+}
+
+func TestCheckHTTP_HeaderContains(t *testing.T) {
+	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Content-Type", "application/json")
+		w.Write([]byte(`{}`))
+	}))
+	defer srv.Close()
+
+	results := CheckHTTP(&schema.HTTPCheck{
+		URL:            srv.URL,
+		HeaderContains: map[string]string{"Content-Type": "json"},
+	})
+
+	if len(results) != 1 {
+		t.Fatalf("expected 1 result, got %d", len(results))
+	}
+	if !results[0].Passed {
+		t.Errorf("expected header_contains to pass")
+	}
+}
+
+func TestCheckHTTP_POST(t *testing.T) {
+	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if r.Method != "POST" {
+			w.WriteHeader(http.StatusMethodNotAllowed)
+			return
+		}
+		w.WriteHeader(http.StatusCreated)
+	}))
+	defer srv.Close()
+
+	status := 201
+	results := CheckHTTP(&schema.HTTPCheck{
+		URL:        srv.URL,
+		Method:     "POST",
+		Body:       `{"name":"test"}`,
+		StatusCode: &status,
+	})
+
+	if len(results) != 1 {
+		t.Fatalf("expected 1 result, got %d", len(results))
+	}
+	if !results[0].Passed {
+		t.Errorf("expected POST with 201 to pass")
+	}
+}
+
+func TestCheckHTTP_InvalidURL(t *testing.T) {
+	results := CheckHTTP(&schema.HTTPCheck{
+		URL: "http://localhost:99999/nonexistent",
+	})
+
+	if len(results) != 1 {
+		t.Fatalf("expected 1 result, got %d", len(results))
+	}
+	if results[0].Passed {
+		t.Errorf("expected request to fail for invalid URL")
+	}
+	if results[0].Type != "http_request" {
+		t.Errorf("expected type 'http_request', got %q", results[0].Type)
+	}
+}
+
+func TestCheckHTTP_MultipleAssertions(t *testing.T) {
+	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("X-Custom", "value")
+		w.WriteHeader(http.StatusOK)
+		w.Write([]byte("OK"))
+	}))
+	defer srv.Close()
+
+	status := 200
+	results := CheckHTTP(&schema.HTTPCheck{
+		URL:            srv.URL,
+		StatusCode:     &status,
+		BodyContains:   "OK",
+		HeaderContains: map[string]string{"X-Custom": "value"},
+	})
+
+	if len(results) != 3 {
+		t.Fatalf("expected 3 results (status, body, header), got %d", len(results))
+	}
+	for i, r := range results {
+		if !r.Passed {
+			t.Errorf("result %d (%s) failed", i, r.Type)
+		}
+	}
+}
+
+// ---------------------------------------------------------------------------
+// CheckJSONField
+// ---------------------------------------------------------------------------
+
+func TestCheckJSONField_Equals(t *testing.T) {
+	json := `{"version": "1.2.3", "status": "healthy"}`
+	results := CheckJSONField(json, &schema.JSONFieldCheck{
+		Path:   "version",
+		Equals: "1.2.3",
+	})
+
+	if len(results) != 1 {
+		t.Fatalf("expected 1 result, got %d", len(results))
+	}
+	if !results[0].Passed {
+		t.Errorf("expected equals check to pass")
+	}
+	if results[0].Type != "json_field_equals" {
+		t.Errorf("expected type 'json_field_equals', got %q", results[0].Type)
+	}
+}
+
+func TestCheckJSONField_Equals_Fail(t *testing.T) {
+	json := `{"version": "1.2.3"}`
+	results := CheckJSONField(json, &schema.JSONFieldCheck{
+		Path:   "version",
+		Equals: "2.0.0",
+	})
+
+	if len(results) != 1 {
+		t.Fatalf("expected 1 result, got %d", len(results))
+	}
+	if results[0].Passed {
+		t.Errorf("expected equals check to fail")
+	}
+}
+
+func TestCheckJSONField_Contains(t *testing.T) {
+	json := `{"message": "hello world"}`
+	results := CheckJSONField(json, &schema.JSONFieldCheck{
+		Path:     "message",
+		Contains: "world",
+	})
+
+	if len(results) != 1 {
+		t.Fatalf("expected 1 result, got %d", len(results))
+	}
+	if !results[0].Passed {
+		t.Errorf("expected contains check to pass")
+	}
+}
+
+func TestCheckJSONField_Matches(t *testing.T) {
+	json := `{"version": "v1.2.3"}`
+	results := CheckJSONField(json, &schema.JSONFieldCheck{
+		Path:    "version",
+		Matches: `v\d+\.\d+\.\d+`,
+	})
+
+	if len(results) != 1 {
+		t.Fatalf("expected 1 result, got %d", len(results))
+	}
+	if !results[0].Passed {
+		t.Errorf("expected matches check to pass")
+	}
+}
+
+func TestCheckJSONField_NestedPath(t *testing.T) {
+	json := `{"data": {"items": [{"name": "first"}, {"name": "second"}]}}`
+	results := CheckJSONField(json, &schema.JSONFieldCheck{
+		Path:   "data.items.0.name",
+		Equals: "first",
+	})
+
+	if len(results) != 1 {
+		t.Fatalf("expected 1 result, got %d", len(results))
+	}
+	if !results[0].Passed {
+		t.Errorf("expected nested path check to pass")
+	}
+}
+
+func TestCheckJSONField_NotFound(t *testing.T) {
+	json := `{"foo": "bar"}`
+	results := CheckJSONField(json, &schema.JSONFieldCheck{
+		Path:   "nonexistent",
+		Equals: "anything",
+	})
+
+	if len(results) != 1 {
+		t.Fatalf("expected 1 result, got %d", len(results))
+	}
+	if results[0].Passed {
+		t.Errorf("expected check to fail for missing field")
+	}
+	if results[0].Actual != "field not found" {
+		t.Errorf("expected 'field not found', got %q", results[0].Actual)
+	}
+}
+
+func TestCheckJSONField_InvalidJSON(t *testing.T) {
+	results := CheckJSONField("not json", &schema.JSONFieldCheck{
+		Path:   "anything",
+		Equals: "anything",
+	})
+
+	if len(results) != 1 {
+		t.Fatalf("expected 1 result, got %d", len(results))
+	}
+	if results[0].Passed {
+		t.Errorf("expected check to fail for invalid JSON")
+	}
+	if results[0].Actual != "invalid JSON" {
+		t.Errorf("expected 'invalid JSON', got %q", results[0].Actual)
+	}
+}
+
+func TestCheckJSONField_MultipleChecks(t *testing.T) {
+	json := `{"version": "1.2.3"}`
+	results := CheckJSONField(json, &schema.JSONFieldCheck{
+		Path:     "version",
+		Equals:   "1.2.3",
+		Contains: "2.3",
+		Matches:  `\d+\.\d+\.\d+`,
+	})
+
+	if len(results) != 3 {
+		t.Fatalf("expected 3 results, got %d", len(results))
+	}
+	for i, r := range results {
+		if !r.Passed {
+			t.Errorf("result %d (%s) failed", i, r.Type)
+		}
 	}
 }
