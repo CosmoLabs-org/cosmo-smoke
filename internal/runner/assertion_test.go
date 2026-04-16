@@ -4,6 +4,7 @@ import (
 	"net/http"
 	"net/http/httptest"
 	"os"
+	"os/exec"
 	"path/filepath"
 	"testing"
 
@@ -411,6 +412,49 @@ func TestCheckPortListening_Fail(t *testing.T) {
 	}
 	if r.Type != "port_listening" {
 		t.Errorf("expected type 'port_listening', got %q", r.Type)
+	}
+}
+
+// ---------------------------------------------------------------------------
+// CheckProcessRunning
+// ---------------------------------------------------------------------------
+
+func TestCheckProcessRunning_ExistingProcess(t *testing.T) {
+	// Spawn a long-running process we can reliably detect, then kill it after.
+	cmd := exec.Command("sleep", "10")
+	if err := cmd.Start(); err != nil {
+		t.Fatalf("failed to start helper process: %v", err)
+	}
+	defer cmd.Process.Kill() //nolint
+	r := CheckProcessRunning("sleep")
+	if !r.Passed {
+		t.Errorf("expected pass for running process 'sleep', got actual=%s", r.Actual)
+	}
+	if r.Type != "process_running" {
+		t.Errorf("expected type 'process_running', got %q", r.Type)
+	}
+}
+
+func TestCheckProcessRunning_MissingProcess(t *testing.T) {
+	r := CheckProcessRunning("definitely-not-a-real-process-xyz123")
+	if r.Passed {
+		t.Errorf("expected fail for non-existent process")
+	}
+	if r.Actual != "not found" {
+		t.Errorf("expected actual 'not found', got %q", r.Actual)
+	}
+	if r.Type != "process_running" {
+		t.Errorf("expected type 'process_running', got %q", r.Type)
+	}
+}
+
+func TestCheckProcessRunning_EmptyName(t *testing.T) {
+	r := CheckProcessRunning("")
+	if r.Passed {
+		t.Errorf("expected fail for empty process name")
+	}
+	if r.Type != "process_running" {
+		t.Errorf("expected type 'process_running', got %q", r.Type)
 	}
 }
 

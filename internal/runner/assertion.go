@@ -6,8 +6,10 @@ import (
 	"net"
 	"net/http"
 	"os"
+	"os/exec"
 	"path/filepath"
 	"regexp"
+	"runtime"
 	"strings"
 	"time"
 
@@ -119,6 +121,25 @@ func CheckPortListening(port int, protocol, host string) AssertionResult {
 	}
 	conn.Close()
 	return AssertionResult{Type: "port_listening", Expected: addr, Actual: "open", Passed: true}
+}
+
+// CheckProcessRunning verifies that a named process is currently running on the host.
+func CheckProcessRunning(name string) AssertionResult {
+	if name == "" {
+		return AssertionResult{Type: "process_running", Expected: name, Actual: "not found", Passed: false}
+	}
+	if runtime.GOOS == "windows" {
+		out, err := exec.Command("tasklist", "/FI", "IMAGENAME eq "+name+".exe").Output()
+		if err != nil || !strings.Contains(string(out), name) {
+			return AssertionResult{Type: "process_running", Expected: name, Actual: "not found", Passed: false}
+		}
+		return AssertionResult{Type: "process_running", Expected: name, Actual: "running", Passed: true}
+	}
+	out, err := exec.Command("pgrep", "-f", name).Output()
+	if err != nil || len(out) == 0 {
+		return AssertionResult{Type: "process_running", Expected: name, Actual: "not found", Passed: false}
+	}
+	return AssertionResult{Type: "process_running", Expected: name, Actual: strings.TrimSpace(string(out)), Passed: true}
 }
 
 // CheckFileExists verifies that a file exists at the given path.
