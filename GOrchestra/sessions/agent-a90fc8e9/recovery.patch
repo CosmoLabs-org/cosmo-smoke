@@ -1,0 +1,426 @@
+From 6753293832f73aed42936d27c95909399891578c Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?G=CE=9BB?= <Gab@CosmoLabs.org>
+Date: Thu, 16 Apr 2026 16:21:08 -0300
+Subject: [PATCH 1/3] feat(assertions): add grpc_health assertion via standard
+ health protocol
+
+- Add GRPCHealthCheck schema with address, service, use_tls, timeout
+- Add CheckGRPCHealth using google.golang.org/grpc health/v1 client
+- Default 5s timeout, configurable via schema
+- Wire into runner pipeline
+- Add google.golang.org/grpc dependency (standard, widely-used)
+- 4 tests using in-process grpc health server
+
+Refs: ROAD-028
+---
+ go.mod                            | 18 +++++--
+ go.sum                            | 43 +++++++++++++++-
+ internal/runner/assertion.go      | 51 +++++++++++++++++++
+ internal/runner/assertion_test.go | 81 +++++++++++++++++++++++++++++++
+ internal/runner/runner.go         |  7 +++
+ internal/schema/schema.go         |  9 ++++
+ 6 files changed, 202 insertions(+), 7 deletions(-)
+
+diff --git a/go.mod b/go.mod
+index 64ee25b..b78933e 100644
+--- a/go.mod
++++ b/go.mod
+@@ -2,10 +2,17 @@ module github.com/CosmoLabs-org/cosmo-smoke
+ 
+ go 1.26.2
+ 
++require (
++	github.com/charmbracelet/lipgloss v1.1.0
++	github.com/spf13/cobra v1.10.2
++	github.com/tidwall/gjson v1.18.0
++	google.golang.org/grpc v1.80.0
++	gopkg.in/yaml.v3 v3.0.1
++)
++
+ require (
+ 	github.com/aymanbagabas/go-osc52/v2 v2.0.1 // indirect
+ 	github.com/charmbracelet/colorprofile v0.2.3-0.20250311203215-f60798e515dc // indirect
+-	github.com/charmbracelet/lipgloss v1.1.0 // indirect
+ 	github.com/charmbracelet/x/ansi v0.8.0 // indirect
+ 	github.com/charmbracelet/x/cellbuf v0.0.13-0.20250311204145-2c3ea96c31dd // indirect
+ 	github.com/charmbracelet/x/term v0.2.1 // indirect
+@@ -15,12 +22,13 @@ require (
+ 	github.com/mattn/go-runewidth v0.0.16 // indirect
+ 	github.com/muesli/termenv v0.16.0 // indirect
+ 	github.com/rivo/uniseg v0.4.7 // indirect
+-	github.com/spf13/cobra v1.10.2 // indirect
+ 	github.com/spf13/pflag v1.0.9 // indirect
+-	github.com/tidwall/gjson v1.18.0 // indirect
+ 	github.com/tidwall/match v1.1.1 // indirect
+ 	github.com/tidwall/pretty v1.2.0 // indirect
+ 	github.com/xo/terminfo v0.0.0-20220910002029-abceb7e1c41e // indirect
+-	golang.org/x/sys v0.30.0 // indirect
+-	gopkg.in/yaml.v3 v3.0.1 // indirect
++	golang.org/x/net v0.49.0 // indirect
++	golang.org/x/sys v0.40.0 // indirect
++	golang.org/x/text v0.33.0 // indirect
++	google.golang.org/genproto/googleapis/rpc v0.0.0-20260120221211-b8f7ae30c516 // indirect
++	google.golang.org/protobuf v1.36.11 // indirect
+ )
+diff --git a/go.sum b/go.sum
+index 6cf77d9..6f637a2 100644
+--- a/go.sum
++++ b/go.sum
+@@ -1,5 +1,7 @@
+ github.com/aymanbagabas/go-osc52/v2 v2.0.1 h1:HwpRHbFMcZLEVr42D4p7XBqjyuxQH5SMiErDT4WkJ2k=
+ github.com/aymanbagabas/go-osc52/v2 v2.0.1/go.mod h1:uYgXzlJ7ZpABp8OJ+exZzJJhRNQ2ASbcXHWsFqH8hp8=
++github.com/cespare/xxhash/v2 v2.3.0 h1:UL815xU9SqsFlibzuggzjXhog7bL6oX9BbNZnL2UFvs=
++github.com/cespare/xxhash/v2 v2.3.0/go.mod h1:VGX0DQ3Q6kWi7AoAeZDth3/j3BFtOZR5XLFGgcrjCOs=
+ github.com/charmbracelet/colorprofile v0.2.3-0.20250311203215-f60798e515dc h1:4pZI35227imm7yK2bGPcfpFEmuY1gc2YSTShr4iJBfs=
+ github.com/charmbracelet/colorprofile v0.2.3-0.20250311203215-f60798e515dc/go.mod h1:X4/0JoqgTIPSFcRA/P6INZzIuyqdFY5rm8tb41s9okk=
+ github.com/charmbracelet/lipgloss v1.1.0 h1:vYXsiLHVkK7fp74RkV7b2kq9+zDLoEU4MZoFqR/noCY=
+@@ -11,6 +13,16 @@ github.com/charmbracelet/x/cellbuf v0.0.13-0.20250311204145-2c3ea96c31dd/go.mod
+ github.com/charmbracelet/x/term v0.2.1 h1:AQeHeLZ1OqSXhrAWpYUtZyX1T3zVxfpZuEQMIQaGIAQ=
+ github.com/charmbracelet/x/term v0.2.1/go.mod h1:oQ4enTYFV7QN4m0i9mzHrViD7TQKvNEEkHUMCmsxdUg=
+ github.com/cpuguy83/go-md2man/v2 v2.0.6/go.mod h1:oOW0eioCTA6cOiMLiUPZOpcVxMig6NIQQ7OS05n1F4g=
++github.com/go-logr/logr v1.4.3 h1:CjnDlHq8ikf6E492q6eKboGOC0T8CDaOvkHCIg8idEI=
++github.com/go-logr/logr v1.4.3/go.mod h1:9T104GzyrTigFIr8wt5mBrctHMim0Nb2HLGrmQ40KvY=
++github.com/go-logr/stdr v1.2.2 h1:hSWxHoqTgW2S2qGc0LTAI563KZ5YKYRhT3MFKZMbjag=
++github.com/go-logr/stdr v1.2.2/go.mod h1:mMo/vtBO5dYbehREoey6XUKy/eSumjCCveDpRre4VKE=
++github.com/golang/protobuf v1.5.4 h1:i7eJL8qZTpSEXOPTxNKhASYpMn+8e5Q6AdndVa1dWek=
++github.com/golang/protobuf v1.5.4/go.mod h1:lnTiLA8Wa4RWRcIUkrtSVa5nRhsEGBg48fD6rSs7xps=
++github.com/google/go-cmp v0.7.0 h1:wk8382ETsv4JYUZwIsn6YpYiWiBsYLSJiTsyBybVuN8=
++github.com/google/go-cmp v0.7.0/go.mod h1:pXiqmnSA92OHEEa9HXL2W4E7lf9JzCmGVUdgjX3N/iU=
++github.com/google/uuid v1.6.0 h1:NIvaJDMOsjHA8n1jAhLSgzrAzy1Hgr+hNrb57e+94F0=
++github.com/google/uuid v1.6.0/go.mod h1:TIyPZe4MgqvfeYDBFedMoGGpEw/LqOeaOT+nhxU+yHo=
+ github.com/inconshreveable/mousetrap v1.1.0 h1:wN+x4NVGpMsO7ErUn/mUI3vEoE6Jt13X2s0bqwp9tc8=
+ github.com/inconshreveable/mousetrap v1.1.0/go.mod h1:vpF70FUmC8bwa3OWnCshd2FqLfsEA9PFc4w1p2J65bw=
+ github.com/lucasb-eyer/go-colorful v1.2.0 h1:1nnpGOrhyZZuNyfu1QjKiUICQ74+3FNCN69Aj6K7nkY=
+@@ -37,10 +49,37 @@ github.com/tidwall/pretty v1.2.0 h1:RWIZEg2iJ8/g6fDDYzMpobmaoGh5OLl4AXtGUGPcqCs=
+ github.com/tidwall/pretty v1.2.0/go.mod h1:ITEVvHYasfjBbM0u2Pg8T2nJnzm8xPwvNhhsoaGGjNU=
+ github.com/xo/terminfo v0.0.0-20220910002029-abceb7e1c41e h1:JVG44RsyaB9T2KIHavMF/ppJZNG9ZpyihvCd0w101no=
+ github.com/xo/terminfo v0.0.0-20220910002029-abceb7e1c41e/go.mod h1:RbqR21r5mrJuqunuUZ/Dhy/avygyECGrLceyNeo4LiM=
++go.opentelemetry.io/auto/sdk v1.2.1 h1:jXsnJ4Lmnqd11kwkBV2LgLoFMZKizbCi5fNZ/ipaZ64=
++go.opentelemetry.io/auto/sdk v1.2.1/go.mod h1:KRTj+aOaElaLi+wW1kO/DZRXwkF4C5xPbEe3ZiIhN7Y=
++go.opentelemetry.io/otel v1.39.0 h1:8yPrr/S0ND9QEfTfdP9V+SiwT4E0G7Y5MO7p85nis48=
++go.opentelemetry.io/otel v1.39.0/go.mod h1:kLlFTywNWrFyEdH0oj2xK0bFYZtHRYUdv1NklR/tgc8=
++go.opentelemetry.io/otel/metric v1.39.0 h1:d1UzonvEZriVfpNKEVmHXbdf909uGTOQjA0HF0Ls5Q0=
++go.opentelemetry.io/otel/metric v1.39.0/go.mod h1:jrZSWL33sD7bBxg1xjrqyDjnuzTUB0x1nBERXd7Ftcs=
++go.opentelemetry.io/otel/sdk v1.39.0 h1:nMLYcjVsvdui1B/4FRkwjzoRVsMK8uL/cj0OyhKzt18=
++go.opentelemetry.io/otel/sdk v1.39.0/go.mod h1:vDojkC4/jsTJsE+kh+LXYQlbL8CgrEcwmt1ENZszdJE=
++go.opentelemetry.io/otel/sdk/metric v1.39.0 h1:cXMVVFVgsIf2YL6QkRF4Urbr/aMInf+2WKg+sEJTtB8=
++go.opentelemetry.io/otel/sdk/metric v1.39.0/go.mod h1:xq9HEVH7qeX69/JnwEfp6fVq5wosJsY1mt4lLfYdVew=
++go.opentelemetry.io/otel/trace v1.39.0 h1:2d2vfpEDmCJ5zVYz7ijaJdOF59xLomrvj7bjt6/qCJI=
++go.opentelemetry.io/otel/trace v1.39.0/go.mod h1:88w4/PnZSazkGzz/w84VHpQafiU4EtqqlVdxWy+rNOA=
+ go.yaml.in/yaml/v3 v3.0.4/go.mod h1:DhzuOOF2ATzADvBadXxruRBLzYTpT36CKvDb3+aBEFg=
++golang.org/x/exp v0.0.0-20220909182711-5c715a9e8561 h1:MDc5xs78ZrZr3HMQugiXOAkSZtfTpbJLDr/lwfgO53E=
++golang.org/x/exp v0.0.0-20220909182711-5c715a9e8561/go.mod h1:cyybsKvd6eL0RnXn6p/Grxp8F5bW7iYuBgsNCOHpMYE=
++golang.org/x/net v0.49.0 h1:eeHFmOGUTtaaPSGNmjBKpbng9MulQsJURQUAfUwY++o=
++golang.org/x/net v0.49.0/go.mod h1:/ysNB2EvaqvesRkuLAyjI1ycPZlQHM3q01F02UY/MV8=
+ golang.org/x/sys v0.6.0/go.mod h1:oPkhp1MJrh7nUepCBck5+mAzfO9JrbApNNgaTdGDITg=
+-golang.org/x/sys v0.30.0 h1:QjkSwP/36a20jFYWkSue1YwXzLmsV5Gfq7Eiy72C1uc=
+-golang.org/x/sys v0.30.0/go.mod h1:/VUhepiaJMQUp4+oa/7Zr1D23ma6VTLIYjOOTFZPUcA=
++golang.org/x/sys v0.40.0 h1:DBZZqJ2Rkml6QMQsZywtnjnnGvHza6BTfYFWY9kjEWQ=
++golang.org/x/sys v0.40.0/go.mod h1:OgkHotnGiDImocRcuBABYBEXf8A9a87e/uXjp9XT3ks=
++golang.org/x/text v0.33.0 h1:B3njUFyqtHDUI5jMn1YIr5B0IE2U0qck04r6d4KPAxE=
++golang.org/x/text v0.33.0/go.mod h1:LuMebE6+rBincTi9+xWTY8TztLzKHc/9C1uBCG27+q8=
++gonum.org/v1/gonum v0.17.0 h1:VbpOemQlsSMrYmn7T2OUvQ4dqxQXU+ouZFQsZOx50z4=
++gonum.org/v1/gonum v0.17.0/go.mod h1:El3tOrEuMpv2UdMrbNlKEh9vd86bmQ6vqIcDwxEOc1E=
++google.golang.org/genproto/googleapis/rpc v0.0.0-20260120221211-b8f7ae30c516 h1:sNrWoksmOyF5bvJUcnmbeAmQi8baNhqg5IWaI3llQqU=
++google.golang.org/genproto/googleapis/rpc v0.0.0-20260120221211-b8f7ae30c516/go.mod h1:j9x/tPzZkyxcgEFkiKEEGxfvyumM01BEtsW8xzOahRQ=
++google.golang.org/grpc v1.80.0 h1:Xr6m2WmWZLETvUNvIUmeD5OAagMw3FiKmMlTdViWsHM=
++google.golang.org/grpc v1.80.0/go.mod h1:ho/dLnxwi3EDJA4Zghp7k2Ec1+c2jqup0bFkw07bwF4=
++google.golang.org/protobuf v1.36.11 h1:fV6ZwhNocDyBLK0dj+fg8ektcVegBBuEolpbTQyBNVE=
++google.golang.org/protobuf v1.36.11/go.mod h1:HTf+CrKn2C3g5S8VImy6tdcUvCska2kB7j23XfzDpco=
++gopkg.in/check.v1 v0.0.0-20161208181325-20d25e280405 h1:yhCVgyC4o1eVCa2tZl7eS0r+SDo693bJlVdllGtEeKM=
+ gopkg.in/check.v1 v0.0.0-20161208181325-20d25e280405/go.mod h1:Co6ibVJAznAaIkqp8huTwlJQCZ016jof/cbN4VW5Yz0=
+ gopkg.in/yaml.v3 v3.0.1 h1:fxVm/GzAzEWqLHuvctI91KS9hhNmmWOoWu0XTYJS7CA=
+ gopkg.in/yaml.v3 v3.0.1/go.mod h1:K4uyk7z7BCEPqu6E+C64Yfv1cQ7kz7rIZviUmN+EgEM=
+diff --git a/internal/runner/assertion.go b/internal/runner/assertion.go
+index 6807abc..8e21bea 100644
+--- a/internal/runner/assertion.go
++++ b/internal/runner/assertion.go
+@@ -16,6 +16,10 @@ import (
+ 
+ 	"github.com/CosmoLabs-org/cosmo-smoke/internal/schema"
+ 	"github.com/tidwall/gjson"
++	"google.golang.org/grpc"
++	"google.golang.org/grpc/credentials"
++	"google.golang.org/grpc/credentials/insecure"
++	healthpb "google.golang.org/grpc/health/grpc_health_v1"
+ )
+ 
+ // AssertionResult holds the outcome of a single assertion check.
+@@ -362,3 +366,50 @@ func CheckJSONField(jsonStr string, check *schema.JSONFieldCheck) []AssertionRes
+ 
+ 	return results
+ }
++
++// CheckGRPCHealth queries grpc.health.v1.Health/Check and passes if SERVING.
++func CheckGRPCHealth(check *schema.GRPCHealthCheck) AssertionResult {
++	timeout := check.Timeout.Duration
++	if timeout == 0 {
++		timeout = 5 * time.Second
++	}
++	ctx, cancel := context.WithTimeout(context.Background(), timeout)
++	defer cancel()
++
++	var creds credentials.TransportCredentials
++	if check.UseTLS {
++		creds = credentials.NewTLS(nil)
++	} else {
++		creds = insecure.NewCredentials()
++	}
++
++	conn, err := grpc.NewClient(check.Address, grpc.WithTransportCredentials(creds))
++	if err != nil {
++		return AssertionResult{
++			Type:     "grpc_health",
++			Expected: check.Address,
++			Actual:   "dial error: " + err.Error(),
++			Passed:   false,
++		}
++	}
++	defer conn.Close()
++
++	client := healthpb.NewHealthClient(conn)
++	resp, err := client.Check(ctx, &healthpb.HealthCheckRequest{Service: check.Service})
++	if err != nil {
++		return AssertionResult{
++			Type:     "grpc_health",
++			Expected: "SERVING",
++			Actual:   "rpc error: " + err.Error(),
++			Passed:   false,
++		}
++	}
++
++	status := resp.GetStatus().String()
++	return AssertionResult{
++		Type:     "grpc_health",
++		Expected: "SERVING",
++		Actual:   status,
++		Passed:   status == "SERVING",
++	}
++}
+diff --git a/internal/runner/assertion_test.go b/internal/runner/assertion_test.go
+index 2b547ba..cc1394c 100644
+--- a/internal/runner/assertion_test.go
++++ b/internal/runner/assertion_test.go
+@@ -1,6 +1,7 @@
+ package runner
+ 
+ import (
++	"net"
+ 	"net/http"
+ 	"net/http/httptest"
+ 	"os"
+@@ -11,6 +12,9 @@ import (
+ 	"time"
+ 
+ 	"github.com/CosmoLabs-org/cosmo-smoke/internal/schema"
++	"google.golang.org/grpc"
++	"google.golang.org/grpc/health"
++	healthpb "google.golang.org/grpc/health/grpc_health_v1"
+ )
+ 
+ // ---------------------------------------------------------------------------
+@@ -774,3 +778,80 @@ func TestCheckJSONField_MultipleChecks(t *testing.T) {
+ 		}
+ 	}
+ }
++
++// ---------------------------------------------------------------------------
++// CheckGRPCHealth
++// ---------------------------------------------------------------------------
++
++// startTestGRPCServer starts an in-process gRPC server on a random port,
++// registers the health service, and returns the address and a stop function.
++func startTestGRPCServer(t *testing.T) (addr string, healthSrv *health.Server, stop func()) {
++	t.Helper()
++	lis, err := net.Listen("tcp", "127.0.0.1:0")
++	if err != nil {
++		t.Fatalf("failed to listen: %v", err)
++	}
++	srv := grpc.NewServer()
++	healthSrv = health.NewServer()
++	healthpb.RegisterHealthServer(srv, healthSrv)
++	go func() { _ = srv.Serve(lis) }()
++	return lis.Addr().String(), healthSrv, func() { srv.Stop() }
++}
++
++func TestCheckGRPCHealth_OverallServing(t *testing.T) {
++	addr, healthSrv, stop := startTestGRPCServer(t)
++	defer stop()
++	healthSrv.SetServingStatus("", healthpb.HealthCheckResponse_SERVING)
++
++	result := CheckGRPCHealth(&schema.GRPCHealthCheck{
++		Address: addr,
++		Service: "",
++	})
++	if !result.Passed {
++		t.Errorf("expected pass, got actual=%q", result.Actual)
++	}
++	if result.Actual != "SERVING" {
++		t.Errorf("expected Actual=SERVING, got %q", result.Actual)
++	}
++}
++
++func TestCheckGRPCHealth_SpecificServiceServing(t *testing.T) {
++	addr, healthSrv, stop := startTestGRPCServer(t)
++	defer stop()
++	healthSrv.SetServingStatus("my.Service", healthpb.HealthCheckResponse_SERVING)
++
++	result := CheckGRPCHealth(&schema.GRPCHealthCheck{
++		Address: addr,
++		Service: "my.Service",
++	})
++	if !result.Passed {
++		t.Errorf("expected pass, got actual=%q", result.Actual)
++	}
++}
++
++func TestCheckGRPCHealth_SpecificServiceNotServing(t *testing.T) {
++	addr, healthSrv, stop := startTestGRPCServer(t)
++	defer stop()
++	healthSrv.SetServingStatus("bad.Service", healthpb.HealthCheckResponse_NOT_SERVING)
++
++	result := CheckGRPCHealth(&schema.GRPCHealthCheck{
++		Address: addr,
++		Service: "bad.Service",
++	})
++	if result.Passed {
++		t.Errorf("expected fail, service is NOT_SERVING")
++	}
++	if result.Actual != "NOT_SERVING" {
++		t.Errorf("expected Actual=NOT_SERVING, got %q", result.Actual)
++	}
++}
++
++func TestCheckGRPCHealth_DialFailure(t *testing.T) {
++	result := CheckGRPCHealth(&schema.GRPCHealthCheck{
++		Address: "127.0.0.1:1", // port 1 is reserved and will refuse connections
++		Timeout: schema.Duration{Duration: 500 * time.Millisecond},
++	})
++	if result.Passed {
++		t.Errorf("expected fail for non-existent address")
++	}
++}
+diff --git a/internal/runner/runner.go b/internal/runner/runner.go
+index fce5bb4..92bd770 100644
+--- a/internal/runner/runner.go
++++ b/internal/runner/runner.go
+@@ -315,6 +315,13 @@ func (r *Runner) runTest(t schema.Test, opts RunOptions) TestResult {
+ 			}
+ 		}
+ 	}
++	if t.Expect.GRPCHealth != nil {
++		a := CheckGRPCHealth(t.Expect.GRPCHealth)
++		assertions = append(assertions, a)
++		if !a.Passed {
++			allPassed = false
++		}
++	}
+ 
+ 	tr := TestResult{
+ 		Name:           t.Name,
+diff --git a/internal/schema/schema.go b/internal/schema/schema.go
+index b4edf19..2ae43cf 100644
+--- a/internal/schema/schema.go
++++ b/internal/schema/schema.go
+@@ -60,6 +60,7 @@ type Expect struct {
+ 	ProcessRunning string          `yaml:"process_running,omitempty"`
+ 	HTTP           *HTTPCheck      `yaml:"http,omitempty"`
+ 	JSONField      *JSONFieldCheck `yaml:"json_field,omitempty"`
++	GRPCHealth     *GRPCHealthCheck `yaml:"grpc_health,omitempty"`
+ }
+ 
+ // PortCheck defines parameters for checking if a port is open and listening.
+@@ -82,6 +83,14 @@ type HTTPCheck struct {
+ 	HeaderContains map[string]string `yaml:"header_contains,omitempty"`
+ }
+ 
++// GRPCHealthCheck queries the grpc.health.v1.Health/Check endpoint.
++type GRPCHealthCheck struct {
++	Address string   `yaml:"address"`           // host:port
++	Service string   `yaml:"service,omitempty"` // "" = overall server health
++	UseTLS  bool     `yaml:"use_tls,omitempty"` // default false (insecure)
++	Timeout Duration `yaml:"timeout,omitempty"` // default 5s
++}
++
+ // JSONFieldCheck defines parameters for asserting on JSON fields in stdout.
+ type JSONFieldCheck struct {
+ 	Path     string `yaml:"path"`
+-- 
+2.53.0
+
+
+From fe69a983614dd0d890db0b478a6dddda743b38dd Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?G=CE=9BB?= <Gab@CosmoLabs.org>
+Date: Thu, 16 Apr 2026 16:28:10 -0300
+Subject: [PATCH 2/3] chore: add quality review results
+
+---
+ .review.json | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
+
+diff --git a/.review.json b/.review.json
+index f19ff22..bedc423 100644
+--- a/.review.json
++++ b/.review.json
+@@ -1,11 +1,11 @@
+ {
+-  "score": 8,
++  "score": 7,
+   "passed": true,
+-  "reviewed_at": "2026-04-16T18:55:06Z",
++  "reviewed_at": "2026-04-16T19:28:10Z",
+   "reviewer": "opus",
+   "origin": "unknown",
+   "iterations": 0,
+   "fixes_applied": 0,
+-  "issues_remaining": 3,
+-  "summary": "Score 8/10, 3 issues"
++  "issues_remaining": 4,
++  "summary": "Score 7/10, 4 issues"
+ }
+\ No newline at end of file
+-- 
+2.53.0
+
+
+From c536f2707f5d93ef0d0114c737252c8e2b5f32e9 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?G=CE=9BB?= <Gab@CosmoLabs.org>
+Date: Thu, 16 Apr 2026 16:35:35 -0300
+Subject: [PATCH 3/3] chore(tracking): update worktree metadata
+
+---
+ .ccsession.json | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
+
+diff --git a/.ccsession.json b/.ccsession.json
+index 445e396..42e483b 100644
+--- a/.ccsession.json
++++ b/.ccsession.json
+@@ -1,18 +1,18 @@
+ {
+   "version": "1.0.0",
+-  "id": "agent-afa452c4",
+-  "name": "agent-afa452c4",
++  "id": "agent-a90fc8e9",
++  "name": "agent-a90fc8e9",
+   "dependencies": [],
+   "dependents": [],
+   "status": "working",
+   "timestamps": {
+-    "created": "2026-04-16T15:42:07.418805-03:00",
+-    "lastActivity": "2026-04-16T15:42:07.418823-03:00"
++    "created": "2026-04-16T16:17:58.264794-03:00",
++    "lastActivity": "2026-04-16T16:17:58.264808-03:00"
+   },
+   "merge": {
+     "order": 0,
+     "readyToMerge": false,
+     "baseBranch": "master"
+   },
+-  "branch": "agent-afa452c4"
++  "branch": "agent-a90fc8e9"
+ }
+\ No newline at end of file
+-- 
+2.53.0
+

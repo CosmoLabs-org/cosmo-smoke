@@ -4,31 +4,7 @@
 
 version: pending
 entries:
-    added:
-        - description: |-
-            # FEAT-006: TAP output format
-
-            **Type**: feature
-            **Status**: closed
-            **Created**: 2026-04-16
-
-            ## Description
-
-            Test Anything Protocol output for broader CI compatibility. Simpler than JUnit, widely supported.
-          source: manual
-          date: 2026-04-16T12:54:36.266391-03:00
-        - description: |-
-            # FEAT-005: Process running assertion
-
-            **Type**: feature
-            **Status**: closed
-            **Created**: 2026-04-16
-
-            ## Description
-
-            New assertion: process_running. Check if process exists by name or pattern. Syntax: process_running: 'nginx'. For daemon/service smoke tests.
-          source: manual
-          date: 2026-04-16T16:15:15.526718-03:00
+    added: []
     fixed: []
     changed: []
     deprecated: []
