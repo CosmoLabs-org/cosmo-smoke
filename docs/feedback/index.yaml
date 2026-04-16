@@ -1,9 +1,9 @@
 version: "1.0"
-next_id: 1
+next_id: 4
 last_updated: "2026-04-16"
 stats:
-    total: 1
-    pending: 1
+    total: 4
+    pending: 4
     implemented: 0
     rejected: 0
     converted: 0
@@ -13,3 +13,18 @@ entries:
       status: pending
       from_project: cosmo-smoke
       created: "2026-04-16T09:29:01.672619-03:00"
+    - id: FB-002
+      title: ccs commit-batch needs --worktree flag
+      status: pending
+      from_project: cosmo-smoke
+      created: "2026-04-16T17:12:43.299638-03:00"
+    - id: FB-003
+      title: Post-commit hook creates chase-your-tail loop
+      status: pending
+      from_project: cosmo-smoke
+      created: "2026-04-16T17:12:47.323845-03:00"
+    - id: FB-004
+      title: ccs prompts status divergence from goal checkboxes
+      status: pending
+      from_project: cosmo-smoke
+      created: "2026-04-16T17:12:51.901448-03:00"
