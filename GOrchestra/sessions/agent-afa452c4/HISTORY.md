@@ -5,9 +5,9 @@ status: conflict
 created: 2026-04-16
 archived: 2026-04-16
 commits: 3
-files_changed: 7
-lines_added: 103
-lines_removed: 7
+files_changed: 13
+lines_added: 121
+lines_removed: 125
 review_status: passed
 ---
 
@@ -16,7 +16,7 @@ review_status: passed
 ## Summary
 
 Branch merged via `ccs merg` on 2026-04-16.
-3 commits, 7 files changed (+103/-7).
+3 commits, 13 files changed (+121/-125).
 
 ## Commits
 
@@ -27,12 +27,18 @@ Branch merged via `ccs merg` on 2026-04-16.
 ## Files Changed
 
 ```
-.review.json                      | 10 ++++----
- docs/issues.yaml                  |  2 +-
- docs/issues/FEAT-006.yaml         |  2 +-
- internal/runner/assertion.go      | 36 +++++++++++++++++++++++++++
- internal/runner/assertion_test.go | 52 +++++++++++++++++++++++++++++++++++++++
- internal/runner/runner.go         |  7 ++++++
- internal/schema/schema.go         |  1 +
- 7 files changed, 103 insertions(+), 7 deletions(-)
+.review.json                                       | 10 ++---
+ GOrchestra/intel/architecture.json                 | 32 ++++++-------
+ GOrchestra/intel/status.json                       |  4 +-
+ GOrchestra/sessions/agent-afa452c4/.ccsession.json | 18 --------
+ GOrchestra/sessions/agent-afa452c4/.review.json    | 11 -----
+ GOrchestra/sessions/agent-afa452c4/HISTORY.md      | 38 ----------------
+ GOrchestra/sessions/agent-afa452c4/session.json    | 33 --------------
+ docs/issues.yaml                                   |  2 +-
+ docs/issues/FEAT-006.yaml                          |  2 +-
+ internal/runner/assertion.go                       | 36 +++++++++++++++
+ internal/runner/assertion_test.go                  | 52 ++++++++++++++++++++++
+ internal/runner/runner.go                          |  7 +++
+ internal/schema/schema.go                          |  1 +
+ 13 files changed, 121 insertions(+), 125 deletions(-)
 ```

@@ -1,11 +1,11 @@
 {
   "version": "1.0",
-  "generated_at": "2026-04-16T15:36:59.842651-03:00",
+  "generated_at": "2026-04-16T15:55:30.455898-03:00",
   "generated_by": "GLM-4.7",
-  "expires_at": "2026-04-17T15:36:59.842652-03:00",
-  "last_analyzed_commit": "d5d6c5f09bc1095b8c8003fb5d1cdba0fdad40ce",
-  "summary": "A Go-based orchestration tool that detects, runs, and reports on schema assertions with plugin support.",
-  "architecture": "monolith",
+  "expires_at": "2026-04-17T15:55:30.455898-03:00",
+  "last_analyzed_commit": "3570de147116a610a5d84391ddc4471c6535e27f",
+  "summary": "A Go-based orchestration and assertion testing framework with plugin support and Kubernetes integration.",
+  "architecture": "modular monolith",
   "primary_language": "Go",
   "hot_files": [
     "internal/runner/runner.go",
@@ -15,20 +15,19 @@
     "internal/reporter/junit_test.go"
   ],
   "patterns": [
-    "Standard Go project layout",
-    "Test-driven development",
-    "Plugin architecture",
-    "Pipeline pattern (detect -\u003e run -\u003e report)"
+    "plugin architecture",
+    "runner-executor pattern",
+    "separation of concerns (detector/reporter/runner/schema)",
+    "test-driven development"
   ],
   "concerns": [
-    "Uncommitted changes (4 modified, 1 staged) suggest incomplete work",
-    "Heavy reliance on test files for understanding core logic indicates possible lack of inline documentation",
-    "Session transcript archiving in source tree could bloat repository over time"
+    "excessive auto-commit session metadata cluttering git history",
+    "version injection via ldflags requires strict build process adherence",
+    "untracked files and staged changes indicate incomplete commits"
   ],
   "suggestions": [
-    "Commit or stash the pending changes to maintain a clean working tree",
-    "Add package-level documentation to internal packages to reduce dependency on reading tests",
-    "Move archived session transcripts to external storage or git-lfs",
-    "Focus on completing the v0.2.0 release cleanup based on recent commit activity"
+    "add session metadata to .gitignore to reduce commit noise",
+    "consolidate or document the multiple config directories (.claude, .gorchestra, GOrchestra)",
+    "focus on the runner and detector modules as they contain the core logic"
   ]
 }
