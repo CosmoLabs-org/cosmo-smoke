@@ -1,6 +1,6 @@
 version: "1.0"
 project: cosmo-smoke
-last_updated: 2026-04-16T16:38:53.456461-03:00
+last_updated: 2026-04-16T17:05:09.306198-03:00
 next_id: 30
 items:
     - id: ROAD-029
@@ -41,6 +41,8 @@ items:
     - id: ROAD-024
       title: Goss migration tool
       status: captured
+      priority: 85
+      effort: large
       created_at: 2026-04-16T08:55:59.911782-03:00
     - id: ROAD-023
       title: Auto-generate from running container
@@ -70,30 +72,42 @@ items:
     - id: ROAD-018
       title: Service dependency checks
       status: captured
+      priority: 60
       created_at: 2026-04-15T17:45:39.819046-03:00
     - id: ROAD-017
       title: Multi-environment smoke configs
       status: captured
+      priority: 50
+      effort: small
       created_at: 2026-04-15T17:45:38.625262-03:00
     - id: ROAD-016
       title: Database connectivity assertions
       status: captured
+      priority: 70
       created_at: 2026-04-15T17:45:37.232418-03:00
     - id: ROAD-015
       title: Docker container smoke tests
       status: captured
+      priority: 75
+      effort: medium
       created_at: 2026-04-15T17:45:35.486222-03:00
     - id: ROAD-014
       title: Credential smoke tests
       status: captured
+      priority: 35
+      effort: small
       created_at: 2026-04-15T17:45:33.616418-03:00
     - id: ROAD-013
       title: Dependency version assertions
       status: captured
+      priority: 40
+      effort: small
       created_at: 2026-04-15T17:45:32.986778-03:00
     - id: ROAD-012
       title: Retry with backoff
       status: captured
+      priority: 80
+      effort: small
       created_at: 2026-04-15T17:36:21.657703-03:00
     - id: ROAD-011
       title: TAP output format
@@ -103,6 +117,8 @@ items:
     - id: ROAD-010
       title: Monorepo sub-config support
       status: captured
+      priority: 45
+      effort: medium
       created_at: 2026-04-15T17:36:19.334069-03:00
     - id: ROAD-009
       title: allow_failure for flaky tests
@@ -112,6 +128,8 @@ items:
     - id: ROAD-008
       title: Conditional test execution
       status: captured
+      priority: 55
+      effort: small
       created_at: 2026-04-15T17:36:12.22819-03:00
     - id: ROAD-007
       title: JSON field assertions
@@ -136,6 +154,8 @@ items:
     - id: ROAD-003
       title: Watch mode for development (--watch)
       status: captured
+      priority: 65
+      effort: small
       created_at: 2026-04-15T17:36:00.274911-03:00
     - id: ROAD-002
       title: env_check assertion type

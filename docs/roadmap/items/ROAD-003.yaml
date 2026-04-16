@@ -1,11 +1,15 @@
 id: ROAD-003
 created_at: 2026-04-15T17:36:00.274911-03:00
-updated_at: 2026-04-15T17:36:00.2753-03:00
+updated_at: 2026-04-16T17:05:08.900742-03:00
 title: Watch mode for development (--watch)
 description: Re-run smoke tests when source files change. Uses fsnotify. Great for TDD-style smoke test development.
 status: captured
-priority: 60
+priority: 65
+effort: small
 tags:
     - v1.2
     - dx
     - feature
+    - v0.4
+notes:
+    - 'smoke run --watch: fsnotify on config dir, re-run on change. Developer ergonomics.'

@@ -1,11 +1,15 @@
 id: ROAD-012
 created_at: 2026-04-15T17:36:21.657703-03:00
-updated_at: 2026-04-15T17:36:21.659468-03:00
+updated_at: 2026-04-16T17:05:04.854908-03:00
 title: Retry with backoff
 description: 'Retry failed tests N times with exponential backoff. Syntax: retry: 3, backoff: 1s. Handles transient failures.'
 status: captured
-priority: 35
+priority: 80
+effort: small
 tags:
     - v2.0
     - feature
     - resilience
+    - v0.4
+notes:
+    - 'Critical DX: flaky-network tests need retry with exponential backoff. Pairs with allow_failure.'

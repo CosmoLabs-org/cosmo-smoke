@@ -1,11 +1,14 @@
 id: ROAD-016
 created_at: 2026-04-15T17:45:37.232418-03:00
-updated_at: 2026-04-15T17:45:37.234126-03:00
+updated_at: 2026-04-16T17:05:04.531224-03:00
 title: Database connectivity assertions
 description: 'New assertion: db_connect. Verify database is reachable. Syntax: db_connect: { type: postgres, env: DATABASE_URL }. No queries, just connection test.'
 status: captured
-priority: 50
+priority: 70
 tags:
     - v2.0
     - database
     - connectivity
+    - v0.4
+notes:
+    - 'v0.3 ships redis_ping and memcached_version covering the cache side. Remaining: Postgres, MySQL, MongoDB connectivity (pg/mysql ping, db_query assertions).'

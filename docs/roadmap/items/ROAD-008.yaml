@@ -1,11 +1,14 @@
 id: ROAD-008
 created_at: 2026-04-15T17:36:12.22819-03:00
-updated_at: 2026-04-15T17:36:12.229022-03:00
+updated_at: 2026-04-16T17:05:08.965485-03:00
 title: Conditional test execution
 description: 'Skip tests based on conditions: os (darwin/linux), env var presence, command availability (docker, bun). Syntax: when: { os: darwin } or skip_when: { missing: docker }.'
 status: captured
-priority: 45
+priority: 55
+effort: small
 tags:
     - v2.0
     - feature
     - conditional
+notes:
+    - 'when: stdout_contains: ''foo'' on test level — conditional execution based on prior test output or env.'

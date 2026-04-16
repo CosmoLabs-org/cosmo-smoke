@@ -1,11 +1,15 @@
 id: ROAD-024
 created_at: 2026-04-16T08:55:59.911782-03:00
-updated_at: 2026-04-16T08:55:59.913245-03:00
+updated_at: 2026-04-16T17:05:04.746834-03:00
 title: Goss migration tool
 description: 'Command: ''smoke migrate goss path/to/.goss.yaml''. Converts Goss configs to .smoke.yaml format. Marketing opportunity: capture Goss users as Goss development has stalled.'
 status: captured
-priority: 50
+priority: 85
+effort: large
 tags:
     - v2.0
     - migration
     - marketing
+    - v0.4
+notes:
+    - 'Strategic: Goss dev stalled 18+ months. Migration tool would capture their users.'
