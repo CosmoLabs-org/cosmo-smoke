@@ -1,0 +1,11 @@
+id: ROAD-017
+created_at: 2026-04-15T17:45:38.625262-03:00
+updated_at: 2026-04-15T17:45:38.634219-03:00
+title: Multi-environment smoke configs
+description: 'Support .smoke.yaml, .smoke.staging.yaml, .smoke.prod.yaml. Run with: smoke run --env staging. Different tests for different environments.'
+status: captured
+priority: 45
+tags:
+    - v2.0
+    - environments
+    - deployment

@@ -2,7 +2,7 @@
 
 Universal smoke test runner for any project, any language.
 
-**Version**: 1.0.0 | **Status**: Stable | **License**: MIT
+**Version**: 0.1.0 | **Status**: Beta | **License**: MIT
 
 ---
 

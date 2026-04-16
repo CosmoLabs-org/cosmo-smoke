@@ -1,11 +1,12 @@
 id: ROAD-011
 created_at: 2026-04-15T17:36:20.655481-03:00
-updated_at: 2026-04-15T17:36:20.655909-03:00
+updated_at: 2026-04-16T08:57:03.434735-03:00
 title: TAP output format
 description: Test Anything Protocol output for broader CI compatibility. Simpler than JUnit, widely supported.
-status: captured
+status: promoted
 priority: 30
 tags:
     - v2.0
     - ci
     - output
+promoted_to: FEAT-006

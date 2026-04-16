@@ -1,15 +1,66 @@
 version: "1.0"
 project: cosmo-smoke
-last_updated: 2026-04-15T17:36:31.67434-03:00
-next_id: 13
+last_updated: 2026-04-16T08:57:03.486593-03:00
+next_id: 25
 items:
+    - id: ROAD-024
+      title: Goss migration tool
+      status: captured
+      created_at: 2026-04-16T08:55:59.911782-03:00
+    - id: ROAD-023
+      title: Auto-generate from running container
+      status: captured
+      created_at: 2026-04-16T08:55:58.388478-03:00
+    - id: ROAD-022
+      title: Process running assertion
+      status: promoted
+      promoted_to: FEAT-005
+      created_at: 2026-04-16T08:55:56.343415-03:00
+    - id: ROAD-021
+      title: Port listening assertion
+      status: promoted
+      promoted_to: FEAT-004
+      created_at: 2026-04-16T08:55:55.193698-03:00
+    - id: ROAD-020
+      title: Config inheritance — includes, vars, templates
+      status: captured
+      created_at: 2026-04-16T08:55:53.417031-03:00
+    - id: ROAD-019
+      title: cosmo-smoke serve — HTTP health endpoint
+      status: captured
+      created_at: 2026-04-16T08:55:51.225103-03:00
+    - id: ROAD-018
+      title: Service dependency checks
+      status: captured
+      created_at: 2026-04-15T17:45:39.819046-03:00
+    - id: ROAD-017
+      title: Multi-environment smoke configs
+      status: captured
+      created_at: 2026-04-15T17:45:38.625262-03:00
+    - id: ROAD-016
+      title: Database connectivity assertions
+      status: captured
+      created_at: 2026-04-15T17:45:37.232418-03:00
+    - id: ROAD-015
+      title: Docker container smoke tests
+      status: captured
+      created_at: 2026-04-15T17:45:35.486222-03:00
+    - id: ROAD-014
+      title: Credential smoke tests
+      status: captured
+      created_at: 2026-04-15T17:45:33.616418-03:00
+    - id: ROAD-013
+      title: Dependency version assertions
+      status: captured
+      created_at: 2026-04-15T17:45:32.986778-03:00
     - id: ROAD-012
       title: Retry with backoff
       status: captured
       created_at: 2026-04-15T17:36:21.657703-03:00
     - id: ROAD-011
       title: TAP output format
-      status: captured
+      status: promoted
+      promoted_to: FEAT-006
       created_at: 2026-04-15T17:36:20.655481-03:00
     - id: ROAD-010
       title: Monorepo sub-config support
@@ -17,7 +68,8 @@ items:
       created_at: 2026-04-15T17:36:19.334069-03:00
     - id: ROAD-009
       title: allow_failure for flaky tests
-      status: captured
+      status: promoted
+      promoted_to: FEAT-007
       created_at: 2026-04-15T17:36:13.727026-03:00
     - id: ROAD-008
       title: Conditional test execution

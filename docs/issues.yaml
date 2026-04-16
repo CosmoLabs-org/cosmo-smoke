@@ -1,11 +1,31 @@
 version: "1.0"
 project: cosmo-smoke
-last_updated: 2026-04-15T17:36:31.673979-03:00
+last_updated: 2026-04-16T08:57:03.485764-03:00
 next_bug_id: 1
-next_feat_id: 4
+next_feat_id: 8
 next_task_id: 1
 next_imp_id: 1
 issues:
+    - id: FEAT-007
+      type: feature
+      status: open
+      title: allow_failure for flaky tests
+      created_at: 2026-04-16T08:57:03.485124-03:00
+    - id: FEAT-006
+      type: feature
+      status: open
+      title: TAP output format
+      created_at: 2026-04-16T08:57:03.434127-03:00
+    - id: FEAT-005
+      type: feature
+      status: open
+      title: Process running assertion
+      created_at: 2026-04-16T08:57:03.386359-03:00
+    - id: FEAT-004
+      type: feature
+      status: open
+      title: Port listening assertion
+      created_at: 2026-04-16T08:57:03.335668-03:00
     - id: FEAT-003
       type: feature
       status: open
@@ -13,11 +33,11 @@ issues:
       created_at: 2026-04-15T17:36:31.67282-03:00
     - id: FEAT-002
       type: feature
-      status: open
+      status: done
       title: env_check assertion type
       created_at: 2026-04-15T17:36:29.038509-03:00
     - id: FEAT-001
       type: feature
-      status: open
+      status: done
       title: stderr_matches assertion type
       created_at: 2026-04-15T17:36:28.855578-03:00

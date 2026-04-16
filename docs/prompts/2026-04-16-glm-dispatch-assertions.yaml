@@ -1,0 +1,150 @@
+# GLM Dispatch Manifest: New Assertions & Features
+# Generated: 2026-04-16
+# Usage: ccs glm-agent exec-batch docs/prompts/2026-04-16-glm-dispatch-assertions.yaml
+
+tasks:
+  - id: 1
+    title: "FEAT-004: Port listening assertion"
+    files_modify:
+      - internal/schema/schema.go
+      - internal/runner/assertion.go
+      - internal/runner/runner.go
+      - internal/runner/assertion_test.go
+    files_create: []
+    description: |
+      Add port_listening assertion type to check if a TCP/UDP port is open.
+
+      1. In schema.go, add to Expect struct:
+         PortListening *PortCheck `yaml:"port_listening,omitempty"`
+
+         Add new struct:
+         type PortCheck struct {
+             Port     int    `yaml:"port"`
+             Protocol string `yaml:"protocol,omitempty"` // tcp (default) or udp
+             Host     string `yaml:"host,omitempty"`     // default localhost
+         }
+
+      2. In assertion.go, add:
+         func CheckPortListening(port int, protocol, host string) AssertionResult
+         - Use net.DialTimeout with 5s timeout
+         - Default protocol to "tcp", host to "localhost"
+         - Return pass if connection succeeds
+
+      3. In runner.go, add evaluation block after env_exists check:
+         if t.Expect.PortListening != nil { ... }
+
+      4. In assertion_test.go, add tests:
+         - TestCheckPortListening_Pass (use a listening port)
+         - TestCheckPortListening_Fail (use closed port)
+         - TestCheckPortListening_UDP
+
+      Build: go build ./...
+      Test: go test ./internal/runner/... -run Port
+    depends_on: []
+    complexity: simple
+
+  - id: 2
+    title: "FEAT-005: Process running assertion"
+    files_modify:
+      - internal/schema/schema.go
+      - internal/runner/assertion.go
+      - internal/runner/runner.go
+      - internal/runner/assertion_test.go
+    files_create: []
+    description: |
+      Add process_running assertion to check if a process exists by name.
+
+      1. In schema.go, add to Expect struct:
+         ProcessRunning string `yaml:"process_running,omitempty"`
+
+      2. In assertion.go, add:
+         func CheckProcessRunning(name string) AssertionResult
+         - Use os/exec to run: pgrep -x <name> (Unix) or tasklist (Windows)
+         - Return pass if exit code is 0 (process found)
+         - For cross-platform: use runtime.GOOS to select command
+
+      3. In runner.go, add evaluation block:
+         if t.Expect.ProcessRunning != "" { ... }
+
+      4. In assertion_test.go, add tests:
+         - TestCheckProcessRunning_Pass (check for "go" during test)
+         - TestCheckProcessRunning_Fail (check for nonexistent process)
+
+      Build: go build ./...
+      Test: go test ./internal/runner/... -run Process
+    depends_on: []
+    complexity: simple
+
+  - id: 3
+    title: "FEAT-006: TAP output format"
+    files_modify:
+      - cmd/run.go
+    files_create:
+      - internal/reporter/tap.go
+      - internal/reporter/tap_test.go
+    description: |
+      Add TAP (Test Anything Protocol) output format.
+
+      1. Create internal/reporter/tap.go:
+         - Copy structure from junit.go
+         - Implement Reporter interface
+         - TAP format:
+           TAP version 14
+           1..N
+           ok 1 - test name
+           not ok 2 - test name
+           # Failed assertion details as comments
+         - Use "ok" for pass, "not ok" for fail, "ok # SKIP" for skipped
+
+      2. Create internal/reporter/tap_test.go:
+         - TestTAPReporter_BasicOutput
+         - TestTAPReporter_WithFailures
+         - TestTAPReporter_Skipped
+
+      3. In cmd/run.go:
+         - Add "tap" case to format switch
+         - Update --format flag description
+
+      Build: go build ./...
+      Test: go test ./internal/reporter/... -run TAP
+    depends_on: []
+    complexity: simple
+
+  - id: 4
+    title: "FEAT-007: allow_failure for flaky tests"
+    files_modify:
+      - internal/schema/schema.go
+      - internal/runner/runner.go
+      - internal/reporter/reporter.go
+      - internal/reporter/terminal.go
+      - internal/reporter/json.go
+    files_create: []
+    description: |
+      Add allow_failure field to mark tests that can fail without failing the suite.
+
+      1. In schema.go, add to Test struct:
+         AllowFailure bool `yaml:"allow_failure,omitempty"`
+
+      2. In runner.go:
+         - In TestResult struct, add: AllowedFailure bool
+         - In runTest, if test fails AND t.AllowFailure is true:
+           - Set tr.AllowedFailure = true
+           - Don't increment suite.Failed
+           - Add new counter: suite.AllowedFailures
+         - In SuiteResult, add: AllowedFailures int
+
+      3. In reporter.go:
+         - Add AllowedFailure bool to TestResultData
+         - Add AllowedFailures int to SuiteResultData
+
+      4. In terminal.go:
+         - Show allowed failures with yellow "⚠" instead of red "✗"
+         - In summary: "N tests: X passed, Y failed, Z allowed failures"
+
+      5. In json.go:
+         - Include allowed_failure field in output
+
+      Build: go build ./...
+      Test: go test ./...
+    depends_on: []
+    complexity: simple

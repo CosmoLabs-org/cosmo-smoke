@@ -1,0 +1,11 @@
+id: ROAD-014
+created_at: 2026-04-15T17:45:33.616418-03:00
+updated_at: 2026-04-15T17:45:33.628293-03:00
+title: Credential smoke tests
+description: 'Smoke test templates for credential verification. Use env_exists to verify required API keys are set (without exposing values). Generate from credentials registry. Example: env_exists: STRIPE_SECRET_KEY'
+status: captured
+priority: 60
+tags:
+    - v2.0
+    - credentials
+    - security

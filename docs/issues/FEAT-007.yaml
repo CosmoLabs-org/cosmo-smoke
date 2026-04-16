@@ -1,0 +1,10 @@
+id: FEAT-007
+type: feature
+created_at: 2026-04-16T08:57:03.485124-03:00
+updated_at: 2026-04-16T08:57:03.485567-03:00
+source: local
+status: open
+origin:
+    roadmap_id: ROAD-009
+title: allow_failure for flaky tests
+description: Mark tests that can fail without failing the suite. Useful for network-dependent tests. Reported separately in summary.

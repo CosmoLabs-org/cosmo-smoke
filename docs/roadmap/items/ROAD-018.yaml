@@ -1,0 +1,11 @@
+id: ROAD-018
+created_at: 2026-04-15T17:45:39.819046-03:00
+updated_at: 2026-04-15T17:45:39.820301-03:00
+title: Service dependency checks
+description: 'New assertion: service_reachable. Verify external services are accessible. Syntax: service_reachable: { url: ''https://api.stripe.com'', timeout: 5s }. For microservice dependencies.'
+status: captured
+priority: 45
+tags:
+    - v2.0
+    - services
+    - connectivity

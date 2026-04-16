@@ -1,0 +1,12 @@
+id: ROAD-019
+created_at: 2026-04-16T08:55:51.225103-03:00
+updated_at: 2026-04-16T08:55:51.2266-03:00
+title: cosmo-smoke serve — HTTP health endpoint
+description: Add 'smoke serve' command that exposes HTTP endpoint (default :8080/healthz). Runs smoke tests on each request, returns 200 (pass) or 503 (fail) + JSON details. Critical for Docker HEALTHCHECK and K8s liveness/readiness probes. Goss's killer feature — we need parity.
+status: captured
+priority: 95
+tags:
+    - v1.2
+    - serve
+    - health
+    - critical

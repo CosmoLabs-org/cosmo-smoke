@@ -1,0 +1,12 @@
+id: ROAD-022
+created_at: 2026-04-16T08:55:56.343415-03:00
+updated_at: 2026-04-16T08:57:03.387272-03:00
+title: Process running assertion
+description: 'New assertion: process_running. Check if process exists by name or pattern. Syntax: process_running: ''nginx''. For daemon/service smoke tests.'
+status: promoted
+priority: 65
+tags:
+    - v2.0
+    - assertion
+    - infra
+promoted_to: FEAT-005
