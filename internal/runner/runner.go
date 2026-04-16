@@ -282,6 +282,13 @@ func (r *Runner) runTest(t schema.Test, opts RunOptions) TestResult {
 			allPassed = false
 		}
 	}
+	if t.Expect.ProcessRunning != "" {
+		a := CheckProcessRunning(t.Expect.ProcessRunning)
+		assertions = append(assertions, a)
+		if !a.Passed {
+			allPassed = false
+		}
+	}
 	if t.Expect.HTTP != nil {
 		httpResults := CheckHTTP(t.Expect.HTTP)
 		for _, a := range httpResults {

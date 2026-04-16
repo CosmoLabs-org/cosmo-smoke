@@ -56,6 +56,7 @@ type Expect struct {
 	FileExists     string          `yaml:"file_exists,omitempty"`
 	EnvExists      string          `yaml:"env_exists,omitempty"`
 	PortListening  *PortCheck      `yaml:"port_listening,omitempty"`
+	ProcessRunning string          `yaml:"process_running,omitempty"`
 	HTTP           *HTTPCheck      `yaml:"http,omitempty"`
 	JSONField      *JSONFieldCheck `yaml:"json_field,omitempty"`
 }

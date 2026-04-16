@@ -1,13 +1,16 @@
 package runner
 
 import (
+	"context"
 	"fmt"
 	"io"
 	"net"
 	"net/http"
 	"os"
+	"os/exec"
 	"path/filepath"
 	"regexp"
+	"runtime"
 	"strings"
 	"time"
 
@@ -119,6 +122,39 @@ func CheckPortListening(port int, protocol, host string) AssertionResult {
 	}
 	conn.Close()
 	return AssertionResult{Type: "port_listening", Expected: addr, Actual: "open", Passed: true}
+}
+
+// CheckProcessRunning verifies that a named process is currently running on the host.
+// Uses exact process-name matching (pgrep -x on Unix, CSV-parsed tasklist on Windows).
+// Bounded by a 2s timeout to prevent hangs.
+func CheckProcessRunning(name string) AssertionResult {
+	if name == "" {
+		return AssertionResult{Type: "process_running", Expected: name, Actual: "empty name", Passed: false}
+	}
+	ctx, cancel := context.WithTimeout(context.Background(), 2*time.Second)
+	defer cancel()
+	if runtime.GOOS == "windows" {
+		filter := fmt.Sprintf("IMAGENAME eq %s", name)
+		out, err := exec.CommandContext(ctx, "tasklist", "/FI", filter, "/FO", "CSV", "/NH").Output()
+		if err != nil {
+			return AssertionResult{Type: "process_running", Expected: name, Actual: "lookup error", Passed: false}
+		}
+		if !strings.Contains(string(out), "\""+name) {
+			return AssertionResult{Type: "process_running", Expected: name, Actual: "not found", Passed: false}
+		}
+		return AssertionResult{Type: "process_running", Expected: name, Actual: "running", Passed: true}
+	}
+	out, err := exec.CommandContext(ctx, "pgrep", "-x", name).Output()
+	if err != nil {
+		if ee, ok := err.(*exec.ExitError); ok && ee.ExitCode() == 1 {
+			return AssertionResult{Type: "process_running", Expected: name, Actual: "not found", Passed: false}
+		}
+		return AssertionResult{Type: "process_running", Expected: name, Actual: "lookup error: " + err.Error(), Passed: false}
+	}
+	if len(out) == 0 {
+		return AssertionResult{Type: "process_running", Expected: name, Actual: "not found", Passed: false}
+	}
+	return AssertionResult{Type: "process_running", Expected: name, Actual: strings.TrimSpace(string(out)), Passed: true}
 }
 
 // CheckFileExists verifies that a file exists at the given path.

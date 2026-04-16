@@ -4,8 +4,11 @@ import (
 	"net/http"
 	"net/http/httptest"
 	"os"
+	"os/exec"
 	"path/filepath"
+	"runtime"
 	"testing"
+	"time"
 
 	"github.com/CosmoLabs-org/cosmo-smoke/internal/schema"
 )
@@ -411,6 +414,55 @@ func TestCheckPortListening_Fail(t *testing.T) {
 	}
 	if r.Type != "port_listening" {
 		t.Errorf("expected type 'port_listening', got %q", r.Type)
+	}
+}
+
+// ---------------------------------------------------------------------------
+// CheckProcessRunning
+// ---------------------------------------------------------------------------
+
+func TestCheckProcessRunning_ExistingProcess(t *testing.T) {
+	if runtime.GOOS == "windows" {
+		t.Skip("pgrep not available on Windows; tasklist path covered via manual verification")
+	}
+	// Spawn a long-running 'sleep' process so we have a predictable target
+	// for pgrep -x. Both macOS and Linux ship /bin/sleep.
+	cmd := exec.Command("sleep", "30")
+	if err := cmd.Start(); err != nil {
+		t.Fatalf("failed to start helper process: %v", err)
+	}
+	t.Cleanup(func() { _ = cmd.Process.Kill() })
+	// Give the OS a moment to register the process in the process table.
+	time.Sleep(50 * time.Millisecond)
+	r := CheckProcessRunning("sleep")
+	if !r.Passed {
+		t.Errorf("expected pass for running 'sleep' process, got actual=%s", r.Actual)
+	}
+	if r.Type != "process_running" {
+		t.Errorf("expected type 'process_running', got %q", r.Type)
+	}
+}
+
+func TestCheckProcessRunning_MissingProcess(t *testing.T) {
+	r := CheckProcessRunning("definitely-not-a-real-process-xyz123")
+	if r.Passed {
+		t.Errorf("expected fail for non-existent process")
+	}
+	if r.Actual != "not found" {
+		t.Errorf("expected actual 'not found', got %q", r.Actual)
+	}
+	if r.Type != "process_running" {
+		t.Errorf("expected type 'process_running', got %q", r.Type)
+	}
+}
+
+func TestCheckProcessRunning_EmptyName(t *testing.T) {
+	r := CheckProcessRunning("")
+	if r.Passed {
+		t.Errorf("expected fail for empty process name")
+	}
+	if r.Type != "process_running" {
+		t.Errorf("expected type 'process_running', got %q", r.Type)
 	}
 }
 
