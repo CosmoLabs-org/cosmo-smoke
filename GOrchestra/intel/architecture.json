@@ -1,10 +1,10 @@
 {
   "version": "1.0",
-  "generated_at": "2026-04-16T09:14:09.590314-03:00",
+  "generated_at": "2026-04-16T09:18:59.244139-03:00",
   "generated_by": "GLM-4.7",
-  "expires_at": "2026-04-17T09:14:09.590314-03:00",
-  "last_analyzed_commit": "db28d9279b832c126de792515972a9d74b7d6bb7",
-  "summary": "A Go-based modular testing framework that detects conditions and runs assertions against infrastructure, reporting results in formats like JUnit.",
+  "expires_at": "2026-04-17T09:18:59.244139-03:00",
+  "last_analyzed_commit": "abd3981f65f3d5e70e00ce90a6be95716f876de9",
+  "summary": "A Go-based orchestration tool that detects, runs, and reports on schema assertions with plugin support and automated agent workflows.",
   "architecture": "modular monolith",
   "primary_language": "Go",
   "hot_files": [
@@ -15,19 +15,19 @@
     "internal/reporter/junit_test.go"
   ],
   "patterns": [
-    "separation of concerns",
     "plugin architecture",
-    "test runner pattern",
-    "pipeline pattern"
+    "separation of concerns (detector/runner/reporter)",
+    "test-driven development",
+    "orchestration/agent workflow"
   ],
   "concerns": [
-    "scattered orchestration metadata directories (.gorchestra, GOrchestra/intel)",
-    "archived session folders committed to the main branch",
-    "heavy reliance on auto-commit CI chores cluttering git history"
+    "frequent archiving of timed-out GLM agent sessions indicates flaky or unstable orchestration workflows",
+    "untracked files in git status suggest missing .gitignore entries",
+    "deeply nested orchestration session directories could lead to path management complexity"
   ],
   "suggestions": [
-    "move .gorchestra and GOrchestra directories to .gitignore",
-    "consolidate CI auto-commit workflows to reduce noise",
-    "add integration tests for the new port_listening assertion"
+    "investigate and stabilize the GLM agent timeout issues causing frequent session archiving",
+    "clean up git state by addressing staged and untracked files",
+    "consider consolidating or pruning archived session directories to reduce repository bloat"
   ]
 }
