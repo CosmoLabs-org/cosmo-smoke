@@ -1,6 +1,8 @@
 package schema
 
 import (
+	"os"
+	"path/filepath"
 	"testing"
 	"time"
 )
@@ -160,5 +162,122 @@ tests:
 	want := 2*time.Minute + 30*time.Second
 	if cfg.Settings.Timeout.Duration != want {
 		t.Errorf("timeout = %v, want %v", cfg.Settings.Timeout.Duration, want)
+	}
+}
+
+func TestTemplate_EnvSubstitution(t *testing.T) {
+	os.Setenv("SMOKE_TEST_VAR", "hello")
+	defer os.Unsetenv("SMOKE_TEST_VAR")
+
+	dir := t.TempDir()
+	configPath := filepath.Join(dir, ".smoke.yaml")
+
+	yaml := `
+version: 1
+project: template-test
+tests:
+  - name: "env test"
+    run: "echo {{ .Env.SMOKE_TEST_VAR }}"
+    expect:
+      exit_code: 0
+`
+	if err := os.WriteFile(configPath, []byte(yaml), 0644); err != nil {
+		t.Fatal(err)
+	}
+
+	cfg, err := Load(configPath)
+	if err != nil {
+		t.Fatalf("Load error: %v", err)
+	}
+
+	if len(cfg.Tests) != 1 {
+		t.Fatalf("expected 1 test, got %d", len(cfg.Tests))
+	}
+	if cfg.Tests[0].Run != "echo hello" {
+		t.Errorf("expected 'echo hello', got %q", cfg.Tests[0].Run)
+	}
+}
+
+func TestLoad_WithIncludes(t *testing.T) {
+	// Create temp directory
+	dir := t.TempDir()
+
+	// Create base config
+	baseContent := `
+version: 1
+project: base
+tests:
+  - name: "base test"
+    run: "echo base"
+    expect:
+      exit_code: 0
+`
+	basePath := filepath.Join(dir, "base.smoke.yaml")
+	if err := os.WriteFile(basePath, []byte(baseContent), 0644); err != nil {
+		t.Fatal(err)
+	}
+
+	// Create main config that includes base
+	mainContent := `
+version: 1
+project: main
+includes:
+  - base.smoke.yaml
+tests:
+  - name: "main test"
+    run: "echo main"
+    expect:
+      exit_code: 0
+`
+	mainPath := filepath.Join(dir, ".smoke.yaml")
+	if err := os.WriteFile(mainPath, []byte(mainContent), 0644); err != nil {
+		t.Fatal(err)
+	}
+
+	cfg, err := Load(mainPath)
+	if err != nil {
+		t.Fatalf("Load error: %v", err)
+	}
+
+	// Should have 2 tests (base prepended, main appended)
+	if len(cfg.Tests) != 2 {
+		t.Fatalf("expected 2 tests, got %d", len(cfg.Tests))
+	}
+	if cfg.Tests[0].Name != "base test" {
+		t.Errorf("expected first test to be 'base test', got %q", cfg.Tests[0].Name)
+	}
+	if cfg.Tests[1].Name != "main test" {
+		t.Errorf("expected second test to be 'main test', got %q", cfg.Tests[1].Name)
+	}
+}
+
+func TestLoad_CircularIncludeProtection(t *testing.T) {
+	dir := t.TempDir()
+
+	// Create circular includes
+	aContent := `
+version: 1
+project: a
+includes:
+  - b.smoke.yaml
+tests: []
+`
+	bContent := `
+version: 1
+project: b
+includes:
+  - a.smoke.yaml
+tests: []
+`
+	if err := os.WriteFile(filepath.Join(dir, "a.smoke.yaml"), []byte(aContent), 0644); err != nil {
+		t.Fatal(err)
+	}
+	if err := os.WriteFile(filepath.Join(dir, "b.smoke.yaml"), []byte(bContent), 0644); err != nil {
+		t.Fatal(err)
+	}
+
+	_, err := Load(filepath.Join(dir, "a.smoke.yaml"))
+	if err == nil {
+		t.Error("expected error for circular includes")
 	}
 }
