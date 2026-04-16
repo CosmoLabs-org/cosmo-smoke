@@ -82,7 +82,7 @@ func (j *JUnit) Summary(s SuiteResultData) {
 			Time: formatSeconds(t.Duration.Seconds()),
 		}
 
-		if t.Skipped {
+		if t.Skipped || t.AllowedFailure {
 			tc.Skipped = &junitSkipped{}
 		} else if !t.Passed {
 			// Build failure message from failed assertions.

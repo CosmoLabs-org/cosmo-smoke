@@ -228,3 +228,134 @@ func TestFilterTests_ExcludeOnly(t *testing.T) {
 		t.Errorf("got %v, want [a]", got)
 	}
 }
+
+func TestRunner_AllowFailure_FailingTest_ExitsZero(t *testing.T) {
+	cfg := newConfig([]schema.Test{
+		{
+			Name:         "flaky",
+			Run:          "exit 1",
+			Expect:       schema.Expect{ExitCode: intPtr(0)},
+			AllowFailure: true,
+		},
+	})
+	r := &Runner{Config: cfg, Reporter: &noopReporter{}, ConfigDir: t.TempDir()}
+	result, err := r.Run(RunOptions{})
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+	if result.Failed != 0 {
+		t.Errorf("failed = %d, want 0 (allow_failure should not count as real failure)", result.Failed)
+	}
+	if result.AllowedFailures != 1 {
+		t.Errorf("allowed_failures = %d, want 1", result.AllowedFailures)
+	}
+	if result.Passed != 0 {
+		t.Errorf("passed = %d, want 0", result.Passed)
+	}
+}
+
+func TestRunner_AllowFailure_PassingTest_CountsAsPassed(t *testing.T) {
+	cfg := newConfig([]schema.Test{
+		{
+			Name:         "sometimes-flaky",
+			Run:          "echo ok",
+			Expect:       schema.Expect{ExitCode: intPtr(0)},
+			AllowFailure: true,
+		},
+	})
+	r := &Runner{Config: cfg, Reporter: &noopReporter{}, ConfigDir: t.TempDir()}
+	result, err := r.Run(RunOptions{})
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+	if result.Passed != 1 {
+		t.Errorf("passed = %d, want 1 (passing test with allow_failure should count as passed)", result.Passed)
+	}
+	if result.AllowedFailures != 0 {
+		t.Errorf("allowed_failures = %d, want 0", result.AllowedFailures)
+	}
+	if result.Failed != 0 {
+		t.Errorf("failed = %d, want 0", result.Failed)
+	}
+}
+
+func TestRunner_AllowFailure_MixedTests_RealFailureExitsOne(t *testing.T) {
+	cfg := newConfig([]schema.Test{
+		{Name: "pass", Run: "echo ok", Expect: schema.Expect{ExitCode: intPtr(0)}},
+		{
+			Name:         "flaky",
+			Run:          "exit 1",
+			Expect:       schema.Expect{ExitCode: intPtr(0)},
+			AllowFailure: true,
+		},
+		{Name: "real-fail", Run: "exit 2", Expect: schema.Expect{ExitCode: intPtr(0)}},
+	})
+	r := &Runner{Config: cfg, Reporter: &noopReporter{}, ConfigDir: t.TempDir()}
+	result, err := r.Run(RunOptions{})
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+	if result.Passed != 1 {
+		t.Errorf("passed = %d, want 1", result.Passed)
+	}
+	if result.AllowedFailures != 1 {
+		t.Errorf("allowed_failures = %d, want 1", result.AllowedFailures)
+	}
+	if result.Failed != 1 {
+		t.Errorf("failed = %d, want 1 (real-fail has no allow_failure)", result.Failed)
+	}
+}
+
+func TestRunner_AllowFailure_AllowedOnly_SuiteExitsZero(t *testing.T) {
+	cfg := newConfig([]schema.Test{
+		{
+			Name:         "flaky-a",
+			Run:          "exit 1",
+			Expect:       schema.Expect{ExitCode: intPtr(0)},
+			AllowFailure: true,
+		},
+		{
+			Name:         "flaky-b",
+			Run:          "exit 2",
+			Expect:       schema.Expect{ExitCode: intPtr(0)},
+			AllowFailure: true,
+		},
+	})
+	r := &Runner{Config: cfg, Reporter: &noopReporter{}, ConfigDir: t.TempDir()}
+	result, err := r.Run(RunOptions{})
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+	if result.Failed != 0 {
+		t.Errorf("failed = %d, want 0", result.Failed)
+	}
+	if result.AllowedFailures != 2 {
+		t.Errorf("allowed_failures = %d, want 2", result.AllowedFailures)
+	}
+}
+
+func TestRunner_AllowFailure_TestResultFlag(t *testing.T) {
+	cfg := newConfig([]schema.Test{
+		{
+			Name:         "check-flag",
+			Run:          "exit 1",
+			Expect:       schema.Expect{ExitCode: intPtr(0)},
+			AllowFailure: true,
+		},
+	})
+	r := &Runner{Config: cfg, Reporter: &noopReporter{}, ConfigDir: t.TempDir()}
+	result, err := r.Run(RunOptions{})
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+	if len(result.Tests) != 1 {
+		t.Fatalf("expected 1 test result, got %d", len(result.Tests))
+	}
+	tr := result.Tests[0]
+	if !tr.AllowedFailure {
+		t.Error("expected TestResult.AllowedFailure = true")
+	}
+	if tr.Passed {
+		t.Error("expected TestResult.Passed = false (test did fail)")
+	}
+}

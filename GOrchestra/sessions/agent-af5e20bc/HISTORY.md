@@ -4,10 +4,10 @@ base: master
 status: conflict
 created: 2026-04-16
 archived: 2026-04-16
-commits: 2
-files_changed: 24
-lines_added: 331
-lines_removed: 352
+commits: 3
+files_changed: 27
+lines_added: 333
+lines_removed: 441
 review_status: passed
 ---
 
@@ -16,22 +16,26 @@ review_status: passed
 ## Summary
 
 Branch merged via `ccs merg` on 2026-04-16.
-2 commits, 24 files changed (+331/-352).
+3 commits, 27 files changed (+333/-441).
 
 ## Commits
 
+- `fa80906` chore(tracking): update local tooling metadata
 - `0ff0bbc` chore: add quality review results
 - `4699981` feat(runner): add allow_failure flag for flaky tests
 
 ## Files Changed
 
 ```
-.ccsession.json                                    |  18 ---
- .gopls.json                                        |   5 -
+.ccsession.json                                    |  10 +-
  .review.json                                       |   8 +-
  .version-registry.json                             |  25 +---
- GOrchestra/intel/architecture.json                 |  31 ++---
+ GOrchestra/intel/architecture.json                 |  25 ++--
  GOrchestra/intel/status.json                       |   6 +-
+ GOrchestra/sessions/agent-af5e20bc/.ccsession.json |  18 ---
+ GOrchestra/sessions/agent-af5e20bc/.review.json    |  11 --
+ GOrchestra/sessions/agent-af5e20bc/HISTORY.md      |  54 ---------
+ GOrchestra/sessions/agent-af5e20bc/session.json    |  27 -----
  GOrchestra/sessions/agent-afa452c4/.ccsession.json |  19 ---
  GOrchestra/sessions/agent-afa452c4/.review.json    |  11 --
  GOrchestra/sessions/agent-afa452c4/HISTORY.md      |  40 -------
@@ -50,5 +54,5 @@ Branch merged via `ccs merg` on 2026-04-16.
  internal/runner/runner_test.go                     | 131 +++++++++++++++++++++
  internal/schema/schema.go                          |  14 +--
  internal/schema/schema_test.go                     |  30 +++++
- 24 files changed, 331 insertions(+), 352 deletions(-)
+ 27 files changed, 333 insertions(+), 441 deletions(-)
 ```

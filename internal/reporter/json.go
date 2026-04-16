@@ -38,33 +38,36 @@ type jsonPrereq struct {
 }
 
 type jsonTest struct {
-	Name       string            `json:"name"`
-	Passed     bool              `json:"passed"`
-	Skipped    bool              `json:"skipped,omitempty"`
-	DurationMs int64             `json:"duration_ms"`
-	Assertions []AssertionDetail `json:"assertions"`
-	Error      string            `json:"error,omitempty"`
+	Name           string            `json:"name"`
+	Passed         bool              `json:"passed"`
+	Skipped        bool              `json:"skipped,omitempty"`
+	AllowedFailure bool              `json:"allowed_failure,omitempty"`
+	DurationMs     int64             `json:"duration_ms"`
+	Assertions     []AssertionDetail `json:"assertions"`
+	Error          string            `json:"error,omitempty"`
 }
 
 type jsonOutput struct {
-	Project       string       `json:"project"`
-	Total         int          `json:"total"`
-	Passed        int          `json:"passed"`
-	Failed        int          `json:"failed"`
-	Skipped       int          `json:"skipped"`
-	DurationMs    int64        `json:"duration_ms"`
-	Prerequisites []jsonPrereq `json:"prerequisites,omitempty"`
-	Tests         []jsonTest   `json:"tests"`
+	Project         string       `json:"project"`
+	Total           int          `json:"total"`
+	Passed          int          `json:"passed"`
+	Failed          int          `json:"failed"`
+	Skipped         int          `json:"skipped"`
+	AllowedFailures int          `json:"allowed_failures"`
+	DurationMs      int64        `json:"duration_ms"`
+	Prerequisites   []jsonPrereq `json:"prerequisites,omitempty"`
+	Tests           []jsonTest   `json:"tests"`
 }
 
 func (j *JSON) Summary(s SuiteResultData) {
 	out := jsonOutput{
-		Project:    s.Project,
-		Total:      s.Total,
-		Passed:     s.Passed,
-		Failed:     s.Failed,
-		Skipped:    s.Skipped,
-		DurationMs: s.Duration.Milliseconds(),
+		Project:         s.Project,
+		Total:           s.Total,
+		Passed:          s.Passed,
+		Failed:          s.Failed,
+		Skipped:         s.Skipped,
+		AllowedFailures: s.AllowedFailures,
+		DurationMs:      s.Duration.Milliseconds(),
 	}
 
 	for _, p := range j.prereqs {
@@ -82,11 +85,12 @@ func (j *JSON) Summary(s SuiteResultData) {
 
 	for _, t := range j.tests {
 		jt := jsonTest{
-			Name:       t.Name,
-			Passed:     t.Passed,
-			Skipped:    t.Skipped,
-			DurationMs: t.Duration.Milliseconds(),
-			Assertions: t.Assertions,
+			Name:           t.Name,
+			Passed:         t.Passed,
+			Skipped:        t.Skipped,
+			AllowedFailure: t.AllowedFailure,
+			DurationMs:     t.Duration.Milliseconds(),
+			Assertions:     t.Assertions,
 		}
 		if t.Error != nil {
 			jt.Error = t.Error.Error()
