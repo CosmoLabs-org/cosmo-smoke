@@ -1,5 +1,5 @@
 {
-  "hash": "2298b3b160d5bf22a01e3a0f58f191215970d7e0ff48f41f0fbc93fd708f6aac",
+  "hash": "7f211dfc71d89bc39b55d4fc922d2765f9cd99f242bee8f22f6e92a3f9cd622b",
   "project_name": "cosmo-smoke",
   "language": "go",
   "framework": "cli",
@@ -7,6 +7,7 @@
     "ClaudeDesktop",
     "GOrchestra",
     "GeminiAI",
+    "bin",
     "cmd",
     "docs",
     "examples",
@@ -22,10 +23,10 @@
     "go-colorful",
     "go-isatty",
     "go-runewidth",
-    "lipgloss",
-    "match"
+    "grpc",
+    "lipgloss"
   ],
   "has_tests": true,
   "has_ci": true,
-  "generated_at": "2026-04-16T11:04:29.051592-03:00"
+  "generated_at": "2026-04-16T16:47:36.077797-03:00"
 }
