@@ -1,0 +1,11 @@
+{
+  "name": "agent-a83d2001",
+  "branch": "agent-a83d2001",
+  "origin": "enterworktree",
+  "status": "active",
+  "base_branch": "master",
+  "base_commit": "3b5920617ba1c004ed27992ba7cafe5b37a544d5",
+  "worktree_path": "/Users/gab/PROJECTS/cosmo-smoke-worktrees/agent-a83d2001",
+  "session_id": "fbe4200e-2cea-4fd9-9de7-0968ac40806e",
+  "created_at": "2026-04-16T16:17:07.803991-03:00"
+}

@@ -1,0 +1,48 @@
+- name: agent-afa452c4
+  created: '2026-04-16T15:42:07-03:00'
+  status: active
+  branch: agent-afa452c4
+  base: master
+  outcome: 
+- name: agent-af5e20bc
+  created: '2026-04-16T15:42:26-03:00'
+  status: active
+  branch: agent-af5e20bc
+  base: master
+  outcome: 
+- name: agent-af5e20bc
+  created: '2026-04-16T15:57:23-03:00'
+  status: killed
+  branch: agent-af5e20bc
+  base: master
+  outcome: archived
+- name: agent-ac5ce913
+  created: '2026-04-16T16:16:47-03:00'
+  status: active
+  branch: agent-ac5ce913
+  base: master
+  outcome: 
+- name: agent-a83d2001
+  created: '2026-04-16T16:17:07-03:00'
+  status: active
+  branch: agent-a83d2001
+  base: master
+  outcome: 
+- name: agent-ac12314e
+  created: '2026-04-16T16:17:34-03:00'
+  status: active
+  branch: agent-ac12314e
+  base: master
+  outcome: 
+- name: agent-a90fc8e9
+  created: '2026-04-16T16:17:58-03:00'
+  status: active
+  branch: agent-a90fc8e9
+  base: master
+  outcome: 
+- name: agent-abe5a065
+  created: '2026-04-16T16:18:17-03:00'
+  status: active
+  branch: agent-abe5a065
+  base: master
+  outcome: 
