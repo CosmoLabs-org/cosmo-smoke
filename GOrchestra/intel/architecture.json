@@ -1,11 +1,11 @@
 {
   "version": "1.0",
-  "generated_at": "2026-04-16T20:14:45.762506-03:00",
+  "generated_at": "2026-04-16T20:44:55.576805-03:00",
   "generated_by": "GLM-4.7",
-  "expires_at": "2026-04-17T20:14:45.762506-03:00",
-  "last_analyzed_commit": "69791d00b26e44422a46d7b47a5e446bb9f37688",
-  "summary": "A Go-based orchestration and assertion testing framework with plugin support and Kubernetes integration.",
-  "architecture": "modular monolith",
+  "expires_at": "2026-04-17T20:44:55.576805-03:00",
+  "last_analyzed_commit": "3ddde22b73da062172128b2628b82fc0ef28be2f",
+  "summary": "A Go-based testing and assertion runner with plugin support and Kubernetes integration.",
+  "architecture": "monolith",
   "primary_language": "Go",
   "hot_files": [
     "internal/runner/runner.go",
@@ -15,19 +15,20 @@
     "internal/runner/runner_test.go"
   ],
   "patterns": [
-    "separation of concerns",
-    "plugin architecture",
+    "standard Go project layout",
     "test-driven development",
-    "runner-detector-reporter pipeline"
+    "plugin architecture",
+    "separation of concerns (detector/reporter/runner)"
   ],
   "concerns": [
-    "session worktree management complexity indicated by frequent archive commits",
-    "staged but uncommitted changes suggesting potential drift",
-    "watch mode feature recently added may lack production maturity"
+    "scattered config directories (.claude, .gorchestra, GOrchestra/intel)",
+    "bin/ directory committed to source control",
+    "no detector implementation files visible (only tests)"
   ],
   "suggestions": [
-    "commit the staged changes to prevent drift",
-    "add integration tests for the new --watch mode",
-    "consolidate or document the multiple config directories (.claude, .gorchestra, GOrchestra)"
+    "consolidate configuration into a single location",
+    "remove bin/ from version control and use build artifacts",
+    "verify detector package has implementation files not just tests",
+    "document the plugin system interface"
   ]
 }
