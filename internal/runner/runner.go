@@ -383,6 +383,20 @@ func (r *Runner) runTestOnce(t schema.Test, opts RunOptions) TestResult {
 			allPassed = false
 		}
 	}
+	if t.Expect.DockerContainer != nil {
+		a := CheckDockerContainerRunning(t.Expect.DockerContainer)
+		assertions = append(assertions, a)
+		if !a.Passed {
+			allPassed = false
+		}
+	}
+	if t.Expect.DockerImage != nil {
+		a := CheckDockerImageExists(t.Expect.DockerImage)
+		assertions = append(assertions, a)
+		if !a.Passed {
+			allPassed = false
+		}
+	}
 
 	duration := time.Since(start)
 
