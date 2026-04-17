@@ -1,0 +1,312 @@
+From d982864af22d4b933268606b8b7fee354559b6f7 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?G=CE=9BB?= <Gab@CosmoLabs.org>
+Date: Thu, 16 Apr 2026 09:07:06 -0300
+Subject: [PATCH 1/2] feat(runner): add port_listening assertion type
+ (FEAT-004)
+
+Adds PortCheck struct to schema with port, protocol, and host fields.
+CheckPortListening dials the address with 5s timeout, defaults to
+tcp/localhost. Wired into runner assertion evaluation. Test covers
+failure case on closed port.
+---
+ .gorchestra/fingerprint-cache.json |  7 ++--
+ .version-registry.json             |  4 +-
+ GOrchestra/intel/status.json       |  6 +--
+ docs/.template-version             |  6 +--
+ docs/brainstorming/SOPs/README.md  | 64 ++++++++++++++++++++++++++++++
+ internal/runner/assertion.go       | 19 +++++++++
+ internal/runner/assertion_test.go  | 14 +++++++
+ internal/runner/runner.go          |  8 ++++
+ internal/schema/schema.go          |  8 ++++
+ 9 files changed, 125 insertions(+), 11 deletions(-)
+ create mode 100644 docs/brainstorming/SOPs/README.md
+
+diff --git a/.gorchestra/fingerprint-cache.json b/.gorchestra/fingerprint-cache.json
+index 4ffa4d4..c55eacd 100644
+--- a/.gorchestra/fingerprint-cache.json
++++ b/.gorchestra/fingerprint-cache.json
+@@ -1,11 +1,12 @@
+ {
+-  "hash": "ef17fb5324678878347df4d8fa9595ab283c8cfa323ce07f7875dc49c6946feb",
+-  "project_name": "cosmo-smoke",
++  "hash": "47234b81b6d6196195d9551a35375c396b963d47965066d6b09143b6d2abb280",
++  "project_name": "_glm-agent-0001-schema-assertion-runner-tests",
+   "language": "go",
+   "framework": "cli",
+   "directories": [
+     "GOrchestra",
+     "cmd",
++    "docs",
+     "internal",
+     "plugins"
+   ],
+@@ -23,5 +24,5 @@
+   ],
+   "has_tests": false,
+   "has_ci": false,
+-  "generated_at": "2026-04-15T17:30:21.792791-03:00"
++  "generated_at": "2026-04-16T08:59:14.215019-03:00"
+ }
+\ No newline at end of file
+diff --git a/.version-registry.json b/.version-registry.json
+index 877b376..7d09394 100644
+--- a/.version-registry.json
++++ b/.version-registry.json
+@@ -1,9 +1,9 @@
+ {
+   "repository": {
+     "version": "1.0.0",
+-    "build": 9,
++    "build": 10,
+     "name": "cosmo-smoke",
+-    "lastUpdated": "2026-04-15T20:39:43Z",
++    "lastUpdated": "2026-04-16T12:07:06Z",
+     "derived_from": "git tag"
+   },
+   "metadata": {}
+diff --git a/GOrchestra/intel/status.json b/GOrchestra/intel/status.json
+index dd8f25d..d9c3064 100644
+--- a/GOrchestra/intel/status.json
++++ b/GOrchestra/intel/status.json
+@@ -1,8 +1,8 @@
+ {
+   "version": "1.0",
+-  "updated_at": "2026-04-15T17:33:44.117738-03:00",
+-  "expires_at": "2026-04-15T18:33:44.117738-03:00",
+-  "project_path": "/Users/gab/PROJECTS/cosmo-smoke",
++  "updated_at": "2026-04-16T08:59:18.232734-03:00",
++  "expires_at": "2026-04-16T09:59:18.232734-03:00",
++  "project_path": "/Users/gab/PROJECTS/cosmo-smoke-worktrees/_glm-agent-0001-schema-assertion-runner-tests",
+   "context": "",
+   "glm_enhanced": false
+ }
+\ No newline at end of file
+diff --git a/docs/.template-version b/docs/.template-version
+index b8f721d..d4abf79 100644
+--- a/docs/.template-version
++++ b/docs/.template-version
+@@ -1,6 +1,6 @@
+ {
+   "version": "2.0.0",
+-  "synced": "2026-04-15T17:33:42-03:00",
++  "synced": "2026-04-16T08:59:17-03:00",
+   "source": "ClaudeCodeSetup",
+   "seeded_files": {
+     "docs/FEATURES.md": {
+@@ -30,8 +30,8 @@
+     },
+     "docs/brainstorming/SOPs/README.md": {
+       "version": "1.0.0",
+-      "seeded_at": "2026-04-15T17:33:42-03:00",
+-      "original_hash": "aa956741fdd21fe0"
++      "seeded_at": "2026-04-16T08:59:17-03:00",
++      "original_hash": "c18e71df063ab2c1"
+     },
+     "docs/brainstorming/collaborative-template.md": {
+       "version": "1.0.0",
+diff --git a/docs/brainstorming/SOPs/README.md b/docs/brainstorming/SOPs/README.md
+new file mode 100644
+index 0000000..8fa44ca
+--- /dev/null
++++ b/docs/brainstorming/SOPs/README.md
+@@ -0,0 +1,64 @@
++# _glm-agent-0001-schema-assertion-runner-tests - SOP Brainstorming
++
++Ideas and rough drafts for project-specific SOPs before implementation.
++
++## Workflow
++
++```
++docs/brainstorming/SOPs/    →  Ideas, rough analysis (THIS FOLDER)
++         ↓
++docs/sops/                  →  Implemented project SOPs
++```
++
++## Adding Ideas
++
++When you identify a repeated workflow or process:
++
++1. Create a brainstorm file: `YYYY-MM-DD-sop-idea-name.md`
++2. Document:
++   - What problem it solves
++   - Steps involved
++   - Tools/skills needed
++   - Pain points
++3. When ready, implement in `docs/sops/`
++
++## Template for Brainstorm
++
++```markdown
++# SOP Idea: [Name]
++
++**Date**: YYYY-MM-DD
++**Status**: Idea | Exploring | Ready to Implement
++
++## Problem
++What workflow is this trying to standardize?
++
++## Current Pain Points
++- Issue 1
++- Issue 2
++
++## Proposed Solution
++How would an SOP help?
++
++## Steps Identified
++1. Step 1
++2. Step 2
++
++## Tools/Skills Needed
++- Tool 1
++- Skill 1
++
++## Open Questions
++- Question 1?
++```
++
++## Current Ideas
++
++| Idea | Status | Notes |
++|------|--------|-------|
++| (none yet) | | |
++
++## Related
++
++- Implemented SOPs: `docs/sops/`
++- Global SOPs: `~/.claude/skills/sop-*.md`
+diff --git a/internal/runner/assertion.go b/internal/runner/assertion.go
+index 30c635f..36280f5 100644
+--- a/internal/runner/assertion.go
++++ b/internal/runner/assertion.go
+@@ -2,10 +2,12 @@ package runner
+ 
+ import (
+ 	"fmt"
++	"net"
+ 	"os"
+ 	"path/filepath"
+ 	"regexp"
+ 	"strings"
++	"time"
+ )
+ 
+ // AssertionResult holds the outcome of a single assertion check.
+@@ -66,6 +68,23 @@ func CheckStderrContains(stderr, substr string) AssertionResult {
+ 	}
+ }
+ 
++// CheckPortListening verifies that a port is open and accepting connections.
++func CheckPortListening(port int, protocol, host string) AssertionResult {
++	if protocol == "" {
++		protocol = "tcp"
++	}
++	if host == "" {
++		host = "localhost"
++	}
++	addr := fmt.Sprintf("%s:%d", host, port)
++	conn, err := net.DialTimeout(protocol, addr, 5*time.Second)
++	if err != nil {
++		return AssertionResult{Type: "port_listening", Expected: addr, Actual: err.Error(), Passed: false}
++	}
++	conn.Close()
++	return AssertionResult{Type: "port_listening", Expected: addr, Actual: "open", Passed: true}
++}
++
+ // CheckFileExists verifies that a file exists at the given path.
+ // Relative paths are resolved against configDir using filepath.Join.
+ func CheckFileExists(path, configDir string) AssertionResult {
+diff --git a/internal/runner/assertion_test.go b/internal/runner/assertion_test.go
+index bfc0d24..f881fea 100644
+--- a/internal/runner/assertion_test.go
++++ b/internal/runner/assertion_test.go
+@@ -308,3 +308,17 @@ func TestCheckFileExists_EmptyConfigDir(t *testing.T) {
+ 	// Result depends on whether file exists in cwd, but it must not panic
+ 	_ = r
+ }
++
++// ---------------------------------------------------------------------------
++// CheckPortListening
++// ---------------------------------------------------------------------------
++
++func TestCheckPortListening_Fail(t *testing.T) {
++	r := CheckPortListening(59999, "tcp", "localhost")
++	if r.Passed {
++		t.Errorf("expected fail for closed port")
++	}
++	if r.Type != "port_listening" {
++		t.Errorf("expected type 'port_listening', got %q", r.Type)
++	}
++}
+diff --git a/internal/runner/runner.go b/internal/runner/runner.go
+index 26262a2..d17651d 100644
+--- a/internal/runner/runner.go
++++ b/internal/runner/runner.go
+@@ -260,6 +260,14 @@ func (r *Runner) runTest(t schema.Test, opts RunOptions) TestResult {
+ 			allPassed = false
+ 		}
+ 	}
++	if t.Expect.PortListening != nil {
++		p := t.Expect.PortListening
++		a := CheckPortListening(p.Port, p.Protocol, p.Host)
++		assertions = append(assertions, a)
++		if !a.Passed {
++			allPassed = false
++		}
++	}
+ 
+ 	tr := TestResult{
+ 		Name:       t.Name,
+diff --git a/internal/schema/schema.go b/internal/schema/schema.go
+index 7adfa90..028bf83 100644
+--- a/internal/schema/schema.go
++++ b/internal/schema/schema.go
+@@ -49,6 +49,14 @@ type Expect struct {
+ 	StdoutMatches  string `yaml:"stdout_matches,omitempty"`
+ 	StderrContains string `yaml:"stderr_contains,omitempty"`
+ 	FileExists     string `yaml:"file_exists,omitempty"`
++	PortListening  *PortCheck `yaml:"port_listening,omitempty"`
++}
++
++// PortCheck defines parameters for checking if a port is open and listening.
++type PortCheck struct {
++	Port     int    `yaml:"port"`
++	Protocol string `yaml:"protocol,omitempty"`
++	Host     string `yaml:"host,omitempty"`
+ }
+ 
+ // Duration wraps time.Duration for YAML unmarshaling from strings like "5s".
+-- 
+2.53.0
+
+
+From c22f628dcd7c5bf45b7e38581500f80225aedcf7 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?G=CE=9BB?= <Gab@CosmoLabs.org>
+Date: Thu, 16 Apr 2026 09:11:41 -0300
+Subject: [PATCH 2/2] chore: add quality review results
+
+---
+ .review.json | 11 +++++++++++
+ 1 file changed, 11 insertions(+)
+ create mode 100644 .review.json
+
+diff --git a/.review.json b/.review.json
+new file mode 100644
+index 0000000..4c99e91
+--- /dev/null
++++ b/.review.json
+@@ -0,0 +1,11 @@
++{
++  "score": 7,
++  "passed": true,
++  "reviewed_at": "2026-04-16T12:11:41Z",
++  "reviewer": "opus",
++  "origin": "glm-agent",
++  "iterations": 0,
++  "fixes_applied": 0,
++  "issues_remaining": 6,
++  "summary": "Score 7/10, 6 issues"
++}
+\ No newline at end of file
+-- 
+2.53.0
+

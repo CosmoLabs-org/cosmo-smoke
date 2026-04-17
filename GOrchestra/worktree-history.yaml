@@ -136,3 +136,15 @@
   branch: agent-aa6c4029
   base: master
   outcome: archived
+- name: agent-a25cc4b5
+  created: '2026-04-17T14:24:07-03:00'
+  status: active
+  branch: agent-a25cc4b5
+  base: master
+  outcome: 
+- name: agent-a281a237
+  created: '2026-04-17T14:31:44-03:00'
+  status: killed
+  branch: agent-a281a237
+  base: master
+  outcome: archived
