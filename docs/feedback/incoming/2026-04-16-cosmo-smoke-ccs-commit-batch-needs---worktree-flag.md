@@ -2,7 +2,7 @@
 id: FB-002
 title: ccs commit-batch needs --worktree flag
 type: idea
-status: pending
+status: implemented
 priority: medium
 complexity: ""
 from_project: cosmo-smoke
@@ -10,7 +10,7 @@ from_path: /Users/gab/PROJECTS/cosmo-smoke
 to_project: cosmo-smoke
 to_target: self
 created: "2026-04-16T17:12:43.299638-03:00"
-updated: "2026-04-16T17:12:43.299638-03:00"
+updated: "2026-04-17T14:42:30.779253-03:00"
 suggested_conversion: feature
 converted_to: null
 related_issues: []

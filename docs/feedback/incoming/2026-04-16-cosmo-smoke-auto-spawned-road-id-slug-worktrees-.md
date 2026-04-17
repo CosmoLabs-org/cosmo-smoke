@@ -2,7 +2,7 @@
 id: FB-005
 title: Auto-spawned road-<id>-<slug> worktrees conflict with Agent-tool Sonnet dispatch
 type: idea
-status: pending
+status: implemented
 priority: high
 complexity: ""
 from_project: cosmo-smoke
@@ -10,7 +10,7 @@ from_path: /Users/gab/PROJECTS/cosmo-smoke
 to_project: cosmo-smoke
 to_target: self
 created: "2026-04-16T20:43:17.618689-03:00"
-updated: "2026-04-16T20:43:17.618689-03:00"
+updated: "2026-04-17T14:42:30.553713-03:00"
 suggested_conversion: feature
 converted_to: null
 related_issues: []

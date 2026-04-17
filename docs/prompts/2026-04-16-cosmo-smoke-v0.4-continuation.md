@@ -1,17 +1,19 @@
 ---
-title: "cosmo-smoke v0.4 — Finish Docker + Goss (4 of 6 shipped)"
-created: 2026-04-16
-status: PENDING
-priority: high
 branch: master
-origin: "/continuation-prompt"
-tags: [continuation, v0.4, roadmap]
+completed: "2026-04-17"
+created: "2026-04-16"
+goals_completed: 2
 goals_total: 2
-goals_completed: 0
-carried_over_from: 2026-04-16-cosmo-smoke-v0.2-continuation.md
-carried_over_goals: 2
+origin: /continuation-prompt
+priority: high
 related_prompts:
-  - docs/prompts/2026-04-16-cosmo-smoke-v0.2-continuation.md
+    - docs/prompts/2026-04-16-cosmo-smoke-v0.2-continuation.md
+status: COMPLETED
+tags:
+    - continuation
+    - v0.4
+    - roadmap
+title: cosmo-smoke v0.4 — Finish Docker + Goss (4 of 6 shipped)
 ---
 
 # cosmo-smoke v0.4 — Finish Docker + Goss
