@@ -1,9 +1,9 @@
 id: ROAD-015
 created_at: 2026-04-15T17:45:35.486222-03:00
-updated_at: 2026-04-16T17:05:08.846922-03:00
+updated_at: 2026-04-17T14:24:32.383133-03:00
 title: Docker container smoke tests
 description: 'Assertions for containerized projects: docker_build (image builds), docker_run (container starts), docker_health (healthcheck passes). Essential for deployment verification.'
-status: captured
+status: in_progress
 priority: 75
 effort: medium
 tags:
