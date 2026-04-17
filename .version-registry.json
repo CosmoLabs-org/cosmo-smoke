@@ -1,13 +1,13 @@
 {
   "repository": {
     "version": "0.3.0",
-    "build": 124,
+    "build": 135,
     "name": "cosmo-smoke",
-    "lastUpdated": "2026-04-16T23:44:16Z",
+    "lastUpdated": "2026-04-17T17:28:17Z",
     "derived_from": "git tag"
   },
   "metadata": {
-    "last_synced": "2026-04-16T22:36:40Z",
+    "last_synced": "2026-04-17T17:21:17Z",
     "sync_method": "git_history_analysis"
   },
   "releaseContext": {
@@ -25,6 +25,22 @@
           "internal/runner/runner_test.go",
           "internal/schema/schema.go",
           "internal/schema/schema_test.go",
+          "internal/schema/validate.go",
+          "internal/schema/validate_test.go"
+        ]
+      },
+      {
+        "branch": "agent-a25cc4b5",
+        "title": "Agent a25cc4b5",
+        "commits": 1,
+        "suggestedBump": "patch",
+        "mergedAt": "2026-04-17T14:28:17-03:00",
+        "files": [
+          "CLAUDE.md",
+          "internal/runner/assertion.go",
+          "internal/runner/assertion_test.go",
+          "internal/runner/runner.go",
+          "internal/schema/schema.go",
           "internal/schema/validate.go",
           "internal/schema/validate_test.go"
         ]

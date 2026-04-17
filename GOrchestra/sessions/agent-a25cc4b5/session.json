@@ -1,9 +1,9 @@
 {
   "branch": "agent-a25cc4b5",
   "base_branch": "master",
-  "status": "conflict",
+  "status": "merged",
   "created": "2026-04-17T14:26:12-03:00",
-  "archived": "2026-04-17T14:28:09.457682-03:00",
+  "archived": "2026-04-17T14:28:17.11192-03:00",
   "commits": [
     {
       "hash": "fe24ff9",
@@ -14,8 +14,8 @@
   ],
   "total_commits": 1,
   "files_changed": 12,
-  "lines_added": 165,
-  "lines_removed": 23,
-  "diff_stat": "CLAUDE.md                         |  2 ++\n docs/roadmap/index.yaml           | 13 ++++-----\n docs/roadmap/items/ROAD-003.yaml  |  6 ++---\n docs/roadmap/items/ROAD-012.yaml  |  6 ++---\n docs/roadmap/items/ROAD-015.yaml  |  4 +--\n docs/roadmap/items/ROAD-016.yaml  |  6 ++---\n internal/runner/assertion.go      | 33 +++++++++++++++++++++++\n internal/runner/assertion_test.go | 56 +++++++++++++++++++++++++++++++++++++++\n internal/runner/runner.go         | 14 ++++++++++\n internal/schema/schema.go         | 14 +++++++++-\n internal/schema/validate.go       |  6 +++++\n internal/schema/validate_test.go  | 28 ++++++++++++++++++++\n 12 files changed, 165 insertions(+), 23 deletions(-)",
+  "lines_added": 30,
+  "lines_removed": 139,
+  "diff_stat": "GOrchestra/intel/architecture.json                 | 29 ++++++++-------\n GOrchestra/intel/status.json                       |  6 ++--\n GOrchestra/sessions/agent-a25cc4b5/.ccsession.json | 18 ----------\n GOrchestra/sessions/agent-a25cc4b5/.review.json    | 11 ------\n GOrchestra/sessions/agent-a25cc4b5/HISTORY.md      | 41 ----------------------\n GOrchestra/sessions/agent-a25cc4b5/bypass.json     |  8 -----\n GOrchestra/sessions/agent-a25cc4b5/session.json    | 21 -----------\n docs/roadmap/index.yaml                            | 13 +++----\n docs/roadmap/items/ROAD-003.yaml                   |  6 ++--\n docs/roadmap/items/ROAD-012.yaml                   |  6 ++--\n docs/roadmap/items/ROAD-015.yaml                   |  4 +--\n docs/roadmap/items/ROAD-016.yaml                   |  6 ++--\n 12 files changed, 30 insertions(+), 139 deletions(-)",
   "review_status": "passed"
 }
