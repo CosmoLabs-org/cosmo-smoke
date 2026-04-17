@@ -7,6 +7,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [v0.4.0] - 2026-04-17
+
+### Added
+- Add --watch mode for continuous testing with fsnotify and 500ms debounce
+- Add retry with exponential backoff for flaky tests (retry: {count, backoff})
+- Add postgres_ping and mysql_ping assertions (stdlib net, no new deps)
+- retry with exponential backoff (retry: {count, backoff} on test level)
+- postgres_ping assertion via SSLRequest handshake
+- mysql_ping assertion via v10 handshake packet
+- docker_container_running and docker_image_exists assertions
+- watch flag for continuous re-runs on file change via fsnotify with 500ms debounce
+
 ## [0.3.0] - 2026-04-16
 
 ### Added
