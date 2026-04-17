@@ -47,6 +47,12 @@ func Validate(cfg *SmokeConfig) error {
 				errs = append(errs, fmt.Sprintf("test[%d] retry.backoff must be > 0", i))
 			}
 		}
+		if t.Expect.DockerContainer != nil && t.Expect.DockerContainer.Name == "" {
+			errs = append(errs, fmt.Sprintf("%s: docker_container_running.name is required", prefix))
+		}
+		if t.Expect.DockerImage != nil && t.Expect.DockerImage.Image == "" {
+			errs = append(errs, fmt.Sprintf("%s: docker_image_exists.image is required", prefix))
+		}
 	}
 
 	if len(errs) > 0 {

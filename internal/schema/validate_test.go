@@ -177,3 +177,31 @@ func TestValidate_RetryValid(t *testing.T) {
 		t.Errorf("unexpected error for valid retry block: %v", err)
 	}
 }
+
+func TestValidate_DockerContainerRunning_MissingName(t *testing.T) {
+	cfg := &SmokeConfig{
+		Version: 1,
+		Project: "test",
+		Tests: []Test{
+			{Name: "t1", Run: "true", Expect: Expect{DockerContainer: &DockerContainerCheck{Name: ""}}},
+		},
+	}
+	err := Validate(cfg)
+	if err == nil {
+		t.Error("expected validation error for empty docker_container_running.name")
+	}
+}
+
+func TestValidate_DockerImageExists_MissingImage(t *testing.T) {
+	cfg := &SmokeConfig{
+		Version: 1,
+		Project: "test",
+		Tests: []Test{
+			{Name: "t1", Run: "true", Expect: Expect{DockerImage: &DockerImageCheck{Image: ""}}},
+		},
+	}
+	err := Validate(cfg)
+	if err == nil {
+		t.Error("expected validation error for empty docker_image_exists.image")
+	}
+}

@@ -1293,3 +1293,59 @@ func TestCheckGRPCHealth_DialFailure(t *testing.T) {
 		t.Errorf("expected fail for non-existent address")
 	}
 }
+
+// ---------------------------------------------------------------------------
+// CheckDockerContainerRunning
+// ---------------------------------------------------------------------------
+
+func TestCheckDockerContainerRunning_NotFound(t *testing.T) {
+	r := CheckDockerContainerRunning(&schema.DockerContainerCheck{Name: "cosmo-smoke-nonexistent-container-xyz"})
+	if r.Passed {
+		t.Error("expected fail for non-existent container, got pass")
+	}
+	if r.Type != "docker_container_running" {
+		t.Errorf("expected type 'docker_container_running', got %q", r.Type)
+	}
+}
+
+func TestCheckDockerContainerRunning_Pass(t *testing.T) {
+	if !isDockerAvailable() {
+		t.Skip("docker daemon not available")
+	}
+	// This test requires a running container named "cosmo-smoke-test-alpine".
+	// Start one with: docker run -d --name cosmo-smoke-test-alpine --rm alpine sleep 300
+	out, err := exec.Command("docker", "ps", "-q", "--filter", "name=cosmo-smoke-test-alpine").Output()
+	if err != nil || strings.TrimSpace(string(out)) == "" {
+		t.Skip("test container 'cosmo-smoke-test-alpine' not running")
+	}
+	r := CheckDockerContainerRunning(&schema.DockerContainerCheck{Name: "cosmo-smoke-test-alpine"})
+	if !r.Passed {
+		t.Errorf("expected pass, got fail: actual=%s", r.Actual)
+	}
+}
+
+// ---------------------------------------------------------------------------
+// CheckDockerImageExists
+// ---------------------------------------------------------------------------
+
+func TestCheckDockerImageExists_NotFound(t *testing.T) {
+	r := CheckDockerImageExists(&schema.DockerImageCheck{Image: "cosmo-smoke-nonexistent-image-xyz:latest"})
+	if r.Passed {
+		t.Error("expected fail for non-existent image, got pass")
+	}
+	if r.Type != "docker_image_exists" {
+		t.Errorf("expected type 'docker_image_exists', got %q", r.Type)
+	}
+}
+
+func TestCheckDockerImageExists_Pass(t *testing.T) {
+	if !isDockerAvailable() {
+		t.Skip("docker daemon not available")
+	}
+	// Pull a tiny image if not present
+	exec.Command("docker", "pull", "alpine:latest").Run() //nolint:errcheck
+	r := CheckDockerImageExists(&schema.DockerImageCheck{Image: "alpine:latest"})
+	if !r.Passed {
+		t.Errorf("expected pass for alpine:latest, got fail: actual=%s", r.Actual)
+	}
+}

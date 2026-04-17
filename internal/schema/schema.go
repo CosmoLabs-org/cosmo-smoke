@@ -73,7 +73,9 @@ type Expect struct {
 	Memcached      *MemcachedCheck  `yaml:"memcached_version,omitempty"`
 	Postgres       *PostgresCheck   `yaml:"postgres_ping,omitempty"`
 	MySQL          *MySQLCheck      `yaml:"mysql_ping,omitempty"`
-	GRPCHealth     *GRPCHealthCheck `yaml:"grpc_health,omitempty"`
+	GRPCHealth      *GRPCHealthCheck      `yaml:"grpc_health,omitempty"`
+	DockerContainer *DockerContainerCheck `yaml:"docker_container_running,omitempty"`
+	DockerImage     *DockerImageCheck     `yaml:"docker_image_exists,omitempty"`
 }
 
 // PortCheck defines parameters for checking if a port is open and listening.
@@ -114,6 +116,16 @@ type PostgresCheck struct {
 type MySQLCheck struct {
 	Host string `yaml:"host,omitempty"` // default "localhost"
 	Port int    `yaml:"port,omitempty"` // default 3306
+}
+
+// DockerContainerCheck verifies a named Docker container is running.
+type DockerContainerCheck struct {
+	Name string `yaml:"name"`
+}
+
+// DockerImageCheck verifies a Docker image exists locally.
+type DockerImageCheck struct {
+	Image string `yaml:"image"`
 }
 
 // HTTPCheck defines parameters for HTTP endpoint assertions.
