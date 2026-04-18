@@ -24,6 +24,10 @@ CosmoLabs has ~95 projects spanning HTTP APIs, gRPC microservices, Go/Node/Pytho
 2. **url_reachable as primitive.** `service_reachable` and `s3_bucket` both reduce to "make an HTTP request, assert on the response." A shared `httpReachable` internal function avoids duplication.
 3. **Pre-commit via framework.** `.pre-commit-hooks.yaml` file in the repo. Zero code, maximum adoption.
 4. **version_check via command execution.** Runs a shell command and regex-matches stdout. No need to parse version strings — the pattern does the work.
+5. **url_reachable vs http: distinct purpose.** The existing `http` assertion is for full response validation (body, headers, status). `url_reachable` is a lightweight connectivity check — "can I reach this URL?" with minimal config. Use `http` when you care about the response content. Use `url_reachable` when you just need to know the endpoint is up.
+6. **service_reachable is url_reachable with semantic naming.** It exists for config readability: `service_reachable: {url: "https://api.stripe.com"}` communicates intent better than `url_reachable` for external dependencies. Will gain `depends_on` DAG support in v0.7.
+7. **S3 is anonymous-only for v0.6.** Authenticated S3 access requires AWS SDK or manual SigV4 signing. For v0.6, anonymous HEAD only. Error messages on 403 explicitly state "bucket requires authentication — use env vars + Go templates in a custom http assertion for authenticated checks."
+8. **version_check is Unix-only.** Uses `sh -c` which doesn't exist on Windows. This is acceptable for v0.6 since cosmo-smoke targets Linux/macOS servers. Windows support tracked as future enhancement.
 
 ## Assertion Types
 
@@ -69,7 +73,7 @@ expect:
 - `region` (optional, default "us-east-1"): AWS region
 - `endpoint` (optional, default "s3.amazonaws.com"): custom endpoint for S3-compatible storage (MinIO, GCS, etc.)
 
-Uses path-style URL: `https://s3.amazonaws.com/my-bucket?location`. Anonymous HEAD request. For authenticated access, users reference env vars via Go templates in the broader test config.
+Uses path-style URL: `https://s3.amazonaws.com/my-bucket?location`. **Anonymous HEAD request only** — no auth fields in v0.6. For authenticated buckets, use the existing `http` assertion with Go template env var references for presigned URLs. Error on 403 includes explicit hint about this limitation.
 
 ### 4. version_check (ROAD-013)
 
@@ -100,7 +104,7 @@ Runs via `os/exec` ("sh", "-c", command). Regex match on combined stdout. Fails 
   stages: [pre-commit]
 ```
 
-No code changes. Users add to `.pre-commit-config.yaml`:
+No code changes. Requires `smoke` binary on PATH (users install via `go install` or download release). Users add to `.pre-commit-config.yaml`:
 
 ```yaml
 repos:
@@ -156,9 +160,23 @@ New check functions in `internal/runner/assertion.go`:
 - `CheckS3Bucket(check *schema.S3BucketCheck) AssertionResult`
 - `CheckVersionCheck(check *schema.VersionCheck) AssertionResult`
 
-Internal shared helper: `httpReachable(url string, timeout time.Duration, expectedStatus int) (int, time.Duration, error)`
+Internal shared helper: `httpReachable(url string, timeout time.Duration, expectedStatus int) (int, time.Duration, error)`. `expectedStatus = 0` means "any 2xx passes."
 
-Wire in `runner.go` `runTestOnce()` alongside existing assertion checks.
+Wire in `runner.go` `runTestOnce()` alongside existing assertion checks. Timeout precedence: assertion-level timeout > test-level timeout > config-level timeout > 5s default.
+
+## Validation Rules
+
+Added to `schema.Validate()`:
+
+| Field | Rule |
+|-------|------|
+| `url_reachable.url` | Must start with `http://` or `https://` |
+| `url_reachable.timeout` | Must be positive if set |
+| `service_reachable.url` | Must start with `http://` or `https://` |
+| `s3_bucket.bucket` | Must be non-empty |
+| `s3_bucket.region` | Must be non-empty if endpoint is not set |
+| `version_check.command` | Must be non-empty |
+| `version_check.pattern` | Must compile as valid Go regex |
 
 ## Error Handling
 
@@ -181,7 +199,7 @@ Wire in `runner.go` `runTestOnce()` alongside existing assertion checks.
 | `version_check` | test helper running echo commands: pattern match, pattern miss, command failure | 3 |
 | Pre-commit YAML | validate YAML structure, verify hook fields | 1 |
 
-~13 new tests. Suite total: ~246.
+~13 new tests. Suite total: ~246 (233 current + 13 new).
 
 ## File Scope
 
