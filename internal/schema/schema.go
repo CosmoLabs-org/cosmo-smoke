@@ -52,6 +52,20 @@ type Test struct {
 	Cleanup      string       `yaml:"cleanup,omitempty"`
 	AllowFailure bool         `yaml:"allow_failure,omitempty"`
 	Retry        *RetryPolicy `yaml:"retry,omitempty"`
+	SkipIf       *SkipIf      `yaml:"skip_if,omitempty"`
+}
+
+// SkipIf defines conditions under which a test should be skipped.
+type SkipIf struct {
+	EnvUnset  string         `yaml:"env_unset,omitempty"`
+	EnvEquals *EnvEqualsCond `yaml:"env_equals,omitempty"`
+	FileMissing string       `yaml:"file_missing,omitempty"`
+}
+
+// EnvEqualsCond checks if an env var equals a specific value.
+type EnvEqualsCond struct {
+	Var   string `yaml:"var"`
+	Value string `yaml:"value"`
 }
 
 // Expect defines the assertions for a test.
@@ -266,4 +280,32 @@ func Parse(data []byte) (*SmokeConfig, error) {
 // LoadDefault finds and loads .smoke.yaml from the current directory.
 func LoadDefault() (*SmokeConfig, error) {
 	return Load(".smoke.yaml")
+}
+
+// MergeEnv loads an environment-specific config and deep-merges it onto base.
+// Env-specific tests are appended (not replaced). Settings from env override base.
+func MergeEnv(base *SmokeConfig, envPath string) (*SmokeConfig, error) {
+	envCfg, err := Load(envPath)
+	if err != nil {
+		return nil, fmt.Errorf("loading env config %s: %w", envPath, err)
+	}
+
+	// Deep merge: env settings override base
+	if envCfg.Settings.Timeout.Duration > 0 {
+		base.Settings.Timeout = envCfg.Settings.Timeout
+	}
+	if envCfg.Settings.FailFast {
+		base.Settings.FailFast = true
+	}
+	if envCfg.Settings.Parallel {
+		base.Settings.Parallel = true
+	}
+
+	// Prepend env prereqs (they run before base prereqs)
+	base.Prereqs = append(envCfg.Prereqs, base.Prereqs...)
+
+	// Append env tests (they run after base tests)
+	base.Tests = append(base.Tests, envCfg.Tests...)
+
+	return base, nil
 }

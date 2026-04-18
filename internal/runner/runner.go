@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"context"
 	"fmt"
+	"os"
 	"os/exec"
 	"strings"
 	"sync"
@@ -198,6 +199,13 @@ func (r *Runner) runTest(t schema.Test, opts RunOptions) TestResult {
 func (r *Runner) runTestOnce(t schema.Test, opts RunOptions) TestResult {
 	r.Reporter.TestStart(t.Name)
 	start := time.Now()
+
+	// Evaluate skip_if conditions
+	if t.SkipIf != nil && shouldSkip(t.SkipIf, r.ConfigDir) {
+		tr := TestResult{Name: t.Name, Skipped: true, Duration: time.Since(start)}
+		r.Reporter.TestResult(toReporterResult(tr))
+		return tr
+	}
 
 	if opts.DryRun {
 		tr := TestResult{Name: t.Name, Passed: true, Duration: time.Since(start)}
@@ -464,6 +472,33 @@ func hasAnyTag(tags, targets []string) bool {
 			if strings.EqualFold(tag, target) {
 				return true
 			}
+		}
+	}
+	return false
+}
+
+// shouldSkip evaluates skip_if conditions and returns true if the test should be skipped.
+func shouldSkip(si *schema.SkipIf, configDir string) bool {
+	if si == nil {
+		return false
+	}
+	if si.EnvUnset != "" {
+		if _, ok := os.LookupEnv(si.EnvUnset); !ok {
+			return true
+		}
+	}
+	if si.EnvEquals != nil {
+		if val, ok := os.LookupEnv(si.EnvEquals.Var); ok && val == si.EnvEquals.Value {
+			return true
+		}
+	}
+	if si.FileMissing != "" {
+		path := si.FileMissing
+		if !strings.HasPrefix(path, "/") {
+			path = configDir + "/" + path
+		}
+		if _, err := os.Stat(path); os.IsNotExist(err) {
+			return true
 		}
 	}
 	return false
