@@ -1,13 +1,13 @@
 {
   "repository": {
-    "version": "0.3.0",
-    "build": 135,
+    "version": "0.4.0",
+    "build": 142,
     "name": "cosmo-smoke",
     "lastUpdated": "2026-04-17T17:28:17Z",
     "derived_from": "git tag"
   },
   "metadata": {
-    "last_synced": "2026-04-17T17:21:17Z",
+    "last_synced": "2026-04-17T22:30:36Z",
     "sync_method": "git_history_analysis"
   },
   "releaseContext": {
