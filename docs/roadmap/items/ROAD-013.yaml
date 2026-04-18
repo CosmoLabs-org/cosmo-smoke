@@ -1,6 +1,6 @@
 id: ROAD-013
 created_at: 2026-04-15T17:45:32.986778-03:00
-updated_at: 2026-04-16T17:05:09.245558-03:00
+updated_at: 2026-04-18T18:30:07.435574-03:00
 title: Dependency version assertions
 description: 'New assertion type: version_check. Verify installed tool versions match requirements. Syntax: version_check: { cmd: ''go version'', pattern: ''go1\.2[0-9]'' }. Integrates with Dependencies SOP.'
 status: captured
@@ -10,3 +10,6 @@ tags:
     - v2.0
     - assertion
     - dependencies
+refs:
+    - type: plan
+      path: docs/planning-mode/2026-04-18-v0-6-connect-and-verify.md

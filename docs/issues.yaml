@@ -1,11 +1,21 @@
 version: "1.0"
 project: cosmo-smoke
-last_updated: 2026-04-16T16:15:15.171149-03:00
+last_updated: 2026-04-18T18:30:07.620738-03:00
 next_bug_id: 1
-next_feat_id: 8
+next_feat_id: 10
 next_task_id: 1
 next_imp_id: 1
 issues:
+    - id: FEAT-009
+      type: feature
+      status: open
+      title: Pre-commit hook integration
+      created_at: 2026-04-18T18:30:07.619987-03:00
+    - id: FEAT-008
+      type: feature
+      status: open
+      title: GraphQL introspection assertion
+      created_at: 2026-04-18T18:30:07.580375-03:00
     - id: FEAT-007
       type: feature
       status: fixed

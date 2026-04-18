@@ -1,33 +1,34 @@
 {
   "version": "1.0",
-  "generated_at": "2026-04-18T06:27:23.780421-03:00",
+  "generated_at": "2026-04-18T18:30:28.552143-03:00",
   "generated_by": "GLM-4.7",
-  "expires_at": "2026-04-19T06:27:23.780421-03:00",
-  "last_analyzed_commit": "cbf23664d4142c36ff896d29dd505e87fcf82db7",
-  "summary": "A Go-based orchestration and detection framework with a plugin system, schema validation, and Kubernetes integration.",
-  "architecture": "monolith",
+  "expires_at": "2026-04-19T18:30:28.552143-03:00",
+  "last_analyzed_commit": "dcbd2d3438de7fbc14fcc6dc9698c2ad655a6ba6",
+  "summary": "A Go-based infrastructure testing and validation framework with Goss migration capabilities and a plugin system.",
+  "architecture": "modular monolith",
   "primary_language": "Go",
   "hot_files": [
     "internal/runner/runner.go",
     "internal/runner/assertion.go",
+    "internal/migrate/goss/translator.go",
     "internal/detector/detector_test.go",
-    "internal/schema/schema.go",
-    "internal/reporter/go-code"
+    "internal/schema/schema_test.go"
   ],
   "patterns": [
-    "runner-executor",
-    "detector-reporter pipeline",
-    "plugin architecture",
-    "schema-driven validation"
+    "Pipeline",
+    "Plugin Architecture",
+    "Migration Tooling",
+    "Test-Driven Development"
   ],
   "concerns": [
-    "recent commits are dominated by session/chore metadata updates rather than feature work",
-    "feedback triage commits suggest potential false-positive issues in detection logic",
-    "clean git status combined with housekeeping commits may indicate stalled development"
+    "Uncommitted changes (6 modified, 1 staged, 2 untracked) indicate unstable working state",
+    "Heavy documentation focus in recent commits may signal design instability or scope creep",
+    "Goss migration marked as RO (read-only) suggests incomplete or experimental feature"
   ],
   "suggestions": [
-    "investigate the false-positive feedback items (FB-511) to improve detector accuracy",
-    "focus on core feature development over session metadata management",
-    "review plugin integration to ensure the plugin system is actively utilized"
+    "Commit or stash the current working tree changes to stabilize the branch",
+    "Finalize v0.6 design specs before implementing further features",
+    "Complete or remove the read-only Goss migration tooling",
+    "Add integration tests for the new skip_if conditional execution feature"
   ]
 }

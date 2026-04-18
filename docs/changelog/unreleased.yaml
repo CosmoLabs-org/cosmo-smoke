@@ -4,7 +4,16 @@
 
 version: pending
 entries:
-    added: []
+    added:
+        - description: 'smoke migrate goss: one-command Goss to cosmo-smoke migration with core 7 key mapping, --distro/--strict/--stats flags'
+          source: manual
+          date: 2026-04-18T15:56:21.937749-03:00
+        - description: 'skip_if: conditional test execution via env_unset, env_equals, file_missing conditions'
+          source: manual
+          date: 2026-04-18T15:56:22.604662-03:00
+        - description: Multi-environment configs via --env flag with deep-merge onto base config
+          source: manual
+          date: 2026-04-18T15:56:23.310462-03:00
     fixed: []
     changed: []
     deprecated: []

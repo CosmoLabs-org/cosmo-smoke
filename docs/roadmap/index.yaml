@@ -1,6 +1,6 @@
 version: "1.0"
 project: cosmo-smoke
-last_updated: 2026-04-17T14:29:10.081033-03:00
+last_updated: 2026-04-18T18:30:07.435091-03:00
 next_id: 30
 items:
     - id: ROAD-029
@@ -40,9 +40,10 @@ items:
       created_at: 2026-04-16T16:14:47.003976-03:00
     - id: ROAD-024
       title: Goss migration tool
-      status: planned
+      status: completed
       priority: 85
       effort: large
+      completed_in: v0.4.0
       created_at: 2026-04-16T08:55:59.911782-03:00
     - id: ROAD-023
       title: Auto-generate from running container
@@ -73,12 +74,14 @@ items:
       title: Service dependency checks
       status: captured
       priority: 60
+      has_plan: true
       created_at: 2026-04-15T17:45:39.819046-03:00
     - id: ROAD-017
       title: Multi-environment smoke configs
-      status: captured
+      status: completed
       priority: 50
       effort: small
+      completed_in: v0.4.0
       created_at: 2026-04-15T17:45:38.625262-03:00
     - id: ROAD-016
       title: Database connectivity assertions
@@ -104,6 +107,7 @@ items:
       status: captured
       priority: 40
       effort: small
+      has_plan: true
       created_at: 2026-04-15T17:45:32.986778-03:00
     - id: ROAD-012
       title: Retry with backoff
@@ -130,9 +134,10 @@ items:
       created_at: 2026-04-15T17:36:13.727026-03:00
     - id: ROAD-008
       title: Conditional test execution
-      status: captured
+      status: completed
       priority: 55
       effort: small
+      completed_in: v0.4.0
       created_at: 2026-04-15T17:36:12.22819-03:00
     - id: ROAD-007
       title: JSON field assertions
