@@ -31,6 +31,7 @@ var (
 	timeout     string
 	dryRun      bool
 	watch       bool
+	envName     string
 )
 
 func init() {
@@ -43,12 +44,23 @@ func init() {
 	runCmd.Flags().StringVar(&timeout, "timeout", "", "Per-test timeout override (e.g. 30s)")
 	runCmd.Flags().BoolVar(&dryRun, "dry-run", false, "List tests without running")
 	runCmd.Flags().BoolVar(&watch, "watch", false, "Re-run tests when files change (Ctrl+C to exit)")
+	runCmd.Flags().StringVar(&envName, "env", "", "Load environment-specific config (e.g. staging loads staging.smoke.yaml)")
 }
 
 func runSmoke(cmd *cobra.Command, args []string) error {
 	cfg, err := schema.Load(configFile)
 	if err != nil {
 		return fmt.Errorf("loading config: %w", err)
+	}
+
+	// Load environment-specific overrides
+	if envName != "" {
+		configDir := filepath.Dir(configFile)
+		envFile := filepath.Join(configDir, envName+".smoke.yaml")
+		cfg, err = schema.MergeEnv(cfg, envFile)
+		if err != nil {
+			return fmt.Errorf("loading env %q: %w", envName, err)
+		}
 	}
 
 	if err := schema.Validate(cfg); err != nil {

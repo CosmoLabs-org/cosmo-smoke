@@ -1,0 +1,46 @@
+process:
+  nginx:
+    running: true
+  sshd:
+    running: true
+
+port:
+  tcp:80:
+    listening: true
+    ip:
+      - 0.0.0.0
+  tcp:443:
+    listening: true
+  udp:53:
+    listening: true
+
+command:
+  "echo hello":
+    exit-status: 0
+    stdout:
+      - hello
+
+file:
+  /etc/hosts:
+    exists: true
+    mode: "0644"
+    owner: root
+  /etc/nginx/nginx.conf:
+    exists: true
+
+http:
+  "http://localhost:80/health":
+    status: 200
+    body:
+      - "ok"
+
+package:
+  nginx:
+    installed: true
+  curl:
+    installed: true
+
+service:
+  nginx:
+    enabled: true
+    running: true

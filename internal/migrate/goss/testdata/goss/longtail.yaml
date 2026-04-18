@@ -1,0 +1,30 @@
+user:
+  nginx:
+    exists: true
+    uid: 101
+
+group:
+  nginx:
+    exists: true
+
+dns:
+  example.com:
+    resolvable: true
+    addrs:
+      - "93.184.216.34"
+
+addr:
+  "tcp://example.com:443":
+    reachable: true
+
+interface:
+  eth0:
+    exists: true
+
+mount:
+  "/data":
+    exists: true
+
+kernel-param:
+  net.ipv4.ip_forward:
+    value: "1"
