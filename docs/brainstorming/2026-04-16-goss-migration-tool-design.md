@@ -1,7 +1,7 @@
 ---
 title: Goss migration tool — design doc
 created: 2026-04-16
-status: design-ready
+status: decisions-resolved
 roadmap: ROAD-024
 related:
   - docs/roadmap/items/ROAD-024.yaml
@@ -187,13 +187,13 @@ Can't use `yaml.Marshal(config)` alone because we need interleaved comments. Two
 
 **Estimated total: 8-10 hours.** Plausibly two parallel Sonnet worktrees (parser+translator in one, emitter+CLI in the other) could do it in 4-5 wall-clock hours.
 
-## Open design questions (for brainstorming session)
+## Resolved design decisions (2026-04-18)
 
-1. **Multi-distro packages:** v1 hardcodes dpkg. Should we detect distro from a Goss-file comment hint? Or ship a `--distro=deb|rpm|apk` flag?
-2. **Lossy vs strict:** Is `command:` fallback with a TODO comment acceptable for v1, or should we refuse to migrate until native assertions exist?
-3. **Output naming:** Should the tool emit multiple `.smoke.yaml` files when a gossfile has includes, or flatten everything into one file with includes preserved?
-4. **Reverse migration:** Is `smoke migrate smoke-to-goss` worth shipping? Low priority but shows confidence. Defer.
-5. **Bulk migration:** A repo might have dozens of goss files. Should `smoke migrate goss <dir>` walk a directory and migrate each? Or require explicit per-file invocation? Start with per-file.
+1. **Multi-distro packages → `--distro` flag.** Ship `--distro=deb|rpm|apk` flag, default `deb`. v2 can add auto-detection later.
+2. **Lossy vs strict → command: fallback + TODO is acceptable for v1.** `--strict` flag exists for CI audits; default is lossy with documented stubs.
+3. **Output naming → flatten into one `.smoke.yaml`.** Gossfile includes are resolved at migration time and merged into a single output file.
+4. **Reverse migration → deferred to v0.6+.** Not in scope for v0.5.
+5. **Bulk migration → per-file only for v0.5.** `smoke migrate goss <file>`, no directory walking. Directory support can ship in v0.5.x or v0.6.
 
 ## v0.4 scope proposal
 
