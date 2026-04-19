@@ -1,11 +1,11 @@
 {
   "version": "1.0",
-  "generated_at": "2026-04-19T15:40:17.963202-03:00",
+  "generated_at": "2026-04-19T15:41:11.283428-03:00",
   "generated_by": "GLM-4.7",
-  "expires_at": "2026-04-20T15:40:17.963202-03:00",
-  "last_analyzed_commit": "1328523a4dea75fa36d962f5bd934e39f551dc9c",
-  "summary": "A Go-based CLI tool for migrating, detecting, and running Goss tests with Kubernetes support and a plugin system.",
-  "architecture": "monolith",
+  "expires_at": "2026-04-20T15:41:11.283428-03:00",
+  "last_analyzed_commit": "c3d5cbfb44f40c95b025fdf9cdfa59006b190166",
+  "summary": "A Go-based modular tool for detecting, migrating, running, and reporting on infrastructure validation tests, likely transitioning from Goss with an emerging MCP/Claude integration.",
+  "architecture": "modular monolith",
   "primary_language": "Go",
   "hot_files": [
     "internal/runner/runner.go",
@@ -15,22 +15,21 @@
     "internal/runner/assertion_test.go"
   ],
   "patterns": [
-    "Standard Go project layout",
-    "Migration tool pattern",
-    "Test-driven development",
-    "Plugin architecture",
-    "Internal package encapsulation"
+    "standard go project layout",
+    "migrator/translator pattern",
+    "runner-executor pattern",
+    "plugin architecture"
   ],
   "concerns": [
-    "Build is currently failing",
-    "Recent commits are dominated by automated session metadata commits adding noise to git history",
-    "Untracked and staged files present during a failed build state",
-    "ClaudeDesktop/specs directory suggests non-standard test placement"
+    "build is currently failing",
+    "recent commits focus heavily on session metadata auto-commit/archival indicating flaky state management",
+    "uncommitted changes alongside a broken build suggests instability",
+    "claude/mcp integration metadata handling appears to be a recurring source of friction"
   ],
   "suggestions": [
-    "Fix the failing build immediately to unblock development",
-    "Configure .gitignore to exclude automated session metadata files from version control",
-    "Move ClaudeDesktop/specs to a standard Go test location or document the testing strategy",
-    "Investigate the untracked file to determine if it is critical to the build failure"
+    "fix the broken build immediately before proceeding with feature work",
+    "investigate and stabilize the session status and merge logic causing repeated metadata commits",
+    "commit or stash the untracked and modified files to establish a clean baseline",
+    "review the goss translator for edge cases given its prominence in the test suite"
   ]
 }
