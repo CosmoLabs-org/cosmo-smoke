@@ -1,0 +1,37 @@
+items:
+  - id: FEAT-001
+    title: "stderr_matches assertion type"
+    status: done
+  - id: FEAT-002
+    title: "env_check assertion type"
+    status: done
+  - id: FEAT-003
+    title: "JUnit XML output format"
+    status: done
+  - id: FEAT-004
+    title: "Port listening assertion"
+    status: done
+  - id: FEAT-005
+    title: "Process running assertion"
+    status: closed
+  - id: FEAT-006
+    title: "TAP output format"
+    status: closed
+  - id: FEAT-007
+    title: "allow_failure for flaky tests"
+    status: fixed
+  - id: FEAT-008
+    title: "GraphQL introspection assertion"
+    status: closed
+  - id: FEAT-009
+    title: "Pre-commit hook integration"
+    status: closed
+  - id: FEAT-010
+    title: "Make run field optional for network-only tests"
+    status: closed
+  - id: FEAT-011
+    title: "Split assertion.go into per-domain files"
+    status: closed
+  - id: FEAT-012
+    title: "OpenTelemetry Trace Correlation"
+    status: done

@@ -7,6 +7,7 @@ cosmo-smoke
 .vscode/
 *.swp
 *.swo
+*~
 
 # OS
 .DS_Store
@@ -20,6 +21,14 @@ coverage.out
 *.test
 plugins/internal
 .claude/
+
+# Environment
+.env
+.env.*
+*.log
+
+# Dependencies
+node_modules/
 
 # CCS worktree metadata (untracked, not project files)
 .worktree-origin
