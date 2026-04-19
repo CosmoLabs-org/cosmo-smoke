@@ -1,10 +1,10 @@
 {
   "version": "1.0",
-  "generated_at": "2026-04-19T15:42:40.403915-03:00",
+  "generated_at": "2026-04-19T15:43:15.794244-03:00",
   "generated_by": "GLM-4.7",
-  "expires_at": "2026-04-20T15:42:40.403915-03:00",
-  "last_analyzed_commit": "7756edb490902ea3dba199b68df7ff684c2aa367",
-  "summary": "A Go-based CLI tool for running, detecting, and migrating Goss tests with dashboard reporting and Kubernetes support.",
+  "expires_at": "2026-04-20T15:43:15.794244-03:00",
+  "last_analyzed_commit": "854fd2292756408a20b37cd7a8766126d2616087",
+  "summary": "A Go-based CLI tool for migrating, detecting, and running Goss tests with a plugin system and dashboard.",
   "architecture": "monolith",
   "primary_language": "Go",
   "hot_files": [
@@ -15,20 +15,21 @@
     "internal/runner/assertion_test.go"
   ],
   "patterns": [
-    "Standard Go project layout",
-    "Test-driven development",
-    "Migration/Translation pattern",
-    "Plugin architecture",
-    "Internal package encapsulation"
+    "standard go layout",
+    "test-driven development",
+    "plugin architecture",
+    "migration tool pattern",
+    "cli application"
   ],
   "concerns": [
-    "Build is currently failing",
-    "Recent commits focus heavily on session metadata archiving rather than feature development",
-    "ClaudeDesktop/specs directory suggests tight coupling to Claude AI tooling"
+    "build is currently failing",
+    "recent commits focus on session metadata chores rather than feature development",
+    "claude-specific configuration and specs suggest tight coupling to an AI tool"
   ],
   "suggestions": [
-    "Fix the failing build immediately",
-    "Investigate the root cause of the build failure in the runner or schema modules",
-    "Consolidate repetitive session metadata commit chores into a single automated hook"
+    "fix the failing build immediately",
+    "investigate the root cause of the build failure",
+    "reduce noise in commit history by batching metadata updates",
+    "decouple claude-specific tooling from core logic"
   ]
 }
