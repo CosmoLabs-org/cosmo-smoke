@@ -2,7 +2,7 @@
 id: IDEA-MO53CPHE
 title: Make run field optional for network-only tests
 created: "2026-04-18T22:32:28.802598-03:00"
-status: harvested
+status: withered
 source: agent
 origin:
     session: 2027
@@ -11,7 +11,14 @@ tags:
     - ux
     - v0.8
 promoted_to: FEAT-010
+resolution:
+    reason: implemented
+    date: "2026-04-19"
+    ref: FEAT-010
+    note: Resolved via FEAT-010 (closed)
 ---
+
+# Make run field optional for network-only tests
 
 # Make run field optional for network-only tests
 

@@ -1,9 +1,9 @@
 id: FEAT-011
 type: feature
 created_at: 2026-04-18T23:05:18.681535-03:00
-updated_at: 2026-04-18T23:05:18.682095-03:00
+updated_at: 2026-04-19T02:55:35.626744-03:00
 source: local
-status: open
+status: closed
 labels:
     - architecture
     - v0.7

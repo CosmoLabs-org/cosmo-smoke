@@ -1,6 +1,6 @@
 version: "1.0"
 project: cosmo-smoke
-last_updated: 2026-04-19T00:42:53.325663-03:00
+last_updated: 2026-04-19T03:05:47.764989-03:00
 next_id: 39
 items:
     - id: ROAD-038
@@ -21,10 +21,11 @@ items:
       created_at: 2026-04-19T00:42:53.222894-03:00
     - id: ROAD-034
       title: OpenTelemetry trace correlation
-      status: captured
+      status: completed
       has_plan: true
       linked_issues:
         - FEAT-012
+      completed_in: v0.8.0
       created_at: 2026-04-19T00:42:22.143612-03:00
     - id: ROAD-033
       title: Parallel-agent merge-conflict SOP
@@ -36,13 +37,15 @@ items:
       created_at: 2026-04-18T19:32:30.268624-03:00
     - id: ROAD-031
       title: WebSocket assertion type
-      status: captured
+      status: completed
       has_plan: true
+      completed_in: v0.8.0
       created_at: 2026-04-18T19:32:30.142872-03:00
     - id: ROAD-030
       title: Optional gRPC module via build tag
-      status: captured
+      status: completed
       has_plan: true
+      completed_in: v0.8.0
       created_at: 2026-04-18T19:32:30.051374-03:00
     - id: ROAD-029
       title: Prometheus metrics output format
@@ -140,9 +143,10 @@ items:
       created_at: 2026-04-15T17:45:35.486222-03:00
     - id: ROAD-014
       title: Credential smoke tests
-      status: captured
+      status: completed
       priority: 35
       effort: small
+      completed_in: v0.8.0
       created_at: 2026-04-15T17:45:33.616418-03:00
     - id: ROAD-013
       title: Dependency version assertions
