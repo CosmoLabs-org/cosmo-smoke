@@ -1,36 +1,34 @@
 {
   "version": "1.0",
-  "generated_at": "2026-04-18T22:33:55.23316-03:00",
+  "generated_at": "2026-04-18T23:21:39.485817-03:00",
   "generated_by": "GLM-4.7",
-  "expires_at": "2026-04-19T22:33:55.23316-03:00",
-  "last_analyzed_commit": "749ce17217c893de7812199c97e4a4d6c064caf6",
-  "summary": "A Go-based modular tool for migrating, detecting, and running infrastructure validation assertions, originally built around Goss.",
-  "architecture": "modular monolith",
+  "expires_at": "2026-04-19T23:21:39.485817-03:00",
+  "last_analyzed_commit": "7a53278793cb6de4d1b978ef677bc9cf70d16b20",
+  "summary": "A Go-based CLI tool for detecting, migrating, and running infrastructure and API assertions, with recent expansion into WebSocket, gRPC, and monorepo support.",
+  "architecture": "cli-tool",
   "primary_language": "Go",
   "hot_files": [
     "internal/runner/runner.go",
     "internal/migrate/goss/translator.go",
     "internal/detector/detector_test.go",
-    "internal/runner/assertion.go",
-    "internal/schema/schema_test.go"
+    "internal/schema/schema.go",
+    "internal/runner/assertion_test.go"
   ],
   "patterns": [
-    "translator/migration pattern",
-    "runner/executor pattern",
-    "assertion/validation pattern",
-    "plugin architecture",
-    "standard Go project layout"
+    "Standard Go project layout",
+    "Test-driven development",
+    "Plugin architecture",
+    "Migration/Translation pattern",
+    "Runner/Reporter separation"
   ],
   "concerns": [
-    "uncommitted changes (3 modified, 1 staged) may indicate instability",
-    "recent commits are heavily documentation and chore-focused, suggesting possible feature stagnation",
-    "tight coupling to Goss migration might limit future extensibility",
-    "scattered config directories (.claude, .gorchestra, GOrchestra) suggest evolving or inconsistent configuration management"
+    "Uncommitted changes (2 modified, 1 staged) may indicate instability",
+    "Heavy focus on goss migration suggests legacy coupling",
+    "Broad feature expansion (WebSocket, gRPC, monorepo) might lead to scope creep"
   ],
   "suggestions": [
-    "commit or stash the pending changes to establish a clean baseline",
-    "focus development on core features beyond documentation to progress past v0.6/v0.7",
-    "consolidate configuration directories into a single standard location",
-    "expand test coverage beyond the detected key files"
+    "Commit or stash the current working tree changes to establish a clean baseline",
+    "Focus testing efforts on the new WebSocket and gRPC assertion features",
+    "Document the plugin interface to encourage community extensions"
   ]
 }

@@ -1,13 +1,8 @@
 ---
-title: "cosmo-smoke v0.6 — Connect and Verify"
-created: 2026-04-18
-status: approved
-roadmap:
-  - ROAD-018
-  - ROAD-013
-ideas:
-  - IDEA-MO1FBWB9
-  - IDEA-MO1FBQHL
+completed: "2026-04-18"
+created: "2026-04-18"
+status: COMPLETED
+title: cosmo-smoke v0.6 — Connect and Verify
 ---
 
 # cosmo-smoke v0.6 — Connect and Verify

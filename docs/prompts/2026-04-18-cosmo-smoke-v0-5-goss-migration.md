@@ -1,17 +1,17 @@
 ---
-title: "cosmo-smoke v0.5 — Goss migration tool + complementary features"
-created: 2026-04-18
-status: PENDING
-priority: high
 branch: master
-origin: "/continuation-prompt"
-tags: [continuation]
+completed: "2026-04-18"
+created: "2026-04-18"
+goals_completed: 5
 goals_total: 5
-goals_completed: 0
-carried_over_from: null
-carried_over_goals: 0
+origin: /continuation-prompt
+priority: high
 related_prompts:
-  - docs/prompts/2026-04-16-cosmo-smoke-v0.4-continuation.md
+    - docs/prompts/2026-04-16-cosmo-smoke-v0.4-continuation.md
+status: COMPLETED
+tags:
+    - continuation
+title: cosmo-smoke v0.5 — Goss migration tool + complementary features
 ---
 
 # cosmo-smoke v0.5 — Goss Migration Tool - Continuation Prompt
@@ -67,7 +67,7 @@ The session also handled feedback triage: FB-511 filed against CosmoHooks for a 
 
 ## Goals
 
-### [ ] 1. Resolve the 5 open design questions for ROAD-024 (Goss migration)
+### [x] 1. Resolve the 5 open design questions for ROAD-024 (Goss migration)
 
 Before any code is written, the 5 open questions from the design doc need answers:
 
@@ -81,7 +81,7 @@ Run `/brainstorm` or discuss directly. Once answered, update the design doc at `
 
 Design doc is at: `docs/brainstorming/2026-04-16-goss-migration-tool-design.md`
 
-### [ ] 2. Implement ROAD-024 — Goss migration tool (parallel worktrees)
+### [x] 2. Implement ROAD-024 — Goss migration tool (parallel worktrees)
 
 After design questions are resolved, execute per the design doc's dispatch recommendation:
 
@@ -108,7 +108,7 @@ After design questions are resolved, execute per the design doc's dispatch recom
 
 Use `ccs spawn` for worktrees. Never `git worktree add` directly. After each merges: `ccs verify-worktree NAME --fix --approve && ccs merge NAME && ccs kill NAME`.
 
-### [ ] 3. Implement ROAD-008 — Conditional test execution (small)
+### [x] 3. Implement ROAD-008 — Conditional test execution (small)
 
 Complementary to Goss migration: Goss has `skip: true`; cosmo-smoke currently has no skip. This resolves the TODO emitted for Goss's `skip` flag.
 
@@ -118,7 +118,7 @@ Files to touch: `internal/schema/` (add `SkipIf` field), `internal/runner/` (eva
 
 Issue: ROAD-008. Check `ccs roadmap show ROAD-008` for any additional spec before implementing.
 
-### [ ] 4. Implement ROAD-017 — Multi-environment smoke configs (small)
+### [x] 4. Implement ROAD-017 — Multi-environment smoke configs (small)
 
 Low-overhead v0.5 inclusion. Allows `smoke run --env staging` to load `staging.smoke.yaml` overrides merged onto base `.smoke.yaml`.
 
@@ -128,7 +128,7 @@ Files to touch: `cmd/run.go` (`--env` flag), `internal/schema/` (merge logic), `
 
 Issue: ROAD-017.
 
-### [ ] 5. Release v0.5.0
+### [x] 5. Release v0.5.0
 
 Once ROAD-024 is merged (and optionally ROAD-008/017):
 

@@ -1,19 +1,20 @@
 ---
-title: "cosmo-smoke v0.6 — Connect and Verify"
-created: 2026-04-18
-status: PENDING
-priority: high
 branch: master
-origin: "/brainplan"
-tags: [continuation, implementation, v0.6]
+completed: "2026-04-18"
+created: "2026-04-18"
+goals_completed: 6
 goals_total: 6
-goals_completed: 0
+origin: /brainplan
+priority: high
 related_prompts:
-  - docs/brainstorming/2026-04-18-v0-6-connect-and-verify.md
-  - docs/planning-mode/2026-04-18-v0-6-connect-and-verify.md
-brainstorm_ref: docs/brainstorming/2026-04-18-v0-6-connect-and-verify.md
-plan_ref: docs/planning-mode/2026-04-18-v0-6-connect-and-verify.md
-glm_tasks_ref: docs/prompts/2026-04-18-cosmo-smoke-v0-6-connect-and-verify-glm-tasks.yaml
+    - docs/brainstorming/2026-04-18-v0-6-connect-and-verify.md
+    - docs/planning-mode/2026-04-18-v0-6-connect-and-verify.md
+status: COMPLETED
+tags:
+    - continuation
+    - implementation
+    - v0.6
+title: cosmo-smoke v0.6 — Connect and Verify
 ---
 
 # cosmo-smoke v0.6 — Connect and Verify
@@ -27,27 +28,27 @@ Implementation plan: `docs/planning-mode/2026-04-18-v0-6-connect-and-verify.md`
 
 ## Goals
 
-### [ ] 1. Add schema structs + validation for 4 new assertion types
+### [x] 1. Add schema structs + validation for 4 new assertion types
 
 Add `URLReachableCheck`, `ServiceReachableCheck`, `S3BucketCheck`, `VersionCheck` structs to schema.go. Add validation rules for URL format, required fields, and regex compilation. Wire into `Expect` struct.
 
-### [ ] 2. Implement httpReachable shared helper + url_reachable + service_reachable
+### [x] 2. Implement httpReachable shared helper + url_reachable + service_reachable
 
 Add `httpReachable` internal helper (stdlib net/http, timeout support, status code matching). Implement `CheckURLReachable` and `CheckServiceReachable`. 6 tests using httptest.
 
-### [ ] 3. Implement s3_bucket assertion
+### [x] 3. Implement s3_bucket assertion
 
 Add `CheckS3Bucket` using httpReachable helper with path-style URL construction. Anonymous HEAD only, explicit 403 hint about authentication. 3 tests.
 
-### [ ] 4. Implement version_check assertion
+### [x] 4. Implement version_check assertion
 
 Add `CheckVersion` running shell command via exec, regex matching stdout. 3 tests covering match, no-match, command failure.
 
-### [ ] 5. Wire all assertions into runner + pre-commit hook
+### [x] 5. Wire all assertions into runner + pre-commit hook
 
 Add evaluation blocks in `runner.go runTestOnce()`. Create `.pre-commit-hooks.yaml`. Add validation test for hook file.
 
-### [ ] 6. Release v0.6.0
+### [x] 6. Release v0.6.0
 
 Update CLAUDE.md, run self-smoke, update changelog, bump version, tag and push.
 

@@ -1,3 +1,12 @@
+---
+completed: "2026-04-18"
+created: "2026-04-18"
+goals_completed: 28
+goals_total: 28
+status: COMPLETED
+title: cosmo-smoke v0.6 — Connect and Verify — Implementation Plan
+---
+
 # cosmo-smoke v0.6 — Connect and Verify — Implementation Plan
 
 > **For agentic workers:** REQUIRED: Use superpowers:subagent-driven-development (if subagents available) or superpowers:executing-plans to implement this plan. Steps use checkbox (`- [ ]`) syntax for tracking.
