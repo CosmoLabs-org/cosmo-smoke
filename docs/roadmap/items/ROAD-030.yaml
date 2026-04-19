@@ -1,0 +1,14 @@
+id: ROAD-030
+created_at: 2026-04-18T19:32:30.051374-03:00
+updated_at: 2026-04-18T22:24:14.225689-03:00
+title: Optional gRPC module via build tag
+description: |-
+    # Optional gRPC module via build tag
+
+    v0.3.0 added google.golang.org/grpc as a direct dep purely for the grpc_health assertion. This adds significant bloat to the binary. Consider splitting grpc_health into a build-tag gated file (e.g. //go:build grpc) or a separate module so users who don't need gRPC don't carry the dep. Same consideration for future heavy deps (kafka, nats, etc.).
+status: captured
+refs:
+    - type: plan
+      path: docs/planning-mode/2026-04-18-v0-7-monorepo-websocket-grpc-buildtag.md
+origin:
+    idea_slug: 2026-04-16-optional-grpc-module-via-build-tag

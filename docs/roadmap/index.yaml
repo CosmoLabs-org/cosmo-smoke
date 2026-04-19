@@ -1,8 +1,26 @@
 version: "1.0"
 project: cosmo-smoke
-last_updated: 2026-04-18T18:30:07.435091-03:00
-next_id: 30
+last_updated: 2026-04-18T22:24:14.225204-03:00
+next_id: 34
 items:
+    - id: ROAD-033
+      title: Parallel-agent merge-conflict SOP
+      status: captured
+      created_at: 2026-04-18T19:32:30.375042-03:00
+    - id: ROAD-032
+      title: Claude Desktop MCP extension for smoke test generation
+      status: captured
+      created_at: 2026-04-18T19:32:30.268624-03:00
+    - id: ROAD-031
+      title: WebSocket assertion type
+      status: captured
+      has_plan: true
+      created_at: 2026-04-18T19:32:30.142872-03:00
+    - id: ROAD-030
+      title: Optional gRPC module via build tag
+      status: captured
+      has_plan: true
+      created_at: 2026-04-18T19:32:30.051374-03:00
     - id: ROAD-029
       title: Prometheus metrics output format
       status: completed
@@ -72,9 +90,10 @@ items:
       created_at: 2026-04-16T08:55:51.225103-03:00
     - id: ROAD-018
       title: Service dependency checks
-      status: captured
+      status: completed
       priority: 60
       has_plan: true
+      completed_in: v0.4.0
       created_at: 2026-04-15T17:45:39.819046-03:00
     - id: ROAD-017
       title: Multi-environment smoke configs
@@ -104,10 +123,11 @@ items:
       created_at: 2026-04-15T17:45:33.616418-03:00
     - id: ROAD-013
       title: Dependency version assertions
-      status: captured
+      status: completed
       priority: 40
       effort: small
       has_plan: true
+      completed_in: v0.4.0
       created_at: 2026-04-15T17:45:32.986778-03:00
     - id: ROAD-012
       title: Retry with backoff
@@ -126,6 +146,7 @@ items:
       status: captured
       priority: 45
       effort: medium
+      has_plan: true
       created_at: 2026-04-15T17:36:19.334069-03:00
     - id: ROAD-009
       title: allow_failure for flaky tests

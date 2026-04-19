@@ -2,11 +2,14 @@
 id: IDEA-MO1X1N40
 title: Parallel-agent merge-conflict SOP
 created: "2026-04-16T17:12:36.288701-03:00"
-status: seed
+status: harvested
 source: human
 origin:
     session: 2026
+promoted_to: ROAD-033
 ---
+
+# Parallel-agent merge-conflict SOP
 
 # Parallel-agent merge-conflict SOP
 

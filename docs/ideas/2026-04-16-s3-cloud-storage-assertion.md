@@ -2,9 +2,14 @@
 id: IDEA-MO1FBZAB
 title: S3/Cloud storage assertion
 created: "2026-04-16T08:56:45.539096-03:00"
-status: seed
+status: withered
 source: human
+resolution:
+    reason: implemented
+    date: "2026-04-18"
 ---
+
+# S3/Cloud storage assertion
 
 # S3/Cloud storage assertion
 

@@ -1,0 +1,11 @@
+id: ROAD-032
+created_at: 2026-04-18T19:32:30.268624-03:00
+updated_at: 2026-04-18T19:32:30.271027-03:00
+title: Claude Desktop MCP extension for smoke test generation
+description: |-
+    # Claude Desktop MCP extension for smoke test generation
+
+    AI-assisted .smoke.yaml generation. Feed README + Dockerfile + docker-compose → Claude generates smoke tests. Live validation as you edit.
+status: captured
+origin:
+    idea_slug: 2026-04-16-claude-desktop-mcp-extension-for-smoke-test-generation
