@@ -1,21 +1,27 @@
 {
+  "id": "mcp-extension",
   "branch": "mcp-extension",
   "base_branch": "master",
-  "status": "conflict",
   "created": "2026-04-19T15:10:30-03:00",
-  "archived": "2026-04-19T15:39:59.659545-03:00",
-  "commits": [
+  "finished_at": "2026-04-19T15:40:18.888914-03:00",
+  "status": "finished",
+  "goals": {
+    "total": 0,
+    "completed": 0
+  },
+  "timeline": [
     {
-      "hash": "bb88c3d",
-      "author": "GΛB",
-      "message": "feat(mcp): add MCP server for Claude Desktop integration (ROAD-032)",
-      "date": 1776622230
+      "type": "finished",
+      "at": "2026-04-19T15:40:18.888914-03:00",
+      "message": "Worktree marked as finished"
     }
   ],
-  "total_commits": 1,
-  "files_changed": 32,
-  "lines_added": 2213,
-  "lines_removed": 1580,
-  "diff_stat": ".gitignore                                         |    2 -\n .version-registry.json                             |    6 +-\n GOrchestra/intel/architecture.json                 |   36 +-\n GOrchestra/intel/status.json                       |    4 +-\n GOrchestra/sessions/mcp-extension/.ccsession.json  |   18 -\n GOrchestra/sessions/mcp-extension/.review.json     |   11 -\n GOrchestra/sessions/mcp-extension/HISTORY.md       |   19 -\n GOrchestra/sessions/mcp-extension/session.json     |   27 -\n GOrchestra/worktree-history.yaml                   |    6 -\n cmd/mcp.go                                         |   31 +\n docs/changelog/unreleased.yaml                     |    5 +-\n .../2026-04-19_143415_17187dc3.md                  | 1418 --------------------\n docs/roadmap/index.yaml                            |   23 +-\n docs/roadmap/items/ROAD-010.yaml                   |    4 +-\n docs/roadmap/items/ROAD-032.yaml                   |    6 +-\n docs/roadmap/items/ROAD-033.yaml                   |    6 +-\n docs/roadmap/items/ROAD-035.yaml                   |   18 +-\n docs/roadmap/items/ROAD-036.yaml                   |   16 +-\n docs/roadmap/items/ROAD-037.yaml                   |   17 +-\n docs/roadmap/items/ROAD-038.yaml                   |   18 +-\n docs/roadmap/items/ROAD-039.yaml                   |    6 +-\n go.mod                                             |    6 +-\n go.sum                                             |   54 +-\n internal/mcp/assertions.go                         |  405 ++++++\n internal/mcp/generate_test.go                      |  120 ++\n internal/mcp/handlers.go                           |  635 +++++++++\n internal/mcp/handlers_test.go                      |  202 +++\n internal/mcp/server.go                             |  217 +++\n internal/mcp/server_test.go                        |  111 ++\n internal/mcp/suggestions.go                        |  116 ++\n internal/mcp/suggestions_test.go                   |  125 ++\n internal/mcp/types.go                              |  105 ++\n 32 files changed, 2213 insertions(+), 1580 deletions(-)",
+  "agents": null,
+  "metrics": {
+    "total_commits": 0,
+    "files_changed": 0,
+    "lines_added": 0,
+    "lines_removed": 0
+  },
   "review_status": "passed"
 }
