@@ -2,6 +2,7 @@ package cmd
 
 import (
 	"fmt"
+	"net/url"
 	"os"
 	"os/signal"
 	"path/filepath"
@@ -15,6 +16,30 @@ import (
 	"github.com/fsnotify/fsnotify"
 	"github.com/spf13/cobra"
 )
+
+// withOTelExport wraps the reporter with OTel telemetry export if configured.
+func withOTelExport(rep reporter.Reporter, cfg *schema.SmokeConfig) reporter.Reporter {
+	if !cfg.OTel.Enabled {
+		return rep
+	}
+	exportURL := cfg.OTel.ExportURL
+	if exportURL == "" && cfg.OTel.JaegerURL != "" {
+		exportURL = cfg.OTel.JaegerURL + "/v1/traces"
+	}
+	if exportURL == "" {
+		return rep
+	}
+	if _, err := url.Parse(exportURL); err != nil {
+		fmt.Fprintf(os.Stderr, "warning: invalid otel export url: %v\n", err)
+		return rep
+	}
+	service := cfg.OTel.ServiceName
+	if service == "" {
+		service = cfg.Project
+	}
+	otel := reporter.NewOTelReporter(exportURL, service, cfg.OTel.ExportHeaders)
+	return reporter.NewMultiReporter(rep, otel)
+}
 
 var runCmd = &cobra.Command{
 	Use:   "run",
@@ -105,6 +130,7 @@ func runSmoke(cmd *cobra.Command, args []string) error {
 		default:
 			rep = reporter.NewTerminal(os.Stdout)
 		}
+		rep = withOTelExport(rep, cfg)
 
 		configs, err := monorepo.Discover(configDir, cfg.Settings.MonorepoExclude)
 		if err != nil {
@@ -170,6 +196,7 @@ func runSmoke(cmd *cobra.Command, args []string) error {
 	default:
 		rep = reporter.NewTerminal(os.Stdout)
 	}
+	rep = withOTelExport(rep, cfg)
 
 	// Parse timeout
 	var timeoutDur time.Duration

@@ -32,12 +32,14 @@ type Settings struct {
 	MonorepoExclude []string `yaml:"monorepo_exclude,omitempty"`
 }
 
-// OTelConfig configures OpenTelemetry trace context propagation.
+// OTelConfig configures OpenTelemetry trace context propagation and telemetry export.
 type OTelConfig struct {
 	Enabled          bool   `yaml:"enabled,omitempty"`
 	JaegerURL        string `yaml:"jaeger_url,omitempty"`
 	ServiceName      string `yaml:"service_name,omitempty"`
 	TracePropagation bool   `yaml:"trace_propagation,omitempty"`
+	ExportURL        string `yaml:"export_url,omitempty"` // OTLP HTTP endpoint for emitting telemetry (defaults to jaeger_url + /v1/traces)
+	ExportHeaders    map[string]string `yaml:"export_headers,omitempty"` // Additional headers for OTLP export (e.g., auth)
 }
 
 // Prerequisite is a command that must succeed before tests run.
@@ -49,8 +51,9 @@ type Prerequisite struct {
 
 // RetryPolicy configures automatic retry for flaky tests.
 type RetryPolicy struct {
-	Count   int      `yaml:"count"`
-	Backoff Duration `yaml:"backoff"`
+	Count           int      `yaml:"count"`
+	Backoff         Duration `yaml:"backoff"`
+	RetryOnTraceOnly bool    `yaml:"retry_on_trace_only,omitempty"`
 }
 
 // Test defines a single smoke test.
@@ -227,12 +230,16 @@ type WebSocketCheck struct {
 	Headers        map[string]string `yaml:"headers,omitempty"`
 }
 
-// OTelTraceCheck verifies that a trace arrived at a Jaeger-compatible collector.
+// OTelTraceCheck verifies that a trace arrived at a trace collector.
+// Supported backends: jaeger (default), tempo, honeycomb, datadog.
 type OTelTraceCheck struct {
+	Backend     string   `yaml:"backend,omitempty"` // jaeger | tempo | honeycomb | datadog
 	JaegerURL   string   `yaml:"jaeger_url,omitempty"`
 	ServiceName string   `yaml:"service_name,omitempty"`
 	MinSpans    int      `yaml:"min_spans,omitempty"`
 	Timeout     Duration `yaml:"timeout,omitempty"`
+	APIKey      string   `yaml:"api_key,omitempty"`      // Honeycomb/Datadog API key
+	DDAppKey    string   `yaml:"dd_app_key,omitempty"`   // Datadog application key (optional)
 }
 
 // CredentialCheck verifies a credential is accessible without leaking its value.

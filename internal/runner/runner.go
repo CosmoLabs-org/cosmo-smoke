@@ -51,10 +51,11 @@ type TestResult struct {
 
 // Runner executes smoke tests from a config.
 type Runner struct {
-	Config    *schema.SmokeConfig
-	Reporter  reporter.Reporter
-	ConfigDir string
-	trace     *TraceContext
+	Config      *schema.SmokeConfig
+	Reporter    reporter.Reporter
+	ConfigDir   string
+	trace       *TraceContext
+	TraceHealth *TraceHealthTracker
 }
 
 // Run executes all tests per the options and returns the suite result.
@@ -92,6 +93,9 @@ func (r *Runner) Run(opts RunOptions) (*SuiteResult, error) {
 	// Initialize trace context if otel is enabled
 	if r.Config.OTel.Enabled {
 		r.trace = NewTraceContext()
+		if r.TraceHealth == nil {
+			r.TraceHealth = NewTraceHealthTracker(10)
+		}
 	}
 
 	suite := &SuiteResult{
@@ -110,7 +114,7 @@ func (r *Runner) Run(opts RunOptions) (*SuiteResult, error) {
 	suite.Duration = time.Since(start)
 
 	// Report summary
-	r.Reporter.Summary(reporter.SuiteResultData{
+	summaryData := reporter.SuiteResultData{
 		Project:         suite.Project,
 		Total:           suite.Total,
 		Passed:          suite.Passed,
@@ -118,7 +122,12 @@ func (r *Runner) Run(opts RunOptions) (*SuiteResult, error) {
 		Skipped:         suite.Skipped,
 		AllowedFailures: suite.AllowedFailures,
 		Duration:        suite.Duration,
-	})
+	}
+	if r.TraceHealth != nil && r.TraceHealth.Total() > 0 {
+		summaryData.TraceHealthPct = r.TraceHealth.HealthPct()
+		summaryData.TraceDegraded = r.TraceHealth.Degraded(50.0)
+	}
+	r.Reporter.Summary(summaryData)
 
 	return suite, nil
 }
@@ -235,6 +244,10 @@ func (r *Runner) runTest(t schema.Test, opts RunOptions) TestResult {
 	for attempt := 1; attempt <= t.Retry.Count; attempt++ {
 		last = r.runTestOnce(t, opts)
 		if last.Passed {
+			last.Attempts = attempt
+			return last
+		}
+		if t.Retry.RetryOnTraceOnly && traceConfirmed(last.Assertions) {
 			last.Attempts = attempt
 			return last
 		}
@@ -539,6 +552,9 @@ func (r *Runner) runTestOnce(t schema.Test, opts RunOptions) TestResult {
 		if !a.Passed {
 			allPassed = false
 		}
+		if r.TraceHealth != nil {
+			r.TraceHealth.Record(a.Passed)
+		}
 	}
 
 	if t.Expect.Credential != nil {
@@ -651,6 +667,17 @@ func shouldSkip(si *schema.SkipIf, configDir string) bool {
 			path = configDir + "/" + path
 		}
 		if _, err := os.Stat(path); os.IsNotExist(err) {
+			return true
+		}
+	}
+	return false
+}
+
+// traceConfirmed checks whether any otel_trace assertion in the results passed,
+// meaning the trace was received at the collector.
+func traceConfirmed(assertions []AssertionResult) bool {
+	for _, a := range assertions {
+		if a.Type == "otel_trace" && a.Passed {
 			return true
 		}
 	}

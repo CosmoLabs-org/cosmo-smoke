@@ -241,3 +241,130 @@ func TestValidate_OTelEnabledRequiresJaegerURL(t *testing.T) {
 		t.Errorf("unexpected error: %v", err)
 	}
 }
+
+func TestValidate_RetryOnTraceOnly_WithoutOTelTrace(t *testing.T) {
+	exitCode := 0
+	cfg := &SmokeConfig{
+		Version: 1,
+		Project: "myapp",
+		Tests: []Test{
+			{
+				Name: "test1", Run: "echo hi",
+				Expect: Expect{ExitCode: &exitCode},
+				Retry: &RetryPolicy{Count: 3, Backoff: Duration{Duration: 1e9}, RetryOnTraceOnly: true},
+			},
+		},
+	}
+	err := Validate(cfg)
+	if err == nil {
+		t.Fatal("expected error for retry_on_trace_only without otel_trace")
+	}
+	if !strings.Contains(err.Error(), "retry_on_trace_only requires otel_trace") {
+		t.Errorf("error = %q, want mention of retry_on_trace_only", err.Error())
+	}
+}
+
+func TestValidate_RetryOnTraceOnly_WithOTelTrace(t *testing.T) {
+	exitCode := 0
+	cfg := &SmokeConfig{
+		Version: 1,
+		Project: "myapp",
+		Tests: []Test{
+			{
+				Name: "test1", Run: "echo hi",
+				Expect: Expect{
+					ExitCode:  &exitCode,
+					OTelTrace: &OTelTraceCheck{JaegerURL: "http://localhost:16686"},
+				},
+				Retry: &RetryPolicy{Count: 3, Backoff: Duration{Duration: 1e9}, RetryOnTraceOnly: true},
+			},
+		},
+	}
+	if err := Validate(cfg); err != nil {
+		t.Errorf("unexpected error for retry_on_trace_only with otel_trace: %v", err)
+	}
+}
+
+func TestValidate_OTelTrace_InvalidBackend(t *testing.T) {
+	cfg := &SmokeConfig{
+		Version: 1,
+		Project: "myapp",
+		Tests: []Test{
+			{
+				Name: "test1", Run: "echo hi",
+				Expect: Expect{
+					OTelTrace: &OTelTraceCheck{JaegerURL: "http://localhost:16686", Backend: "zipkin"},
+				},
+			},
+		},
+	}
+	err := Validate(cfg)
+	if err == nil {
+		t.Fatal("expected error for invalid backend")
+	}
+	if !strings.Contains(err.Error(), "otel_trace.backend must be") {
+		t.Errorf("error = %q, want mention of valid backends", err.Error())
+	}
+}
+
+func TestValidate_OTelTrace_HoneycombRequiresAPIKey(t *testing.T) {
+	cfg := &SmokeConfig{
+		Version: 1,
+		Project: "myapp",
+		Tests: []Test{
+			{
+				Name: "test1", Run: "echo hi",
+				Expect: Expect{
+					OTelTrace: &OTelTraceCheck{JaegerURL: "https://api.honeycomb.io", Backend: "honeycomb"},
+				},
+			},
+		},
+	}
+	err := Validate(cfg)
+	if err == nil {
+		t.Fatal("expected error for honeycomb without api_key")
+	}
+	if !strings.Contains(err.Error(), "api_key is required for honeycomb") {
+		t.Errorf("error = %q, want mention of api_key", err.Error())
+	}
+}
+
+func TestValidate_OTelTrace_DatadogRequiresAPIKey(t *testing.T) {
+	cfg := &SmokeConfig{
+		Version: 1,
+		Project: "myapp",
+		Tests: []Test{
+			{
+				Name: "test1", Run: "echo hi",
+				Expect: Expect{
+					OTelTrace: &OTelTraceCheck{JaegerURL: "https://api.datadoghq.com", Backend: "datadog"},
+				},
+			},
+		},
+	}
+	err := Validate(cfg)
+	if err == nil {
+		t.Fatal("expected error for datadog without api_key")
+	}
+	if !strings.Contains(err.Error(), "api_key is required for datadog") {
+		t.Errorf("error = %q, want mention of api_key", err.Error())
+	}
+}
+
+func TestValidate_OTelTrace_TempoValidWithJaegerURL(t *testing.T) {
+	cfg := &SmokeConfig{
+		Version: 1,
+		Project: "myapp",
+		Tests: []Test{
+			{
+				Name: "test1", Run: "echo hi",
+				Expect: Expect{
+					OTelTrace: &OTelTraceCheck{JaegerURL: "http://tempo:3200", Backend: "tempo"},
+				},
+			},
+		},
+	}
+	if err := Validate(cfg); err != nil {
+		t.Errorf("unexpected error for valid tempo config: %v", err)
+	}
+}

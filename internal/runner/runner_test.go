@@ -460,3 +460,59 @@ func TestRetry_ExhaustsAllAttempts(t *testing.T) {
 		t.Errorf("elapsed = %v, want >= 30ms (two backoffs: 10ms + 20ms)", elapsed)
 	}
 }
+
+func TestTraceConfirmed(t *testing.T) {
+	t.Run("returns_true_when_otel_trace_passed", func(t *testing.T) {
+		assertions := []AssertionResult{
+			{Type: "exit_code", Passed: false},
+			{Type: "otel_trace", Passed: true},
+		}
+		if !traceConfirmed(assertions) {
+			t.Error("expected true when otel_trace assertion passed")
+		}
+	})
+	t.Run("returns_false_when_otel_trace_failed", func(t *testing.T) {
+		assertions := []AssertionResult{
+			{Type: "exit_code", Passed: false},
+			{Type: "otel_trace", Passed: false},
+		}
+		if traceConfirmed(assertions) {
+			t.Error("expected false when otel_trace assertion failed")
+		}
+	})
+	t.Run("returns_false_when_no_otel_trace_assertion", func(t *testing.T) {
+		assertions := []AssertionResult{
+			{Type: "exit_code", Passed: false},
+		}
+		if traceConfirmed(assertions) {
+			t.Error("expected false when no otel_trace assertion present")
+		}
+	})
+}
+
+func TestRetry_TraceAware_NoOTelTrace_ExhaustsRetries(t *testing.T) {
+	cfg := newConfig([]schema.Test{
+		{
+			Name: "fails-no-trace",
+			Run:  "exit 1",
+			Expect: schema.Expect{ExitCode: intPtr(0)},
+			Retry: &schema.RetryPolicy{
+				Count:            3,
+				Backoff:          schema.Duration{Duration: 10 * time.Millisecond},
+				RetryOnTraceOnly: true,
+			},
+		},
+	})
+	r := &Runner{Config: cfg, Reporter: &noopReporter{}, ConfigDir: t.TempDir()}
+	result, err := r.Run(RunOptions{})
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+	if result.Failed != 1 {
+		t.Errorf("failed = %d, want 1", result.Failed)
+	}
+	tr := result.Tests[0]
+	if tr.Attempts != 3 {
+		t.Errorf("Attempts = %d, want 3 (no otel_trace assertion -> all retries exhausted)", tr.Attempts)
+	}
+}

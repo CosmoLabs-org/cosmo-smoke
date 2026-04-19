@@ -47,6 +47,9 @@ func Validate(cfg *SmokeConfig) error {
 			if t.Retry.Backoff.Duration <= 0 {
 				errs = append(errs, fmt.Sprintf("test[%d] retry.backoff must be > 0", i))
 			}
+			if t.Retry.RetryOnTraceOnly && t.Expect.OTelTrace == nil {
+				errs = append(errs, fmt.Sprintf("test[%d] retry.retry_on_trace_only requires otel_trace assertion", i))
+			}
 		}
 		if t.Expect.DockerContainer != nil && t.Expect.DockerContainer.Name == "" {
 			errs = append(errs, fmt.Sprintf("%s: docker_container_running.name is required", prefix))
@@ -114,10 +117,24 @@ func Validate(cfg *SmokeConfig) error {
 			}
 		}
 		if e := t.Expect.OTelTrace; e != nil {
-			if e.JaegerURL == "" && cfg.OTel.JaegerURL == "" {
-				errs = append(errs, fmt.Sprintf("%s: otel_trace.jaeger_url is required (or set otel.jaeger_url globally)", prefix))
-			} else if e.JaegerURL != "" && !strings.HasPrefix(e.JaegerURL, "http://") && !strings.HasPrefix(e.JaegerURL, "https://") {
-				errs = append(errs, fmt.Sprintf("%s: otel_trace.jaeger_url must start with http:// or https://", prefix))
+			if e.Backend != "" && e.Backend != "jaeger" && e.Backend != "tempo" && e.Backend != "honeycomb" && e.Backend != "datadog" {
+				errs = append(errs, fmt.Sprintf("%s: otel_trace.backend must be jaeger, tempo, honeycomb, or datadog", prefix))
+			}
+			if e.Backend == "" || e.Backend == "jaeger" || e.Backend == "tempo" {
+				if e.JaegerURL == "" && cfg.OTel.JaegerURL == "" {
+					errs = append(errs, fmt.Sprintf("%s: otel_trace.jaeger_url is required (or set otel.jaeger_url globally)", prefix))
+				} else if e.JaegerURL != "" && !strings.HasPrefix(e.JaegerURL, "http://") && !strings.HasPrefix(e.JaegerURL, "https://") {
+					errs = append(errs, fmt.Sprintf("%s: otel_trace.jaeger_url must start with http:// or https://", prefix))
+				}
+			}
+			if (e.Backend == "honeycomb" || e.Backend == "datadog") && e.JaegerURL == "" && cfg.OTel.JaegerURL == "" {
+				errs = append(errs, fmt.Sprintf("%s: otel_trace.jaeger_url (collector URL) is required", prefix))
+			}
+			if e.Backend == "honeycomb" && e.APIKey == "" {
+				errs = append(errs, fmt.Sprintf("%s: otel_trace.api_key is required for honeycomb backend", prefix))
+			}
+			if e.Backend == "datadog" && e.APIKey == "" {
+				errs = append(errs, fmt.Sprintf("%s: otel_trace.api_key is required for datadog backend", prefix))
 			}
 			if e.MinSpans < 0 {
 				errs = append(errs, fmt.Sprintf("%s: otel_trace.min_spans must be >= 0", prefix))

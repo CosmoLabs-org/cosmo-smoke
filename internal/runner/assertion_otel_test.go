@@ -128,3 +128,125 @@ func TestCheckOTelTrace_PollingRetries(t *testing.T) {
 		t.Errorf("expected >= 3 calls, got %d", callCount)
 	}
 }
+
+func TestCheckOTelTrace_TempoBackend(t *testing.T) {
+	ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if got := r.URL.Path; got != "/api/traces/abc123" {
+			t.Errorf("path = %q, want /api/traces/abc123", got)
+		}
+		w.Header().Set("Content-Type", "application/json")
+		fmt.Fprint(w, jaegerJSON("abc123", 3))
+	}))
+	defer ts.Close()
+
+	check := &schema.OTelTraceCheck{
+		Backend:     "tempo",
+		JaegerURL:   ts.URL,
+		ServiceName: "myservice",
+		MinSpans:    2,
+		Timeout:     schema.Duration{Duration: 2 * time.Second},
+	}
+	result := CheckOTelTrace(check, "abc123", ts.Client())
+	if !result.Passed {
+		t.Errorf("expected pass, got fail: %s", result.Actual)
+	}
+}
+
+func TestCheckOTelTrace_HoneycombBackend(t *testing.T) {
+	ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if got := r.Header.Get("X-Honeycomb-Team"); got != "hc-api-key-123" {
+			t.Errorf("X-Honeycomb-Team = %q, want hc-api-key-123", got)
+		}
+		if got := r.URL.Path; got != "/v1/traces/trace-hc" {
+			t.Errorf("path = %q, want /v1/traces/trace-hc", got)
+		}
+		w.Header().Set("Content-Type", "application/json")
+		fmt.Fprint(w, `{"data":{"spans":[{},{},{}]}}`)
+	}))
+	defer ts.Close()
+
+	check := &schema.OTelTraceCheck{
+		Backend:   "honeycomb",
+		JaegerURL: ts.URL,
+		APIKey:    "hc-api-key-123",
+		MinSpans:  2,
+		Timeout:   schema.Duration{Duration: 2 * time.Second},
+	}
+	result := CheckOTelTrace(check, "trace-hc", ts.Client())
+	if !result.Passed {
+		t.Errorf("expected pass, got fail: %s", result.Actual)
+	}
+}
+
+func TestCheckOTelTrace_DatadogBackend(t *testing.T) {
+	ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if got := r.Header.Get("DD-API-KEY"); got != "dd-api-key-456" {
+			t.Errorf("DD-API-KEY = %q, want dd-api-key-456", got)
+		}
+		if got := r.Header.Get("DD-APPLICATION-KEY"); got != "dd-app-key-789" {
+			t.Errorf("DD-APPLICATION-KEY = %q, want dd-app-key-789", got)
+		}
+		if got := r.URL.Path; got != "/api/v1/traces/trace-dd" {
+			t.Errorf("path = %q, want /api/v1/traces/trace-dd", got)
+		}
+		w.Header().Set("Content-Type", "application/json")
+		fmt.Fprint(w, `{"traces":[{"spans":[{},{}]},{"spans":[{}]}]}`)
+	}))
+	defer ts.Close()
+
+	check := &schema.OTelTraceCheck{
+		Backend:   "datadog",
+		JaegerURL: ts.URL,
+		APIKey:    "dd-api-key-456",
+		DDAppKey:  "dd-app-key-789",
+		MinSpans:  3,
+		Timeout:   schema.Duration{Duration: 2 * time.Second},
+	}
+	result := CheckOTelTrace(check, "trace-dd", ts.Client())
+	if !result.Passed {
+		t.Errorf("expected pass, got fail: %s", result.Actual)
+	}
+}
+
+func TestCheckOTelTrace_HoneycombBackend_NoSpans(t *testing.T) {
+	ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Content-Type", "application/json")
+		fmt.Fprint(w, `{"data":{"spans":[]}}`)
+	}))
+	defer ts.Close()
+
+	check := &schema.OTelTraceCheck{
+		Backend:   "honeycomb",
+		JaegerURL: ts.URL,
+		APIKey:    "test-key",
+		MinSpans:  1,
+		Timeout:   schema.Duration{Duration: 100 * time.Millisecond},
+	}
+	result := CheckOTelTrace(check, "missing", ts.Client())
+	if result.Passed {
+		t.Error("expected fail for empty spans")
+	}
+}
+
+func TestCheckOTelTrace_DefaultBackendIsJaeger(t *testing.T) {
+	// Empty backend string should behave like jaeger.
+	ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if got := r.URL.Path; got != "/api/traces/default-trace" {
+			t.Errorf("path = %q, want /api/traces/default-trace (jaeger format)", got)
+		}
+		w.Header().Set("Content-Type", "application/json")
+		fmt.Fprint(w, jaegerJSON("default-trace", 1))
+	}))
+	defer ts.Close()
+
+	check := &schema.OTelTraceCheck{
+		Backend:   "",
+		JaegerURL: ts.URL,
+		MinSpans:  1,
+		Timeout:   schema.Duration{Duration: 2 * time.Second},
+	}
+	result := CheckOTelTrace(check, "default-trace", ts.Client())
+	if !result.Passed {
+		t.Errorf("expected pass with default (jaeger) backend, got fail: %s", result.Actual)
+	}
+}

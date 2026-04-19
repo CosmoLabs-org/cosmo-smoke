@@ -111,6 +111,15 @@ func (t *Terminal) Summary(s SuiteResultData) {
 	parts = append(parts, dimStyle.Render(formatDuration(s.Duration)))
 
 	fmt.Fprintf(t.w, "  %s\n", strings.Join(parts, "  "))
+
+	if s.TraceHealthPct > 0 {
+		pct := fmt.Sprintf("%.1f%%", s.TraceHealthPct)
+		if s.TraceDegraded {
+			fmt.Fprintf(t.w, "  %s %s\n", failStyle.Render("trace health:"), failStyle.Render(pct+" degraded"))
+		} else {
+			fmt.Fprintf(t.w, "  %s %s\n", dimStyle.Render("trace health:"), dimStyle.Render(pct))
+		}
+	}
 }
 
 func formatDuration(d time.Duration) string {

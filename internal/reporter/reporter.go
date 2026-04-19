@@ -49,4 +49,6 @@ type SuiteResultData struct {
 	AllowedFailures int              `json:"allowed_failures"`
 	Duration        time.Duration    `json:"duration"`
 	Tests           []TestResultData `json:"tests"`
+	TraceHealthPct  float64          `json:"trace_health_pct,omitempty"`
+	TraceDegraded   bool             `json:"trace_degraded,omitempty"`
 }
