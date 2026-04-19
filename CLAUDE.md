@@ -18,7 +18,7 @@ cmd/
 └── version.go       # smoke version (ldflags-injected)
 internal/
 ├── schema/          # SmokeConfig structs, YAML parsing, validation
-├── runner/          # Assertion engine (26 types), prereq runner, test execution
+├── runner/          # Assertion engine (27 types), prereq runner, test execution
 ├── reporter/        # Terminal (Lipgloss) + JSON reporters
 ├── monorepo/        # Sub-config discovery for monorepo projects
 └── detector/        # Project type detection + template generation
@@ -27,7 +27,7 @@ internal/
 ## Key Design Decisions
 
 - **Minimal deps**: Cobra + Lipgloss + yaml.v3 + gjson. No Viper, no Bubbletea.
-- **Pure assertions**: All 26 assertion types are pure functions — no side effects.
+- **Pure assertions**: All 27 assertion types are pure functions — no side effects.
 - **Config inheritance**: `includes:` directive + Go templates (`{{ .Env.FOO }}`).
 - **Config-dir-relative**: Commands execute from the config file's directory, not cwd.
 - **All errors at once**: Validation returns all errors, not just the first.
@@ -42,7 +42,7 @@ internal/
 
 ```bash
 go build ./...                    # Build
-go test ./...                     # Run all tests (253 total)
+go test ./...                     # Run all tests (269 total)
 smoke run                         # Self-smoke (6 tests)
 go build -ldflags "-s -w -X github.com/CosmoLabs-org/cosmo-smoke/cmd.Version=X.Y.Z" -o smoke .
 ```
@@ -50,7 +50,7 @@ go build -ldflags "-s -w -X github.com/CosmoLabs-org/cosmo-smoke/cmd.Version=X.Y
 ## Commands
 
 ```bash
-smoke run [--tag X] [--exclude-tag X] [--format terminal|json|junit|tap|prometheus] [--fail-fast] [--timeout 30s] [-f path] [--dry-run] [--watch] [--monorepo]
+smoke run [--tag X] [--exclude-tag X] [--format terminal|json|junit|tap|prometheus] [--fail-fast] [--timeout 30s] [-f path] [--dry-run] [--watch] [--monorepo] [--otel-collector URL] [--no-otel]
 smoke init [--force] [--from-running CONTAINER]
 smoke version
 ```
@@ -84,8 +84,21 @@ smoke version
 | service_reachable | `{url, timeout?}` | External service dependency check |
 | s3_bucket | `{bucket, region?, endpoint?}` | S3-compatible bucket accessibility (anonymous HEAD) |
 | version_check | `{command, pattern}` | Tool version verification via shell command + regex |
+| otel_trace | `{jaeger_url, service_name?, min_spans?, timeout?}` | Jaeger API trace verification (W3C traceparent propagation) |
 
 Plus `allow_failure: true` on Test for flaky/allowed-failure tests.
+
+## OpenTelemetry Integration
+
+```yaml
+otel:
+  enabled: true
+  jaeger_url: "http://jaeger:16686"
+  service_name: "cosmo-smoke"
+  trace_propagation: true
+```
+
+When enabled, W3C `traceparent` headers are auto-injected into HTTP, gRPC, and WebSocket assertions. The `otel_trace` assertion verifies traces arrived at a Jaeger-compatible collector.
 
 ## Output Formats
 

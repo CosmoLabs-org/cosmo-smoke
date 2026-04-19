@@ -24,16 +24,18 @@ var runCmd = &cobra.Command{
 }
 
 var (
-	configFile  string
-	tags        []string
-	excludeTags []string
-	format      string
-	failFast    bool
-	timeout     string
-	dryRun      bool
-	watch       bool
-	envName     string
+	configFile   string
+	tags         []string
+	excludeTags  []string
+	format       string
+	failFast     bool
+	timeout      string
+	dryRun       bool
+	watch        bool
+	envName      string
 	monorepoMode bool
+	otelCollector string
+	noOtel       bool
 )
 
 func init() {
@@ -48,6 +50,8 @@ func init() {
 	runCmd.Flags().BoolVar(&watch, "watch", false, "Re-run tests when files change (Ctrl+C to exit)")
 	runCmd.Flags().StringVar(&envName, "env", "", "Load environment-specific config (e.g. staging loads staging.smoke.yaml)")
 	runCmd.Flags().BoolVar(&monorepoMode, "monorepo", false, "Auto-discover .smoke.yaml in subdirectories")
+	runCmd.Flags().StringVar(&otelCollector, "otel-collector", "", "Override otel.jaeger_url and enable tracing")
+	runCmd.Flags().BoolVar(&noOtel, "no-otel", false, "Disable otel trace propagation for this run")
 }
 
 func runSmoke(cmd *cobra.Command, args []string) error {
@@ -64,6 +68,15 @@ func runSmoke(cmd *cobra.Command, args []string) error {
 		if err != nil {
 			return fmt.Errorf("loading env %q: %w", envName, err)
 		}
+	}
+
+	// Apply CLI otel flags
+	if noOtel {
+		cfg.OTel.Enabled = false
+	}
+	if otelCollector != "" {
+		cfg.OTel.JaegerURL = otelCollector
+		cfg.OTel.Enabled = true
 	}
 
 	if err := schema.Validate(cfg); err != nil {
