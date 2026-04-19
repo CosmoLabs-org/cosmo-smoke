@@ -1,0 +1,8 @@
+- id: smoke
+  name: cosmo-smoke
+  description: Run smoke tests from .smoke.yaml
+  entry: smoke run --fail-fast
+  language: system
+  pass_filenames: false
+  always_run: true
+  stages: [pre-commit]
