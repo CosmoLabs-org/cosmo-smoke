@@ -154,3 +154,9 @@
   branch: mcp-extension
   base: master
   outcome: 
+- name: mcp-extension
+  created: '2026-04-19T15:44:48-03:00'
+  status: killed
+  branch: mcp-extension
+  base: master
+  outcome: archived

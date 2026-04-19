@@ -1,0 +1,2406 @@
+From bb88c3d746958985c0d12c94b5a2940af5ab132f Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?G=CE=9BB?= <Gab@CosmoLabs.org>
+Date: Sun, 19 Apr 2026 15:10:30 -0300
+Subject: [PATCH 1/2] feat(mcp): add MCP server for Claude Desktop integration
+ (ROAD-032)
+
+Implements `smoke mcp` subcommand exposing 7 tools over stdio:
+
+- smoke_run: execute tests with tag/timeout/fail-fast options
+- smoke_init: auto-detect project and generate .smoke.yaml
+- smoke_validate: check config validity without running tests
+- smoke_list: enumerate tests with assertions and tags
+- smoke_discover: find .smoke.yaml files in directory tree
+- smoke_explain: document all 29 assertion types with examples
+- smoke_generate_test: create single-test YAML snippets
+
+Uses mark3labs/mcp-go v0.48.0 (only new dependency). Includes fix
+suggestion engine that maps failure patterns to actionable remediation
+for all assertion types.
+
+9 new files, ~1300 LOC, 22 tests passing.
+---
+ cmd/mcp.go                       |  31 ++
+ go.mod                           |   6 +-
+ go.sum                           |  54 ++-
+ internal/mcp/assertions.go       | 405 ++++++++++++++++++++
+ internal/mcp/generate_test.go    | 120 ++++++
+ internal/mcp/handlers.go         | 635 +++++++++++++++++++++++++++++++
+ internal/mcp/handlers_test.go    | 202 ++++++++++
+ internal/mcp/server.go           | 217 +++++++++++
+ internal/mcp/server_test.go      | 111 ++++++
+ internal/mcp/suggestions.go      | 116 ++++++
+ internal/mcp/suggestions_test.go | 125 ++++++
+ internal/mcp/types.go            | 105 +++++
+ 12 files changed, 2124 insertions(+), 3 deletions(-)
+ create mode 100644 cmd/mcp.go
+ create mode 100644 internal/mcp/assertions.go
+ create mode 100644 internal/mcp/generate_test.go
+ create mode 100644 internal/mcp/handlers.go
+ create mode 100644 internal/mcp/handlers_test.go
+ create mode 100644 internal/mcp/server.go
+ create mode 100644 internal/mcp/server_test.go
+ create mode 100644 internal/mcp/suggestions.go
+ create mode 100644 internal/mcp/suggestions_test.go
+ create mode 100644 internal/mcp/types.go
+
+diff --git a/cmd/mcp.go b/cmd/mcp.go
+new file mode 100644
+index 0000000..35c1515
+--- /dev/null
++++ b/cmd/mcp.go
+@@ -0,0 +1,31 @@
++package cmd
++
++import (
++	"github.com/CosmoLabs-org/cosmo-smoke/internal/mcp"
++	"github.com/spf13/cobra"
++)
++
++var mcpCmd = &cobra.Command{
++	Use:   "mcp",
++	Short: "Start MCP server for Claude Desktop integration",
++	Long: `Start an MCP (Model Context Protocol) server that exposes smoke test
++operations as tools. Designed for use with Claude Desktop and other MCP clients.
++
++Add to your Claude Desktop configuration:
++  {
++    "mcpServers": {
++      "cosmo-smoke": {
++        "command": "smoke",
++        "args": ["mcp"]
++      }
++    }
++  }`,
++	RunE: func(cmd *cobra.Command, args []string) error {
++		srv := mcp.NewServer()
++		return srv.ServeStdio()
++	},
++}
++
++func init() {
++	rootCmd.AddCommand(mcpCmd)
++}
+diff --git a/go.mod b/go.mod
+index 0baebfd..ae6de5f 100644
+--- a/go.mod
++++ b/go.mod
+@@ -5,10 +5,12 @@ go 1.26.2
+ require (
+ 	github.com/charmbracelet/lipgloss v1.1.0
+ 	github.com/fsnotify/fsnotify v1.9.0
++	github.com/mark3labs/mcp-go v0.48.0
+ 	github.com/spf13/cobra v1.10.2
+ 	github.com/tidwall/gjson v1.18.0
+ 	google.golang.org/grpc v1.80.0
+ 	gopkg.in/yaml.v3 v3.0.1
++	modernc.org/sqlite v1.49.1
+ )
+ 
+ require (
+@@ -18,6 +20,7 @@ require (
+ 	github.com/charmbracelet/x/cellbuf v0.0.13-0.20250311204145-2c3ea96c31dd // indirect
+ 	github.com/charmbracelet/x/term v0.2.1 // indirect
+ 	github.com/dustin/go-humanize v1.0.1 // indirect
++	github.com/google/jsonschema-go v0.4.2 // indirect
+ 	github.com/google/uuid v1.6.0 // indirect
+ 	github.com/inconshreveable/mousetrap v1.1.0 // indirect
+ 	github.com/lucasb-eyer/go-colorful v1.2.0 // indirect
+@@ -27,10 +30,12 @@ require (
+ 	github.com/ncruces/go-strftime v1.0.0 // indirect
+ 	github.com/remyoudompheng/bigfft v0.0.0-20230129092748-24d4a6f8daec // indirect
+ 	github.com/rivo/uniseg v0.4.7 // indirect
++	github.com/spf13/cast v1.7.1 // indirect
+ 	github.com/spf13/pflag v1.0.9 // indirect
+ 	github.com/tidwall/match v1.1.1 // indirect
+ 	github.com/tidwall/pretty v1.2.0 // indirect
+ 	github.com/xo/terminfo v0.0.0-20220910002029-abceb7e1c41e // indirect
++	github.com/yosida95/uritemplate/v3 v3.0.2 // indirect
+ 	golang.org/x/net v0.49.0 // indirect
+ 	golang.org/x/sys v0.42.0 // indirect
+ 	golang.org/x/text v0.33.0 // indirect
+@@ -39,5 +44,4 @@ require (
+ 	modernc.org/libc v1.72.0 // indirect
+ 	modernc.org/mathutil v1.7.1 // indirect
+ 	modernc.org/memory v1.11.0 // indirect
+-	modernc.org/sqlite v1.49.1 // indirect
+ )
+diff --git a/go.sum b/go.sum
+index 79a11c9..47954fb 100644
+--- a/go.sum
++++ b/go.sum
+@@ -13,8 +13,12 @@ github.com/charmbracelet/x/cellbuf v0.0.13-0.20250311204145-2c3ea96c31dd/go.mod
+ github.com/charmbracelet/x/term v0.2.1 h1:AQeHeLZ1OqSXhrAWpYUtZyX1T3zVxfpZuEQMIQaGIAQ=
+ github.com/charmbracelet/x/term v0.2.1/go.mod h1:oQ4enTYFV7QN4m0i9mzHrViD7TQKvNEEkHUMCmsxdUg=
+ github.com/cpuguy83/go-md2man/v2 v2.0.6/go.mod h1:oOW0eioCTA6cOiMLiUPZOpcVxMig6NIQQ7OS05n1F4g=
++github.com/davecgh/go-spew v1.1.1 h1:vj9j/u1bqnvCEfJOwUhtlOARqs3+rkHYY13jYWTU97c=
++github.com/davecgh/go-spew v1.1.1/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
+ github.com/dustin/go-humanize v1.0.1 h1:GzkhY7T5VNhEkwH0PVJgjz+fX1rhBrR7pRT3mDkpeCY=
+ github.com/dustin/go-humanize v1.0.1/go.mod h1:Mu1zIs6XwVuF/gI1OepvI0qD18qycQx+mFykh5fBlto=
++github.com/frankban/quicktest v1.14.6 h1:7Xjx+VpznH+oBnejlPUj8oUpdxnVs4f8XU8WnHkI4W8=
++github.com/frankban/quicktest v1.14.6/go.mod h1:4ptaffx2x8+WTWXmUCuVU6aPUX1/Mz7zb5vbUoiM6w0=
+ github.com/fsnotify/fsnotify v1.9.0 h1:2Ml+OJNzbYCTzsxtv8vKSFD9PbJjmhYF14k/jKC7S9k=
+ github.com/fsnotify/fsnotify v1.9.0/go.mod h1:8jBTzvmWwFyi3Pb8djgCCO5IBqzKJ/Jwo8TRcHyHii0=
+ github.com/go-logr/logr v1.4.3 h1:CjnDlHq8ikf6E492q6eKboGOC0T8CDaOvkHCIg8idEI=
+@@ -25,12 +29,24 @@ github.com/golang/protobuf v1.5.4 h1:i7eJL8qZTpSEXOPTxNKhASYpMn+8e5Q6AdndVa1dWek
+ github.com/golang/protobuf v1.5.4/go.mod h1:lnTiLA8Wa4RWRcIUkrtSVa5nRhsEGBg48fD6rSs7xps=
+ github.com/google/go-cmp v0.7.0 h1:wk8382ETsv4JYUZwIsn6YpYiWiBsYLSJiTsyBybVuN8=
+ github.com/google/go-cmp v0.7.0/go.mod h1:pXiqmnSA92OHEEa9HXL2W4E7lf9JzCmGVUdgjX3N/iU=
++github.com/google/jsonschema-go v0.4.2 h1:tmrUohrwoLZZS/P3x7ex0WAVknEkBZM46iALbcqoRA8=
++github.com/google/jsonschema-go v0.4.2/go.mod h1:r5quNTdLOYEz95Ru18zA0ydNbBuYoo9tgaYcxEYhJVE=
++github.com/google/pprof v0.0.0-20250317173921-a4b03ec1a45e h1:ijClszYn+mADRFY17kjQEVQ1XRhq2/JR1M3sGqeJoxs=
++github.com/google/pprof v0.0.0-20250317173921-a4b03ec1a45e/go.mod h1:boTsfXsheKC2y+lKOCMpSfarhxDeIzfZG1jqGcPl3cA=
+ github.com/google/uuid v1.6.0 h1:NIvaJDMOsjHA8n1jAhLSgzrAzy1Hgr+hNrb57e+94F0=
+ github.com/google/uuid v1.6.0/go.mod h1:TIyPZe4MgqvfeYDBFedMoGGpEw/LqOeaOT+nhxU+yHo=
++github.com/hashicorp/golang-lru/v2 v2.0.7 h1:a+bsQ5rvGLjzHuww6tVxozPZFVghXaHOwFs4luLUK2k=
++github.com/hashicorp/golang-lru/v2 v2.0.7/go.mod h1:QeFd9opnmA6QUJc5vARoKUSoFhyfM2/ZepoAG6RGpeM=
+ github.com/inconshreveable/mousetrap v1.1.0 h1:wN+x4NVGpMsO7ErUn/mUI3vEoE6Jt13X2s0bqwp9tc8=
+ github.com/inconshreveable/mousetrap v1.1.0/go.mod h1:vpF70FUmC8bwa3OWnCshd2FqLfsEA9PFc4w1p2J65bw=
++github.com/kr/pretty v0.3.1 h1:flRD4NNwYAUpkphVc1HcthR4KEIFJ65n8Mw5qdRn3LE=
++github.com/kr/pretty v0.3.1/go.mod h1:hoEshYVHaxMs3cyo3Yncou5ZscifuDolrwPKZanG3xk=
++github.com/kr/text v0.2.0 h1:5Nx0Ya0ZqY2ygV366QzturHI13Jq95ApcVaJBhpS+AY=
++github.com/kr/text v0.2.0/go.mod h1:eLer722TekiGuMkidMxC/pM04lWEeraHUUmBw8l2grE=
+ github.com/lucasb-eyer/go-colorful v1.2.0 h1:1nnpGOrhyZZuNyfu1QjKiUICQ74+3FNCN69Aj6K7nkY=
+ github.com/lucasb-eyer/go-colorful v1.2.0/go.mod h1:R4dSotOR9KMtayYi1e77YzuveK+i7ruzyGqttikkLy0=
++github.com/mark3labs/mcp-go v0.48.0 h1:o+MXuGW/HCeR2ny5LcAcZQn2bo6I2xaZMEHnpRG+dtw=
++github.com/mark3labs/mcp-go v0.48.0/go.mod h1:JKTC7R2LLVagkEWK7Kwu7DbmA6iIvnNAod6yrHiQMag=
+ github.com/mattn/go-isatty v0.0.20 h1:xfD0iDuEKnDkl03q4limB+vH+GxLEtL/jb4xVJSWWEY=
+ github.com/mattn/go-isatty v0.0.20/go.mod h1:W+V8PltTTMOvKvAeJH7IuucS94S2C6jfK/D7dTCTo3Y=
+ github.com/mattn/go-runewidth v0.0.16 h1:E5ScNMtiwvlvB5paMFdw9p4kSQzbXFikJ5SQO6TULQc=
+@@ -39,16 +55,24 @@ github.com/muesli/termenv v0.16.0 h1:S5AlUN9dENB57rsbnkPyfdGuWIlkmzJjbFf0Tf5FWUc
+ github.com/muesli/termenv v0.16.0/go.mod h1:ZRfOIKPFDYQoDFF4Olj7/QJbW60Ol/kL1pU3VfY/Cnk=
+ github.com/ncruces/go-strftime v1.0.0 h1:HMFp8mLCTPp341M/ZnA4qaf7ZlsbTc+miZjCLOFAw7w=
+ github.com/ncruces/go-strftime v1.0.0/go.mod h1:Fwc5htZGVVkseilnfgOVb9mKy6w1naJmn9CehxcKcls=
++github.com/pmezard/go-difflib v1.0.0 h1:4DBwDE0NGyQoBHbLQYPwSUPoCMWR5BEzIk/f1lZbAQM=
++github.com/pmezard/go-difflib v1.0.0/go.mod h1:iKH77koFhYxTK1pcRnkKkqfTogsbg7gZNVY4sRDYZ/4=
+ github.com/remyoudompheng/bigfft v0.0.0-20230129092748-24d4a6f8daec h1:W09IVJc94icq4NjY3clb7Lk8O1qJ8BdBEF8z0ibU0rE=
+ github.com/remyoudompheng/bigfft v0.0.0-20230129092748-24d4a6f8daec/go.mod h1:qqbHyh8v60DhA7CoWK5oRCqLrMHRGoxYCSS9EjAz6Eo=
+ github.com/rivo/uniseg v0.2.0/go.mod h1:J6wj4VEh+S6ZtnVlnTBMWIodfgj8LQOQFoIToxlJtxc=
+ github.com/rivo/uniseg v0.4.7 h1:WUdvkW8uEhrYfLC4ZzdpI2ztxP1I582+49Oc5Mq64VQ=
+ github.com/rivo/uniseg v0.4.7/go.mod h1:FN3SvrM+Zdj16jyLfmOkMNblXMcoc8DfTHruCPUcx88=
++github.com/rogpeppe/go-internal v1.9.0 h1:73kH8U+JUqXU8lRuOHeVHaa/SZPifC7BkcraZVejAe8=
++github.com/rogpeppe/go-internal v1.9.0/go.mod h1:WtVeX8xhTBvf0smdhujwtBcq4Qrzq/fJaraNFVN+nFs=
+ github.com/russross/blackfriday/v2 v2.1.0/go.mod h1:+Rmxgy9KzJVeS9/2gXHxylqXiyQDYRxCVz55jmeOWTM=
++github.com/spf13/cast v1.7.1 h1:cuNEagBQEHWN1FnbGEjCXL2szYEXqfJPbP2HNUaca9Y=
++github.com/spf13/cast v1.7.1/go.mod h1:ancEpBxwJDODSW/UG4rDrAqiKolqNNh2DX3mk86cAdo=
+ github.com/spf13/cobra v1.10.2 h1:DMTTonx5m65Ic0GOoRY2c16WCbHxOOw6xxezuLaBpcU=
+ github.com/spf13/cobra v1.10.2/go.mod h1:7C1pvHqHw5A4vrJfjNwvOdzYu0Gml16OCs2GRiTUUS4=
+ github.com/spf13/pflag v1.0.9 h1:9exaQaMOCwffKiiiYk6/BndUBv+iRViNW+4lEMi0PvY=
+ github.com/spf13/pflag v1.0.9/go.mod h1:McXfInJRrz4CZXVZOBLb0bTZqETkiAhM9Iw0y3An2Bg=
++github.com/stretchr/testify v1.9.0 h1:HtqpIVDClZ4nwg75+f6Lvsy/wHu+3BoSGCbBAcpTsTg=
++github.com/stretchr/testify v1.9.0/go.mod h1:r2ic/lqez/lEtzL7wO/rwa5dbSLXVDPFyf8C91i36aY=
+ github.com/tidwall/gjson v1.18.0 h1:FIDeeyB800efLX89e5a8Y0BNH+LOngJyGrIWxG2FKQY=
+ github.com/tidwall/gjson v1.18.0/go.mod h1:/wbyibRr2FHMks5tjHJ5F8dMZh3AcwJEMf5vlfC0lxk=
+ github.com/tidwall/match v1.1.1 h1:+Ho715JplO36QYgwN9PGYNhgZvoUSc9X2c80KVTi+GA=
+@@ -57,6 +81,8 @@ github.com/tidwall/pretty v1.2.0 h1:RWIZEg2iJ8/g6fDDYzMpobmaoGh5OLl4AXtGUGPcqCs=
+ github.com/tidwall/pretty v1.2.0/go.mod h1:ITEVvHYasfjBbM0u2Pg8T2nJnzm8xPwvNhhsoaGGjNU=
+ github.com/xo/terminfo v0.0.0-20220910002029-abceb7e1c41e h1:JVG44RsyaB9T2KIHavMF/ppJZNG9ZpyihvCd0w101no=
+ github.com/xo/terminfo v0.0.0-20220910002029-abceb7e1c41e/go.mod h1:RbqR21r5mrJuqunuUZ/Dhy/avygyECGrLceyNeo4LiM=
++github.com/yosida95/uritemplate/v3 v3.0.2 h1:Ed3Oyj9yrmi9087+NczuL5BwkIc4wvTb5zIM+UJPGz4=
++github.com/yosida95/uritemplate/v3 v3.0.2/go.mod h1:ILOh0sOhIJR3+L/8afwt/kE++YT040gmv5BQTMR2HP4=
+ go.opentelemetry.io/auto/sdk v1.2.1 h1:jXsnJ4Lmnqd11kwkBV2LgLoFMZKizbCi5fNZ/ipaZ64=
+ go.opentelemetry.io/auto/sdk v1.2.1/go.mod h1:KRTj+aOaElaLi+wW1kO/DZRXwkF4C5xPbEe3ZiIhN7Y=
+ go.opentelemetry.io/otel v1.39.0 h1:8yPrr/S0ND9QEfTfdP9V+SiwT4E0G7Y5MO7p85nis48=
+@@ -72,15 +98,19 @@ go.opentelemetry.io/otel/trace v1.39.0/go.mod h1:88w4/PnZSazkGzz/w84VHpQafiU4Etq
+ go.yaml.in/yaml/v3 v3.0.4/go.mod h1:DhzuOOF2ATzADvBadXxruRBLzYTpT36CKvDb3+aBEFg=
+ golang.org/x/exp v0.0.0-20220909182711-5c715a9e8561 h1:MDc5xs78ZrZr3HMQugiXOAkSZtfTpbJLDr/lwfgO53E=
+ golang.org/x/exp v0.0.0-20220909182711-5c715a9e8561/go.mod h1:cyybsKvd6eL0RnXn6p/Grxp8F5bW7iYuBgsNCOHpMYE=
++golang.org/x/mod v0.33.0 h1:tHFzIWbBifEmbwtGz65eaWyGiGZatSrT9prnU8DbVL8=
++golang.org/x/mod v0.33.0/go.mod h1:swjeQEj+6r7fODbD2cqrnje9PnziFuw4bmLbBZFrQ5w=
+ golang.org/x/net v0.49.0 h1:eeHFmOGUTtaaPSGNmjBKpbng9MulQsJURQUAfUwY++o=
+ golang.org/x/net v0.49.0/go.mod h1:/ysNB2EvaqvesRkuLAyjI1ycPZlQHM3q01F02UY/MV8=
++golang.org/x/sync v0.20.0 h1:e0PTpb7pjO8GAtTs2dQ6jYa5BWYlMuX047Dco/pItO4=
++golang.org/x/sync v0.20.0/go.mod h1:9xrNwdLfx4jkKbNva9FpL6vEN7evnE43NNNJQ2LF3+0=
+ golang.org/x/sys v0.6.0/go.mod h1:oPkhp1MJrh7nUepCBck5+mAzfO9JrbApNNgaTdGDITg=
+-golang.org/x/sys v0.40.0 h1:DBZZqJ2Rkml6QMQsZywtnjnnGvHza6BTfYFWY9kjEWQ=
+-golang.org/x/sys v0.40.0/go.mod h1:OgkHotnGiDImocRcuBABYBEXf8A9a87e/uXjp9XT3ks=
+ golang.org/x/sys v0.42.0 h1:omrd2nAlyT5ESRdCLYdm3+fMfNFE/+Rf4bDIQImRJeo=
+ golang.org/x/sys v0.42.0/go.mod h1:4GL1E5IUh+htKOUEOaiffhrAeqysfVGipDYzABqnCmw=
+ golang.org/x/text v0.33.0 h1:B3njUFyqtHDUI5jMn1YIr5B0IE2U0qck04r6d4KPAxE=
+ golang.org/x/text v0.33.0/go.mod h1:LuMebE6+rBincTi9+xWTY8TztLzKHc/9C1uBCG27+q8=
++golang.org/x/tools v0.42.0 h1:uNgphsn75Tdz5Ji2q36v/nsFSfR/9BRFvqhGBaJGd5k=
++golang.org/x/tools v0.42.0/go.mod h1:Ma6lCIwGZvHK6XtgbswSoWroEkhugApmsXyrUmBhfr0=
+ gonum.org/v1/gonum v0.17.0 h1:VbpOemQlsSMrYmn7T2OUvQ4dqxQXU+ouZFQsZOx50z4=
+ gonum.org/v1/gonum v0.17.0/go.mod h1:El3tOrEuMpv2UdMrbNlKEh9vd86bmQ6vqIcDwxEOc1E=
+ google.golang.org/genproto/googleapis/rpc v0.0.0-20260120221211-b8f7ae30c516 h1:sNrWoksmOyF5bvJUcnmbeAmQi8baNhqg5IWaI3llQqU=
+@@ -93,11 +123,31 @@ gopkg.in/check.v1 v0.0.0-20161208181325-20d25e280405 h1:yhCVgyC4o1eVCa2tZl7eS0r+
+ gopkg.in/check.v1 v0.0.0-20161208181325-20d25e280405/go.mod h1:Co6ibVJAznAaIkqp8huTwlJQCZ016jof/cbN4VW5Yz0=
+ gopkg.in/yaml.v3 v3.0.1 h1:fxVm/GzAzEWqLHuvctI91KS9hhNmmWOoWu0XTYJS7CA=
+ gopkg.in/yaml.v3 v3.0.1/go.mod h1:K4uyk7z7BCEPqu6E+C64Yfv1cQ7kz7rIZviUmN+EgEM=
++modernc.org/cc/v4 v4.27.3 h1:uNCgn37E5U09mTv1XgskEVUJ8ADKpmFMPxzGJ0TSo+U=
++modernc.org/cc/v4 v4.27.3/go.mod h1:3YjcbCqhoTTHPycJDRl2WZKKFj0nwcOIPBfEZK0Hdk8=
++modernc.org/ccgo/v4 v4.32.4 h1:L5OB8rpEX4ZsXEQwGozRfJyJSFHbbNVOoQ59DU9/KuU=
++modernc.org/ccgo/v4 v4.32.4/go.mod h1:lY7f+fiTDHfcv6YlRgSkxYfhs+UvOEEzj49jAn2TOx0=
++modernc.org/fileutil v1.4.0 h1:j6ZzNTftVS054gi281TyLjHPp6CPHr2KCxEXjEbD6SM=
++modernc.org/fileutil v1.4.0/go.mod h1:EqdKFDxiByqxLk8ozOxObDSfcVOv/54xDs/DUHdvCUU=
++modernc.org/gc/v2 v2.6.5 h1:nyqdV8q46KvTpZlsw66kWqwXRHdjIlJOhG6kxiV/9xI=
++modernc.org/gc/v2 v2.6.5/go.mod h1:YgIahr1ypgfe7chRuJi2gD7DBQiKSLMPgBQe9oIiito=
++modernc.org/gc/v3 v3.1.2 h1:ZtDCnhonXSZexk/AYsegNRV1lJGgaNZJuKjJSWKyEqo=
++modernc.org/gc/v3 v3.1.2/go.mod h1:HFK/6AGESC7Ex+EZJhJ2Gni6cTaYpSMmU/cT9RmlfYY=
++modernc.org/goabi0 v0.2.0 h1:HvEowk7LxcPd0eq6mVOAEMai46V+i7Jrj13t4AzuNks=
++modernc.org/goabi0 v0.2.0/go.mod h1:CEFRnnJhKvWT1c1JTI3Avm+tgOWbkOu5oPA8eH8LnMI=
+ modernc.org/libc v1.72.0 h1:IEu559v9a0XWjw0DPoVKtXpO2qt5NVLAnFaBbjq+n8c=
+ modernc.org/libc v1.72.0/go.mod h1:tTU8DL8A+XLVkEY3x5E/tO7s2Q/q42EtnNWda/L5QhQ=
+ modernc.org/mathutil v1.7.1 h1:GCZVGXdaN8gTqB1Mf/usp1Y/hSqgI2vAGGP4jZMCxOU=
+ modernc.org/mathutil v1.7.1/go.mod h1:4p5IwJITfppl0G4sUEDtCr4DthTaT47/N3aT6MhfgJg=
+ modernc.org/memory v1.11.0 h1:o4QC8aMQzmcwCK3t3Ux/ZHmwFPzE6hf2Y5LbkRs+hbI=
+ modernc.org/memory v1.11.0/go.mod h1:/JP4VbVC+K5sU2wZi9bHoq2MAkCnrt2r98UGeSK7Mjw=
++modernc.org/opt v0.1.4 h1:2kNGMRiUjrp4LcaPuLY2PzUfqM/w9N23quVwhKt5Qm8=
++modernc.org/opt v0.1.4/go.mod h1:03fq9lsNfvkYSfxrfUhZCWPk1lm4cq4N+Bh//bEtgns=
++modernc.org/sortutil v1.2.1 h1:+xyoGf15mM3NMlPDnFqrteY07klSFxLElE2PVuWIJ7w=
++modernc.org/sortutil v1.2.1/go.mod h1:7ZI3a3REbai7gzCLcotuw9AC4VZVpYMjDzETGsSMqJE=
+ modernc.org/sqlite v1.49.1 h1:dYGHTKcX1sJ+EQDnUzvz4TJ5GbuvhNJa8Fg6ElGx73U=
+ modernc.org/sqlite v1.49.1/go.mod h1:m0w8xhwYUVY3H6pSDwc3gkJ/irZT/0YEXwBlhaxQEew=
++modernc.org/strutil v1.2.1 h1:UneZBkQA+DX2Rp35KcM69cSsNES9ly8mQWD71HKlOA0=
++modernc.org/strutil v1.2.1/go.mod h1:EHkiggD70koQxjVdSBM3JKM7k6L0FbGE5eymy9i3B9A=
++modernc.org/token v1.1.0 h1:Xl7Ap9dKaEs5kLoOQeQmPWevfnk/DM5qcLcYlA8ys6Y=
++modernc.org/token v1.1.0/go.mod h1:UGzOrNV1mAFSEB63lOFHIpNRUVMvYTc6yu1SMY/XTDM=
+diff --git a/internal/mcp/assertions.go b/internal/mcp/assertions.go
+new file mode 100644
+index 0000000..fd87bce
+--- /dev/null
++++ b/internal/mcp/assertions.go
+@@ -0,0 +1,405 @@
++package mcp
++
++// assertionDocs maps assertion type names to their documentation.
++var assertionDocs = map[string]*ExplainResult{
++	"exit_code": {
++		Type:        "exit_code",
++		Description: "Verifies the process exit code matches the expected value",
++		Fields: []ExplainField{
++			{Name: "exit_code", Type: "int", Required: false, Default: "0", Description: "Expected exit code"},
++		},
++		Example: `tests:
++  - name: command succeeds
++    run: echo hello
++    expect:
++      exit_code: 0`,
++	},
++	"stdout_contains": {
++		Type:        "stdout_contains",
++		Description: "Checks that stdout contains a specific substring",
++		Fields: []ExplainField{
++			{Name: "stdout_contains", Type: "string", Required: true, Description: "Substring to search for in stdout"},
++		},
++		Example: `tests:
++  - name: output contains hello
++    run: echo "hello world"
++    expect:
++      stdout_contains: "hello"`,
++	},
++	"stdout_matches": {
++		Type:        "stdout_matches",
++		Description: "Checks that stdout matches a regular expression",
++		Fields: []ExplainField{
++			{Name: "stdout_matches", Type: "string", Required: true, Description: "Regex pattern to match against stdout"},
++		},
++		Example: `tests:
++  - name: version output matches pattern
++    run: myapp --version
++    expect:
++      stdout_matches: "v\\d+\\.\\d+\\.\\d+"`,
++	},
++	"stderr_contains": {
++		Type:        "stderr_contains",
++		Description: "Checks that stderr contains a specific substring",
++		Fields: []ExplainField{
++			{Name: "stderr_contains", Type: "string", Required: true, Description: "Substring to search for in stderr"},
++		},
++		Example: `tests:
++  - name: error message in stderr
++    run: myapp --invalid
++    expect:
++      stderr_contains: "unknown flag"`,
++	},
++	"stderr_matches": {
++		Type:        "stderr_matches",
++		Description: "Checks that stderr matches a regular expression",
++		Fields: []ExplainField{
++			{Name: "stderr_matches", Type: "string", Required: true, Description: "Regex pattern to match against stderr"},
++		},
++		Example: `tests:
++  - name: error matches pattern
++    run: myapp --invalid
++    expect:
++      stderr_matches: "error:.*flag"`,
++	},
++	"file_exists": {
++		Type:        "file_exists",
++		Description: "Checks that a file exists relative to the config directory",
++		Fields: []ExplainField{
++			{Name: "file_exists", Type: "string", Required: true, Description: "File path relative to config directory"},
++		},
++		Example: `tests:
++  - name: config file created
++    run: myapp init
++    expect:
++      file_exists: "config.yaml"`,
++	},
++	"env_exists": {
++		Type:        "env_exists",
++		Description: "Checks that an environment variable is set",
++		Fields: []ExplainField{
++			{Name: "env_exists", Type: "string", Required: true, Description: "Name of the environment variable to check"},
++		},
++		Example: `tests:
++  - name: HOME is set
++    run: "true"
++    expect:
++      env_exists: "HOME"`,
++	},
++	"port_listening": {
++		Type:        "port_listening",
++		Description: "Checks that a TCP or UDP port is open and accepting connections",
++		Fields: []ExplainField{
++			{Name: "port", Type: "int", Required: true, Description: "Port number to check"},
++			{Name: "protocol", Type: "string", Required: false, Default: "tcp", Description: "Protocol: tcp or udp"},
++			{Name: "host", Type: "string", Required: false, Default: "localhost", Description: "Host to connect to"},
++		},
++		Example: `tests:
++  - name: web server listening
++    expect:
++      port_listening:
++        port: 8080
++        protocol: tcp`,
++	},
++	"process_running": {
++		Type:        "process_running",
++		Description: "Checks that a named process is currently running",
++		Fields: []ExplainField{
++			{Name: "process_running", Type: "string", Required: true, Description: "Exact process name (matched with pgrep -x / tasklist)"},
++		},
++		Example: `tests:
++  - name: nginx is running
++    expect:
++      process_running: "nginx"`,
++	},
++	"http": {
++		Type:        "http",
++		Description: "HTTP endpoint check supporting status code, body, and header assertions",
++		Fields: []ExplainField{
++			{Name: "url", Type: "string", Required: true, Description: "URL to request"},
++			{Name: "method", Type: "string", Required: false, Default: "GET", Description: "HTTP method"},
++			{Name: "status_code", Type: "int", Required: false, Default: "200", Description: "Expected HTTP status code"},
++			{Name: "body_contains", Type: "string", Required: false, Description: "Substring to find in response body"},
++			{Name: "body_matches", Type: "string", Required: false, Description: "Regex to match against response body"},
++			{Name: "header_contains", Type: "string", Required: false, Description: "Expected header in 'Name: Value' format"},
++		},
++		Example: `tests:
++  - name: health endpoint returns 200
++    expect:
++      http:
++        url: "http://localhost:8080/health"
++        status_code: 200
++        body_contains: "ok"`,
++	},
++	"json_field": {
++		Type:        "json_field",
++		Description: "Asserts on a JSON field from stdout using dot-notation path",
++		Fields: []ExplainField{
++			{Name: "path", Type: "string", Required: true, Description: "JSONPath using dot notation (e.g. 'data.name')"},
++			{Name: "equals", Type: "string", Required: false, Description: "Exact value match"},
++			{Name: "contains", Type: "string", Required: false, Description: "Substring match on the field value"},
++			{Name: "matches", Type: "string", Required: false, Description: "Regex match on the field value"},
++		},
++		Example: `tests:
++  - name: API returns correct version
++    run: curl -s http://localhost:8080/api/version
++    expect:
++      json_field:
++        path: "version"
++        equals: "1.0.0"`,
++	},
++	"response_time_ms": {
++		Type:        "response_time_ms",
++		Description: "Asserts total test duration does not exceed threshold in milliseconds",
++		Fields: []ExplainField{
++			{Name: "response_time_ms", Type: "int", Required: true, Description: "Maximum allowed duration in milliseconds"},
++		},
++		Example: `tests:
++  - name: API responds quickly
++    run: curl -s http://localhost:8080/api
++    expect:
++      response_time_ms: 500`,
++	},
++	"ssl_cert": {
++		Type:        "ssl_cert",
++		Description: "TLS certificate validity and expiry check",
++		Fields: []ExplainField{
++			{Name: "host", Type: "string", Required: true, Description: "Hostname to check"},
++			{Name: "port", Type: "int", Required: false, Default: "443", Description: "TLS port"},
++			{Name: "min_days_remaining", Type: "int", Required: false, Default: "7", Description: "Minimum days before expiry"},
++			{Name: "allow_self_signed", Type: "bool", Required: false, Default: "false", Description: "Accept self-signed certificates"},
++		},
++		Example: `tests:
++  - name: TLS cert is valid
++    expect:
++      ssl_cert:
++        host: "example.com"
++        min_days_remaining: 30`,
++	},
++	"redis_ping": {
++		Type:        "redis_ping",
++		Description: "Redis PING command returns +PONG via RESP protocol",
++		Fields: []ExplainField{
++			{Name: "host", Type: "string", Required: false, Default: "localhost", Description: "Redis host"},
++			{Name: "port", Type: "int", Required: false, Default: "6379", Description: "Redis port"},
++			{Name: "password", Type: "string", Required: false, Description: "Redis AUTH password"},
++		},
++		Example: `tests:
++  - name: Redis is reachable
++    expect:
++      redis_ping:
++        host: "localhost"
++        port: 6379`,
++	},
++	"memcached_version": {
++		Type:        "memcached_version",
++		Description: "Memcached version command returns VERSION response",
++		Fields: []ExplainField{
++			{Name: "host", Type: "string", Required: false, Default: "localhost", Description: "Memcached host"},
++			{Name: "port", Type: "int", Required: false, Default: "11211", Description: "Memcached port"},
++		},
++		Example: `tests:
++  - name: Memcached is reachable
++    expect:
++      memcached_version:
++        host: "localhost"`,
++	},
++	"postgres_ping": {
++		Type:        "postgres_ping",
++		Description: "Postgres server SSLRequest handshake returns valid protocol byte",
++		Fields: []ExplainField{
++			{Name: "host", Type: "string", Required: false, Default: "localhost", Description: "Postgres host"},
++			{Name: "port", Type: "int", Required: false, Default: "5432", Description: "Postgres port"},
++		},
++		Example: `tests:
++  - name: Postgres is reachable
++    expect:
++      postgres_ping:
++        host: "localhost"`,
++	},
++	"mysql_ping": {
++		Type:        "mysql_ping",
++		Description: "MySQL server sends valid v10 handshake packet on connection",
++		Fields: []ExplainField{
++			{Name: "host", Type: "string", Required: false, Default: "localhost", Description: "MySQL host"},
++			{Name: "port", Type: "int", Required: false, Default: "3306", Description: "MySQL port"},
++		},
++		Example: `tests:
++  - name: MySQL is reachable
++    expect:
++      mysql_ping:
++        host: "localhost"`,
++	},
++	"grpc_health": {
++		Type:        "grpc_health",
++		Description: "grpc.health.v1 Health/Check returns SERVING status (requires -tags grpc build)",
++		Fields: []ExplainField{
++			{Name: "address", Type: "string", Required: true, Description: "gRPC server address (host:port)"},
++			{Name: "service", Type: "string", Required: false, Description: "Specific service name to check"},
++			{Name: "use_tls", Type: "bool", Required: false, Default: "false", Description: "Use TLS connection"},
++			{Name: "timeout", Type: "string", Required: false, Default: "10s", Description: "Connection timeout"},
++		},
++		Example: `tests:
++  - name: gRPC health check
++    expect:
++      grpc_health:
++        address: "localhost:9090"
++        service: "myservice.MyService"`,
++		Notes: "Requires building with -tags grpc to include gRPC dependencies",
++	},
++	"docker_container_running": {
++		Type:        "docker_container_running",
++		Description: "Checks that a named Docker container is currently running",
++		Fields: []ExplainField{
++			{Name: "name", Type: "string", Required: true, Description: "Docker container name"},
++		},
++		Example: `tests:
++  - name: postgres container is running
++    expect:
++      docker_container_running:
++        name: "my-postgres"`,
++	},
++	"docker_image_exists": {
++		Type:        "docker_image_exists",
++		Description: "Checks that a Docker image exists locally",
++		Fields: []ExplainField{
++			{Name: "image", Type: "string", Required: true, Description: "Docker image name (e.g. 'nginx:latest')"},
++		},
++		Example: `tests:
++  - name: base image exists
++    expect:
++      docker_image_exists:
++        image: "nginx:alpine"`,
++	},
++	"url_reachable": {
++		Type:        "url_reachable",
++		Description: "HTTP/HTTPS connectivity check with optional status code validation",
++		Fields: []ExplainField{
++			{Name: "url", Type: "string", Required: true, Description: "URL to check"},
++			{Name: "timeout", Type: "string", Required: false, Default: "10s", Description: "Request timeout"},
++			{Name: "status_code", Type: "int", Required: false, Default: "200", Description: "Expected status code"},
++		},
++		Example: `tests:
++  - name: external API is reachable
++    expect:
++      url_reachable:
++        url: "https://api.example.com/health"
++        timeout: "5s"`,
++	},
++	"service_reachable": {
++		Type:        "service_reachable",
++		Description: "External service dependency connectivity check",
++		Fields: []ExplainField{
++			{Name: "url", Type: "string", Required: true, Description: "Service URL to check"},
++			{Name: "timeout", Type: "string", Required: false, Default: "10s", Description: "Request timeout"},
++		},
++		Example: `tests:
++  - name: payment service reachable
++    expect:
++      service_reachable:
++        url: "https://payments.internal/health"`,
++	},
++	"s3_bucket": {
++		Type:        "s3_bucket",
++		Description: "S3-compatible bucket accessibility check via anonymous HEAD request",
++		Fields: []ExplainField{
++			{Name: "bucket", Type: "string", Required: true, Description: "Bucket name"},
++			{Name: "region", Type: "string", Required: false, Default: "us-east-1", Description: "AWS region"},
++			{Name: "endpoint", Type: "string", Required: false, Description: "Custom S3-compatible endpoint URL"},
++		},
++		Example: `tests:
++  - name: assets bucket accessible
++    expect:
++      s3_bucket:
++        bucket: "my-assets"
++        region: "us-east-1"`,
++	},
++	"version_check": {
++		Type:        "version_check",
++		Description: "Tool version verification via shell command and regex pattern",
++		Fields: []ExplainField{
++			{Name: "command", Type: "string", Required: true, Description: "Shell command that outputs version info"},
++			{Name: "pattern", Type: "string", Required: true, Description: "Regex to extract version from command output"},
++		},
++		Example: `tests:
++  - name: Go version check
++    expect:
++      version_check:
++        command: "go version"
++        pattern: "go(\\d+\\.\\d+\\.\\d+)"`,
++	},
++	"otel_trace": {
++		Type:        "otel_trace",
++		Description: "OpenTelemetry trace verification with W3C traceparent propagation. Supports Jaeger, Tempo, Honeycomb, and Datadog backends",
++		Fields: []ExplainField{
++			{Name: "backend", Type: "string", Required: false, Default: "jaeger", Description: "Trace backend: jaeger, tempo, honeycomb, datadog"},
++			{Name: "jaeger_url", Type: "string", Required: false, Description: "Jaeger/collector URL"},
++			{Name: "service_name", Type: "string", Required: false, Description: "Service name to filter traces"},
++			{Name: "min_spans", Type: "int", Required: false, Default: "1", Description: "Minimum number of expected spans"},
++			{Name: "timeout", Type: "string", Required: false, Default: "10s", Description: "Trace lookup timeout"},
++			{Name: "api_key", Type: "string", Required: false, Description: "API key for honeycomb/datadog"},
++			{Name: "dd_app_key", Type: "string", Required: false, Description: "Datadog application key"},
++		},
++		Example: `otel:
++  enabled: true
++  jaeger_url: "http://jaeger:16686"
++tests:
++  - name: trace received
++    run: curl http://localhost:8080/api
++    expect:
++      otel_trace:
++        service_name: "my-api"
++        min_spans: 2`,
++	},
++	"websocket": {
++		Type:        "websocket",
++		Description: "WebSocket connect-send-expect assertion using stdlib-only client",
++		Fields: []ExplainField{
++			{Name: "url", Type: "string", Required: true, Description: "WebSocket URL (ws:// or wss://)"},
++			{Name: "send", Type: "string", Required: false, Description: "Message to send after connecting"},
++			{Name: "expect_contains", Type: "string", Required: false, Description: "Substring to find in received message"},
++			{Name: "expect_matches", Type: "string", Required: false, Description: "Regex to match against received message"},
++			{Name: "timeout", Type: "string", Required: false, Default: "10s", Description: "Wait timeout for expected message"},
++		},
++		Example: `tests:
++  - name: WebSocket echo
++    expect:
++      websocket:
++        url: "ws://localhost:8080/ws"
++        send: "hello"
++        expect_contains: "hello"`,
++	},
++	"credential_check": {
++		Type:        "credential_check",
++		Description: "Verifies a credential is accessible without leaking its value",
++		Fields: []ExplainField{
++			{Name: "source", Type: "string", Required: true, Description: "Source type: env, file, or exec"},
++			{Name: "name", Type: "string", Required: true, Description: "Variable name, file path, or command"},
++			{Name: "contains", Type: "string", Required: false, Description: "Substring that must be present in the value"},
++		},
++		Example: `tests:
++  - name: API key is set
++    expect:
++      credential_check:
++        source: "env"
++        name: "API_KEY"`,
++	},
++	"graphql": {
++		Type:        "graphql",
++		Description: "GraphQL introspection and query assertion",
++		Fields: []ExplainField{
++			{Name: "url", Type: "string", Required: true, Description: "GraphQL endpoint URL"},
++			{Name: "query", Type: "string", Required: false, Description: "GraphQL query to execute"},
++			{Name: "status_code", Type: "int", Required: false, Default: "200", Description: "Expected HTTP status code"},
++			{Name: "expect_types", Type: "[]string", Required: false, Description: "Type names expected in schema"},
++			{Name: "expect_contains", Type: "string", Required: false, Description: "Substring expected in response"},
++			{Name: "timeout", Type: "string", Required: false, Default: "10s", Description: "Request timeout"},
++		},
++		Example: `tests:
++  - name: GraphQL schema has User type
++    expect:
++      graphql:
++        url: "http://localhost:8080/graphql"
++        expect_types: ["User"]`,
++	},
++}
+diff --git a/internal/mcp/generate_test.go b/internal/mcp/generate_test.go
+new file mode 100644
+index 0000000..9c31bc4
+--- /dev/null
++++ b/internal/mcp/generate_test.go
+@@ -0,0 +1,120 @@
++package mcp
++
++import (
++	"context"
++	"strings"
++	"testing"
++)
++
++// TestHandleSmokeInitAutoDetect tests config generation for the current project.
++func TestHandleSmokeInitAutoDetect(t *testing.T) {
++	srv := NewServer()
++	handler := srv.Handler("smoke_init")
++
++	result, err := handler(context.Background(), map[string]interface{}{
++		"directory": "../..",
++	})
++	if err != nil {
++		t.Fatalf("smoke_init returned error: %v", err)
++	}
++
++	ir, ok := result.(*InitResult)
++	if !ok {
++		t.Fatalf("expected *InitResult, got %T", result)
++	}
++
++	if ir.YAML == "" {
++		t.Error("expected non-empty YAML output")
++	}
++	if ir.Written {
++		t.Error("expected written=false when write not specified")
++	}
++	// Should contain config markers
++	if !strings.Contains(ir.YAML, "version") || !strings.Contains(ir.YAML, "tests") {
++		t.Errorf("generated YAML doesn't look like a smoke config: %s", ir.YAML[:min(200, len(ir.YAML))])
++	}
++}
++
++// TestHandleSmokeGenerateTestHTTP tests generating a single HTTP test.
++func TestHandleSmokeGenerateTestHTTP(t *testing.T) {
++	srv := NewServer()
++	handler := srv.Handler("smoke_generate_test")
++
++	result, err := handler(context.Background(), map[string]interface{}{
++		"name":           "health check",
++		"assertion_type": "http",
++		"params": map[string]interface{}{
++			"url":         "http://localhost:8080/health",
++			"status_code": float64(200),
++		},
++	})
++	if err != nil {
++		t.Fatalf("smoke_generate_test returned error: %v", err)
++	}
++
++	gr, ok := result.(*GenerateTestResult)
++	if !ok {
++		t.Fatalf("expected *GenerateTestResult, got %T", result)
++	}
++
++	if !strings.Contains(gr.YAML, "health check") {
++		t.Error("generated YAML should contain test name")
++	}
++	if !strings.Contains(gr.YAML, "http") {
++		t.Error("generated YAML should contain http assertion")
++	}
++	if !strings.Contains(gr.YAML, "localhost:8080") {
++		t.Error("generated YAML should contain the URL")
++	}
++}
++
++// TestHandleSmokeGenerateTestPort tests generating a port_listening test.
++func TestHandleSmokeGenerateTestPort(t *testing.T) {
++	srv := NewServer()
++	handler := srv.Handler("smoke_generate_test")
++
++	result, err := handler(context.Background(), map[string]interface{}{
++		"name":           "web server port",
++		"assertion_type": "port_listening",
++		"params": map[string]interface{}{
++			"port": float64(8080),
++		},
++	})
++	if err != nil {
++		t.Fatalf("smoke_generate_test returned error: %v", err)
++	}
++
++	gr := result.(*GenerateTestResult)
++	if !strings.Contains(gr.YAML, "port_listening") {
++		t.Error("generated YAML should contain port_listening")
++	}
++	if !strings.Contains(gr.YAML, "8080") {
++		t.Error("generated YAML should contain port 8080")
++	}
++}
++
++// TestHandleSmokeGenerateTestMissingName tests error for missing name.
++func TestHandleSmokeGenerateTestMissingName(t *testing.T) {
++	srv := NewServer()
++	handler := srv.Handler("smoke_generate_test")
++
++	_, err := handler(context.Background(), map[string]interface{}{
++		"assertion_type": "http",
++	})
++	if err == nil {
++		t.Error("expected error for missing name")
++	}
++}
++
++// TestHandleSmokeGenerateTestMissingType tests error for missing assertion type.
++func TestHandleSmokeGenerateTestMissingType(t *testing.T) {
++	srv := NewServer()
++	handler := srv.Handler("smoke_generate_test")
++
++	_, err := handler(context.Background(), map[string]interface{}{
++		"name": "some test",
++	})
++	if err == nil {
++		t.Error("expected error for missing assertion_type")
++	}
++}
+diff --git a/internal/mcp/handlers.go b/internal/mcp/handlers.go
+new file mode 100644
+index 0000000..52dc660
+--- /dev/null
++++ b/internal/mcp/handlers.go
+@@ -0,0 +1,635 @@
++package mcp
++
++import (
++	"context"
++	"fmt"
++	"os"
++	"path/filepath"
++	"strings"
++	"time"
++
++	"github.com/CosmoLabs-org/cosmo-smoke/internal/detector"
++	"github.com/CosmoLabs-org/cosmo-smoke/internal/monorepo"
++	"github.com/CosmoLabs-org/cosmo-smoke/internal/reporter"
++	"gopkg.in/yaml.v3"
++	"github.com/CosmoLabs-org/cosmo-smoke/internal/runner"
++	"github.com/CosmoLabs-org/cosmo-smoke/internal/schema"
++)
++
++// handleSmokeRun executes smoke tests and returns structured results.
++func handleSmokeRun(ctx context.Context, args map[string]interface{}) (interface{}, error) {
++	configPath := resolveConfigPath(strArg(args, "config_path", ".smoke.yaml"))
++
++	cfg, err := schema.Load(configPath)
++	if err != nil {
++		return nil, fmt.Errorf("loading config: %w", err)
++	}
++
++	configDir := filepath.Dir(configPath)
++
++	opts := runner.RunOptions{
++		Tags:        strSliceArg(args, "tags"),
++		ExcludeTags: strSliceArg(args, "exclude_tags"),
++		FailFast:    boolArg(args, "fail_fast", false),
++		DryRun:      boolArg(args, "dry_run", false),
++	}
++
++	if timeout := strArg(args, "timeout", ""); timeout != "" {
++		d, err := time.ParseDuration(timeout)
++		if err != nil {
++			return nil, fmt.Errorf("invalid timeout %q: %w", timeout, err)
++		}
++		opts.Timeout = d
++	}
++
++	r := &runner.Runner{
++		Config:    cfg,
++		Reporter:  &noopReporter{},
++		ConfigDir: configDir,
++	}
++
++	suiteResult, err := r.Run(opts)
++	if err != nil {
++		return nil, fmt.Errorf("running tests: %w", err)
++	}
++
++	return suiteResultToMCP(suiteResult, configPath), nil
++}
++
++// handleSmokeInit generates a .smoke.yaml config.
++func handleSmokeInit(ctx context.Context, args map[string]interface{}) (interface{}, error) {
++	dir := strArg(args, "directory", ".")
++	absDir, err := filepath.Abs(dir)
++	if err != nil {
++		return nil, fmt.Errorf("resolving directory: %w", err)
++	}
++
++	types := detector.Detect(absDir)
++	if len(types) == 0 {
++		return nil, fmt.Errorf("no known project type detected in %s", absDir)
++	}
++
++	cfg := detector.GenerateConfig(absDir, types)
++	yamlBytes, err := yaml.Marshal(cfg)
++	if err != nil {
++		return nil, fmt.Errorf("marshalling config: %w", err)
++	}
++
++	shouldWrite := boolArg(args, "write", false)
++	if shouldWrite {
++		outPath := filepath.Join(absDir, ".smoke.yaml")
++		force := boolArg(args, "force", false)
++		if !force {
++			if _, err := filepath.Abs(outPath); err == nil {
++				if fi, statErr := os.Stat(outPath); statErr == nil && !fi.IsDir() {
++					return nil, fmt.Errorf(".smoke.yaml already exists (use force=true to overwrite)")
++				}
++			}
++		}
++		if err := os.WriteFile(outPath, yamlBytes, 0644); err != nil {
++			return nil, fmt.Errorf("writing config: %w", err)
++		}
++		return &InitResult{YAML: string(yamlBytes), Written: true, WritePath: outPath}, nil
++	}
++
++	return &InitResult{YAML: string(yamlBytes), Written: false}, nil
++}
++
++// handleSmokeValidate validates a config file.
++func handleSmokeValidate(ctx context.Context, args map[string]interface{}) (interface{}, error) {
++	configPath := resolveConfigPath(strArg(args, "config_path", ".smoke.yaml"))
++
++	cfg, err := schema.Load(configPath)
++	if err != nil {
++		return nil, fmt.Errorf("loading config: %w", err)
++	}
++
++	verr := schema.Validate(cfg)
++	if verr != nil {
++		if ve, ok := verr.(*schema.ValidationError); ok {
++			return &ValidateResult{Valid: false, Errors: ve.Errors}, nil
++		}
++		return &ValidateResult{Valid: false, Errors: []string{verr.Error()}}, nil
++	}
++
++	testNames := make([]string, len(cfg.Tests))
++	for i, t := range cfg.Tests {
++		testNames[i] = t.Name
++	}
++
++	return &ValidateResult{Valid: true, Tests: testNames}, nil
++}
++
++// handleSmokeList lists tests in a config.
++func handleSmokeList(ctx context.Context, args map[string]interface{}) (interface{}, error) {
++	configPath := resolveConfigPath(strArg(args, "config_path", ".smoke.yaml"))
++
++	cfg, err := schema.Load(configPath)
++	if err != nil {
++		return nil, fmt.Errorf("loading config: %w", err)
++	}
++
++	tagFilter := strSliceArg(args, "tags")
++	tests := make([]ListedTest, 0)
++	for _, t := range cfg.Tests {
++		if len(tagFilter) > 0 && !hasTag(t.Tags, tagFilter) {
++			continue
++		}
++		tests = append(tests, ListedTest{
++			Name:           t.Name,
++			Tags:           t.Tags,
++			RunCommand:     t.Run,
++			AssertionTypes: getAssertionTypes(t.Expect),
++			SkipIf:         skipIfString(t.SkipIf),
++		})
++	}
++
++	return &ListResult{ConfigPath: configPath, Tests: tests}, nil
++}
++
++// handleSmokeDiscover finds .smoke.yaml files.
++func handleSmokeDiscover(ctx context.Context, args map[string]interface{}) (interface{}, error) {
++	dir := strArg(args, "directory", ".")
++
++	absDir, err := filepath.Abs(dir)
++	if err != nil {
++		return nil, fmt.Errorf("resolving directory: %w", err)
++	}
++
++	subs, err := monorepo.Discover(absDir, nil)
++	if err != nil {
++		return nil, fmt.Errorf("discovering configs: %w", err)
++	}
++
++	// Also check if the root directory has a .smoke.yaml
++	configs := make([]DiscoveredConfig, 0)
++	rootConfig := filepath.Join(absDir, ".smoke.yaml")
++	if _, err := filepath.Abs(rootConfig); err == nil {
++		if fi, err := filepath.Abs(rootConfig); err == nil {
++			if _, statErr := filepath.Abs(fi); statErr == nil {
++				configs = append(configs, DiscoveredConfig{
++					Path:        rootConfig,
++					Directory:   absDir,
++					ProjectName: filepath.Base(absDir),
++				})
++			}
++		}
++	}
++
++	for _, sub := range subs {
++		configs = append(configs, DiscoveredConfig{
++			Path:        sub.Path,
++			Directory:   sub.Dir,
++			ProjectName: sub.Project,
++		})
++	}
++
++	return &DiscoverResult{Configs: configs}, nil
++}
++
++// handleSmokeExplain explains an assertion type.
++func handleSmokeExplain(ctx context.Context, args map[string]interface{}) (interface{}, error) {
++	assertionType := strArg(args, "assertion_type", "")
++	if assertionType == "" {
++		return nil, fmt.Errorf("assertion_type is required")
++	}
++
++	info, ok := assertionDocs[assertionType]
++	if !ok {
++		return nil, fmt.Errorf("unknown assertion type: %s", assertionType)
++	}
++	return info, nil
++}
++
++// handleSmokeGenerateTest generates a single test YAML snippet.
++func handleSmokeGenerateTest(ctx context.Context, args map[string]interface{}) (interface{}, error) {
++	name := strArg(args, "name", "")
++	if name == "" {
++		return nil, fmt.Errorf("name is required")
++	}
++	assertionType := strArg(args, "assertion_type", "")
++	if assertionType == "" {
++		return nil, fmt.Errorf("assertion_type is required")
++	}
++
++	params, _ := args["params"].(map[string]interface{})
++	yaml := generateTestYAML(name, assertionType, params, strSliceArg(args, "tags"))
++	return &GenerateTestResult{YAML: yaml}, nil
++}
++
++// generateTestYAML creates a YAML snippet for a single test.
++func generateTestYAML(name, assertionType string, params map[string]interface{}, tags []string) string {
++	var b strings.Builder
++	b.WriteString("  - name: ")
++	b.WriteString(name)
++	b.WriteString("\n")
++
++	if len(tags) > 0 {
++		b.WriteString("    tags:\n")
++		for _, t := range tags {
++			fmt.Fprintf(&b, "      - %s\n", t)
++		}
++	}
++
++	expectBlock := generateExpectBlock(assertionType, params)
++	if expectBlock != "" {
++		if needsRunCommand(assertionType) {
++			b.WriteString("    run: <command>\n")
++		}
++		b.WriteString("    expect:\n")
++		b.WriteString(expectBlock)
++	}
++
++	return b.String()
++}
++
++// needsRunCommand returns true if the assertion type requires a run command.
++func needsRunCommand(assertionType string) bool {
++	standalone := map[string]bool{
++		"port_listening": true, "process_running": true, "http": true,
++		"ssl_cert": true, "redis_ping": true, "memcached_version": true,
++		"postgres_ping": true, "mysql_ping": true, "grpc_health": true,
++		"docker_container_running": true, "docker_image_exists": true,
++		"url_reachable": true, "service_reachable": true, "s3_bucket": true,
++		"version_check": true, "websocket": true, "otel_trace": true,
++		"credential_check": true, "graphql": true,
++	}
++	return !standalone[assertionType]
++}
++
++// generateExpectBlock creates the YAML for an assertion's expect block.
++func generateExpectBlock(assertionType string, params map[string]interface{}) string {
++	switch assertionType {
++	case "exit_code":
++		code := intParam(params, "code", 0)
++		return fmt.Sprintf("      exit_code: %d\n", code)
++
++	case "stdout_contains":
++		return fmt.Sprintf("      stdout_contains: %q\n", strParam(params, "text", "expected output"))
++
++	case "stdout_matches":
++		return fmt.Sprintf("      stdout_matches: %q\n", strParam(params, "pattern", ".*"))
++
++	case "stderr_contains":
++		return fmt.Sprintf("      stderr_contains: %q\n", strParam(params, "text", "error output"))
++
++	case "stderr_matches":
++		return fmt.Sprintf("      stderr_matches: %q\n", strParam(params, "pattern", ".*"))
++
++	case "file_exists":
++		return fmt.Sprintf("      file_exists: %q\n", strParam(params, "path", "output.txt"))
++
++	case "env_exists":
++		return fmt.Sprintf("      env_exists: %q\n", strParam(params, "var", "HOME"))
++
++	case "port_listening":
++		port := intParam(params, "port", 8080)
++		proto := strParam(params, "protocol", "tcp")
++		host := strParam(params, "host", "localhost")
++		return fmt.Sprintf("      port_listening:\n        port: %d\n        protocol: %s\n        host: %s\n", port, proto, host)
++
++	case "process_running":
++		return fmt.Sprintf("      process_running: %q\n", strParam(params, "name", "nginx"))
++
++	case "http":
++		url := strParam(params, "url", "http://localhost:8080/health")
++		code := intParam(params, "status_code", 200)
++		return fmt.Sprintf("      http:\n        url: %q\n        status_code: %d\n", url, code)
++
++	case "json_field":
++		path := strParam(params, "path", "key")
++		eq := strParam(params, "equals", "")
++		if eq != "" {
++			return fmt.Sprintf("      json_field:\n        path: %q\n        equals: %q\n", path, eq)
++		}
++		return fmt.Sprintf("      json_field:\n        path: %q\n", path)
++
++	case "response_time_ms":
++		ms := intParam(params, "ms", 500)
++		return fmt.Sprintf("      response_time_ms: %d\n", ms)
++
++	case "ssl_cert":
++		host := strParam(params, "host", "example.com")
++		days := intParam(params, "min_days_remaining", 30)
++		return fmt.Sprintf("      ssl_cert:\n        host: %q\n        min_days_remaining: %d\n", host, days)
++
++	case "redis_ping":
++		host := strParam(params, "host", "localhost")
++		port := intParam(params, "port", 6379)
++		return fmt.Sprintf("      redis_ping:\n        host: %q\n        port: %d\n", host, port)
++
++	case "memcached_version":
++		return fmt.Sprintf("      memcached_version:\n        host: %q\n        port: %d\n", strParam(params, "host", "localhost"), intParam(params, "port", 11211))
++
++	case "postgres_ping":
++		return fmt.Sprintf("      postgres_ping:\n        host: %q\n        port: %d\n", strParam(params, "host", "localhost"), intParam(params, "port", 5432))
++
++	case "mysql_ping":
++		return fmt.Sprintf("      mysql_ping:\n        host: %q\n        port: %d\n", strParam(params, "host", "localhost"), intParam(params, "port", 3306))
++
++	case "grpc_health":
++		addr := strParam(params, "address", "localhost:9090")
++		return fmt.Sprintf("      grpc_health:\n        address: %q\n", addr)
++
++	case "docker_container_running":
++		return fmt.Sprintf("      docker_container_running:\n        name: %q\n", strParam(params, "name", "my-container"))
++
++	case "docker_image_exists":
++		return fmt.Sprintf("      docker_image_exists:\n        image: %q\n", strParam(params, "image", "nginx:alpine"))
++
++	case "url_reachable":
++		url := strParam(params, "url", "https://example.com")
++		code := intParam(params, "status_code", 200)
++		return fmt.Sprintf("      url_reachable:\n        url: %q\n        status_code: %d\n", url, code)
++
++	case "service_reachable":
++		return fmt.Sprintf("      service_reachable:\n        url: %q\n", strParam(params, "url", "https://api.example.com/health"))
++
++	case "s3_bucket":
++		return fmt.Sprintf("      s3_bucket:\n        bucket: %q\n        region: %q\n", strParam(params, "bucket", "my-bucket"), strParam(params, "region", "us-east-1"))
++
++	case "version_check":
++		return fmt.Sprintf("      version_check:\n        command: %q\n        pattern: %q\n", strParam(params, "command", "go version"), strParam(params, "pattern", `\d+\.\d+\.\d+`))
++
++	case "websocket":
++		url := strParam(params, "url", "ws://localhost:8080/ws")
++		send := strParam(params, "send", "ping")
++		return fmt.Sprintf("      websocket:\n        url: %q\n        send: %q\n        expect_contains: %q\n", url, send, "pong")
++
++	case "otel_trace":
++		svc := strParam(params, "service_name", "my-service")
++		return fmt.Sprintf("      otel_trace:\n        service_name: %q\n        min_spans: %d\n", svc, intParam(params, "min_spans", 1))
++
++	case "credential_check":
++		return fmt.Sprintf("      credential_check:\n        source: %q\n        name: %q\n", strParam(params, "source", "env"), strParam(params, "name", "API_KEY"))
++
++	case "graphql":
++		url := strParam(params, "url", "http://localhost:8080/graphql")
++		return fmt.Sprintf("      graphql:\n        url: %q\n", url)
++
++	default:
++		return fmt.Sprintf("      # assertion type %q — add assertion fields here\n", assertionType)
++	}
++}
++
++func strParam(params map[string]interface{}, key, def string) string {
++	if v, ok := params[key]; ok {
++		if s, ok := v.(string); ok {
++			return s
++		}
++	}
++	return def
++}
++
++func intParam(params map[string]interface{}, key string, def int) int {
++	if v, ok := params[key]; ok {
++		if f, ok := v.(float64); ok {
++			return int(f)
++		}
++	}
++	return def
++}
++
++// --- helpers ---
++
++func resolveConfigPath(configPath string) string {
++	if filepath.IsAbs(configPath) {
++		return configPath
++	}
++	abs, err := filepath.Abs(configPath)
++	if err != nil {
++		return configPath
++	}
++	return abs
++}
++
++func strArg(args map[string]interface{}, key, def string) string {
++	v, ok := args[key]
++	if !ok {
++		return def
++	}
++	s, ok := v.(string)
++	if !ok {
++		return def
++	}
++	return s
++}
++
++func boolArg(args map[string]interface{}, key string, def bool) bool {
++	v, ok := args[key]
++	if !ok {
++		return def
++	}
++	b, ok := v.(bool)
++	if !ok {
++		return def
++	}
++	return b
++}
++
++func strSliceArg(args map[string]interface{}, key string) []string {
++	v, ok := args[key]
++	if !ok {
++		return nil
++	}
++	switch val := v.(type) {
++	case []string:
++		return val
++	case []interface{}:
++		result := make([]string, 0, len(val))
++		for _, item := range val {
++			if s, ok := item.(string); ok {
++				result = append(result, s)
++			}
++		}
++		return result
++	default:
++		return nil
++	}
++}
++
++func hasTag(tags []string, filter []string) bool {
++	for _, ft := range filter {
++		for _, t := range tags {
++			if t == ft {
++				return true
++			}
++		}
++	}
++	return false
++}
++
++// getAssertionTypes returns the list of assertion types set in an Expect block.
++func getAssertionTypes(e schema.Expect) []string {
++	var types []string
++	if e.ExitCode != nil {
++		types = append(types, "exit_code")
++	}
++	if e.StdoutContains != "" {
++		types = append(types, "stdout_contains")
++	}
++	if e.StdoutMatches != "" {
++		types = append(types, "stdout_matches")
++	}
++	if e.StderrContains != "" {
++		types = append(types, "stderr_contains")
++	}
++	if e.StderrMatches != "" {
++		types = append(types, "stderr_matches")
++	}
++	if e.FileExists != "" {
++		types = append(types, "file_exists")
++	}
++	if e.EnvExists != "" {
++		types = append(types, "env_exists")
++	}
++	if e.PortListening != nil {
++		types = append(types, "port_listening")
++	}
++	if e.ProcessRunning != "" {
++		types = append(types, "process_running")
++	}
++	if e.HTTP != nil {
++		types = append(types, "http")
++	}
++	if e.JSONField != nil {
++		types = append(types, "json_field")
++	}
++	if e.ResponseTimeMs != nil {
++		types = append(types, "response_time_ms")
++	}
++	if e.SSLCert != nil {
++		types = append(types, "ssl_cert")
++	}
++	if e.Redis != nil {
++		types = append(types, "redis_ping")
++	}
++	if e.Memcached != nil {
++		types = append(types, "memcached_version")
++	}
++	if e.Postgres != nil {
++		types = append(types, "postgres_ping")
++	}
++	if e.MySQL != nil {
++		types = append(types, "mysql_ping")
++	}
++	if e.GRPCHealth != nil {
++		types = append(types, "grpc_health")
++	}
++	if e.DockerContainer != nil {
++		types = append(types, "docker_container_running")
++	}
++	if e.DockerImage != nil {
++		types = append(types, "docker_image_exists")
++	}
++	if e.URLReachable != nil {
++		types = append(types, "url_reachable")
++	}
++	if e.ServiceReachable != nil {
++		types = append(types, "service_reachable")
++	}
++	if e.S3Bucket != nil {
++		types = append(types, "s3_bucket")
++	}
++	if e.VersionCheck != nil {
++		types = append(types, "version_check")
++	}
++	if e.OTelTrace != nil {
++		types = append(types, "otel_trace")
++	}
++	if e.WebSocket != nil {
++		types = append(types, "websocket")
++	}
++	if e.Credential != nil {
++		types = append(types, "credential_check")
++	}
++	if e.GraphQL != nil {
++		types = append(types, "graphql")
++	}
++	return types
++}
++
++// suiteResultToMCP converts runner.SuiteResult to MCP RunResult.
++func suiteResultToMCP(sr *runner.SuiteResult, configPath string) *RunResult {
++	tests := make([]TestResult, len(sr.Tests))
++	for i, tr := range sr.Tests {
++		assertions := make([]AssertionResult, len(tr.Assertions))
++		for j, ar := range tr.Assertions {
++			assertions[j] = AssertionResult{
++				Type:     ar.Type,
++				Expected: ar.Expected,
++				Actual:   ar.Actual,
++				Passed:   ar.Passed,
++			}
++		}
++
++		tests[i] = TestResult{
++			Name:           tr.Name,
++			Passed:         tr.Passed,
++			Skipped:        tr.Skipped,
++			AllowedFailure: tr.AllowedFailure,
++			DurationMs:     tr.Duration.Milliseconds(),
++			Assertions:     assertions,
++		}
++		if tr.Error != nil {
++			tests[i].Error = tr.Error.Error()
++		}
++		// Add fix suggestions for failed assertions
++		if !tr.Passed && !tr.AllowedFailure {
++			for _, ar := range tr.Assertions {
++				if !ar.Passed {
++					tests[i].FixSuggestions = append(tests[i].FixSuggestions, GetSuggestions(ar.Type, ar.Actual)...)
++				}
++			}
++			if tr.Error != nil {
++				tests[i].FixSuggestions = append(tests[i].FixSuggestions, GetSuggestions("exit_code", tr.Error.Error())...)
++			}
++		}
++	}
++
++	return &RunResult{
++		Project:    sr.Project,
++		Total:      sr.Total,
++		Passed:     sr.Passed,
++		Failed:     sr.Failed,
++		Skipped:    sr.Skipped,
++		Duration:   sr.Duration,
++		Tests:      tests,
++		ConfigPath: configPath,
++	}
++}
++
++// noopReporter is a silent reporter for MCP handler use.
++type noopReporter struct{}
++
++func skipIfString(si *schema.SkipIf) string {
++	if si == nil {
++		return ""
++	}
++	parts := make([]string, 0)
++	if si.EnvUnset != "" {
++		parts = append(parts, fmt.Sprintf("env_unset:%s", si.EnvUnset))
++	}
++	if si.EnvEquals != nil {
++		parts = append(parts, fmt.Sprintf("env_equals:%s=%s", si.EnvEquals.Var, si.EnvEquals.Value))
++	}
++	if si.FileMissing != "" {
++		parts = append(parts, fmt.Sprintf("file_missing:%s", si.FileMissing))
++	}
++	return strings.Join(parts, ", ")
++}
++
++func (n *noopReporter) PrereqStart(_ string)                     {}
++func (n *noopReporter) PrereqResult(_ reporter.PrereqResultData) {}
++func (n *noopReporter) TestStart(_ string)                       {}
++func (n *noopReporter) TestResult(_ reporter.TestResultData)     {}
++func (n *noopReporter) Summary(_ reporter.SuiteResultData)       {}
++
++// Sanitize truncates output for display in MCP results.
++func sanitize(s string, maxLen int) string {
++	s = strings.TrimSpace(s)
++	if len(s) <= maxLen {
++		return s
++	}
++	return s[:maxLen] + fmt.Sprintf("\n[... truncated, full output: %d bytes]", len(s))
++}
+diff --git a/internal/mcp/handlers_test.go b/internal/mcp/handlers_test.go
+new file mode 100644
+index 0000000..2adac8d
+--- /dev/null
++++ b/internal/mcp/handlers_test.go
+@@ -0,0 +1,202 @@
++package mcp
++
++import (
++	"context"
++	"os"
++	"testing"
++)
++
++// TestHandleSmokeValidate tests config validation via MCP handler.
++func TestHandleSmokeValidate(t *testing.T) {
++	configPath := "../../.smoke.yaml"
++	if _, err := os.Stat(configPath); os.IsNotExist(err) {
++		t.Skip("no .smoke.yaml found")
++	}
++
++	srv := NewServer()
++	handler := srv.Handler("smoke_validate")
++
++	result, err := handler(context.Background(), map[string]interface{}{
++		"config_path": configPath,
++	})
++	if err != nil {
++		t.Fatalf("smoke_validate returned error: %v", err)
++	}
++
++	vr, ok := result.(*ValidateResult)
++	if !ok {
++		t.Fatalf("expected *ValidateResult, got %T", result)
++	}
++
++	if !vr.Valid {
++		t.Errorf("expected valid config, got errors: %v", vr.Errors)
++	}
++	if len(vr.Tests) == 0 {
++		t.Error("expected at least one test in valid config")
++	}
++}
++
++// TestHandleSmokeValidateBadPath tests validation with a nonexistent config.
++func TestHandleSmokeValidateBadPath(t *testing.T) {
++	srv := NewServer()
++	handler := srv.Handler("smoke_validate")
++
++	_, err := handler(context.Background(), map[string]interface{}{
++		"config_path": "/nonexistent/.smoke.yaml",
++	})
++	if err == nil {
++		t.Error("expected error for nonexistent config path")
++	}
++}
++
++// TestHandleSmokeList tests listing tests via MCP handler.
++func TestHandleSmokeList(t *testing.T) {
++	configPath := "../../.smoke.yaml"
++	if _, err := os.Stat(configPath); os.IsNotExist(err) {
++		t.Skip("no .smoke.yaml found")
++	}
++
++	srv := NewServer()
++	handler := srv.Handler("smoke_list")
++
++	result, err := handler(context.Background(), map[string]interface{}{
++		"config_path": configPath,
++	})
++	if err != nil {
++		t.Fatalf("smoke_list returned error: %v", err)
++	}
++
++	lr, ok := result.(*ListResult)
++	if !ok {
++		t.Fatalf("expected *ListResult, got %T", result)
++	}
++
++	if len(lr.Tests) == 0 {
++		t.Error("expected at least one test in config")
++	}
++
++	// Each test should have a name
++	for _, test := range lr.Tests {
++		if test.Name == "" {
++			t.Error("test entry has empty name")
++		}
++	}
++}
++
++// TestHandleSmokeListWithTags tests tag filtering in list.
++func TestHandleSmokeListWithTags(t *testing.T) {
++	configPath := "../../.smoke.yaml"
++	if _, err := os.Stat(configPath); os.IsNotExist(err) {
++		t.Skip("no .smoke.yaml found")
++	}
++
++	srv := NewServer()
++	handler := srv.Handler("smoke_list")
++
++	result, err := handler(context.Background(), map[string]interface{}{
++		"config_path": configPath,
++		"tags":        []interface{}{"nonexistent-tag-xyz"},
++	})
++	if err != nil {
++		t.Fatalf("smoke_list with tags returned error: %v", err)
++	}
++
++	lr := result.(*ListResult)
++	if len(lr.Tests) != 0 {
++		t.Errorf("expected 0 tests with nonexistent tag, got %d", len(lr.Tests))
++	}
++}
++
++// TestHandleSmokeDiscover tests finding .smoke.yaml files.
++func TestHandleSmokeDiscover(t *testing.T) {
++	dir := "../.."
++	if _, err := os.Stat(dir + "/.smoke.yaml"); os.IsNotExist(err) {
++		t.Skip("no .smoke.yaml found in project root")
++	}
++
++	srv := NewServer()
++	handler := srv.Handler("smoke_discover")
++
++	result, err := handler(context.Background(), map[string]interface{}{
++		"directory": dir,
++	})
++	if err != nil {
++		t.Fatalf("smoke_discover returned error: %v", err)
++	}
++
++	dr, ok := result.(*DiscoverResult)
++	if !ok {
++		t.Fatalf("expected *DiscoverResult, got %T", result)
++	}
++
++	if len(dr.Configs) == 0 {
++		t.Error("expected at least one discovered config")
++	}
++
++	found := false
++	for _, cfg := range dr.Configs {
++		if cfg.ProjectName != "" && cfg.Path != "" {
++			found = true
++			break
++		}
++	}
++	if !found {
++		t.Error("discovered configs missing project_name or path")
++	}
++}
++
++// TestHandleSmokeExplain tests assertion type explanation.
++func TestHandleSmokeExplain(t *testing.T) {
++	tests := []struct {
++		assertionType string
++		wantDesc      string
++	}{
++		{"http", "HTTP endpoint"},
++		{"redis_ping", "Redis PING"},
++		{"exit_code", "exit code"},
++		{"port_listening", "port"},
++		{"ssl_cert", "TLS certificate"},
++	}
++
++	srv := NewServer()
++	handler := srv.Handler("smoke_explain")
++
++	for _, tt := range tests {
++		t.Run(tt.assertionType, func(t *testing.T) {
++			result, err := handler(context.Background(), map[string]interface{}{
++				"assertion_type": tt.assertionType,
++			})
++			if err != nil {
++				t.Fatalf("smoke_explain(%s) returned error: %v", tt.assertionType, err)
++			}
++
++			er, ok := result.(*ExplainResult)
++			if !ok {
++				t.Fatalf("expected *ExplainResult, got %T", result)
++			}
++
++			if er.Type != tt.assertionType {
++				t.Errorf("expected type %s, got %s", tt.assertionType, er.Type)
++			}
++			if er.Example == "" {
++				t.Error("expected non-empty example YAML")
++			}
++			if len(er.Fields) == 0 {
++				t.Error("expected at least one field description")
++			}
++		})
++	}
++}
++
++// TestHandleSmokeExplainUnknown tests explanation for unknown assertion type.
++func TestHandleSmokeExplainUnknown(t *testing.T) {
++	srv := NewServer()
++	handler := srv.Handler("smoke_explain")
++
++	_, err := handler(context.Background(), map[string]interface{}{
++		"assertion_type": "totally_fake_type",
++	})
++	if err == nil {
++		t.Error("expected error for unknown assertion type")
++	}
++}
+diff --git a/internal/mcp/server.go b/internal/mcp/server.go
+new file mode 100644
+index 0000000..164024b
+--- /dev/null
++++ b/internal/mcp/server.go
+@@ -0,0 +1,217 @@
++package mcp
++
++import (
++	"context"
++	"encoding/json"
++
++	mcplib "github.com/mark3labs/mcp-go/mcp"
++	"github.com/mark3labs/mcp-go/server"
++)
++
++// Server wraps the mcp-go MCPServer with cosmo-smoke tool registration.
++type Server struct {
++	mcp       *server.MCPServer
++	handlers  map[string]ToolHandler
++}
++
++// NewServer creates a new MCP server with all smoke tools registered.
++func NewServer() *Server {
++	mcpServer := server.NewMCPServer(
++		"cosmo-smoke",
++		"0.9.0",
++		server.WithToolCapabilities(true),
++	)
++
++	s := &Server{
++		mcp:      mcpServer,
++		handlers: make(map[string]ToolHandler),
++	}
++	s.registerTools()
++	return s
++}
++
++// Handler returns the handler for a named tool, or nil if not found.
++func (s *Server) Handler(name string) ToolHandler {
++	return s.handlers[name]
++}
++
++// ToolNames returns the names of all registered tools.
++func (s *Server) ToolNames() []string {
++	names := make([]string, 0, len(s.handlers))
++	for name := range s.handlers {
++		names = append(names, name)
++	}
++	return names
++}
++
++// MCPServer returns the underlying mcp-go server for stdio serving.
++func (s *Server) MCPServer() *server.MCPServer {
++	return s.mcp
++}
++
++// ServeStdio runs the MCP server over stdin/stdout.
++func (s *Server) ServeStdio() error {
++	return server.ServeStdio(s.mcp)
++}
++
++// registerTools adds all 7 smoke tool handlers.
++func (s *Server) registerTools() {
++	s.addTool("smoke_run", smokeRunTool(), handleSmokeRun)
++	s.addTool("smoke_init", smokeInitTool(), handleSmokeInit)
++	s.addTool("smoke_validate", smokeValidateTool(), handleSmokeValidate)
++	s.addTool("smoke_list", smokeListTool(), handleSmokeList)
++	s.addTool("smoke_discover", smokeDiscoverTool(), handleSmokeDiscover)
++	s.addTool("smoke_explain", smokeExplainTool(), handleSmokeExplain)
++	s.addTool("smoke_generate_test", smokeGenerateTestTool(), handleSmokeGenerateTest)
++}
++
++// addTool registers both the mcp-go tool definition and our internal handler.
++func (s *Server) addTool(name string, tool mcplib.Tool, handler ToolHandler) {
++	s.handlers[name] = handler
++	s.mcp.AddTool(tool, s.adaptHandler(handler))
++}
++
++// adaptHandler wraps our ToolHandler to match mcp-go's ToolHandlerFunc signature.
++func (s *Server) adaptHandler(h ToolHandler) server.ToolHandlerFunc {
++	return func(ctx context.Context, req mcplib.CallToolRequest) (*mcplib.CallToolResult, error) {
++		args := make(map[string]interface{})
++		if req.Params.Arguments != nil {
++			if m, ok := req.Params.Arguments.(map[string]interface{}); ok {
++				args = m
++			}
++		}
++
++		result, err := h(ctx, args)
++		if err != nil {
++			return mcplib.NewToolResultErrorFromErr("smoke tool error", err), nil
++		}
++
++		// Return structured JSON result
++		jsonBytes, err := json.Marshal(result)
++		if err != nil {
++			return mcplib.NewToolResultErrorFromErr("marshalling result", err), nil
++		}
++
++		return mcplib.NewToolResultStructured(result, string(jsonBytes)), nil
++	}
++}
++
++// --- Tool Definitions ---
++
++func smokeRunTool() mcplib.Tool {
++	return mcplib.NewTool("smoke_run",
++		mcplib.WithDescription("Run smoke tests from a .smoke.yaml config file. Returns pass/fail results with assertion details for each test. Use this to verify services are healthy, check endpoints, validate configs, or debug failures."),
++		mcplib.WithString("config_path",
++			mcplib.Description("Path to .smoke.yaml (default: .smoke.yaml in working directory)"),
++		),
++		mcplib.WithArray("tags",
++			mcplib.Description("Include only tests with these tags"),
++			mcplib.Items(map[string]any{"type": "string"}),
++		),
++		mcplib.WithArray("exclude_tags",
++			mcplib.Description("Exclude tests with these tags"),
++			mcplib.Items(map[string]any{"type": "string"}),
++		),
++		mcplib.WithBoolean("fail_fast",
++			mcplib.Description("Stop on first failure (default: false)"),
++		),
++		mcplib.WithString("timeout",
++			mcplib.Description("Per-test timeout override, e.g. '30s'"),
++		),
++		mcplib.WithBoolean("dry_run",
++			mcplib.Description("List tests without running them (default: false)"),
++		),
++		mcplib.WithBoolean("monorepo",
++			mcplib.Description("Discover and run .smoke.yaml in subdirectories (default: false)"),
++		),
++	)
++}
++
++func smokeInitTool() mcplib.Tool {
++	return mcplib.NewTool("smoke_init",
++		mcplib.WithDescription("Generate a .smoke.yaml smoke test config for a project. Auto-detects Go, Node, Python, Docker, and Rust projects. Can also inspect a running Docker container. Returns the generated config without writing to disk unless write=true."),
++		mcplib.WithString("directory",
++			mcplib.Description("Project directory to scan (default: working directory)"),
++		),
++		mcplib.WithString("from_container",
++			mcplib.Description("Generate config by inspecting a running Docker container name"),
++		),
++		mcplib.WithBoolean("write",
++			mcplib.Description("Write .smoke.yaml to disk (default: false, returns YAML as text)"),
++		),
++		mcplib.WithBoolean("force",
++			mcplib.Description("Overwrite existing .smoke.yaml (default: false)"),
++		),
++	)
++}
++
++func smokeValidateTool() mcplib.Tool {
++	return mcplib.NewTool("smoke_validate",
++		mcplib.WithDescription("Validate a .smoke.yaml config file without running tests. Checks for required fields, assertion consistency, regex validity, and structural correctness. Returns all errors at once."),
++		mcplib.WithString("config_path",
++			mcplib.Description("Path to .smoke.yaml (default: .smoke.yaml)"),
++		),
++	)
++}
++
++func smokeListTool() mcplib.Tool {
++	return mcplib.NewTool("smoke_list",
++		mcplib.WithDescription("List all smoke tests defined in a .smoke.yaml config. Shows test names, tags, command, and assertion types. Useful for understanding what's configured before running."),
++		mcplib.WithString("config_path",
++			mcplib.Description("Path to .smoke.yaml (default: .smoke.yaml)"),
++		),
++		mcplib.WithArray("tags",
++			mcplib.Description("Filter to tests with these tags"),
++			mcplib.Items(map[string]any{"type": "string"}),
++		),
++		mcplib.WithBoolean("monorepo",
++			mcplib.Description("Discover configs in subdirectories (default: false)"),
++		),
++	)
++}
++
++func smokeDiscoverTool() mcplib.Tool {
++	return mcplib.NewTool("smoke_discover",
++		mcplib.WithDescription("Find all .smoke.yaml config files in a directory tree. Returns paths and project names. Useful for understanding the test landscape of a workspace."),
++		mcplib.WithString("directory",
++			mcplib.Description("Root directory to search (default: working directory)"),
++		),
++		mcplib.WithNumber("depth",
++			mcplib.Description("Maximum search depth (default: unlimited)"),
++		),
++	)
++}
++
++func smokeExplainTool() mcplib.Tool {
++	return mcplib.NewTool("smoke_explain",
++		mcplib.WithDescription("Explain a smoke test assertion type and its configuration. Returns the assertion's fields, defaults, and an example YAML snippet. Use when you need to understand or construct assertion configurations."),
++		mcplib.WithString("assertion_type",
++			mcplib.Description("Assertion type to explain"),
++			mcplib.Required(),
++		),
++	)
++}
++
++func smokeGenerateTestTool() mcplib.Tool {
++	return mcplib.NewTool("smoke_generate_test",
++		mcplib.WithDescription("Generate a single smoke test YAML snippet. Provide what you want to test and get back valid YAML to add to .smoke.yaml. Supports all 29 assertion types."),
++		mcplib.WithString("name",
++			mcplib.Description("Test name"),
++			mcplib.Required(),
++		),
++		mcplib.WithString("assertion_type",
++			mcplib.Description("Primary assertion type (e.g. 'http', 'port_listening', 'redis_ping')"),
++			mcplib.Required(),
++		),
++		mcplib.WithString("description",
++			mcplib.Description("What this test should verify (natural language)"),
++		),
++		mcplib.WithObject("params",
++			mcplib.Description("Assertion parameters as key-value pairs"),
++		),
++		mcplib.WithArray("tags",
++			mcplib.Description("Tags for this test"),
++			mcplib.Items(map[string]any{"type": "string"}),
++		),
++	)
++}
+diff --git a/internal/mcp/server_test.go b/internal/mcp/server_test.go
+new file mode 100644
+index 0000000..29af72a
+--- /dev/null
++++ b/internal/mcp/server_test.go
+@@ -0,0 +1,111 @@
++package mcp
++
++import (
++	"context"
++	"os"
++	"testing"
++)
++
++// TestNewServerRegistersTools verifies that the MCP server registers all 7 expected tools.
++func TestNewServerRegistersTools(t *testing.T) {
++	srv := NewServer()
++	if srv == nil {
++		t.Fatal("NewServer() returned nil")
++	}
++
++	expected := []string{
++		"smoke_run",
++		"smoke_init",
++		"smoke_validate",
++		"smoke_list",
++		"smoke_discover",
++		"smoke_explain",
++		"smoke_generate_test",
++	}
++
++	registered := srv.ToolNames()
++	if len(registered) != len(expected) {
++		t.Errorf("expected %d tools, got %d", len(expected), len(registered))
++	}
++
++	for _, name := range expected {
++		handler := srv.Handler(name)
++		if handler == nil {
++			t.Errorf("expected handler for tool %q, got nil", name)
++		}
++	}
++}
++
++// TestSmokeRunHandlerExists verifies smoke_run handler is non-nil.
++func TestSmokeRunHandlerExists(t *testing.T) {
++	srv := NewServer()
++	handler := srv.Handler("smoke_run")
++	if handler == nil {
++		t.Fatal("smoke_run handler should be registered")
++	}
++}
++
++// TestSmokeRunAgainstSelf runs smoke_run against the project's own .smoke.yaml.
++func TestSmokeRunAgainstSelf(t *testing.T) {
++	configPath := "../../.smoke.yaml"
++	if _, err := os.Stat(configPath); os.IsNotExist(err) {
++		t.Skip("no .smoke.yaml found, skipping integration test")
++	}
++
++	srv := NewServer()
++	handler := srv.Handler("smoke_run")
++
++	result, err := handler(context.Background(), map[string]interface{}{
++		"config_path": configPath,
++	})
++	if err != nil {
++		t.Fatalf("smoke_run handler returned error: %v", err)
++	}
++
++	runResult, ok := result.(*RunResult)
++	if !ok {
++		t.Fatalf("expected *RunResult, got %T", result)
++	}
++
++	if runResult.Total == 0 {
++		t.Error("expected at least one test in .smoke.yaml")
++	}
++
++	if runResult.Passed+runResult.Failed+runResult.Skipped != runResult.Total {
++		t.Errorf("result counts don't add up: passed=%d failed=%d skipped=%d total=%d",
++			runResult.Passed, runResult.Failed, runResult.Skipped, runResult.Total)
++	}
++}
++
++// TestSmokeRunWithTags tests tag filtering via the handler.
++func TestSmokeRunWithTags(t *testing.T) {
++	configPath := "../../.smoke.yaml"
++	if _, err := os.Stat(configPath); os.IsNotExist(err) {
++		t.Skip("no .smoke.yaml found, skipping integration test")
++	}
++
++	srv := NewServer()
++	handler := srv.Handler("smoke_run")
++
++	// Run with a non-existent tag — should return 0 tests
++	result, err := handler(context.Background(), map[string]interface{}{
++		"config_path": configPath,
++		"tags":        []interface{}{"nonexistent-tag-xyz"},
++	})
++	if err != nil {
++		t.Fatalf("smoke_run with tags returned error: %v", err)
++	}
++
++	runResult := result.(*RunResult)
++	if runResult.Total != 0 {
++		t.Errorf("expected 0 tests with nonexistent tag, got %d", runResult.Total)
++	}
++}
++
++// TestMCPServerHasUnderlyingServer verifies the mcp-go server is initialized.
++func TestMCPServerHasUnderlyingServer(t *testing.T) {
++	srv := NewServer()
++	if srv.MCPServer() == nil {
++		t.Error("MCPServer() should not return nil")
++	}
++}
+diff --git a/internal/mcp/suggestions.go b/internal/mcp/suggestions.go
+new file mode 100644
+index 0000000..a8f4e97
+--- /dev/null
++++ b/internal/mcp/suggestions.go
+@@ -0,0 +1,116 @@
++package mcp
++
++import "strings"
++
++// suggestionRule maps a failure pattern to a fix suggestion.
++type suggestionRule struct {
++	Match  string // substring to match in Actual
++	Action string // concrete fix suggestion
++}
++
++// assertionSuggestions maps assertion types to their fix suggestion rules.
++var assertionSuggestions = map[string][]suggestionRule{
++	"redis_ping": {
++		{Match: "connection refused", Action: "Redis is not running or not listening on the configured host/port. Start Redis: docker run -d -p 6379:6379 redis:alpine"},
++		{Match: "auth", Action: "Redis requires authentication. Add redis_ping.password to .smoke.yaml"},
++		{Match: "timeout", Action: "Redis connection timed out. Check if Redis is reachable and not behind a firewall"},
++	},
++	"http": {
++		{Match: "connection refused", Action: "Server is not listening on the expected address. Check if the service is running and the port is correct"},
++		{Match: "status code", Action: "Unexpected HTTP status code. Verify the endpoint returns the expected status (check for redirects, auth requirements, or error responses)"},
++		{Match: "timeout", Action: "HTTP request timed out. Increase timeout or check if the service is overloaded"},
++		{Match: "tls", Action: "TLS handshake failed. Check certificate validity and protocol version"},
++		{Match: "body", Action: "Response body doesn't contain expected content. Check if the API response format changed"},
++	},
++	"port_listening": {
++		{Match: "not open", Action: "Start the service that should listen on this port"},
++		{Match: "connection refused", Action: "Port is not open. The service may not be started or is listening on a different address"},
++		{Match: "timeout", Action: "Connection attempt timed out. Check firewall rules and service status"},
++	},
++	"postgres_ping": {
++		{Match: "connection refused", Action: "Postgres is not running. Start it: docker run -d -p 5432:5432 -e POSTGRES_PASSWORD=postgres postgres:alpine"},
++		{Match: "timeout", Action: "Postgres connection timed out. Check if the service is reachable"},
++	},
++	"mysql_ping": {
++		{Match: "connection refused", Action: "MySQL is not running. Start it: docker run -d -p 3306:3306 -e MYSQL_ROOT_PASSWORD=root mysql:8"},
++		{Match: "timeout", Action: "MySQL connection timed out. Check if the service is reachable"},
++	},
++	"memcached_version": {
++		{Match: "connection refused", Action: "Memcached is not running. Start it: docker run -d -p 11211:11211 memcached:alpine"},
++	},
++	"ssl_cert": {
++		{Match: "expired", Action: "TLS certificate has expired. Renew the certificate"},
++		{Match: "self-signed", Action: "Certificate is self-signed. Add allow_self_signed: true if this is expected"},
++		{Match: "days remaining", Action: "Certificate is close to expiry. Renew it before it expires"},
++		{Match: "not yet valid", Action: "Certificate is not yet valid. Check system clock synchronization"},
++	},
++	"exit_code": {
++		{Match: "exit code", Action: "Command returned unexpected exit code. Run the command manually to see the error output"},
++	},
++	"stdout_contains": {
++		{Match: "not found", Action: "Expected text not found in stdout. Run the command manually to inspect output"},
++	},
++	"stderr_contains": {
++		{Match: "not found", Action: "Expected text not found in stderr. Run the command manually to inspect error output"},
++	},
++	"docker_container_running": {
++		{Match: "not found", Action: "Container is not running. Start it with docker start <name> or docker compose up"},
++	},
++	"docker_image_exists": {
++		{Match: "not found", Action: "Docker image not found locally. Pull it with docker pull <image>"},
++	},
++	"grpc_health": {
++		{Match: "connection refused", Action: "gRPC server is not listening. Check if the service is running"},
++		{Match: "not serving", Action: "gRPC health check returned non-SERVING status. The service may be initializing or degraded"},
++	},
++	"url_reachable": {
++		{Match: "connection refused", Action: "URL is not reachable. Check if the service is running and the URL is correct"},
++		{Match: "timeout", Action: "Request timed out. Check network connectivity and service responsiveness"},
++	},
++	"websocket": {
++		{Match: "connection refused", Action: "WebSocket server is not reachable. Check if the service is running"},
++		{Match: "timeout", Action: "WebSocket response timed out. The server may not be sending the expected message"},
++	},
++	"credential_check": {
++		{Match: "not set", Action: "Credential is not set. Set the environment variable or create the file"},
++		{Match: "not found", Action: "Credential file not found. Create it or update the path"},
++	},
++	"s3_bucket": {
++		{Match: "no such bucket", Action: "S3 bucket does not exist. Create it or check the bucket name"},
++		{Match: "access denied", Action: "Access denied to S3 bucket. Check IAM permissions or endpoint configuration"},
++	},
++	"version_check": {
++		{Match: "not found", Action: "Command not found. Install the tool or check the command path"},
++		{Match: "no match", Action: "Version pattern didn't match. Run the command manually to check output format"},
++	},
++	"graphql": {
++		{Match: "connection refused", Action: "GraphQL server is not reachable. Check if the service is running"},
++		{Match: "not found", Action: "Expected types not found in GraphQL schema. Check if the schema has been updated"},
++	},
++	"otel_trace": {
++		{Match: "no traces", Action: "No traces found. Check if the service is instrumented and sending traces to the collector"},
++		{Match: "timeout", Action: "Trace lookup timed out. The collector may be slow or unreachable"},
++	},
++}
++
++// GetSuggestions returns fix suggestions for a failed assertion.
++func GetSuggestions(assertionType, actual string) []string {
++	rules, ok := assertionSuggestions[assertionType]
++	if !ok {
++		return []string{"Check the configuration for this assertion type"}
++	}
++
++	var suggestions []string
++	lower := strings.ToLower(actual)
++	for _, rule := range rules {
++		if strings.Contains(lower, strings.ToLower(rule.Match)) {
++			suggestions = append(suggestions, rule.Action)
++		}
++	}
++
++	if len(suggestions) == 0 {
++		suggestions = append(suggestions, "Check the configuration for this assertion type")
++	}
++
++	return suggestions
++}
+diff --git a/internal/mcp/suggestions_test.go b/internal/mcp/suggestions_test.go
+new file mode 100644
+index 0000000..271df2c
+--- /dev/null
++++ b/internal/mcp/suggestions_test.go
+@@ -0,0 +1,125 @@
++package mcp
++
++import (
++	"strings"
++	"testing"
++)
++
++// TestGetSuggestions verifies suggestion generation for common failure patterns.
++func TestGetSuggestions(t *testing.T) {
++	tests := []struct {
++		assertionType string
++		actual        string
++		wantCount     int
++		wantContains  string
++	}{
++		{
++			assertionType: "redis_ping",
++			actual:        "connection refused on localhost:6379",
++			wantCount:     1,
++			wantContains:  "not running",
++		},
++		{
++			assertionType: "http",
++			actual:        "connection refused",
++			wantCount:     1,
++			wantContains:  "listening",
++		},
++		{
++			assertionType: "http",
++			actual:        "unexpected status code: got 500",
++			wantCount:     1,
++			wantContains:  "status code",
++		},
++		{
++			assertionType: "port_listening",
++			actual:        "port 8080 is not open",
++			wantCount:     1,
++			wantContains:  "Start the service",
++		},
++		{
++			assertionType: "postgres_ping",
++			actual:        "connection refused",
++			wantCount:     1,
++			wantContains:  "not running",
++		},
++		{
++			assertionType: "ssl_cert",
++			actual:        "certificate expired",
++			wantCount:     1,
++			wantContains:  "renew",
++		},
++		{
++			assertionType: "exit_code",
++			actual:        "exit code: got 1, expected 0",
++			wantCount:     1,
++			wantContains:  "exit code",
++		},
++		{
++			assertionType: "unknown_type",
++			actual:        "something failed",
++			wantCount:     1,
++			wantContains:  "configuration",
++		},
++	}
++
++	for _, tt := range tests {
++		t.Run(tt.assertionType+"/"+tt.wantContains, func(t *testing.T) {
++			suggestions := GetSuggestions(tt.assertionType, tt.actual)
++			if len(suggestions) < tt.wantCount {
++				t.Errorf("expected at least %d suggestions, got %d", tt.wantCount, len(suggestions))
++			}
++			found := false
++			for _, s := range suggestions {
++				if strings.Contains(strings.ToLower(s), strings.ToLower(tt.wantContains)) {
++					found = true
++					break
++				}
++			}
++			if !found {
++				t.Errorf("no suggestion contains %q in %v", tt.wantContains, suggestions)
++			}
++		})
++	}
++}
++
++// TestSanitize tests output truncation.
++func TestSanitize(t *testing.T) {
++	tests := []struct {
++		name   string
++		input  string
++		maxLen int
++		want   string
++	}{
++		{"short", "hello", 100, "hello"},
++		{"exact", "hello", 5, "hello"},
++		{"truncated", "hello world this is a long string", 5, "hello\n[... truncated, full output: 33 bytes]"},
++		{"whitespace trimmed", "  hello  ", 100, "hello"},
++	}
++
++	for _, tt := range tests {
++		t.Run(tt.name, func(t *testing.T) {
++			got := sanitize(tt.input, tt.maxLen)
++			if got != tt.want {
++				t.Errorf("sanitize(%q, %d) = %q, want %q", tt.input, tt.maxLen, got, tt.want)
++			}
++		})
++	}
++}
++
++// TestSuiteResultIncludesSuggestions verifies that smoke_run results
++// include fix_suggestions for failed assertions.
++func TestSuiteResultIncludesSuggestions(t *testing.T) {
++	// Simulate a failed assertion result
++	ar := AssertionResult{
++		Type:     "redis_ping",
++		Expected: "+PONG response from Redis",
++		Actual:   "connection refused on localhost:6379",
++		Passed:   false,
++	}
++
++	suggestions := GetSuggestions(ar.Type, ar.Actual)
++	if len(suggestions) == 0 {
++		t.Error("expected fix suggestions for failed redis_ping assertion")
++	}
++}
+diff --git a/internal/mcp/types.go b/internal/mcp/types.go
+new file mode 100644
+index 0000000..920e856
+--- /dev/null
++++ b/internal/mcp/types.go
+@@ -0,0 +1,105 @@
++package mcp
++
++import (
++	"context"
++	"time"
++)
++
++// ToolHandler is a function that handles an MCP tool call.
++type ToolHandler func(ctx context.Context, args map[string]interface{}) (interface{}, error)
++
++// RunResult is the structured result from smoke_run.
++type RunResult struct {
++	Project   string        `json:"project"`
++	Total     int           `json:"total"`
++	Passed    int           `json:"passed"`
++	Failed    int           `json:"failed"`
++	Skipped   int           `json:"skipped"`
++	Duration  time.Duration `json:"duration_ms"`
++	Tests     []TestResult  `json:"tests"`
++	ConfigPath string       `json:"config_path"`
++}
++
++// TestResult is a single test's result in MCP format.
++type TestResult struct {
++	Name           string             `json:"name"`
++	Passed         bool               `json:"passed"`
++	Skipped        bool               `json:"skipped"`
++	AllowedFailure bool               `json:"allowed_failure,omitempty"`
++	DurationMs     int64              `json:"duration_ms"`
++	Assertions     []AssertionResult  `json:"assertions,omitempty"`
++	FixSuggestions []string           `json:"fix_suggestions,omitempty"`
++	Error          string             `json:"error,omitempty"`
++}
++
++// AssertionResult is a single assertion's result in MCP format.
++type AssertionResult struct {
++	Type     string `json:"type"`
++	Expected string `json:"expected"`
++	Actual   string `json:"actual"`
++	Passed   bool   `json:"passed"`
++}
++
++// ValidateResult is the result from smoke_validate.
++type ValidateResult struct {
++	Valid  bool     `json:"valid"`
++	Tests  []string `json:"tests,omitempty"`
++	Errors []string `json:"errors,omitempty"`
++}
++
++// ListResult is the result from smoke_list.
++type ListResult struct {
++	ConfigPath string       `json:"config_path"`
++	Tests      []ListedTest `json:"tests"`
++}
++
++// ListedTest is a single test entry in smoke_list output.
++type ListedTest struct {
++	Name           string   `json:"name"`
++	Tags           []string `json:"tags,omitempty"`
++	RunCommand     string   `json:"run_command,omitempty"`
++	AssertionTypes []string `json:"assertion_types,omitempty"`
++	SkipIf         string   `json:"skip_if,omitempty"`
++}
++
++// DiscoverResult is the result from smoke_discover.
++type DiscoverResult struct {
++	Configs []DiscoveredConfig `json:"configs"`
++}
++
++// DiscoveredConfig is a single discovered .smoke.yaml.
++type DiscoveredConfig struct {
++	Path        string `json:"path"`
++	Directory   string `json:"directory"`
++	ProjectName string `json:"project_name"`
++}
++
++// ExplainResult is the result from smoke_explain.
++type ExplainResult struct {
++	Type        string         `json:"type"`
++	Description string         `json:"description"`
++	Fields      []ExplainField `json:"fields"`
++	Example     string         `json:"example_yaml"`
++	Notes       string         `json:"notes,omitempty"`
++}
++
++// ExplainField describes one field of an assertion type.
++type ExplainField struct {
++	Name        string `json:"name"`
++	Type        string `json:"type"`
++	Required    bool   `json:"required"`
++	Default     string `json:"default,omitempty"`
++	Description string `json:"description"`
++}
++
++// InitResult is the result from smoke_init.
++type InitResult struct {
++	YAML      string `json:"yaml"`
++	Written   bool   `json:"written"`
++	WritePath string `json:"write_path,omitempty"`
++}
++
++// GenerateTestResult is the result from smoke_generate_test.
++type GenerateTestResult struct {
++	YAML string `json:"yaml"`
++}
+-- 
+2.53.0
+
+
+From 9ea5a9ce74c46d78cab7dbce3d03682b8eab1bd5 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?G=CE=9BB?= <Gab@CosmoLabs.org>
+Date: Sun, 19 Apr 2026 15:44:48 -0300
+Subject: [PATCH 2/2] ccs kill: auto-commit 1 uncommitted files before removal
+
+---
+ .ccsession.json | 24 +++++-------------------
+ 1 file changed, 5 insertions(+), 19 deletions(-)
+
+diff --git a/.ccsession.json b/.ccsession.json
+index 7e8a55f..b5880df 100644
+--- a/.ccsession.json
++++ b/.ccsession.json
+@@ -1,32 +1,18 @@
+ {
+   "version": "1.0.0",
+-<<<<<<< HEAD
+-  "id": "agent-abe5a065",
+-  "name": "agent-abe5a065",
+-=======
+-  "id": "agent-a90fc8e9",
+-  "name": "agent-a90fc8e9",
+->>>>>>> agent-a90fc8e9
++  "id": "mcp-extension",
++  "name": "mcp-extension",
+   "dependencies": [],
+   "dependents": [],
+   "status": "working",
+   "timestamps": {
+-<<<<<<< HEAD
+-    "created": "2026-04-16T16:18:17.424356-03:00",
+-    "lastActivity": "2026-04-16T16:18:17.424363-03:00"
+-=======
+-    "created": "2026-04-16T16:17:58.264794-03:00",
+-    "lastActivity": "2026-04-16T16:17:58.264808-03:00"
+->>>>>>> agent-a90fc8e9
++    "created": "2026-04-19T14:38:04.140834-03:00",
++    "lastActivity": "2026-04-19T14:38:04.141215-03:00"
+   },
+   "merge": {
+     "order": 0,
+     "readyToMerge": false,
+     "baseBranch": "master"
+   },
+-<<<<<<< HEAD
+-  "branch": "agent-abe5a065"
+-=======
+-  "branch": "agent-a90fc8e9"
+->>>>>>> agent-a90fc8e9
++  "origin": "claude-agent"
+ }
+\ No newline at end of file
+-- 
+2.53.0
+

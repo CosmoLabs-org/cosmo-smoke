@@ -1,11 +1,11 @@
 {
   "version": "1.0",
-  "generated_at": "2026-04-19T15:43:53.846764-03:00",
+  "generated_at": "2026-04-19T15:44:25.937053-03:00",
   "generated_by": "GLM-4.7",
-  "expires_at": "2026-04-20T15:43:53.846764-03:00",
-  "last_analyzed_commit": "6a4a96a920a2b560ca7b2d1ed7134f1eb65d1dd1",
-  "summary": "A Go-based modular CLI tool for detecting, migrating, running, and reporting on infrastructure validation tests, featuring a Goss migration translator and Kubernetes examples.",
-  "architecture": "modular monolith",
+  "expires_at": "2026-04-20T15:44:25.937053-03:00",
+  "last_analyzed_commit": "dcca0ad6ea0d9a3af33264fe859b21c00c813b06",
+  "summary": "A Go-based CLI tool for running, detecting, and migrating infrastructure validation tests with a plugin system and dashboard.",
+  "architecture": "monolith",
   "primary_language": "Go",
   "hot_files": [
     "internal/runner/runner.go",
@@ -15,22 +15,22 @@
     "internal/runner/assertion_test.go"
   ],
   "patterns": [
-    "Standard Go project layout",
-    "Migration/Translator pattern",
-    "Test-driven development",
-    "Plugin architecture",
-    "Internal package encapsulation"
+    "standard go layout",
+    "migration tool",
+    "test-driven development",
+    "plugin architecture",
+    "cli application"
   ],
   "concerns": [
-    "Build is currently failing",
-    "Recent commits are exclusively automated metadata chores with no functional changes",
-    "ClaudeDesktop/specs directory suggests AI-generated or assisted testing which may lack coverage guarantees",
-    "MCP-extension session metadata archiving cluttering commit history"
+    "build is currently failing",
+    "recent commits are dominated by automated session metadata chores",
+    "goss migration suggests legacy dependency",
+    "bin/ directory committed to source control"
   ],
   "suggestions": [
-    "Fix the broken build immediately as the repository is currently in a non-deployable state",
-    "Investigate and resolve the failing build output to unblock development",
-    "Configure git to ignore or filter out automated session metadata commits",
-    "Review test coverage in ClaudeDesktop/specs to ensure it meets project standards"
+    "fix the broken build immediately",
+    "gitignore the bin/ directory",
+    "investigate and filter out noisy auto-commit session metadata hooks",
+    "complete the goss migration and remove legacy translator"
   ]
 }
