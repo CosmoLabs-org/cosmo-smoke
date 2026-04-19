@@ -6,8 +6,8 @@ created: 2026-04-19
 archived: 2026-04-19
 commits: 1
 files_changed: 35
-lines_added: 2215
-lines_removed: 3675
+lines_added: 2216
+lines_removed: 3716
 review_status: passed
 ---
 
@@ -16,7 +16,7 @@ review_status: passed
 ## Summary
 
 Branch merged via `ccs merg` on 2026-04-19.
-1 commits, 35 files changed (+2215/-3675).
+1 commits, 35 files changed (+2216/-3716).
 
 ## Commits
 
@@ -27,13 +27,13 @@ Branch merged via `ccs merg` on 2026-04-19.
 ```
 .gitignore                                         |    2 -
  .version-registry.json                             |    6 +-
- GOrchestra/intel/architecture.json                 |   33 +-
+ GOrchestra/intel/architecture.json                 |   36 +-
  GOrchestra/intel/status.json                       |    4 +-
  GOrchestra/sessions/mcp-extension/.ccsession.json  |   18 -
  GOrchestra/sessions/mcp-extension/.review.json     |   11 -
- GOrchestra/sessions/mcp-extension/HISTORY.md       |   19 -
+ GOrchestra/sessions/mcp-extension/HISTORY.md       |   64 -
  GOrchestra/sessions/mcp-extension/bypass.json      |    8 -
- GOrchestra/sessions/mcp-extension/session.json     |   27 -
+ GOrchestra/sessions/mcp-extension/session.json     |   21 -
  GOrchestra/worktree-history.yaml                   |    6 -
  cmd/mcp.go                                         |   31 +
  docs/changelog/unreleased.yaml                     |    5 +-
@@ -60,5 +60,5 @@ Branch merged via `ccs merg` on 2026-04-19.
  internal/mcp/suggestions.go                        |  116 ++
  internal/mcp/suggestions_test.go                   |  125 ++
  internal/mcp/types.go                              |  105 ++
- 35 files changed, 2215 insertions(+), 3675 deletions(-)
+ 35 files changed, 2216 insertions(+), 3716 deletions(-)
 ```
