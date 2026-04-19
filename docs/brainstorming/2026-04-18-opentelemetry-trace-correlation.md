@@ -28,9 +28,9 @@ Add W3C trace context propagation to cosmo-smoke's network assertions (HTTP, gRP
 ```yaml
 otel:
   enabled: true
-  collector_url: "http://jaeger:16686"
-  service_name: "cosmo-smoke"      # default: "smoke"
-  trace_propagation: true          # auto-inject traceparent into network assertions
+  jaeger_url: "http://jaeger:16686"   # Jaeger query API (not OTLP ingest)
+  service_name: "cosmo-smoke"         # default: "smoke"
+  trace_propagation: true             # auto-inject traceparent into network assertions
 ```
 
 ### Per-test `otel_trace` assertion
@@ -41,7 +41,7 @@ tests:
     run: curl http://localhost:8080/health
     expect:
       otel_trace:
-        collector_url: "http://jaeger:16686"   # overrides global
+        jaeger_url: "http://jaeger:16686"      # overrides global
         service_name: "my-service"             # overrides global
         min_spans: 1                           # at least N spans received (default: 1)
         timeout: 5s                            # wait for trace to appear
@@ -57,7 +57,7 @@ All propagation uses the W3C `traceparent` header: `00-{traceID}-{spanID}-{flags
 - `spanID`: 16 hex chars (8 bytes), generated per test
 - `flags`: `01` (sampled)
 
-No OTel SDK dependency. Pure string construction from crypto/rand.
+No OTel SDK dependency. Pure string construction from crypto/rand. The `tracestate` header is intentionally omitted — cosmo-smoke doesn't need vendor-specific trace context.
 
 ### Hierarchy
 
@@ -87,12 +87,12 @@ When `otel` config is absent or `enabled: false`, no injection occurs. Zero over
 The `otel_trace` assertion queries Jaeger's trace API:
 
 ```
-GET {collector_url}/api/traces/{traceID}?service={service_name}
+GET {jaeger_url}/api/traces/{traceID}?service={service_name}
 ```
 
 ### Assertion Logic
 
-1. Build the Jaeger API URL from `collector_url` + `traceID` + `service_name`
+1. Build the Jaeger API URL from `jaeger_url` + `traceID` + `service_name`
 2. Poll with 500ms interval until `timeout` expires
 3. Parse Jaeger JSON response (`data[].spans[]`)
 4. Assert `len(spans) >= min_spans`
@@ -141,12 +141,12 @@ Assertion checks `data[0].spans` length against `min_spans`.
 | File | Change |
 |------|--------|
 | `internal/schema/schema.go` | Add `OTelConfig` struct at top level + `OTelTraceCheck` field on `Expect` |
-| `internal/schema/validate.go` | Validate otel config: collector_url format, service_name required when enabled |
+| `internal/schema/validate.go` | Validate otel config: jaeger_url format, service_name required when enabled |
 | `internal/runner/runner.go` | Initialize `traceContext` in `Run()`, pass to assertion execution |
 | `internal/runner/assertion_network.go` | Inject `traceparent` header into HTTP requests when trace context available |
 | `internal/runner/assertion_grpc.go` | Inject `traceparent` into gRPC metadata when trace context available |
 | `internal/runner/assertion_ws.go` | Inject `traceparent` into WebSocket handshake headers when trace context available |
-| `cmd/run.go` | Add `--otel-collector` CLI flag as shortcut to override `otel.collector_url` |
+| `cmd/run.go` | Add `--otel-collector` CLI flag (override `otel.jaeger_url`) and `--no-otel` flag (disable at runtime) |
 
 ### Data Flow
 
@@ -157,14 +157,19 @@ smoke run
        ├── If otel.enabled: init traceContext (generate traceID)
        ├── For each test:
        │    ├── Create child spanID
-       │    ├── Run test command
        │    ├── For HTTP/gRPC/WS assertions:
-       │    │    └── Inject traceparent: 00-{traceID}-{spanID}-01
+       │    │    └── Inject traceparent into request BEFORE sending
+       │    │        (at request-construction time inside each Check* function)
+       │    ├── Run test command
        │    ├── For otel_trace assertion:
-       │    │    └── Poll GET {collector}/api/traces/{traceID}?service={svc}
+       │    │    └── Poll GET {jaeger}/api/traces/{traceID}?service={svc}
        │    └── Collect AssertionResult
        └── Return SuiteResult
 ```
+
+### Impure Assertion Note
+
+All 26 existing assertions are pure functions — no I/O beyond test command output. `otel_trace` departs from this by polling an external HTTP API. This is intentional: trace verification is inherently an external system check (like `port_listening` or `redis_ping`). The function signature accepts an `*http.Client` parameter for testability — tests inject an `httptest` mock, production uses the default client.
 
 ### No New Dependencies
 
@@ -180,7 +185,7 @@ All stdlib: `crypto/rand`, `encoding/hex`, `net/http`, `encoding/json`, `fmt`. W
 | Per-test spanID | Allows identifying which test generated which downstream span. |
 | Polling for verification | Traces take time to propagate through collector pipeline. 500ms interval balances latency vs load. |
 | `min_spans` threshold | Default 1 means "any trace arrived." Configurable for stricter checks. |
-| Override per assertion | `otel_trace` allows per-test `collector_url` and `service_name` for multi-service scenarios. |
+| Override per assertion | `otel_trace` allows per-test `jaeger_url` and `service_name` for multi-service scenarios. |
 
 ## Edge Cases
 
@@ -189,6 +194,7 @@ All stdlib: `crypto/rand`, `encoding/hex`, `net/http`, `encoding/json`, `fmt`. W
 - **Multiple `otel_trace` assertions**: Each queries independently with its own timeout/collector config
 - **Collector returns empty data**: Retries until timeout, then fails
 - **W3C traceparent format compatibility**: Strict `00` version prefix, lowercase hex, 32+16+2 char parts
+- **`allow_failure` interaction**: Trace context creation and injection are independent of assertion pass/fail. A test with `allow_failure: true` still gets a spanID and traceparent injection — the `otel_trace` assertion may fail without affecting suite outcome.
 
 ## Future Considerations
 
