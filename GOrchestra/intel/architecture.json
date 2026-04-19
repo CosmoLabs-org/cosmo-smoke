@@ -1,11 +1,11 @@
 {
   "version": "1.0",
-  "generated_at": "2026-04-19T13:52:11.192197-03:00",
+  "generated_at": "2026-04-19T15:38:14.362785-03:00",
   "generated_by": "GLM-4.7",
-  "expires_at": "2026-04-20T13:52:11.192197-03:00",
-  "last_analyzed_commit": "9f75974bafab9ae3530b928e3e21a05e32e335b7",
-  "summary": "A Go-based modular CLI tool for migrating, detecting, and running Goss test assertions with dashboard reporting and Kubernetes support.",
-  "architecture": "modular monolith",
+  "expires_at": "2026-04-20T15:38:14.362786-03:00",
+  "last_analyzed_commit": "f1eaa1b6077b9791295c26bf2286dc8937d71efc",
+  "summary": "A Go-based CLI tool for migrating, detecting, and running Goss tests with dashboard reporting and Kubernetes support.",
+  "architecture": "monolith",
   "primary_language": "Go",
   "hot_files": [
     "internal/runner/runner.go",
@@ -15,22 +15,21 @@
     "internal/runner/assertion_test.go"
   ],
   "patterns": [
-    "Standard Go project layout",
-    "Migration/Translation pattern",
-    "Test-driven development",
-    "Plugin architecture",
-    "Internal package encapsulation"
+    "standard Go project layout",
+    "migration tool pattern",
+    "test-driven development",
+    "plugin architecture"
   ],
   "concerns": [
-    "Documentation and roadmap updates dominate recent commits over feature work",
-    "Staged but uncommitted changes indicate possible workflow interruption",
-    "Heavy reliance on internal packages may limit external reuse",
-    "Kubernetes examples suggest deployment complexity"
+    "build is currently failing",
+    "uncommitted changes (1 staged, 1 untracked) may relate to build failure",
+    "recent commits are entirely chore/docs metadata with no functional code changes",
+    "claude-specific config and session metadata mixed into repository"
   ],
   "suggestions": [
-    "Commit or unstage the pending change to maintain a clean working tree",
-    "Shift focus from documentation chores back to feature development",
-    "Consider extracting plugins into their own module if they grow",
-    "Add integration tests for the Kubernetes examples"
+    "fix the failing build immediately",
+    "commit or stash the pending changes to resolve dirty working tree",
+    "clean up AI session metadata from the repository",
+    "verify migration translator logic since it appears to be a core component"
   ]
 }
