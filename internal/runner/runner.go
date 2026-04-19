@@ -10,6 +10,7 @@ import (
 	"sync"
 	"time"
 
+	"github.com/CosmoLabs-org/cosmo-smoke/internal/monorepo"
 	"github.com/CosmoLabs-org/cosmo-smoke/internal/reporter"
 	"github.com/CosmoLabs-org/cosmo-smoke/internal/schema"
 )
@@ -112,6 +113,49 @@ func (r *Runner) Run(opts RunOptions) (*SuiteResult, error) {
 		Duration:        suite.Duration,
 	})
 
+	return suite, nil
+}
+
+// RunMonorepo discovers and runs all sub-configs in a monorepo.
+func (r *Runner) RunMonorepo(opts RunOptions, subConfigs []monorepo.SubConfig) (*SuiteResult, error) {
+	start := time.Now()
+
+	suite := &SuiteResult{
+		Project: r.Config.Project,
+	}
+
+	for _, sc := range subConfigs {
+		cfg, err := schema.Load(sc.Path)
+		if err != nil {
+			return nil, fmt.Errorf("loading %s: %w", sc.Path, err)
+		}
+		subRunner := &Runner{
+			Config:    cfg,
+			Reporter:  r.Reporter,
+			ConfigDir: sc.Dir,
+		}
+		result, err := subRunner.Run(opts)
+		if err != nil {
+			return nil, fmt.Errorf("running %s: %w", sc.Project, err)
+		}
+		suite.Tests = append(suite.Tests, result.Tests...)
+		suite.Passed += result.Passed
+		suite.Failed += result.Failed
+		suite.Skipped += result.Skipped
+		suite.AllowedFailures += result.AllowedFailures
+		suite.Total += result.Total
+	}
+
+	suite.Duration = time.Since(start)
+	r.Reporter.Summary(reporter.SuiteResultData{
+		Project:         suite.Project,
+		Total:           suite.Total,
+		Passed:          suite.Passed,
+		Failed:          suite.Failed,
+		Skipped:         suite.Skipped,
+		AllowedFailures: suite.AllowedFailures,
+		Duration:        suite.Duration,
+	})
 	return suite, nil
 }
 
@@ -236,30 +280,32 @@ func (r *Runner) runTestOnce(t schema.Test, opts RunOptions) TestResult {
 		}()
 	}
 
-	// Execute command
-	ctx, cancel := context.WithTimeout(context.Background(), timeout)
-	defer cancel()
-
-	cmd := exec.CommandContext(ctx, "sh", "-c", t.Run)
-	cmd.Dir = r.ConfigDir
+	// Execute command (skip if no run command — standalone assertions only)
 	var stdout, stderr bytes.Buffer
-	cmd.Stdout = &stdout
-	cmd.Stderr = &stderr
-
-	err := cmd.Run()
 	exitCode := 0
-	if err != nil {
-		if exitErr, ok := err.(*exec.ExitError); ok {
-			exitCode = exitErr.ExitCode()
-		} else {
-			tr := TestResult{
-				Name:           t.Name,
-				AllowedFailure: t.AllowFailure,
-				Duration:       time.Since(start),
-				Error:          err,
+	if t.Run != "" {
+		ctx, cancel := context.WithTimeout(context.Background(), timeout)
+		defer cancel()
+
+		cmd := exec.CommandContext(ctx, "sh", "-c", t.Run)
+		cmd.Dir = r.ConfigDir
+		cmd.Stdout = &stdout
+		cmd.Stderr = &stderr
+
+		err := cmd.Run()
+		if err != nil {
+			if exitErr, ok := err.(*exec.ExitError); ok {
+				exitCode = exitErr.ExitCode()
+			} else {
+				tr := TestResult{
+					Name:           t.Name,
+					AllowedFailure: t.AllowFailure,
+					Duration:       time.Since(start),
+					Error:          err,
+				}
+				r.Reporter.TestResult(toReporterResult(tr))
+				return tr
 			}
-			r.Reporter.TestResult(toReporterResult(tr))
-			return tr
 		}
 	}
 
@@ -428,6 +474,13 @@ func (r *Runner) runTestOnce(t schema.Test, opts RunOptions) TestResult {
 	}
 	if t.Expect.VersionCheck != nil {
 		a := CheckVersion(t.Expect.VersionCheck)
+		assertions = append(assertions, a)
+		if !a.Passed {
+			allPassed = false
+		}
+	}
+	if t.Expect.WebSocket != nil {
+		a := CheckWebSocket(t.Expect.WebSocket)
 		assertions = append(assertions, a)
 		if !a.Passed {
 			allPassed = false

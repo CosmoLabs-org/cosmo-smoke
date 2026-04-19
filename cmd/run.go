@@ -8,6 +8,7 @@ import (
 	"syscall"
 	"time"
 
+	"github.com/CosmoLabs-org/cosmo-smoke/internal/monorepo"
 	"github.com/CosmoLabs-org/cosmo-smoke/internal/reporter"
 	"github.com/CosmoLabs-org/cosmo-smoke/internal/runner"
 	"github.com/CosmoLabs-org/cosmo-smoke/internal/schema"
@@ -32,6 +33,7 @@ var (
 	dryRun      bool
 	watch       bool
 	envName     string
+	monorepoMode bool
 )
 
 func init() {
@@ -45,6 +47,7 @@ func init() {
 	runCmd.Flags().BoolVar(&dryRun, "dry-run", false, "List tests without running")
 	runCmd.Flags().BoolVar(&watch, "watch", false, "Re-run tests when files change (Ctrl+C to exit)")
 	runCmd.Flags().StringVar(&envName, "env", "", "Load environment-specific config (e.g. staging loads staging.smoke.yaml)")
+	runCmd.Flags().BoolVar(&monorepoMode, "monorepo", false, "Auto-discover .smoke.yaml in subdirectories")
 }
 
 func runSmoke(cmd *cobra.Command, args []string) error {
@@ -71,6 +74,73 @@ func runSmoke(cmd *cobra.Command, args []string) error {
 	if !filepath.IsAbs(configDir) {
 		cwd, _ := os.Getwd()
 		configDir = filepath.Join(cwd, configDir)
+	}
+
+	// Check monorepo mode
+	if monorepoMode || cfg.Settings.Monorepo {
+		// Create reporter early for monorepo mode
+		var rep reporter.Reporter
+		switch format {
+		case "json":
+			rep = reporter.NewJSON(os.Stdout)
+		case "junit":
+			rep = reporter.NewJUnit(os.Stdout)
+		case "tap":
+			rep = reporter.NewTAP(os.Stdout)
+		case "prometheus":
+			rep = reporter.NewPrometheus(os.Stdout)
+		default:
+			rep = reporter.NewTerminal(os.Stdout)
+		}
+
+		configs, err := monorepo.Discover(configDir, cfg.Settings.MonorepoExclude)
+		if err != nil {
+			return fmt.Errorf("discovering sub-configs: %w", err)
+		}
+		if len(configs) == 0 {
+			return fmt.Errorf("no smoke configs found in %s", configDir)
+		}
+		r := &runner.Runner{Config: cfg, Reporter: rep, ConfigDir: configDir}
+
+		// Parse timeout
+		var timeoutDur time.Duration
+		if timeout != "" {
+			timeoutDur, err = time.ParseDuration(timeout)
+			if err != nil {
+				return fmt.Errorf("invalid timeout %q: %w", timeout, err)
+			}
+		}
+
+		if !watch {
+			result, err := r.RunMonorepo(runner.RunOptions{
+				Tags:        tags,
+				ExcludeTags: excludeTags,
+				FailFast:    failFast,
+				DryRun:      dryRun,
+				Timeout:     timeoutDur,
+			}, configs)
+			if err != nil {
+				return err
+			}
+			if result.Failed > 0 {
+				os.Exit(1)
+			}
+			return nil
+		}
+
+		return runWatch(configDir, configFile, func() error {
+			_, err := r.RunMonorepo(runner.RunOptions{
+				Tags:        tags,
+				ExcludeTags: excludeTags,
+				FailFast:    failFast,
+				DryRun:      dryRun,
+				Timeout:     timeoutDur,
+			}, configs)
+			if err != nil {
+				return err
+			}
+			return nil
+		})
 	}
 
 	// Create reporter

@@ -6,7 +6,7 @@ Universal smoke test runner. Standalone Go binary that reads `.smoke.yaml` and r
 
 **Repository**: `github.com/CosmoLabs-org/cosmo-smoke`
 **Company**: CosmoLabs
-**Version**: 0.6.0
+**Version**: 0.7.0
 
 ## Architecture
 
@@ -18,27 +18,31 @@ cmd/
 └── version.go       # smoke version (ldflags-injected)
 internal/
 ├── schema/          # SmokeConfig structs, YAML parsing, validation
-├── runner/          # Assertion engine (15 types), prereq runner, test execution
+├── runner/          # Assertion engine (26 types), prereq runner, test execution
 ├── reporter/        # Terminal (Lipgloss) + JSON reporters
+├── monorepo/        # Sub-config discovery for monorepo projects
 └── detector/        # Project type detection + template generation
 ```
 
 ## Key Design Decisions
 
 - **Minimal deps**: Cobra + Lipgloss + yaml.v3 + gjson. No Viper, no Bubbletea.
-- **Pure assertions**: All 15 assertion types are pure functions — no side effects.
+- **Pure assertions**: All 26 assertion types are pure functions — no side effects.
 - **Config inheritance**: `includes:` directive + Go templates (`{{ .Env.FOO }}`).
 - **Config-dir-relative**: Commands execute from the config file's directory, not cwd.
 - **All errors at once**: Validation returns all errors, not just the first.
 - **Reporter interface**: Terminal and JSON reporters are pluggable via interface.
 - **Watch mode**: `--watch` keeps smoke resident and re-runs on file changes. fsnotify-backed. 500ms debounce.
 - **Retry**: Opt-in `retry: {count, backoff}` on test level. Exponential backoff. No side effects on pass-first-try.
+- **Monorepo**: `--monorepo` flag auto-discovers `.smoke.yaml` in subdirectories. Unlimited depth, configurable exclusions.
+- **WebSocket**: Stdlib-only WebSocket client. Connect-send-expect pattern with no external deps.
+- **gRPC opt-in**: gRPC health check excluded from default build. Use `-tags grpc` to include.
 
 ## Build & Test
 
 ```bash
 go build ./...                    # Build
-go test ./...                     # Run all tests (246 total)
+go test ./...                     # Run all tests (253 total)
 smoke run                         # Self-smoke (6 tests)
 go build -ldflags "-s -w -X github.com/CosmoLabs-org/cosmo-smoke/cmd.Version=X.Y.Z" -o smoke .
 ```
@@ -46,7 +50,7 @@ go build -ldflags "-s -w -X github.com/CosmoLabs-org/cosmo-smoke/cmd.Version=X.Y
 ## Commands
 
 ```bash
-smoke run [--tag X] [--exclude-tag X] [--format terminal|json|junit|tap|prometheus] [--fail-fast] [--timeout 30s] [-f path] [--dry-run] [--watch]
+smoke run [--tag X] [--exclude-tag X] [--format terminal|json|junit|tap|prometheus] [--fail-fast] [--timeout 30s] [-f path] [--dry-run] [--watch] [--monorepo]
 smoke init [--force] [--from-running CONTAINER]
 smoke version
 ```
@@ -72,7 +76,8 @@ smoke version
 | memcached_version | `{host?, port?}` | Memcached `version` command returns VERSION |
 | postgres_ping | `{host?, port?}` | Postgres server SSLRequest handshake returns valid protocol byte |
 | mysql_ping | `{host?, port?}` | MySQL server sends valid v10 handshake packet on connection |
-| grpc_health | `{address, service?, use_tls?, timeout?}` | grpc.health.v1 Health/Check returns SERVING |
+| grpc_health | `{address, service?, use_tls?, timeout?}` | grpc.health.v1 Health/Check returns SERVING (requires `-tags grpc`) |
+| websocket | `{url, send?, expect_contains?, expect_matches?, timeout?}` | WebSocket connect-send-expect assertion |
 | docker_container_running | `{name}` | Named Docker container is currently running |
 | docker_image_exists | `{image}` | Docker image exists locally |
 | url_reachable | `{url, timeout?, status_code?}` | HTTP/HTTPS connectivity check |

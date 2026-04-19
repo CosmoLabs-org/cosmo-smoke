@@ -24,9 +24,11 @@ type SmokeConfig struct {
 
 // Settings controls global test behavior.
 type Settings struct {
-	Timeout  Duration `yaml:"timeout,omitempty"`
-	FailFast bool     `yaml:"fail_fast,omitempty"`
-	Parallel bool     `yaml:"parallel,omitempty"`
+	Timeout         Duration `yaml:"timeout,omitempty"`
+	FailFast        bool     `yaml:"fail_fast,omitempty"`
+	Parallel        bool     `yaml:"parallel,omitempty"`
+	Monorepo        bool     `yaml:"monorepo,omitempty"`
+	MonorepoExclude []string `yaml:"monorepo_exclude,omitempty"`
 }
 
 // Prerequisite is a command that must succeed before tests run.
@@ -94,6 +96,7 @@ type Expect struct {
 	ServiceReachable *ServiceReachableCheck `yaml:"service_reachable,omitempty"`
 	S3Bucket         *S3BucketCheck         `yaml:"s3_bucket,omitempty"`
 	VersionCheck     *VersionCheck          `yaml:"version_check,omitempty"`
+	WebSocket        *WebSocketCheck        `yaml:"websocket,omitempty"`
 }
 
 // PortCheck defines parameters for checking if a port is open and listening.
@@ -199,6 +202,15 @@ type S3BucketCheck struct {
 type VersionCheck struct {
 	Command string `yaml:"command"`
 	Pattern string `yaml:"pattern"`
+}
+
+// WebSocketCheck verifies a WebSocket endpoint is reachable and responds as expected.
+type WebSocketCheck struct {
+	URL            string   `yaml:"url"`
+	Send           string   `yaml:"send,omitempty"`
+	ExpectContains string   `yaml:"expect_contains,omitempty"`
+	ExpectMatches  string   `yaml:"expect_matches,omitempty"`
+	Timeout        Duration `yaml:"timeout,omitempty"`
 }
 
 // Duration wraps time.Duration for YAML unmarshaling from strings like "5s".

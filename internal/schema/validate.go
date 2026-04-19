@@ -37,8 +37,8 @@ func Validate(cfg *SmokeConfig) error {
 		if t.Name == "" {
 			errs = append(errs, fmt.Sprintf("%s: name is required", prefix))
 		}
-		if t.Run == "" {
-			errs = append(errs, fmt.Sprintf("%s: run command is required", prefix))
+		if t.Run == "" && !hasStandaloneAssertions(t.Expect) {
+			errs = append(errs, fmt.Sprintf("%s: run command is required (or add a network/storage assertion)", prefix))
 		}
 		if t.Retry != nil {
 			if t.Retry.Count < 1 {
@@ -83,10 +83,43 @@ func Validate(cfg *SmokeConfig) error {
 				errs = append(errs, fmt.Sprintf("%s: version_check.pattern is invalid regex: %v", prefix, err))
 			}
 		}
+		if e := t.Expect.WebSocket; e != nil {
+			if e.URL == "" {
+				errs = append(errs, fmt.Sprintf("%s: websocket.url is required", prefix))
+			} else if !strings.HasPrefix(e.URL, "ws://") && !strings.HasPrefix(e.URL, "wss://") {
+				errs = append(errs, fmt.Sprintf("%s: websocket.url must start with ws:// or wss://", prefix))
+			}
+			if e.ExpectMatches != "" {
+				if _, err := regexp.Compile(e.ExpectMatches); err != nil {
+					errs = append(errs, fmt.Sprintf("%s: websocket.expect_matches is invalid regex: %v", prefix, err))
+				}
+			}
+		}
 	}
 
 	if len(errs) > 0 {
 		return &ValidationError{Errors: errs}
 	}
 	return nil
+}
+
+// hasStandaloneAssertions returns true if the test has assertions that don't
+// require command output (stdout/stderr). These can run without a run command.
+func hasStandaloneAssertions(e Expect) bool {
+	return e.PortListening != nil ||
+		e.ProcessRunning != "" ||
+		e.HTTP != nil ||
+		e.SSLCert != nil ||
+		e.Redis != nil ||
+		e.Memcached != nil ||
+		e.Postgres != nil ||
+		e.MySQL != nil ||
+		e.GRPCHealth != nil ||
+		e.DockerContainer != nil ||
+		e.DockerImage != nil ||
+		e.URLReachable != nil ||
+		e.ServiceReachable != nil ||
+		e.S3Bucket != nil ||
+		e.VersionCheck != nil ||
+		e.WebSocket != nil
 }
