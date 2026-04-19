@@ -7,6 +7,28 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.9.0] - 2026-04-19
+
+### Added
+- # FEAT-010: Make run field optional for network-only tests
+
+**Type**: feature
+**Status**: closed
+**Created**: 2026-04-18
+
+## Description
+
+Currently tests require a run field even when only using network assertions (url_reachable, service_reachable, s3_bucket, redis_ping, etc.). Users must add run: 'true' as a dummy. Relax validation: if expect contains at least one network/storage assertion, run can be omitted. The test would skip command execution and only evaluate assertions.
+
+Origin: session-end: validation review
+- Trace-aware retry: only retry when otel_trace assertion fails (ROAD-037)
+- Multi-backend trace verification: Jaeger, Tempo, Honeycomb, Datadog (ROAD-036)
+- Export smoke results as OTLP telemetry to OTel collector (ROAD-035)
+- Watch mode trace health monitoring with sliding window (ROAD-038)
+- add multi-backend trace reporter with health checks (commit:22c9eb88)
+- add GraphQL introspection assertion (commit:acbd0bdf)
+- add credential_check assertion type (commit:7c286afd)
+
 ## [0.8.0] - 2026-04-19
 
 ### Added

@@ -4,21 +4,7 @@
 
 version: pending
 entries:
-    added:
-        - description: |-
-            # FEAT-010: Make run field optional for network-only tests
-
-            **Type**: feature
-            **Status**: closed
-            **Created**: 2026-04-18
-
-            ## Description
-
-            Currently tests require a run field even when only using network assertions (url_reachable, service_reachable, s3_bucket, redis_ping, etc.). Users must add run: 'true' as a dummy. Relax validation: if expect contains at least one network/storage assertion, run can be omitted. The test would skip command execution and only evaluate assertions.
-
-            Origin: session-end: validation review
-          source: manual
-          date: 2026-04-19T03:14:33.579772-03:00
+    added: []
     fixed: []
     changed: []
     deprecated: []
