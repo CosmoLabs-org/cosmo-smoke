@@ -1,10 +1,10 @@
 {
   "version": "1.0",
-  "generated_at": "2026-04-19T15:48:47.572649-03:00",
+  "generated_at": "2026-04-19T15:50:14.771143-03:00",
   "generated_by": "GLM-4.7",
-  "expires_at": "2026-04-20T15:48:47.572649-03:00",
-  "last_analyzed_commit": "cddd0e9a53439680d903214bacb57b7288697111",
-  "summary": "A Go-based testing and validation tool with MCP integration for Claude Desktop and Goss migration capabilities.",
+  "expires_at": "2026-04-20T15:50:14.771143-03:00",
+  "last_analyzed_commit": "acd5140c55f9921d23b14fd7c9d6eafe65dc558a",
+  "summary": "A Go-based validation and migration tool integrating with Claude Desktop via MCP to run assertions and migrate Goss configurations.",
   "architecture": "monolith",
   "primary_language": "Go",
   "hot_files": [
@@ -15,19 +15,21 @@
     "internal/detector/detector.go"
   ],
   "patterns": [
-    "Standard Go project layout",
     "MCP (Model Context Protocol) integration",
-    "Migration/Translator pattern",
-    "Test-driven development"
+    "Test Runner pattern",
+    "Migration/Translation pattern",
+    "Schema validation",
+    "Internal package encapsulation"
   ],
   "concerns": [
-    "ClaudeDesktop/specs directory suggests test specs are misplaced outside the codebase",
-    "Recent commits show churn around session metadata management",
-    "1 staged file indicates potential incomplete work"
+    "Uncommitted changes (2 modified, 1 staged) during active MCP feature development",
+    "Archived session metadata suggests unstable or evolving MCP extension design",
+    "Heavy reliance on internal packages may limit external plugin extensibility"
   ],
   "suggestions": [
-    "Consolidate ClaudeDesktop/specs into a standard test directory",
-    "Stabilize session metadata handling to reduce commit churn",
-    "Commit or stash the staged changes to maintain a clean working tree"
+    "Commit or stash the working tree changes to establish a clean baseline",
+    "Stabilize the MCP server API before expanding Claude Desktop integration",
+    "Increase test coverage for the new MCP handlers",
+    "Document the plugin architecture given the separate plugins/ directory"
   ]
 }

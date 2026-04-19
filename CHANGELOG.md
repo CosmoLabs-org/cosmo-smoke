@@ -7,6 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.10.0] - 2026-04-19
+
+### Added
+- portfolio smoke dashboard with push reporting
+- MCP server for Claude Desktop integration — 7 tools over stdio (ROAD-032)
+- add MCP server for Claude Desktop integration (ROAD-032) (commit:72321bcc)
+- add portfolio smoke dashboard with push reporting (commit:dfcc8a9c)
+
 ## [0.9.0] - 2026-04-19
 
 ### Added
