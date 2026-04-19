@@ -1,10 +1,10 @@
 {
   "version": "1.0",
-  "generated_at": "2026-04-19T15:41:28.263473-03:00",
+  "generated_at": "2026-04-19T15:42:40.403915-03:00",
   "generated_by": "GLM-4.7",
-  "expires_at": "2026-04-20T15:41:28.263473-03:00",
-  "last_analyzed_commit": "1271cdeb3b3175ef35e63065a849e711e220b20e",
-  "summary": "A Go-based CLI tool for migrating, detecting, and running Goss validation tests with plugin support.",
+  "expires_at": "2026-04-20T15:42:40.403915-03:00",
+  "last_analyzed_commit": "7756edb490902ea3dba199b68df7ff684c2aa367",
+  "summary": "A Go-based CLI tool for running, detecting, and migrating Goss tests with dashboard reporting and Kubernetes support.",
   "architecture": "monolith",
   "primary_language": "Go",
   "hot_files": [
@@ -16,20 +16,19 @@
   ],
   "patterns": [
     "Standard Go project layout",
-    "Migration tool pattern",
     "Test-driven development",
-    "Plugin architecture"
+    "Migration/Translation pattern",
+    "Plugin architecture",
+    "Internal package encapsulation"
   ],
   "concerns": [
     "Build is currently failing",
-    "Uncommitted changes (1 staged, 1 untracked) during a failed build state",
-    "Recent commit history is cluttered with automated session metadata commits",
-    "ClaudeDesktop/specs directory suggests non-standard test location"
+    "Recent commits focus heavily on session metadata archiving rather than feature development",
+    "ClaudeDesktop/specs directory suggests tight coupling to Claude AI tooling"
   ],
   "suggestions": [
-    "Resolve the build failure immediately before proceeding",
-    "Investigate and fix the failing build to unblock development",
-    "Clean up automated session metadata commits using git rebase or squashing",
-    "Move ClaudeDesktop/specs to a standard Go test location or document the exception"
+    "Fix the failing build immediately",
+    "Investigate the root cause of the build failure in the runner or schema modules",
+    "Consolidate repetitive session metadata commit chores into a single automated hook"
   ]
 }
