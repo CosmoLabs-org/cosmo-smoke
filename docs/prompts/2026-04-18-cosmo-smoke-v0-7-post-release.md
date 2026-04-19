@@ -1,17 +1,19 @@
 ---
-title: "cosmo-smoke v0.7 Post-Release — Tag, Creds, GraphQL, Doc Gaps"
-created: 2026-04-18
-status: PENDING
-priority: high
 branch: master
-origin: "/continuation-prompt"
-tags: [continuation, post-release, v0.7]
+completed: "2026-04-19"
+created: "2026-04-18"
+goals_completed: 5
 goals_total: 5
-goals_completed: 0
-carried_over_from: null
-carried_over_goals: 0
+origin: /continuation-prompt
+priority: high
 related_prompts:
-  - docs/prompts/2026-04-18-v0-7-monorepo-websocket-grpc-buildtag.md
+    - docs/prompts/2026-04-18-v0-7-monorepo-websocket-grpc-buildtag.md
+status: COMPLETED
+tags:
+    - continuation
+    - post-release
+    - v0.7
+title: cosmo-smoke v0.7 Post-Release — Tag, Creds, GraphQL, Doc Gaps
 ---
 
 # cosmo-smoke v0.7 Post-Release — Tag, Creds, GraphQL, Doc Gaps
@@ -63,7 +65,7 @@ Test count: 253 passed across 8 packages. All green.
 
 ## Goals
 
-### [ ] 1. Tag and release v0.7.0
+### [x] 1. Tag and release v0.7.0
 
 The changelog is staged in `docs/changelog/unreleased.yaml` with all v0.7 entries (WebSocket, monorepo, gRPC build tag, optional run field, pre-commit hook, assertion refactor). Need to:
 
@@ -72,7 +74,7 @@ The changelog is staged in `docs/changelog/unreleased.yaml` with all v0.7 entrie
 - Tag: `git tag v0.7.0 -m "v0.7.0: WebSocket, monorepo discovery, gRPC build tag"`
 - Push when ready: `git push origin master --tags`
 
-### [ ] 2. Credential smoke tests (ROAD-014)
+### [x] 2. Credential smoke tests (ROAD-014)
 
 Quick win. Add a `credential_check` assertion type that verifies credentials/secrets are accessible without leaking them. Design questions:
 
@@ -82,7 +84,7 @@ Quick win. Add a `credential_check` assertion type that verifies credentials/sec
 
 Start with env + file credential checks. Keep it simple — this is a quick win, not a full secrets manager integration.
 
-### [ ] 3. GraphQL introspection assertion (FEAT-008)
+### [x] 3. GraphQL introspection assertion (FEAT-008)
 
 Medium task. The issue exists at `docs/issues/FEAT-008.yaml` (currently has a stale description referencing S3 — update it). Design needed:
 
@@ -93,7 +95,7 @@ Medium task. The issue exists at `docs/issues/FEAT-008.yaml` (currently has a st
 
 This follows the same pattern as the HTTP and WebSocket assertions — should be straightforward once the API surface is decided.
 
-### [ ] 4. Fill command doc gaps
+### [x] 4. Fill command doc gaps
 
 5 commands are missing dedicated README/USAGE docs:
 - `cmd/init_cmd.go` — `smoke init`
@@ -104,7 +106,7 @@ This follows the same pattern as the HTTP and WebSocket assertions — should be
 
 Create `docs/commands/` directory with one doc per command covering: description, usage, flags, examples. This is a good GLM batch task since each doc is independent and bounded.
 
-### [ ] 5. Roadmap grooming — update ROAD-031 and ROAD-030 status
+### [x] 5. Roadmap grooming — update ROAD-031 and ROAD-030 status
 
 ROAD-031 (WebSocket assertion) and ROAD-030 (gRPC build tag) are still marked `captured` in the roadmap but are now implemented in v0.7. Update their status to `completed` with `completed_in: v0.7.0`. Also review other `captured` items for any that were implemented but not updated.
 

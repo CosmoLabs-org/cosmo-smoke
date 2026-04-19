@@ -1,10 +1,10 @@
 id: FEAT-008
 type: feature
 created_at: 2026-04-18T18:30:07.580375-03:00
-updated_at: 2026-04-18T18:30:07.580822-03:00
+updated_at: 2026-04-19T03:38:01.340356-03:00
 source: local
-status: open
+status: closed
 origin:
     idea_slug: 2026-04-16-graphql-introspection-assertion
 title: GraphQL introspection assertion
-description: S3 bucket anonymous accessibility check via url_reachable helper
+description: 'GraphQL endpoint introspection assertion. Sends introspection query (or custom query), validates response: status code, schema types exist, body contains substring. Follows HTTP assertion pattern.'

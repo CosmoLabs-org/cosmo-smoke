@@ -2,9 +2,14 @@
 id: IDEA-MO1FBPJB
 title: Trace correlation with OpenTelemetry
 created: "2026-04-16T08:56:32.903611-03:00"
-status: seed
+status: withered
 source: human
+resolution:
+    reason: implemented
+    date: "2026-04-19"
 ---
+
+# Trace correlation with OpenTelemetry
 
 # Trace correlation with OpenTelemetry
 

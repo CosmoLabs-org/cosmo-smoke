@@ -1,8 +1,19 @@
 id: ROAD-037
 created_at: 2026-04-19T00:42:53.290541-03:00
-updated_at: 2026-04-19T00:42:53.291875-03:00
+updated_at: 2026-04-19T20:00:00-03:00
 title: 'Trace-aware retry: only retry if trace never received'
-status: captured
+description: >
+  Adds retry_on_trace_only option to RetryPolicy. When enabled, retry is skipped
+  if the otel_trace assertion confirms the trace was received at the collector.
+  This prevents unnecessary retries when the system under test is responding
+  (trace confirmed) but other assertions are failing for non-transient reasons.
+status: completed
+completed_in: v0.8.0
 priority: 20
 origin:
     session: 2027
+implementation:
+    schema: internal/schema/schema.go (RetryPolicy.RetryOnTraceOnly)
+    validation: internal/schema/validate.go (requires otel_trace assertion)
+    runner: internal/runner/runner.go (traceConfirmed helper, early exit in retry loop)
+    tests: internal/runner/runner_test.go, internal/schema/validate_test.go (7 tests)

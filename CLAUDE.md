@@ -32,8 +32,8 @@ internal/
 - **Config-dir-relative**: Commands execute from the config file's directory, not cwd.
 - **All errors at once**: Validation returns all errors, not just the first.
 - **Reporter interface**: Terminal and JSON reporters are pluggable via interface.
-- **Watch mode**: `--watch` keeps smoke resident and re-runs on file changes. fsnotify-backed. 500ms debounce.
-- **Retry**: Opt-in `retry: {count, backoff}` on test level. Exponential backoff. No side effects on pass-first-try.
+- **Watch mode**: `--watch` keeps smoke resident and re-runs on file changes. fsnotify-backed. 500ms debounce. When OTel is enabled, tracks trace health across runs with a sliding window (last 10 runs). Alerts when health drops below 50%.
+- **Retry**: Opt-in `retry: {count, backoff, retry_on_trace_only?}` on test level. Exponential backoff. No side effects on pass-first-try. `retry_on_trace_only` skips retry when the otel_trace assertion confirms the trace was received.
 - **Monorepo**: `--monorepo` flag auto-discovers `.smoke.yaml` in subdirectories. Unlimited depth, configurable exclusions.
 - **WebSocket**: Stdlib-only WebSocket client. Connect-send-expect pattern with no external deps.
 - **gRPC opt-in**: gRPC health check excluded from default build. Use `-tags grpc` to include.
@@ -42,7 +42,7 @@ internal/
 
 ```bash
 go build ./...                    # Build
-go test ./...                     # Run all tests (289 total)
+go test ./...                     # Run all tests (314 total)
 smoke run                         # Self-smoke (6 tests)
 go build -ldflags "-s -w -X github.com/CosmoLabs-org/cosmo-smoke/cmd.Version=X.Y.Z" -o smoke .
 ```
@@ -84,7 +84,7 @@ smoke version
 | service_reachable | `{url, timeout?}` | External service dependency check |
 | s3_bucket | `{bucket, region?, endpoint?}` | S3-compatible bucket accessibility (anonymous HEAD) |
 | version_check | `{command, pattern}` | Tool version verification via shell command + regex |
-| otel_trace | `{jaeger_url, service_name?, min_spans?, timeout?}` | Jaeger API trace verification (W3C traceparent propagation) |
+| otel_trace | `{backend?, jaeger_url, service_name?, min_spans?, timeout?, api_key?, dd_app_key?}` | Trace verification with W3C traceparent propagation. Backends: jaeger (default), tempo, honeycomb, datadog |
 | credential_check | `{source, name, contains?}` | Credential accessible without leaking value (env\|file\|exec) |
 | graphql | `{url, query?, status_code?, expect_types?, expect_contains?, timeout?}` | GraphQL introspection assertion |
 
@@ -100,7 +100,9 @@ otel:
   trace_propagation: true
 ```
 
-When enabled, W3C `traceparent` headers are auto-injected into HTTP, gRPC, and WebSocket assertions. The `otel_trace` assertion verifies traces arrived at a Jaeger-compatible collector.
+When enabled, W3C `traceparent` headers are auto-injected into HTTP, gRPC, and WebSocket assertions. The `otel_trace` assertion verifies traces arrived at a collector (supports Jaeger, Tempo, Honeycomb, Datadog backends).
+
+Smoke test results are also exported as OTLP telemetry when `export_url` is configured or `jaeger_url` is set (auto-appends `/v1/traces`). Each test becomes a span with attributes for pass/fail status, duration, and assertion details.
 
 ## Output Formats
 

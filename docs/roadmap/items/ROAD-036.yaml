@@ -1,8 +1,18 @@
 id: ROAD-036
 created_at: 2026-04-19T00:42:53.256283-03:00
-updated_at: 2026-04-19T00:42:53.257704-03:00
+updated_at: 2026-04-19T20:30:00-03:00
 title: Multi-backend trace verification (Tempo, Honeycomb, Datadog)
-status: captured
+description: >
+  Extends the otel_trace assertion beyond Jaeger to support Tempo (Jaeger-compatible API),
+  Honeycomb (v1/traces API with X-Honeycomb-Team header), and Datadog (v1/traces API with
+  DD-API-KEY header). Uses a traceBackend interface for clean extensibility.
+status: completed
+completed_in: v0.8.0
 priority: 25
 origin:
     session: 2027
+implementation:
+    schema: internal/schema/schema.go (Backend, APIKey, DDAppKey fields)
+    validation: internal/schema/validate.go (backend enum, per-backend required fields)
+    runner: internal/runner/assertion_otel.go (traceBackend interface, jaeger/honeycomb/datadog implementations)
+    tests: internal/runner/assertion_otel_test.go (5 backend tests), internal/schema/validate_test.go (4 validation tests)

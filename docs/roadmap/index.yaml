@@ -1,8 +1,12 @@
 version: "1.0"
 project: cosmo-smoke
-last_updated: 2026-04-19T03:05:47.764989-03:00
-next_id: 39
+last_updated: 2026-04-19T03:44:34.699168-03:00
+next_id: 40
 items:
+    - id: ROAD-039
+      title: Portfolio smoke dashboard
+      status: captured
+      created_at: 2026-04-19T03:44:34.698867-03:00
     - id: ROAD-038
       title: Watch mode continuous trace health monitoring
       status: captured

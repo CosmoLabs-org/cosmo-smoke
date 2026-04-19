@@ -2,7 +2,7 @@
 id: FB-009
 title: ccs version --bump highlights validation rejects valid descriptions that happen to match changelog entries. The overlap detection is too aggressive — a narrative sentence containing 'OpenTelemetry trace correlation' was rejected because the changelog has an entry with the same phrase. Workaround required shortening/rewording to avoid false match.
 type: idea
-status: pending
+status: implemented
 priority: medium
 complexity: ""
 from_project: cosmo-smoke
@@ -10,7 +10,7 @@ from_path: /Users/gab/PROJECTS/cosmo-smoke
 to_project: cosmo-smoke
 to_target: self
 created: "2026-04-19T02:16:13.53465-03:00"
-updated: "2026-04-19T02:16:13.53465-03:00"
+updated: "2026-04-19T03:34:05.947196-03:00"
 suggested_conversion: feature
 converted_to: null
 related_issues: []
@@ -24,7 +24,7 @@ response:
   implemented: null
   rejected: null
   rejection_reason: null
-  notes: ""
+  notes: Forwarded to CCS as FB-549. Bug is in ccs version --bump, not cosmo-smoke.
 ---
 
 # FB-009: ccs version --bump highlights validation rejects valid descriptions that happen to match changelog entries. The overlap detection is too aggressive — a narrative sentence containing 'OpenTelemetry trace correlation' was rejected because the changelog has an entry with the same phrase. Workaround required shortening/rewording to avoid false match.

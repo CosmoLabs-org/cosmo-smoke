@@ -4,6 +4,7 @@ version: v0.4.0
 topic: Docker assertions, v0.4.0 release, feedback triage
 commit_count: 8
 test_delta: "192 → 198 (+6)"
+status: COMPLETED
 ---
 
 # Session 001 — 2026-04-17

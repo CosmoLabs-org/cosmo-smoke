@@ -2,9 +2,12 @@
 id: IDEA-MO1FBRNZ
 title: Portfolio smoke dashboard
 created: "2026-04-16T08:56:35.663881-03:00"
-status: seed
+status: harvested
 source: human
+promoted_to: ROAD-039
 ---
+
+# Portfolio smoke dashboard
 
 # Portfolio smoke dashboard
 

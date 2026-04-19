@@ -1,0 +1,11 @@
+id: ROAD-039
+created_at: 2026-04-19T03:44:34.698867-03:00
+updated_at: 2026-04-19T03:44:34.700581-03:00
+title: Portfolio smoke dashboard
+description: |-
+    # Portfolio smoke dashboard
+
+    Central dashboard aggregating smoke results across all 95+ CosmoLabs projects. GitHub Pages + Allure or custom Next.js. Pull JUnit artifacts from all repos.
+status: captured
+origin:
+    idea_slug: 2026-04-16-portfolio-smoke-dashboard

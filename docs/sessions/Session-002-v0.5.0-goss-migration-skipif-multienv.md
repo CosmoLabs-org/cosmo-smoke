@@ -4,6 +4,7 @@ version: v0.5.0
 topic: Goss migration tool, skip_if, multi-env, v0.6 planning
 commit_count: 6
 test_delta: "198 → 233 (+35)"
+status: COMPLETED
 ---
 
 # Session 002 — 2026-04-18
