@@ -41,6 +41,26 @@ func withOTelExport(rep reporter.Reporter, cfg *schema.SmokeConfig) reporter.Rep
 	return reporter.NewMultiReporter(rep, otel)
 }
 
+// buildReporter creates a chained reporter from the format string, wrapping with
+// OTel export and push report if configured. Returns the reporter and any opened
+// files that must be closed (in reverse order) after the run completes.
+func buildReporter(formatStr string, cfg *schema.SmokeConfig) (reporter.Reporter, func(), error) {
+	rep, closers, err := reporter.Chain(formatStr, os.Stdout)
+	if err != nil {
+		return nil, nil, err
+	}
+	rep = withOTelExport(rep, cfg)
+	rep = withPushReport(rep)
+	closeAll := func() {
+		for i := len(closers) - 1; i >= 0; i-- {
+			if err := closers[i].Close(); err != nil {
+				fmt.Fprintf(os.Stderr, "warning: closing reporter: %v\n", err)
+			}
+		}
+	}
+	return rep, closeAll, nil
+}
+
 // withPushReport wraps the reporter with a PushReporter if --report-url is set.
 func withPushReport(rep reporter.Reporter) reporter.Reporter {
 	if reportURL == "" {
@@ -83,7 +103,7 @@ func init() {
 	runCmd.Flags().StringVarP(&configFile, "file", "f", ".smoke.yaml", "Config file path")
 	runCmd.Flags().StringSliceVar(&tags, "tag", nil, "Include only tests with these tags")
 	runCmd.Flags().StringSliceVar(&excludeTags, "exclude-tag", nil, "Exclude tests with these tags")
-	runCmd.Flags().StringVar(&format, "format", "terminal", "Output format (terminal|json|junit|tap|prometheus)")
+	runCmd.Flags().StringVar(&format, "format", "terminal", "Output format(s), comma-separated (terminal,json,junit,tap,prometheus)")
 	runCmd.Flags().BoolVar(&failFast, "fail-fast", false, "Stop on first failure")
 	runCmd.Flags().StringVar(&timeout, "timeout", "", "Per-test timeout override (e.g. 30s)")
 	runCmd.Flags().BoolVar(&dryRun, "dry-run", false, "List tests without running")
@@ -133,22 +153,12 @@ func runSmoke(cmd *cobra.Command, args []string) error {
 
 	// Check monorepo mode
 	if monorepoMode || cfg.Settings.Monorepo {
-		// Create reporter early for monorepo mode
-		var rep reporter.Reporter
-		switch format {
-		case "json":
-			rep = reporter.NewJSON(os.Stdout)
-		case "junit":
-			rep = reporter.NewJUnit(os.Stdout)
-		case "tap":
-			rep = reporter.NewTAP(os.Stdout)
-		case "prometheus":
-			rep = reporter.NewPrometheus(os.Stdout)
-		default:
-			rep = reporter.NewTerminal(os.Stdout)
+		// Create reporter
+		rep, closeAll, err := buildReporter(format, cfg)
+		if err != nil {
+			return err
 		}
-		rep = withOTelExport(rep, cfg)
-		rep = withPushReport(rep)
+		defer closeAll()
 
 		configs, err := monorepo.Discover(configDir, cfg.Settings.MonorepoExclude)
 		if err != nil {
@@ -201,20 +211,11 @@ func runSmoke(cmd *cobra.Command, args []string) error {
 	}
 
 	// Create reporter
-	var rep reporter.Reporter
-	switch format {
-	case "json":
-		rep = reporter.NewJSON(os.Stdout)
-	case "junit":
-		rep = reporter.NewJUnit(os.Stdout)
-	case "tap":
-		rep = reporter.NewTAP(os.Stdout)
-	case "prometheus":
-		rep = reporter.NewPrometheus(os.Stdout)
-	default:
-		rep = reporter.NewTerminal(os.Stdout)
+	rep, closeAll, err := buildReporter(format, cfg)
+	if err != nil {
+		return err
 	}
-	rep = withOTelExport(rep, cfg)
+	defer closeAll()
 
 	// Parse timeout
 	var timeoutDur time.Duration
