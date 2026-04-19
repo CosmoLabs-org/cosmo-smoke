@@ -1,27 +1,32 @@
 version: "1.0"
 project: cosmo-smoke
-last_updated: 2026-04-19T07:17:51.023133-03:00
+last_updated: 2026-04-19T15:19:02.909443-03:00
 next_id: 40
 items:
     - id: ROAD-039
       title: Portfolio smoke dashboard
-      status: captured
+      status: completed
+      completed_in: v0.9.0
       created_at: 2026-04-19T03:44:34.698867-03:00
     - id: ROAD-038
       title: Watch mode continuous trace health monitoring
-      status: captured
+      status: completed
+      completed_in: v0.9.0
       created_at: 2026-04-19T00:42:53.325468-03:00
     - id: ROAD-037
       title: 'Trace-aware retry: only retry if trace never received'
-      status: captured
+      status: completed
+      completed_in: v0.9.0
       created_at: 2026-04-19T00:42:53.290541-03:00
     - id: ROAD-036
       title: Multi-backend trace verification (Tempo, Honeycomb, Datadog)
-      status: captured
+      status: completed
+      completed_in: v0.9.0
       created_at: 2026-04-19T00:42:53.256283-03:00
     - id: ROAD-035
       title: Export smoke results as OTel telemetry
-      status: captured
+      status: completed
+      completed_in: v0.9.0
       created_at: 2026-04-19T00:42:53.222894-03:00
     - id: ROAD-034
       title: OpenTelemetry trace correlation
@@ -33,11 +38,13 @@ items:
       created_at: 2026-04-19T00:42:22.143612-03:00
     - id: ROAD-033
       title: Parallel-agent merge-conflict SOP
-      status: captured
+      status: completed
+      completed_in: v0.9.0
       created_at: 2026-04-18T19:32:30.375042-03:00
     - id: ROAD-032
       title: Claude Desktop MCP extension for smoke test generation
-      status: captured
+      status: completed
+      completed_in: v0.9.0
       created_at: 2026-04-18T19:32:30.268624-03:00
     - id: ROAD-031
       title: WebSocket assertion type

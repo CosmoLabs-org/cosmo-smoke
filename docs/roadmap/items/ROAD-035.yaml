@@ -1,20 +1,12 @@
 id: ROAD-035
 created_at: 2026-04-19T00:42:53.222894-03:00
-updated_at: 2026-04-19T21:00:00-03:00
+updated_at: 2026-04-19T15:19:02.717429-03:00
 title: Export smoke results as OTel telemetry
-description: >
-  Emits smoke test results as OTLP JSON spans to an OTel collector HTTP endpoint.
-  Each test becomes a span with attributes (pass/fail, duration, assertion details).
-  Uses manual OTLP JSON construction — no OTel SDK dependency. Wired via MultiReporter
-  that fans out to both the terminal reporter and the OTel reporter.
+description: |
+    Emits smoke test results as OTLP JSON spans to an OTel collector HTTP endpoint. Each test becomes a span with attributes (pass/fail, duration, assertion details). Uses manual OTLP JSON construction — no OTel SDK dependency. Wired via MultiReporter that fans out to both the terminal reporter and the OTel reporter.
 status: completed
-completed_in: v0.8.0
 priority: 30
+completed_in: v0.9.0
+completed_at: 2026-04-19T15:19:02.717422-03:00
 origin:
     session: 2027
-implementation:
-    reporter: internal/reporter/otel.go (OTelReporter, OTLP JSON payload construction)
-    reporter: internal/reporter/multi.go (MultiReporter fan-out)
-    cli: cmd/run.go (withOTelExport helper, wired in both monorepo and normal paths)
-    schema: internal/schema/schema.go (ExportURL, ExportHeaders fields on OTelConfig)
-    tests: internal/reporter/otel_test.go (4 tests: span emission, summary, headers, unreachable)

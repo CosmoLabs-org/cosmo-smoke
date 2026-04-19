@@ -1,11 +1,13 @@
 id: ROAD-033
 created_at: 2026-04-18T19:32:30.375042-03:00
-updated_at: 2026-04-18T19:32:30.376652-03:00
+updated_at: 2026-04-19T15:17:17.164101-03:00
 title: Parallel-agent merge-conflict SOP
 description: |-
     # Parallel-agent merge-conflict SOP
 
     Document the proven pattern from v0.3.0 session: Opus briefs → Sonnet agents in worktrees → ccs verify-worktree review → sequential merge with union-resolve for schema.go/assertion.go/runner.go adjacent-line conflicts + checkout --ours for metadata files (.ccsession.json, .review.json, conversation-transcripts). Pattern scales to 7+ parallel agents, proven at 5-way parallel dispatch for v0.3 assertion pack. Would be useful as a reusable command or skill across CosmoLabs projects.
-status: captured
+status: completed
+completed_in: v0.9.0
+completed_at: 2026-04-19T15:17:17.164095-03:00
 origin:
     idea_slug: 2026-04-16-parallel-agent-merge-conflict-sop

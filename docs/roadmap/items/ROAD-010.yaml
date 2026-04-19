@@ -1,6 +1,6 @@
 id: ROAD-010
 created_at: 2026-04-15T17:36:19.334069-03:00
-updated_at: 2026-04-19T07:17:51.022531-03:00
+updated_at: 2026-04-19T15:17:17.332935-03:00
 title: Monorepo sub-config support
 description: Support .smoke.yaml in subdirectories. smoke run --recursive finds and runs all configs. Essential for CosmoLabs monorepos.
 status: completed
@@ -16,4 +16,4 @@ refs:
     - type: plan
       path: docs/planning-mode/2026-04-18-v0-7-monorepo-websocket-grpc-buildtag.md
 completed_in: v0.9.0
-completed_at: 2026-04-19T07:17:51.022527-03:00
+completed_at: 2026-04-19T15:17:17.332929-03:00

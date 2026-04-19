@@ -1,20 +1,12 @@
 id: ROAD-038
 created_at: 2026-04-19T00:42:53.325468-03:00
-updated_at: 2026-04-19T21:30:00-03:00
+updated_at: 2026-04-19T15:19:02.909188-03:00
 title: Watch mode continuous trace health monitoring
-description: >
-  When --watch and OTel are both enabled, tracks otel_trace assertion results
-  across runs using a sliding window (last 10 results). Computes a health
-  percentage and alerts when it drops below 50%. Health is displayed in the
-  terminal summary and included in OTel-exported telemetry spans.
+description: |
+    When --watch and OTel are both enabled, tracks otel_trace assertion results across runs using a sliding window (last 10 results). Computes a health percentage and alerts when it drops below 50%. Health is displayed in the terminal summary and included in OTel-exported telemetry spans.
 status: completed
-completed_in: v0.8.0
 priority: 20
+completed_in: v0.9.0
+completed_at: 2026-04-19T15:19:02.909183-03:00
 origin:
     session: 2027
-implementation:
-    tracker: internal/runner/trace_health.go (TraceHealthTracker with ring buffer)
-    runner: internal/runner/runner.go (TraceHealth field, Record calls after otel_trace assertions)
-    reporter: internal/reporter/reporter.go (TraceHealthPct, TraceDegraded fields on SuiteResultData)
-    terminal: internal/reporter/terminal.go (trace health line in summary)
-    tests: internal/runner/trace_health_test.go (5 tests: Record, HealthPct, SlidingWindow, Degraded, Reset)

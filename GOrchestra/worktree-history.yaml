@@ -148,3 +148,9 @@
   branch: agent-a281a237
   base: master
   outcome: archived
+- name: mcp-extension
+  created: '2026-04-19T14:38:04-03:00'
+  status: active
+  branch: mcp-extension
+  base: master
+  outcome: 

@@ -32,3 +32,5 @@ node_modules/
 
 # CCS worktree metadata (untracked, not project files)
 .worktree-origin
+go.work
+go.work.sum
