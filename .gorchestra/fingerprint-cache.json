@@ -1,5 +1,5 @@
 {
-  "hash": "9d1a67eb9a12da717bc977a99af96184594d55395530affbc1d4d8f084dad111",
+  "hash": "554dc42f9fb71b5b499db048236cbecdf55cbfba356cc395b58d98fe125bcf69",
   "project_name": "cosmo-smoke",
   "language": "go",
   "framework": "cli",
@@ -28,5 +28,5 @@
   ],
   "has_tests": true,
   "has_ci": true,
-  "generated_at": "2026-04-19T01:32:15.779787-03:00"
+  "generated_at": "2026-04-19T05:32:21.307018-03:00"
 }
