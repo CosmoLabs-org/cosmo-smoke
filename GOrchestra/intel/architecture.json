@@ -1,35 +1,36 @@
 {
   "version": "1.0",
-  "generated_at": "2026-04-19T05:32:47.360005-03:00",
+  "generated_at": "2026-04-19T05:36:43.965796-03:00",
   "generated_by": "GLM-4.7",
-  "expires_at": "2026-04-20T05:32:47.360005-03:00",
-  "last_analyzed_commit": "7bb8e580db5632951c60edff93bce00771a8d47e",
-  "summary": "A Go-based testing and validation runner with Goss migration support, OpenTelemetry tracing, and a plugin system.",
-  "architecture": "monolith",
+  "expires_at": "2026-04-20T05:36:43.965796-03:00",
+  "last_analyzed_commit": "fd6d4ab2d704266ca4b479dbd3ea059d9eea997e",
+  "summary": "A Go-based CLI tool (GOrchestra) that migrates, detects, and runs Goss configurations with OpenTelemetry tracing and a plugin system.",
+  "architecture": "cli-tool",
   "primary_language": "Go",
   "hot_files": [
     "internal/runner/runner.go",
     "internal/migrate/goss/translator.go",
-    "internal/detector/detector_test.go",
     "internal/schema/validate_test.go",
-    "internal/runner/assertion_test.go"
+    "internal/detector/detector_test.go",
+    "internal/reporter/reporter.go"
   ],
   "patterns": [
     "Standard Go project layout",
-    "Migration/Translator pattern",
-    "Runner/Executor pattern",
+    "Migration/Translation pattern",
+    "Test-driven development",
     "Plugin architecture",
-    "Test-driven development"
+    "Internal package encapsulation"
   ],
   "concerns": [
-    "Heavy documentation churn relative to feature commits",
-    "Potential over-reliance on Goss migration rather than native schema",
-    "Clean git status with recent CCS standardization may mask incomplete refactoring"
+    "Heavy reliance on test files for understanding core logic suggests implementation may be scattered",
+    "Migration path (goss translator) might carry legacy constraints",
+    "Multiple recent metadata/documentation commits could indicate instability in project direction",
+    "Missing key implementation files in hot files list (e.g., reporter.go is inferred, not provided)"
   ],
   "suggestions": [
-    "Focus on expanding native assertion types beyond GraphQL introspection",
-    "Evaluate plugin adoption and community usage",
-    "Consolidate documentation to reduce maintenance overhead",
-    "Add integration tests for the OpenTelemetry multi-backend reporter"
+    "Focus on runner.go and translator.go to understand core value proposition",
+    "Review the OpenTelemetry multi-backend reporter added in recent commits",
+    "Examine the schema validation logic for extensibility",
+    "Check plugin system for future integration capabilities"
   ]
 }
