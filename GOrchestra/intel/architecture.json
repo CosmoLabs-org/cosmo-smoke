@@ -1,36 +1,35 @@
 {
   "version": "1.0",
-  "generated_at": "2026-04-19T03:38:32.679484-03:00",
+  "generated_at": "2026-04-19T05:32:47.360005-03:00",
   "generated_by": "GLM-4.7",
-  "expires_at": "2026-04-20T03:38:32.679484-03:00",
-  "last_analyzed_commit": "acbd0bdf9f839f8fda800503741b65500ea8682d",
-  "summary": "A Go-based CLI tool that runs infrastructure assertions, migrates from Goss, and supports a plugin architecture with Kubernetes deployment examples.",
-  "architecture": "cli-tool",
-  "primary_language": "go",
+  "expires_at": "2026-04-20T05:32:47.360005-03:00",
+  "last_analyzed_commit": "7bb8e580db5632951c60edff93bce00771a8d47e",
+  "summary": "A Go-based testing and validation runner with Goss migration support, OpenTelemetry tracing, and a plugin system.",
+  "architecture": "monolith",
+  "primary_language": "Go",
   "hot_files": [
     "internal/runner/runner.go",
     "internal/migrate/goss/translator.go",
-    "internal/schema/schema.go",
     "internal/detector/detector_test.go",
+    "internal/schema/validate_test.go",
     "internal/runner/assertion_test.go"
   ],
   "patterns": [
-    "standard-go-layout",
-    "internal-package-encapsulation",
-    "plugin-architecture",
-    "migration-pattern",
-    "assertion-testing"
+    "Standard Go project layout",
+    "Migration/Translator pattern",
+    "Runner/Executor pattern",
+    "Plugin architecture",
+    "Test-driven development"
   ],
   "concerns": [
-    "uncommitted changes in progress (9 modified, 1 staged, 1 untracked)",
-    "tight coupling between runner and assertion types may hinder extensibility",
-    "goss migration logic could become obsolete or require long-term maintenance",
-    "kubernetes examples suggest deployment complexity not reflected in CI workflows"
+    "Heavy documentation churn relative to feature commits",
+    "Potential over-reliance on Goss migration rather than native schema",
+    "Clean git status with recent CCS standardization may mask incomplete refactoring"
   ],
   "suggestions": [
-    "commit or stash the current working tree changes to establish a clean baseline",
-    "define a formal assertion interface to standardize future assertion types like credential_check and GraphQL introspection",
-    "add integration tests for the kubernetes examples",
-    "document the plugin system to encourage community extensions"
+    "Focus on expanding native assertion types beyond GraphQL introspection",
+    "Evaluate plugin adoption and community usage",
+    "Consolidate documentation to reduce maintenance overhead",
+    "Add integration tests for the OpenTelemetry multi-backend reporter"
   ]
 }
