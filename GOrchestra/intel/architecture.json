@@ -1,36 +1,33 @@
 {
   "version": "1.0",
-  "generated_at": "2026-04-19T15:44:25.937053-03:00",
+  "generated_at": "2026-04-19T15:48:47.572649-03:00",
   "generated_by": "GLM-4.7",
-  "expires_at": "2026-04-20T15:44:25.937053-03:00",
-  "last_analyzed_commit": "dcca0ad6ea0d9a3af33264fe859b21c00c813b06",
-  "summary": "A Go-based CLI tool for running, detecting, and migrating infrastructure validation tests with a plugin system and dashboard.",
+  "expires_at": "2026-04-20T15:48:47.572649-03:00",
+  "last_analyzed_commit": "cddd0e9a53439680d903214bacb57b7288697111",
+  "summary": "A Go-based testing and validation tool with MCP integration for Claude Desktop and Goss migration capabilities.",
   "architecture": "monolith",
   "primary_language": "Go",
   "hot_files": [
     "internal/runner/runner.go",
+    "internal/mcp/handlers.go",
     "internal/migrate/goss/translator.go",
     "internal/schema/validate_test.go",
-    "internal/detector/detector_test.go",
-    "internal/runner/assertion_test.go"
+    "internal/detector/detector.go"
   ],
   "patterns": [
-    "standard go layout",
-    "migration tool",
-    "test-driven development",
-    "plugin architecture",
-    "cli application"
+    "Standard Go project layout",
+    "MCP (Model Context Protocol) integration",
+    "Migration/Translator pattern",
+    "Test-driven development"
   ],
   "concerns": [
-    "build is currently failing",
-    "recent commits are dominated by automated session metadata chores",
-    "goss migration suggests legacy dependency",
-    "bin/ directory committed to source control"
+    "ClaudeDesktop/specs directory suggests test specs are misplaced outside the codebase",
+    "Recent commits show churn around session metadata management",
+    "1 staged file indicates potential incomplete work"
   ],
   "suggestions": [
-    "fix the broken build immediately",
-    "gitignore the bin/ directory",
-    "investigate and filter out noisy auto-commit session metadata hooks",
-    "complete the goss migration and remove legacy translator"
+    "Consolidate ClaudeDesktop/specs into a standard test directory",
+    "Stabilize session metadata handling to reduce commit churn",
+    "Commit or stash the staged changes to maintain a clean working tree"
   ]
 }
