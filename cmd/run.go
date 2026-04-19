@@ -153,13 +153,6 @@ func runSmoke(cmd *cobra.Command, args []string) error {
 
 	// Check monorepo mode
 	if monorepoMode || cfg.Settings.Monorepo {
-		// Create reporter
-		rep, closeAll, err := buildReporter(format, cfg)
-		if err != nil {
-			return err
-		}
-		defer closeAll()
-
 		configs, err := monorepo.Discover(configDir, cfg.Settings.MonorepoExclude)
 		if err != nil {
 			return fmt.Errorf("discovering sub-configs: %w", err)
@@ -167,7 +160,6 @@ func runSmoke(cmd *cobra.Command, args []string) error {
 		if len(configs) == 0 {
 			return fmt.Errorf("no smoke configs found in %s", configDir)
 		}
-		r := &runner.Runner{Config: cfg, Reporter: rep, ConfigDir: configDir}
 
 		// Parse timeout
 		var timeoutDur time.Duration
@@ -178,44 +170,49 @@ func runSmoke(cmd *cobra.Command, args []string) error {
 			}
 		}
 
-		if !watch {
-			result, err := r.RunMonorepo(runner.RunOptions{
-				Tags:        tags,
-				ExcludeTags: excludeTags,
-				FailFast:    failFast,
-				DryRun:      dryRun,
-				Timeout:     timeoutDur,
-			}, configs)
-			if err != nil {
-				return err
-			}
-			if result.Failed > 0 {
-				os.Exit(1)
-			}
-			return nil
+		if watch {
+			return runWatch(configDir, configFile, func() error {
+				rep, closeAll, err := buildReporter(format, cfg)
+				if err != nil {
+					return err
+				}
+				defer closeAll()
+				r := &runner.Runner{Config: cfg, Reporter: rep, ConfigDir: configDir}
+				_, err = r.RunMonorepo(runner.RunOptions{
+					Tags:        tags,
+					ExcludeTags: excludeTags,
+					FailFast:    failFast,
+					DryRun:      dryRun,
+					Timeout:     timeoutDur,
+				}, configs)
+				if err != nil {
+					return err
+				}
+				return nil
+			})
 		}
 
-		return runWatch(configDir, configFile, func() error {
-			_, err := r.RunMonorepo(runner.RunOptions{
-				Tags:        tags,
-				ExcludeTags: excludeTags,
-				FailFast:    failFast,
-				DryRun:      dryRun,
-				Timeout:     timeoutDur,
-			}, configs)
-			if err != nil {
-				return err
-			}
-			return nil
-		})
+		rep, closeAll, err := buildReporter(format, cfg)
+		if err != nil {
+			return err
+		}
+		defer closeAll()
+		r := &runner.Runner{Config: cfg, Reporter: rep, ConfigDir: configDir}
+		result, err := r.RunMonorepo(runner.RunOptions{
+			Tags:        tags,
+			ExcludeTags: excludeTags,
+			FailFast:    failFast,
+			DryRun:      dryRun,
+			Timeout:     timeoutDur,
+		}, configs)
+		if err != nil {
+			return err
+		}
+		if result.Failed > 0 {
+			os.Exit(1)
+		}
+		return nil
 	}
-
-	// Create reporter
-	rep, closeAll, err := buildReporter(format, cfg)
-	if err != nil {
-		return err
-	}
-	defer closeAll()
 
 	// Parse timeout
 	var timeoutDur time.Duration
@@ -226,35 +223,50 @@ func runSmoke(cmd *cobra.Command, args []string) error {
 		}
 	}
 
-	r := &runner.Runner{
-		Config:    cfg,
-		Reporter:  rep,
-		ConfigDir: configDir,
-	}
-
-	runOnce := func() error {
-		result, err := r.Run(runner.RunOptions{
-			Tags:        tags,
-			ExcludeTags: excludeTags,
-			FailFast:    failFast,
-			DryRun:      dryRun,
-			Timeout:     timeoutDur,
-		})
-		if err != nil {
-			return err
+	if watch {
+		runOnce := func() error {
+			rep, closeAll, err := buildReporter(format, cfg)
+			if err != nil {
+				return err
+			}
+			defer closeAll()
+			r := &runner.Runner{Config: cfg, Reporter: rep, ConfigDir: configDir}
+			_, err = r.Run(runner.RunOptions{
+				Tags:        tags,
+				ExcludeTags: excludeTags,
+				FailFast:    failFast,
+				DryRun:      dryRun,
+				Timeout:     timeoutDur,
+			})
+			if err != nil {
+				return err
+			}
+			return nil
 		}
-		// In watch mode, don't exit process on failure — print marker and loop
-		if !watch && result.Failed > 0 {
-			os.Exit(1)
-		}
-		return nil
+		return runWatch(configDir, configFile, runOnce)
 	}
 
-	if !watch {
-		return runOnce()
+	rep, closeAll, err := buildReporter(format, cfg)
+	if err != nil {
+		return err
 	}
+	defer closeAll()
 
-	return runWatch(configDir, configFile, runOnce)
+	r := &runner.Runner{Config: cfg, Reporter: rep, ConfigDir: configDir}
+	result, err := r.Run(runner.RunOptions{
+		Tags:        tags,
+		ExcludeTags: excludeTags,
+		FailFast:    failFast,
+		DryRun:      dryRun,
+		Timeout:     timeoutDur,
+	})
+	if err != nil {
+		return err
+	}
+	if result.Failed > 0 {
+		os.Exit(1)
+	}
+	return nil
 }
 
 func runWatch(configDir, configFile string, runOnce func() error) error {
