@@ -1,12 +1,12 @@
 {
   "version": "1.0",
-  "generated_at": "2026-04-19T01:32:36.881073-03:00",
+  "generated_at": "2026-04-19T02:13:22.525491-03:00",
   "generated_by": "GLM-4.7",
-  "expires_at": "2026-04-20T01:32:36.881073-03:00",
-  "last_analyzed_commit": "79dbfe339c9d797609861ba02d2150d126105370",
-  "summary": "A Go-based CLI tool that migrates Goss tests to a new schema, detects monorepo structures, and executes assertions with OpenTelemetry observability.",
+  "expires_at": "2026-04-20T02:13:22.525491-03:00",
+  "last_analyzed_commit": "1e8a9d462ed00dd0f4f109e94ede46157228ad15",
+  "summary": "A Go-based CLI tool that migrates Goss tests, detects infrastructure configurations, and runs assertions with OpenTelemetry tracing support.",
   "architecture": "cli-tool",
-  "primary_language": "go",
+  "primary_language": "Go",
   "hot_files": [
     "internal/runner/runner.go",
     "internal/migrate/goss/translator.go",
@@ -15,20 +15,22 @@
     "internal/runner/assertion_test.go"
   ],
   "patterns": [
-    "standard-go-layout",
-    "migration-tool",
-    "plugin-architecture",
-    "test-driven-development",
-    "observability-integration"
+    "Standard Go project layout",
+    "Migrator/Translator pattern",
+    "Test-driven development",
+    "Plugin architecture",
+    "OpenTelemetry instrumentation"
   ],
   "concerns": [
-    "staged but uncommitted changes may cause context drift",
-    "heavy recent focus on OpenTelemetry might be adding premature complexity",
-    "monorepo detection logic could become fragile across diverse project structures"
+    "Heavy reliance on Goss migration suggests legacy coupling",
+    "Plugin directory lacks clear structure or typed interfaces",
+    "Multiple config directories (.claude, .gorchestra, .github) may cause fragmentation",
+    "No visible dependency injection framework for complex internal wiring"
   ],
   "suggestions": [
-    "commit the staged changes to maintain a clean working tree",
-    "validate otel trace correlation overhead in production-like scenarios",
-    "expand test coverage for the plugin system"
+    "Finalize and deprecate the Goss migration path to reduce maintenance burden",
+    "Document the plugin API and provide typed Go interfaces for plugin authors",
+    "Consolidate configuration management across the scattered config directories",
+    "Expand OpenTelemetry coverage beyond the runner to detector and reporter modules"
   ]
 }

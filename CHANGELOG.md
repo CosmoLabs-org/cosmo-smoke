@@ -7,6 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.8.0] - 2026-04-19
+
+### Added
+- OpenTelemetry trace correlation with W3C traceparent propagation
+- otel_trace assertion querying Jaeger API for trace verification
+- add --otel-collector and --no-otel CLI flags (commit:5a1d491e)
+- add OpenTelemetry trace correlation (FEAT-012) (commit:14f504d6)
+
 ## [0.7.0] - 2026-04-18
 
 ### Added
