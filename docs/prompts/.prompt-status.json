@@ -1,0 +1,27 @@
+{
+  "version": "1.0",
+  "prompts": {
+    "2026-04-19-v0.8-otel-complete-continuation.md": {
+      "status": "pending",
+      "summary": "Post-OTel strategic pivot: MCP extension (ROAD-032), portfolio dashboard (ROAD-039), monorepo (ROAD-010)"
+    },
+    "2026-04-19-opentelemetry-trace-correlation.md": {
+      "status": "implemented",
+      "implemented_date": "2026-04-19",
+      "implemented_in": "master",
+      "summary": "OTel trace correlation plan — completed as part of v0.8.0 OTel depth work"
+    },
+    "2026-04-18-v0-7-monorepo-websocket-grpc-buildtag.md": {
+      "status": "implemented",
+      "implemented_date": "2026-04-18",
+      "implemented_in": "master",
+      "summary": "v0.7+ features: monorepo, websocket, gRPC build tag — all shipped in v0.8.0"
+    },
+    "2026-04-18-cosmo-smoke-v0-7-post-release.md": {
+      "status": "implemented",
+      "implemented_date": "2026-04-18",
+      "implemented_in": "master",
+      "summary": "v0.7 post-release continuation — led to v0.8.0 OTel work"
+    }
+  }
+}
