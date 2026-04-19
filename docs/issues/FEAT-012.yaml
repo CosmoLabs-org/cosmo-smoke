@@ -1,9 +1,9 @@
 id: FEAT-012
 type: feature
 created_at: 2026-04-19T00:41:58.692992-03:00
-updated_at: 2026-04-19T01:30:52.109074-03:00
+updated_at: 2026-04-19T01:32:30.873363-03:00
 source: local
-status: in_progress
+status: done
 origin:
     roadmap_items:
         - ROAD-034

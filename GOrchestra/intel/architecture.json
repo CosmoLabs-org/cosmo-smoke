@@ -1,35 +1,34 @@
 {
   "version": "1.0",
-  "generated_at": "2026-04-19T00:42:24.587679-03:00",
+  "generated_at": "2026-04-19T01:32:36.881073-03:00",
   "generated_by": "GLM-4.7",
-  "expires_at": "2026-04-20T00:42:24.587679-03:00",
-  "last_analyzed_commit": "2e5cf00b6549e2a3f968bcb96666e1295a5d9591",
-  "summary": "A Go-based CLI tool for running infrastructure assertions, migrating from Goss, with planned OpenTelemetry trace correlation.",
+  "expires_at": "2026-04-20T01:32:36.881073-03:00",
+  "last_analyzed_commit": "79dbfe339c9d797609861ba02d2150d126105370",
+  "summary": "A Go-based CLI tool that migrates Goss tests to a new schema, detects monorepo structures, and executes assertions with OpenTelemetry observability.",
   "architecture": "cli-tool",
-  "primary_language": "Go",
+  "primary_language": "go",
   "hot_files": [
     "internal/runner/runner.go",
     "internal/migrate/goss/translator.go",
-    "internal/detector/detector_test.go",
     "internal/schema/schema.go",
+    "internal/detector/detector_test.go",
     "internal/runner/assertion_test.go"
   ],
   "patterns": [
-    "Standard Go project layout",
-    "Migration/Translator pattern",
-    "Test-driven development",
-    "Plugin architecture",
-    "Schema validation"
+    "standard-go-layout",
+    "migration-tool",
+    "plugin-architecture",
+    "test-driven-development",
+    "observability-integration"
   ],
   "concerns": [
-    "Heavy documentation focus in recent commits may indicate stalled implementation",
-    "Uncommitted changes (2 modified, 1 staged) suggest incomplete work",
-    "Goss migration implies legacy dependency that may need long-term maintenance"
+    "staged but uncommitted changes may cause context drift",
+    "heavy recent focus on OpenTelemetry might be adding premature complexity",
+    "monorepo detection logic could become fragile across diverse project structures"
   ],
   "suggestions": [
-    "Complete and commit the current in-progress changes",
-    "Transition from design docs to implementing the OpenTelemetry trace correlation",
-    "Expand test coverage beyond the core runner and translator modules",
-    "Document the plugin system to encourage community extensions"
+    "commit the staged changes to maintain a clean working tree",
+    "validate otel trace correlation overhead in production-like scenarios",
+    "expand test coverage for the plugin system"
   ]
 }

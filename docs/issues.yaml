@@ -1,68 +1,68 @@
 version: "1.0"
 project: cosmo-smoke
-last_updated: 2026-04-19T01:30:52.110262-03:00
+last_updated: 2026-04-19T02:12:17.877706-03:00
 next_bug_id: 1
 next_feat_id: 13
 next_task_id: 1
 next_imp_id: 1
 issues:
-    - id: FEAT-012
-      type: feature
-      status: in_progress
-      title: OpenTelemetry Trace Correlation
-      created_at: 2026-04-19T00:41:58.692992-03:00
-    - id: FEAT-011
-      type: feature
-      status: open
-      title: Split assertion.go into per-domain files
-      created_at: 2026-04-18T23:05:18.681535-03:00
-    - id: FEAT-010
-      type: feature
-      status: open
-      title: Make run field optional for network-only tests
-      created_at: 2026-04-18T23:05:07.176047-03:00
-    - id: FEAT-009
-      type: feature
-      status: closed
-      title: Pre-commit hook integration
-      created_at: 2026-04-18T18:30:07.619987-03:00
-    - id: FEAT-008
-      type: feature
-      status: open
-      title: GraphQL introspection assertion
-      created_at: 2026-04-18T18:30:07.580375-03:00
-    - id: FEAT-007
-      type: feature
-      status: fixed
-      title: allow_failure for flaky tests
-      created_at: 2026-04-16T08:57:03.485124-03:00
-    - id: FEAT-006
-      type: feature
-      status: closed
-      title: TAP output format
-      created_at: 2026-04-16T08:57:03.434127-03:00
-    - id: FEAT-005
-      type: feature
-      status: closed
-      title: Process running assertion
-      created_at: 2026-04-16T08:57:03.386359-03:00
-    - id: FEAT-004
-      type: feature
-      status: done
-      title: Port listening assertion
-      created_at: 2026-04-16T08:57:03.335668-03:00
-    - id: FEAT-003
-      type: feature
-      status: done
-      title: JUnit XML output format
-      created_at: 2026-04-15T17:36:31.67282-03:00
-    - id: FEAT-002
-      type: feature
-      status: done
-      title: env_check assertion type
-      created_at: 2026-04-15T17:36:29.038509-03:00
     - id: FEAT-001
       type: feature
       status: done
       title: stderr_matches assertion type
       created_at: 2026-04-15T17:36:28.855578-03:00
+    - id: FEAT-002
+      type: feature
+      status: done
+      title: env_check assertion type
+      created_at: 2026-04-15T17:36:29.038509-03:00
+    - id: FEAT-003
+      type: feature
+      status: done
+      title: JUnit XML output format
+      created_at: 2026-04-15T17:36:31.67282-03:00
+    - id: FEAT-004
+      type: feature
+      status: done
+      title: Port listening assertion
+      created_at: 2026-04-16T08:57:03.335668-03:00
+    - id: FEAT-005
+      type: feature
+      status: closed
+      title: Process running assertion
+      created_at: 2026-04-16T08:57:03.386359-03:00
+    - id: FEAT-006
+      type: feature
+      status: closed
+      title: TAP output format
+      created_at: 2026-04-16T08:57:03.434127-03:00
+    - id: FEAT-007
+      type: feature
+      status: fixed
+      title: allow_failure for flaky tests
+      created_at: 2026-04-16T08:57:03.485124-03:00
+    - id: FEAT-008
+      type: feature
+      status: open
+      title: GraphQL introspection assertion
+      created_at: 2026-04-18T18:30:07.580375-03:00
+    - id: FEAT-009
+      type: feature
+      status: closed
+      title: Pre-commit hook integration
+      created_at: 2026-04-18T18:30:07.619987-03:00
+    - id: FEAT-010
+      type: feature
+      status: open
+      title: Make run field optional for network-only tests
+      created_at: 2026-04-18T23:05:07.176047-03:00
+    - id: FEAT-011
+      type: feature
+      status: open
+      title: Split assertion.go into per-domain files
+      created_at: 2026-04-18T23:05:18.681535-03:00
+    - id: FEAT-012
+      type: feature
+      status: done
+      title: OpenTelemetry Trace Correlation
+      created_at: 2026-04-19T00:41:58.692992-03:00
