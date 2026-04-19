@@ -4,7 +4,10 @@
 
 version: pending
 entries:
-    added: []
+    added:
+        - description: portfolio smoke dashboard with push reporting
+          source: manual
+          date: 2026-04-19T13:49:36.354443-03:00
     fixed: []
     changed: []
     deprecated: []

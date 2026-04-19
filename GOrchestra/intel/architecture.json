@@ -1,10 +1,10 @@
 {
   "version": "1.0",
-  "generated_at": "2026-04-19T13:49:06.546293-03:00",
+  "generated_at": "2026-04-19T13:52:11.192197-03:00",
   "generated_by": "GLM-4.7",
-  "expires_at": "2026-04-20T13:49:06.546293-03:00",
-  "last_analyzed_commit": "c6f3f065560f12db60c077376ce148c2da8153ff",
-  "summary": "A Go-based modular tool for migrating, detecting, running, and reporting on infrastructure compliance tests with a Goss migration adapter and emerging dashboard capabilities.",
+  "expires_at": "2026-04-20T13:52:11.192197-03:00",
+  "last_analyzed_commit": "9f75974bafab9ae3530b928e3e21a05e32e335b7",
+  "summary": "A Go-based modular CLI tool for migrating, detecting, and running Goss test assertions with dashboard reporting and Kubernetes support.",
   "architecture": "modular monolith",
   "primary_language": "Go",
   "hot_files": [
@@ -12,25 +12,25 @@
     "internal/migrate/goss/translator.go",
     "internal/schema/validate_test.go",
     "internal/detector/detector_test.go",
-    "internal/dashboard/go-code"
+    "internal/runner/assertion_test.go"
   ],
   "patterns": [
-    "standard Go project layout",
-    "migration adapter pattern",
-    "test-driven development",
-    "plugin architecture",
-    "internal package encapsulation"
+    "Standard Go project layout",
+    "Migration/Translation pattern",
+    "Test-driven development",
+    "Plugin architecture",
+    "Internal package encapsulation"
   ],
   "concerns": [
-    "generic 'go-code' directory names lack semantic clarity",
-    "untracked file in git status indicates possible incomplete commits",
-    "frequent 'chore: update intel metadata' commits suggest automated noise in history",
-    "docs/commands duplicates cmd/ structure potentially causing drift"
+    "Documentation and roadmap updates dominate recent commits over feature work",
+    "Staged but uncommitted changes indicate possible workflow interruption",
+    "Heavy reliance on internal packages may limit external reuse",
+    "Kubernetes examples suggest deployment complexity"
   ],
   "suggestions": [
-    "rename 'go-code' directories to reflect actual domain (e.g., 'handlers', 'services')",
-    "investigate and commit or gitignore the untracked file",
-    "consolidate command documentation to avoid duplication with source structure",
-    "focus on ROAD-035-03 roadmap items based on recent commit activity"
+    "Commit or unstage the pending change to maintain a clean working tree",
+    "Shift focus from documentation chores back to feature development",
+    "Consider extracting plugins into their own module if they grow",
+    "Add integration tests for the Kubernetes examples"
   ]
 }
