@@ -1,10 +1,10 @@
 {
   "version": "1.0",
-  "generated_at": "2026-04-19T18:56:28.742672-03:00",
+  "generated_at": "2026-04-19T19:06:14.861058-03:00",
   "generated_by": "GLM-4.7",
-  "expires_at": "2026-04-20T18:56:28.742672-03:00",
-  "last_analyzed_commit": "3c84b02153da781b48313ea1d8ef4a612bceec3b",
-  "summary": "A Go-based infrastructure testing tool with MCP integration, Goss migration support, and pluggable multi-format reporting.",
+  "expires_at": "2026-04-20T19:06:14.861058-03:00",
+  "last_analyzed_commit": "b224f52478bdbbe594839e7390748893420580c3",
+  "summary": "A Go-based MCP server tool that migrates Goss tests, runs assertions against infrastructure, and chains multi-format reports.",
   "architecture": "monolith",
   "primary_language": "Go",
   "hot_files": [
@@ -15,20 +15,20 @@
     "internal/reporter/reporter.go"
   ],
   "patterns": [
-    "MCP (Model Context Protocol) integration",
+    "MCP (Model Context Protocol) server",
     "Goss migration/translation",
-    "Multi-format reporter chaining",
-    "Test-driven development",
-    "Standard Go project layout"
+    "Reporter chaining",
+    "Watch mode with lifecycle management",
+    "Schema validation"
   ],
   "concerns": [
-    "Uncommitted changes (1 modified, 1 staged) could lead to drift",
-    "Heavy reliance on internal packages limits external reuse",
-    "Monorepo detection logic mixed with core runner concerns"
+    "Reporter state leakage in watch cycles requiring recreation",
+    "Uncommitted changes in working directory",
+    "Heavy coupling between runner, detector, and reporter components"
   ],
   "suggestions": [
-    "Commit or stash the pending changes to maintain a clean state",
-    "Document the MCP handler API surface in docs/commands/",
-    "Consider extracting the reporter chaining into a standalone interface"
+    "Commit or stash the pending changes before release",
+    "Investigate root cause of reporter state accumulation in watch mode",
+    "Add integration tests for the multi-format reporter chaining feature"
   ]
 }
