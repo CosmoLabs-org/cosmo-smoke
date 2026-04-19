@@ -1,9 +1,9 @@
 {
   "repository": {
-    "version": "0.10.0",
-    "build": 225,
+    "version": "0.11.0",
+    "build": 226,
     "name": "cosmo-smoke",
-    "lastUpdated": "2026-04-19T21:53:40Z",
+    "lastUpdated": "2026-04-19T21:55:49Z",
     "derived_from": "git tag"
   },
   "metadata": {
@@ -12,7 +12,7 @@
   },
   "releaseContext": {
     "lastRelease": {
-      "version": "0.10.0",
+      "version": "0.11.0",
       "date": "2026-04-19",
       "branch": "master"
     }

@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.11.0] - 2026-04-19
+
+### Added
+- Multi-format reporter chaining (--format terminal,json,prometheus)
+- add multi-format reporter chaining (commit:779a88f1)
+
 ## [0.10.0] - 2026-04-19
 
 ### Added
