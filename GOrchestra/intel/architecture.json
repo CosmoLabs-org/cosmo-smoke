@@ -1,10 +1,10 @@
 {
   "version": "1.0",
-  "generated_at": "2026-04-19T15:41:11.283428-03:00",
+  "generated_at": "2026-04-19T15:41:16.623832-03:00",
   "generated_by": "GLM-4.7",
-  "expires_at": "2026-04-20T15:41:11.283428-03:00",
-  "last_analyzed_commit": "c3d5cbfb44f40c95b025fdf9cdfa59006b190166",
-  "summary": "A Go-based modular tool for detecting, migrating, running, and reporting on infrastructure validation tests, likely transitioning from Goss with an emerging MCP/Claude integration.",
+  "expires_at": "2026-04-20T15:41:16.623832-03:00",
+  "last_analyzed_commit": "98e28697083514d350c7b9d883d74a8bb91b1a37",
+  "summary": "A Go-based modular tool for running assertions, migrating Goss configurations, and detecting schemas with plugin and Kubernetes support.",
   "architecture": "modular monolith",
   "primary_language": "Go",
   "hot_files": [
@@ -15,21 +15,22 @@
     "internal/runner/assertion_test.go"
   ],
   "patterns": [
-    "standard go project layout",
-    "migrator/translator pattern",
-    "runner-executor pattern",
-    "plugin architecture"
+    "Standard Go project layout",
+    "Test-driven development",
+    "Plugin architecture",
+    "Migration/Translation pattern",
+    "Schema validation"
   ],
   "concerns": [
-    "build is currently failing",
-    "recent commits focus heavily on session metadata auto-commit/archival indicating flaky state management",
-    "uncommitted changes alongside a broken build suggests instability",
-    "claude/mcp integration metadata handling appears to be a recurring source of friction"
+    "Build is currently failing",
+    "Uncommitted changes in working directory",
+    "Repetitive session metadata auto-commit commits in recent history",
+    "ClaudeDesktop/specs directory suggests non-standard test location"
   ],
   "suggestions": [
-    "fix the broken build immediately before proceeding with feature work",
-    "investigate and stabilize the session status and merge logic causing repeated metadata commits",
-    "commit or stash the untracked and modified files to establish a clean baseline",
-    "review the goss translator for edge cases given its prominence in the test suite"
+    "Fix the failing build immediately",
+    "Resolve the staged and untracked git changes",
+    "Investigate and stabilize the session metadata auto-commit mechanism",
+    "Move ClaudeDesktop/specs to a conventional test location"
   ]
 }
