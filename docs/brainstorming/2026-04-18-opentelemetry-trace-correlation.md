@@ -1,10 +1,13 @@
 ---
-title: "OpenTelemetry Trace Correlation for cosmo-smoke"
+completed: "2026-04-19"
 created: "2026-04-18"
-status: DRAFT
-idea_ref: IDEA-MO1FBPJB
-plan: docs/planning-mode/2026-04-19-opentelemetry-trace-correlation.md
-tags: [opentelemetry, tracing, observability, jaeger]
+status: COMPLETED
+tags:
+    - opentelemetry
+    - tracing
+    - observability
+    - jaeger
+title: OpenTelemetry Trace Correlation for cosmo-smoke
 ---
 
 # OpenTelemetry Trace Correlation

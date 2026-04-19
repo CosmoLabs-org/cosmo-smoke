@@ -1,18 +1,21 @@
 ---
-title: "OpenTelemetry Trace Correlation — Full Implementation"
-created: "2026-04-19"
-status: PENDING
-priority: high
 branch: master
-origin: "/brainplan"
-tags: [continuation, implementation, opentelemetry, tracing]
+completed: "2026-04-19"
+created: "2026-04-19"
+goals_completed: 10
 goals_total: 10
-goals_completed: 0
+origin: /brainplan
+priority: high
 related_prompts:
-  - docs/brainstorming/2026-04-18-opentelemetry-trace-correlation.md
-  - docs/planning-mode/2026-04-19-opentelemetry-trace-correlation.md
-brainstorm_ref: docs/brainstorming/2026-04-18-opentelemetry-trace-correlation.md
-plan_ref: docs/planning-mode/2026-04-19-opentelemetry-trace-correlation.md
+    - docs/brainstorming/2026-04-18-opentelemetry-trace-correlation.md
+    - docs/planning-mode/2026-04-19-opentelemetry-trace-correlation.md
+status: COMPLETED
+tags:
+    - continuation
+    - implementation
+    - opentelemetry
+    - tracing
+title: OpenTelemetry Trace Correlation — Full Implementation
 ---
 
 # OpenTelemetry Trace Correlation — Full Implementation
@@ -26,16 +29,16 @@ Implementation plan: `docs/planning-mode/2026-04-19-opentelemetry-trace-correlat
 
 ## Goals
 
-- [ ] Task 1: Add OTelConfig + OTelTraceCheck to schema
-- [ ] Task 2: Add validation for otel config fields
-- [ ] Task 3: Implement TraceContext + SpanContext
-- [ ] Task 4: Implement CheckOTelTrace with Jaeger polling
-- [ ] Task 5: Inject traceparent into HTTP requests
-- [ ] Task 6: Inject traceparent into WebSocket handshake
-- [ ] Task 7: Inject traceparent into gRPC metadata
-- [ ] Task 8: Wire trace context into runner pipeline
-- [ ] Task 9: Add --otel-collector and --no-otel CLI flags
-- [ ] Task 10: Update CLAUDE.md and self-smoke config
+- [x] Task 1: Add OTelConfig + OTelTraceCheck to schema
+- [x] Task 2: Add validation for otel config fields
+- [x] Task 3: Implement TraceContext + SpanContext
+- [x] Task 4: Implement CheckOTelTrace with Jaeger polling
+- [x] Task 5: Inject traceparent into HTTP requests
+- [x] Task 6: Inject traceparent into WebSocket handshake
+- [x] Task 7: Inject traceparent into gRPC metadata
+- [x] Task 8: Wire trace context into runner pipeline
+- [x] Task 9: Add --otel-collector and --no-otel CLI flags
+- [x] Task 10: Update CLAUDE.md and self-smoke config
 
 ## Execution Strategy
 

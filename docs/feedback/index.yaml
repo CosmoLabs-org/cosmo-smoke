@@ -1,9 +1,9 @@
 version: "1.0"
-next_id: 8
-last_updated: "2026-04-18"
+next_id: 9
+last_updated: "2026-04-19"
 stats:
-    total: 8
-    pending: 8
+    total: 9
+    pending: 9
     implemented: 0
     rejected: 0
     converted: 0
@@ -48,3 +48,8 @@ entries:
       status: pending
       from_project: cosmo-smoke
       created: "2026-04-18T22:36:05.856799-03:00"
+    - id: FB-009
+      title: ccs version --bump highlights validation rejects valid descriptions that happen to match changelog entries. The overlap detection is too aggressive — a narrative sentence containing 'OpenTelemetry trace correlation' was rejected because the changelog has an entry with the same phrase. Workaround required shortening/rewording to avoid false match.
+      status: pending
+      from_project: cosmo-smoke
+      created: "2026-04-19T02:16:13.53465-03:00"

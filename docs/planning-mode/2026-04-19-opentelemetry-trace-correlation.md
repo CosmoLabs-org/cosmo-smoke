@@ -1,3 +1,12 @@
+---
+completed: "2026-04-19"
+created: "2026-04-19"
+goals_completed: 52
+goals_total: 52
+status: COMPLETED
+title: OpenTelemetry Trace Correlation — Implementation Plan
+---
+
 # OpenTelemetry Trace Correlation — Implementation Plan
 
 > **For agentic workers:** REQUIRED: Use superpowers:subagent-driven-development (if subagents available) or superpowers:executing-plans to implement this plan. Steps use checkbox (`- [ ]`) syntax for tracking.
