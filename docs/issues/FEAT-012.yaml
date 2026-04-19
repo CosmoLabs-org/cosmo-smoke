@@ -1,10 +1,12 @@
 id: FEAT-012
 type: feature
 created_at: 2026-04-19T00:41:58.692992-03:00
-updated_at: 2026-04-19T00:41:58.694828-03:00
+updated_at: 2026-04-19T01:30:52.109074-03:00
 source: local
-status: open
+status: in_progress
 origin:
+    roadmap_items:
+        - ROAD-034
     session: 2027
 title: OpenTelemetry Trace Correlation
 description: 'Add W3C trace context propagation to HTTP/gRPC/WebSocket assertions + Jaeger API trace verification. Design: docs/brainstorming/2026-04-18-opentelemetry-trace-correlation.md, Plan: docs/planning-mode/2026-04-19-opentelemetry-trace-correlation.md'

@@ -1,8 +1,31 @@
 version: "1.0"
 project: cosmo-smoke
-last_updated: 2026-04-18T22:24:14.225204-03:00
-next_id: 34
+last_updated: 2026-04-19T00:42:53.325663-03:00
+next_id: 39
 items:
+    - id: ROAD-038
+      title: Watch mode continuous trace health monitoring
+      status: captured
+      created_at: 2026-04-19T00:42:53.325468-03:00
+    - id: ROAD-037
+      title: 'Trace-aware retry: only retry if trace never received'
+      status: captured
+      created_at: 2026-04-19T00:42:53.290541-03:00
+    - id: ROAD-036
+      title: Multi-backend trace verification (Tempo, Honeycomb, Datadog)
+      status: captured
+      created_at: 2026-04-19T00:42:53.256283-03:00
+    - id: ROAD-035
+      title: Export smoke results as OTel telemetry
+      status: captured
+      created_at: 2026-04-19T00:42:53.222894-03:00
+    - id: ROAD-034
+      title: OpenTelemetry trace correlation
+      status: captured
+      has_plan: true
+      linked_issues:
+        - FEAT-012
+      created_at: 2026-04-19T00:42:22.143612-03:00
     - id: ROAD-033
       title: Parallel-agent merge-conflict SOP
       status: captured

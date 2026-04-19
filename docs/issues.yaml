@@ -1,11 +1,16 @@
 version: "1.0"
 project: cosmo-smoke
-last_updated: 2026-04-18T23:21:22.166202-03:00
+last_updated: 2026-04-19T01:30:52.110262-03:00
 next_bug_id: 1
-next_feat_id: 12
+next_feat_id: 13
 next_task_id: 1
 next_imp_id: 1
 issues:
+    - id: FEAT-012
+      type: feature
+      status: in_progress
+      title: OpenTelemetry Trace Correlation
+      created_at: 2026-04-19T00:41:58.692992-03:00
     - id: FEAT-011
       type: feature
       status: open
