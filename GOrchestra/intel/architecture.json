@@ -1,33 +1,34 @@
 {
   "version": "1.0",
-  "generated_at": "2026-04-19T05:57:54.709691-03:00",
+  "generated_at": "2026-04-19T06:10:26.763245-03:00",
   "generated_by": "GLM-4.7",
-  "expires_at": "2026-04-20T05:57:54.709691-03:00",
-  "last_analyzed_commit": "ad5c152cc3b7de9e440188146aa21e4d9f180acc",
-  "summary": "A Go-based CLI tool for running infrastructure validation tests, migrating from Goss, and supporting monorepo detection with a plugin system.",
+  "expires_at": "2026-04-20T06:10:26.763245-03:00",
+  "last_analyzed_commit": "caa5dd5c066c5a200afeab7c7ffd5e6e180e4a6a",
+  "summary": "A Go-based CLI tool for detecting, migrating, validating, and running Goss configurations in monorepo and Kubernetes environments.",
   "architecture": "cli-tool",
   "primary_language": "Go",
   "hot_files": [
     "internal/runner/runner.go",
     "internal/migrate/goss/translator.go",
-    "internal/detector/detector_test.go",
     "internal/schema/validate_test.go",
-    "internal/reporter/reporter.go"
+    "internal/detector/detector_test.go",
+    "internal/runner/assertion_test.go"
   ],
   "patterns": [
     "Standard Go project layout",
-    "Plugin architecture",
-    "Migration/Translation pattern",
-    "Test-driven development"
+    "Migration/Translator pattern",
+    "Runner/Executor pattern",
+    "Schema validation",
+    "Plugin architecture"
   ],
   "concerns": [
-    "Heavy documentation churn in recent commits with no code changes",
-    "Missing reporter implementation file in key files list",
-    "Potential over-reliance on internal package restricting extensibility"
+    "Uncommitted changes (1 modified, 1 staged) may indicate incomplete work",
+    "Heavy reliance on test files for understanding core logic suggests documentation gaps",
+    "ClaudeDesktop/specs directory indicates tight coupling to a specific AI tooling workflow"
   ],
   "suggestions": [
-    "Focus on core runner and detector logic over documentation metadata",
-    "Add integration tests for the Goss migration path",
-    "Ensure plugin system is well-documented for community contributions"
+    "Commit or stash the pending changes to maintain a clean working tree",
+    "Add inline documentation or README files to reduce dependency on test files for understanding",
+    "Decouple from Claude-specific tooling if broader adoption is a goal"
   ]
 }
