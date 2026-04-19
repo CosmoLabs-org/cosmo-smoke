@@ -1,12 +1,12 @@
 {
   "version": "1.0",
-  "generated_at": "2026-04-19T02:17:02.108744-03:00",
+  "generated_at": "2026-04-19T02:17:26.622754-03:00",
   "generated_by": "GLM-4.7",
-  "expires_at": "2026-04-20T02:17:02.108744-03:00",
-  "last_analyzed_commit": "6ef56b437252fde7fd3389780306d44420fed0d9",
-  "summary": "A Go-based CLI tool for running, detecting, and migrating infrastructure tests with OpenTelemetry support and a Goss migration pathway.",
+  "expires_at": "2026-04-20T02:17:26.622754-03:00",
+  "last_analyzed_commit": "4dafdfe5b1f9c309964ef22d8f6e42a9fc80e562",
+  "summary": "A Go-based CLI tool that migrates Goss tests to a new schema, executes assertions, and correlates results via OpenTelemetry traces.",
   "architecture": "cli-tool",
-  "primary_language": "Go",
+  "primary_language": "go",
   "hot_files": [
     "internal/runner/runner.go",
     "internal/migrate/goss/translator.go",
@@ -15,22 +15,19 @@
     "internal/runner/assertion_test.go"
   ],
   "patterns": [
-    "Standard Go project layout",
-    "Migration/Translator pattern",
-    "Runner/Executor pattern",
-    "Plugin architecture",
-    "Test-driven development"
+    "standard-go-layout",
+    "migration-tool",
+    "plugin-architecture",
+    "test-driven-development"
   ],
   "concerns": [
-    "Heavy reliance on internal packages limits external reuse",
-    "Plugin directory exists but integration with core runner is unclear",
-    "Goss migration suggests legacy coupling that might introduce tech debt",
-    "CLI flags for OpenTelemetry added recently, indicating observability is an afterthought"
+    "tight coupling between runner and detector modules",
+    "kubernetes examples suggest potential configuration drift complexity",
+    "goss migration scope might limit long-term extensibility"
   ],
   "suggestions": [
-    "Document the plugin system and how it integrates with the runner",
-    "Ensure Goss migration path has a clear deprecation timeline",
-    "Expand OpenTelemetry instrumentation beyond CLI flags to internal components",
-    "Add integration tests for the Kubernetes examples"
+    "expand OpenTelemetry integration beyond trace correlation",
+    "document plugin development lifecycle",
+    "consider abstracting the migration layer for future tool support"
   ]
 }
