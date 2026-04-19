@@ -88,8 +88,12 @@ type Expect struct {
 	Postgres       *PostgresCheck   `yaml:"postgres_ping,omitempty"`
 	MySQL          *MySQLCheck      `yaml:"mysql_ping,omitempty"`
 	GRPCHealth      *GRPCHealthCheck      `yaml:"grpc_health,omitempty"`
-	DockerContainer *DockerContainerCheck `yaml:"docker_container_running,omitempty"`
-	DockerImage     *DockerImageCheck     `yaml:"docker_image_exists,omitempty"`
+	DockerContainer  *DockerContainerCheck  `yaml:"docker_container_running,omitempty"`
+	DockerImage      *DockerImageCheck      `yaml:"docker_image_exists,omitempty"`
+	URLReachable     *URLReachableCheck     `yaml:"url_reachable,omitempty"`
+	ServiceReachable *ServiceReachableCheck `yaml:"service_reachable,omitempty"`
+	S3Bucket         *S3BucketCheck         `yaml:"s3_bucket,omitempty"`
+	VersionCheck     *VersionCheck          `yaml:"version_check,omitempty"`
 }
 
 // PortCheck defines parameters for checking if a port is open and listening.
@@ -169,6 +173,32 @@ type JSONFieldCheck struct {
 	Equals   string `yaml:"equals,omitempty"`
 	Contains string `yaml:"contains,omitempty"`
 	Matches  string `yaml:"matches,omitempty"`
+}
+
+// URLReachableCheck verifies an HTTP/HTTPS endpoint is accessible.
+type URLReachableCheck struct {
+	URL        string   `yaml:"url"`
+	Timeout    Duration `yaml:"timeout,omitempty"`
+	StatusCode *int     `yaml:"status_code,omitempty"`
+}
+
+// ServiceReachableCheck verifies an external service dependency is accessible.
+type ServiceReachableCheck struct {
+	URL     string   `yaml:"url"`
+	Timeout Duration `yaml:"timeout,omitempty"`
+}
+
+// S3BucketCheck verifies an S3-compatible bucket is accessible via anonymous HEAD.
+type S3BucketCheck struct {
+	Bucket   string `yaml:"bucket"`
+	Region   string `yaml:"region,omitempty"`
+	Endpoint string `yaml:"endpoint,omitempty"`
+}
+
+// VersionCheck verifies an installed tool matches a required version pattern.
+type VersionCheck struct {
+	Command string `yaml:"command"`
+	Pattern string `yaml:"pattern"`
 }
 
 // Duration wraps time.Duration for YAML unmarshaling from strings like "5s".

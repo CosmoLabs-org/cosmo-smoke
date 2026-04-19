@@ -2,6 +2,7 @@ package schema
 
 import (
 	"fmt"
+	"regexp"
 	"strings"
 )
 
@@ -52,6 +53,35 @@ func Validate(cfg *SmokeConfig) error {
 		}
 		if t.Expect.DockerImage != nil && t.Expect.DockerImage.Image == "" {
 			errs = append(errs, fmt.Sprintf("%s: docker_image_exists.image is required", prefix))
+		}
+		if e := t.Expect.URLReachable; e != nil {
+			if e.URL == "" {
+				errs = append(errs, fmt.Sprintf("%s: url_reachable.url is required", prefix))
+			} else if !strings.HasPrefix(e.URL, "http://") && !strings.HasPrefix(e.URL, "https://") {
+				errs = append(errs, fmt.Sprintf("%s: url_reachable.url must start with http:// or https://", prefix))
+			}
+		}
+		if e := t.Expect.ServiceReachable; e != nil {
+			if e.URL == "" {
+				errs = append(errs, fmt.Sprintf("%s: service_reachable.url is required", prefix))
+			} else if !strings.HasPrefix(e.URL, "http://") && !strings.HasPrefix(e.URL, "https://") {
+				errs = append(errs, fmt.Sprintf("%s: service_reachable.url must start with http:// or https://", prefix))
+			}
+		}
+		if e := t.Expect.S3Bucket; e != nil {
+			if e.Bucket == "" {
+				errs = append(errs, fmt.Sprintf("%s: s3_bucket.bucket is required", prefix))
+			}
+		}
+		if e := t.Expect.VersionCheck; e != nil {
+			if e.Command == "" {
+				errs = append(errs, fmt.Sprintf("%s: version_check.command is required", prefix))
+			}
+			if e.Pattern == "" {
+				errs = append(errs, fmt.Sprintf("%s: version_check.pattern is required", prefix))
+			} else if _, err := regexp.Compile(e.Pattern); err != nil {
+				errs = append(errs, fmt.Sprintf("%s: version_check.pattern is invalid regex: %v", prefix, err))
+			}
 		}
 	}
 
