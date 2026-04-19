@@ -18,7 +18,7 @@ cmd/
 └── version.go       # smoke version (ldflags-injected)
 internal/
 ├── schema/          # SmokeConfig structs, YAML parsing, validation
-├── runner/          # Assertion engine (28 types), prereq runner, test execution
+├── runner/          # Assertion engine (29 types), prereq runner, test execution
 ├── reporter/        # Terminal (Lipgloss) + JSON reporters
 ├── monorepo/        # Sub-config discovery for monorepo projects
 └── detector/        # Project type detection + template generation
@@ -27,7 +27,7 @@ internal/
 ## Key Design Decisions
 
 - **Minimal deps**: Cobra + Lipgloss + yaml.v3 + gjson. No Viper, no Bubbletea.
-- **Pure assertions**: All 28 assertion types are pure functions — no side effects.
+- **Pure assertions**: All 29 assertion types are pure functions — no side effects.
 - **Config inheritance**: `includes:` directive + Go templates (`{{ .Env.FOO }}`).
 - **Config-dir-relative**: Commands execute from the config file's directory, not cwd.
 - **All errors at once**: Validation returns all errors, not just the first.
@@ -42,7 +42,7 @@ internal/
 
 ```bash
 go build ./...                    # Build
-go test ./...                     # Run all tests (281 total)
+go test ./...                     # Run all tests (289 total)
 smoke run                         # Self-smoke (6 tests)
 go build -ldflags "-s -w -X github.com/CosmoLabs-org/cosmo-smoke/cmd.Version=X.Y.Z" -o smoke .
 ```
@@ -86,6 +86,7 @@ smoke version
 | version_check | `{command, pattern}` | Tool version verification via shell command + regex |
 | otel_trace | `{jaeger_url, service_name?, min_spans?, timeout?}` | Jaeger API trace verification (W3C traceparent propagation) |
 | credential_check | `{source, name, contains?}` | Credential accessible without leaking value (env\|file\|exec) |
+| graphql | `{url, query?, status_code?, expect_types?, expect_contains?, timeout?}` | GraphQL introspection assertion |
 
 Plus `allow_failure: true` on Test for flaky/allowed-failure tests.
 

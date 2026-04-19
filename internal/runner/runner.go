@@ -549,6 +549,16 @@ func (r *Runner) runTestOnce(t schema.Test, opts RunOptions) TestResult {
 		}
 	}
 
+	if t.Expect.GraphQL != nil {
+		graphqlResults := CheckGraphQL(t.Expect.GraphQL)
+		for _, a := range graphqlResults {
+			assertions = append(assertions, a)
+			if !a.Passed {
+				allPassed = false
+			}
+		}
+	}
+
 	duration := time.Since(start)
 
 	if t.Expect.ResponseTimeMs != nil {

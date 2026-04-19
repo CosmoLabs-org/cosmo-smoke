@@ -105,6 +105,14 @@ func Validate(cfg *SmokeConfig) error {
 				errs = append(errs, fmt.Sprintf("%s: credential_check.name is required", prefix))
 			}
 		}
+		if e := t.Expect.GraphQL; e != nil {
+			if e.URL == "" {
+				errs = append(errs, fmt.Sprintf("%s: graphql.url is required", prefix))
+			}
+			if e.Query == "" && len(e.ExpectTypes) == 0 && e.ExpectContains == "" {
+				// Standard introspection — nothing else required
+			}
+		}
 		if e := t.Expect.OTelTrace; e != nil {
 			if e.JaegerURL == "" && cfg.OTel.JaegerURL == "" {
 				errs = append(errs, fmt.Sprintf("%s: otel_trace.jaeger_url is required (or set otel.jaeger_url globally)", prefix))
@@ -150,5 +158,6 @@ func hasStandaloneAssertions(e Expect) bool {
 		e.VersionCheck != nil ||
 		e.WebSocket != nil ||
 		e.OTelTrace != nil ||
-		e.Credential != nil
+		e.Credential != nil ||
+		e.GraphQL != nil
 }

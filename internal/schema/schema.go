@@ -108,6 +108,7 @@ type Expect struct {
 	WebSocket        *WebSocketCheck        `yaml:"websocket,omitempty"`
 	OTelTrace        *OTelTraceCheck        `yaml:"otel_trace,omitempty"`
 	Credential       *CredentialCheck       `yaml:"credential_check,omitempty"`
+	GraphQL          *GraphQLCheck          `yaml:"graphql,omitempty"`
 }
 
 // PortCheck defines parameters for checking if a port is open and listening.
@@ -240,6 +241,16 @@ type CredentialCheck struct {
 	Source   string `yaml:"source"`             // env | file | exec
 	Name     string `yaml:"name"`               // env var name, file path, or command
 	Contains string `yaml:"contains,omitempty"` // optional: value must contain this substring
+}
+
+// GraphQLCheck verifies a GraphQL endpoint is introspectable and returns expected types.
+type GraphQLCheck struct {
+	URL            string   `yaml:"url"`
+	Query          string   `yaml:"query,omitempty"`            // custom query (default: full introspection)
+	StatusCode     *int     `yaml:"status_code,omitempty"`      // expected HTTP status (default 200)
+	ExpectTypes    []string `yaml:"expect_types,omitempty"`     // types that must exist in schema
+	ExpectContains string   `yaml:"expect_contains,omitempty"`  // response body must contain substring
+	Timeout        Duration `yaml:"timeout,omitempty"`          // HTTP client timeout
 }
 
 // Duration wraps time.Duration for YAML unmarshaling from strings like "5s".
