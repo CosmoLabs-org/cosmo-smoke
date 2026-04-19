@@ -107,6 +107,7 @@ type Expect struct {
 	VersionCheck     *VersionCheck          `yaml:"version_check,omitempty"`
 	WebSocket        *WebSocketCheck        `yaml:"websocket,omitempty"`
 	OTelTrace        *OTelTraceCheck        `yaml:"otel_trace,omitempty"`
+	Credential       *CredentialCheck       `yaml:"credential_check,omitempty"`
 }
 
 // PortCheck defines parameters for checking if a port is open and listening.
@@ -231,6 +232,14 @@ type OTelTraceCheck struct {
 	ServiceName string   `yaml:"service_name,omitempty"`
 	MinSpans    int      `yaml:"min_spans,omitempty"`
 	Timeout     Duration `yaml:"timeout,omitempty"`
+}
+
+// CredentialCheck verifies a credential is accessible without leaking its value.
+// Source can be "env" (env var), "file" (file path), or "exec" (shell command).
+type CredentialCheck struct {
+	Source   string `yaml:"source"`             // env | file | exec
+	Name     string `yaml:"name"`               // env var name, file path, or command
+	Contains string `yaml:"contains,omitempty"` // optional: value must contain this substring
 }
 
 // Duration wraps time.Duration for YAML unmarshaling from strings like "5s".

@@ -95,6 +95,16 @@ func Validate(cfg *SmokeConfig) error {
 				}
 			}
 		}
+		if e := t.Expect.Credential; e != nil {
+			if e.Source == "" {
+				errs = append(errs, fmt.Sprintf("%s: credential_check.source is required", prefix))
+			} else if e.Source != "env" && e.Source != "file" && e.Source != "exec" {
+				errs = append(errs, fmt.Sprintf("%s: credential_check.source must be env, file, or exec", prefix))
+			}
+			if e.Name == "" {
+				errs = append(errs, fmt.Sprintf("%s: credential_check.name is required", prefix))
+			}
+		}
 		if e := t.Expect.OTelTrace; e != nil {
 			if e.JaegerURL == "" && cfg.OTel.JaegerURL == "" {
 				errs = append(errs, fmt.Sprintf("%s: otel_trace.jaeger_url is required (or set otel.jaeger_url globally)", prefix))
@@ -139,5 +149,6 @@ func hasStandaloneAssertions(e Expect) bool {
 		e.S3Bucket != nil ||
 		e.VersionCheck != nil ||
 		e.WebSocket != nil ||
-		e.OTelTrace != nil
+		e.OTelTrace != nil ||
+		e.Credential != nil
 }
