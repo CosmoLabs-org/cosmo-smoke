@@ -7,6 +7,55 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.7.0] - 2026-04-18
+
+### Added
+- add WebSocket assertion, monorepo discovery, gRPC build tag, optional run field (commit:089eac65)
+- add pre-commit hook integration (commit:7c7f2483)
+- implement v0.6 connect-and-verify assertions (commit:4a515fa5)
+- add url_reachable, service_reachable, s3_bucket, version_check types (commit:6edb4502)
+- add skip_if conditional execution and env config merge (commit:4b426ba8)
+- add Goss-to-cosmo-smoke migration tool (ROAD-024) (commit:c4226da8)
+
+## [0.6.0] - 2026-04-18
+
+### Added
+- add WebSocket assertion, monorepo discovery, gRPC build tag, optional run field (commit:089eac65)
+- add pre-commit hook integration (commit:7c7f2483)
+- implement v0.6 connect-and-verify assertions (commit:4a515fa5)
+- add url_reachable, service_reachable, s3_bucket, version_check types (commit:6edb4502)
+- add skip_if conditional execution and env config merge (commit:4b426ba8)
+- add Goss-to-cosmo-smoke migration tool (ROAD-024) (commit:c4226da8)
+
+## [0.5.0] - 2026-04-18
+
+### Added
+- smoke migrate goss: one-command Goss to cosmo-smoke migration with core 7 key mapping, --distro/--strict/--stats flags
+- skip_if: conditional test execution via env_unset, env_equals, file_missing conditions
+- Multi-environment configs via --env flag with deep-merge onto base config
+- # FEAT-009: Pre-commit hook integration
+
+**Type**: feature
+**Status**: closed
+**Created**: 2026-04-18
+
+## Description
+
+Pre-commit framework hook for smoke run integration
+- WebSocket connect-send-expect assertion (stdlib-only)
+- Monorepo sub-config auto-discovery with --monorepo flag
+- Optional gRPC module via build tag (-tags grpc)
+- Run field optional for network-only tests
+- add WebSocket assertion, monorepo discovery, gRPC build tag, optional run field (commit:089eac65)
+- add pre-commit hook integration (commit:7c7f2483)
+- implement v0.6 connect-and-verify assertions (commit:4a515fa5)
+- add url_reachable, service_reachable, s3_bucket, version_check types (commit:6edb4502)
+- add skip_if conditional execution and env config merge (commit:4b426ba8)
+- add Goss-to-cosmo-smoke migration tool (ROAD-024) (commit:c4226da8)
+
+### Changed
+- Split assertion.go into per-domain files
+
 ## [v0.4.0] - 2026-04-17
 
 ### Added

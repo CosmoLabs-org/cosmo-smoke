@@ -1,10 +1,10 @@
 {
   "version": "1.0",
-  "generated_at": "2026-04-18T23:21:39.485817-03:00",
+  "generated_at": "2026-04-18T23:27:28.359232-03:00",
   "generated_by": "GLM-4.7",
-  "expires_at": "2026-04-19T23:21:39.485817-03:00",
-  "last_analyzed_commit": "7a53278793cb6de4d1b978ef677bc9cf70d16b20",
-  "summary": "A Go-based CLI tool for detecting, migrating, and running infrastructure and API assertions, with recent expansion into WebSocket, gRPC, and monorepo support.",
+  "expires_at": "2026-04-19T23:27:28.359232-03:00",
+  "last_analyzed_commit": "d02d1c5bf4555198fba437d0a02ad21b1d56cb3f",
+  "summary": "A Go-based CLI tool for running infrastructure and service assertions, featuring Goss migration, monorepo discovery, and multi-protocol support.",
   "architecture": "cli-tool",
   "primary_language": "Go",
   "hot_files": [
@@ -18,17 +18,17 @@
     "Standard Go project layout",
     "Test-driven development",
     "Plugin architecture",
-    "Migration/Translation pattern",
+    "Migration/Translator pattern",
     "Runner/Reporter separation"
   ],
   "concerns": [
-    "Uncommitted changes (2 modified, 1 staged) may indicate instability",
-    "Heavy focus on goss migration suggests legacy coupling",
-    "Broad feature expansion (WebSocket, gRPC, monorepo) might lead to scope creep"
+    "Heavy reliance on AI-generated commits suggests possible instability or rapid prototyping phase",
+    "Goss migration implies technical debt from a legacy tool",
+    "Broad protocol support (WebSocket, gRPC, Kubernetes) may lead to scope creep"
   ],
   "suggestions": [
-    "Commit or stash the current working tree changes to establish a clean baseline",
-    "Focus testing efforts on the new WebSocket and gRPC assertion features",
-    "Document the plugin interface to encourage community extensions"
+    "Focus on stabilizing the core assertion runner before expanding protocol support",
+    "Document the Goss migration path and deprecation timeline",
+    "Establish integration tests for Kubernetes and plugin workflows"
   ]
 }

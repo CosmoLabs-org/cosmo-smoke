@@ -1,9 +1,9 @@
 {
   "repository": {
-    "version": "0.4.0",
-    "build": 162,
+    "version": "0.7.0",
+    "build": 163,
     "name": "cosmo-smoke",
-    "lastUpdated": "2026-04-19T02:27:10Z",
+    "lastUpdated": "2026-04-19T02:30:51Z",
     "derived_from": "git tag"
   },
   "metadata": {
@@ -11,44 +11,9 @@
     "sync_method": "git_history_analysis"
   },
   "releaseContext": {
-    "pendingFeatures": [
-      {
-        "branch": "agent-a1e42bae",
-        "title": "Agent a1e42bae",
-        "commits": 2,
-        "suggestedBump": "patch",
-        "mergedAt": "2026-04-16T19:08:22-03:00",
-        "files": [
-          ".review.json",
-          "CLAUDE.md",
-          "internal/runner/runner.go",
-          "internal/runner/runner_test.go",
-          "internal/schema/schema.go",
-          "internal/schema/schema_test.go",
-          "internal/schema/validate.go",
-          "internal/schema/validate_test.go"
-        ]
-      },
-      {
-        "branch": "agent-a25cc4b5",
-        "title": "Agent a25cc4b5",
-        "commits": 1,
-        "suggestedBump": "patch",
-        "mergedAt": "2026-04-17T14:28:17-03:00",
-        "files": [
-          "CLAUDE.md",
-          "internal/runner/assertion.go",
-          "internal/runner/assertion_test.go",
-          "internal/runner/runner.go",
-          "internal/schema/schema.go",
-          "internal/schema/validate.go",
-          "internal/schema/validate_test.go"
-        ]
-      }
-    ],
     "lastRelease": {
-      "version": "0.3.0",
-      "date": "2026-04-16",
+      "version": "0.7.0",
+      "date": "2026-04-18",
       "branch": "master"
     }
   }
