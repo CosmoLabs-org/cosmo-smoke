@@ -1,5 +1,5 @@
 {
-  "hash": "554dc42f9fb71b5b499db048236cbecdf55cbfba356cc395b58d98fe125bcf69",
+  "hash": "9d6eac6ae80c0fb89e756c42cfafd8a7061b74b4b616940a9977312f5dd92296",
   "project_name": "cosmo-smoke",
   "language": "go",
   "framework": "cli",
@@ -16,17 +16,17 @@
   ],
   "dependencies": [
     "ansi",
+    "bigfft",
     "cellbuf",
     "cobra",
     "colorprofile",
     "fsnotify",
     "gjson",
     "go-colorful",
-    "go-isatty",
-    "go-runewidth",
-    "grpc"
+    "go-humanize",
+    "go-isatty"
   ],
   "has_tests": true,
   "has_ci": true,
-  "generated_at": "2026-04-19T05:32:21.307018-03:00"
+  "generated_at": "2026-04-19T13:43:11.603446-03:00"
 }
