@@ -405,6 +405,34 @@ func (r *Runner) runTestOnce(t schema.Test, opts RunOptions) TestResult {
 			allPassed = false
 		}
 	}
+	if t.Expect.URLReachable != nil {
+		a := CheckURLReachable(t.Expect.URLReachable)
+		assertions = append(assertions, a)
+		if !a.Passed {
+			allPassed = false
+		}
+	}
+	if t.Expect.ServiceReachable != nil {
+		a := CheckServiceReachable(t.Expect.ServiceReachable)
+		assertions = append(assertions, a)
+		if !a.Passed {
+			allPassed = false
+		}
+	}
+	if t.Expect.S3Bucket != nil {
+		a := CheckS3Bucket(t.Expect.S3Bucket)
+		assertions = append(assertions, a)
+		if !a.Passed {
+			allPassed = false
+		}
+	}
+	if t.Expect.VersionCheck != nil {
+		a := CheckVersion(t.Expect.VersionCheck)
+		assertions = append(assertions, a)
+		if !a.Passed {
+			allPassed = false
+		}
+	}
 
 	duration := time.Since(start)
 
