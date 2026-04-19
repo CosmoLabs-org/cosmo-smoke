@@ -10,6 +10,7 @@ import (
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials"
 	"google.golang.org/grpc/credentials/insecure"
+	"google.golang.org/grpc/metadata"
 	healthpb "google.golang.org/grpc/health/grpc_health_v1"
 )
 
@@ -21,6 +22,11 @@ func CheckGRPCHealth(check *schema.GRPCHealthCheck) AssertionResult {
 	}
 	ctx, cancel := context.WithTimeout(context.Background(), timeout)
 	defer cancel()
+
+	if len(check.Metadata) > 0 {
+		md := metadata.New(check.Metadata)
+		ctx = metadata.NewOutgoingContext(ctx, md)
+	}
 
 	var creds credentials.TransportCredentials
 	if check.UseTLS {
@@ -58,4 +64,13 @@ func CheckGRPCHealth(check *schema.GRPCHealthCheck) AssertionResult {
 		Actual:   status,
 		Passed:   status == "SERVING",
 	}
+}
+
+// CheckGRPCHealthWithTrace is like CheckGRPCHealth but injects traceparent into metadata.
+func CheckGRPCHealthWithTrace(check *schema.GRPCHealthCheck, span *SpanContext) AssertionResult {
+	if check.Metadata == nil {
+		check.Metadata = make(map[string]string)
+	}
+	check.Metadata["traceparent"] = span.Traceparent()
+	return CheckGRPCHealth(check)
 }

@@ -1271,3 +1271,31 @@ func TestCheckDockerImageExists_Pass(t *testing.T) {
 		t.Errorf("expected pass for alpine:latest, got fail: actual=%s", r.Actual)
 	}
 }
+
+func TestCheckHTTP_TraceparentInjected(t *testing.T) {
+	var receivedTraceparent string
+	ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		receivedTraceparent = r.Header.Get("traceparent")
+		w.WriteHeader(200)
+	}))
+	defer ts.Close()
+
+	check := &schema.HTTPCheck{
+		URL:        ts.URL,
+		StatusCode: intPtr(200),
+	}
+	span := NewTraceContext().NewSpan()
+	results := CheckHTTPWithTrace(check, span)
+	for _, r := range results {
+		if !r.Passed {
+			t.Errorf("unexpected failure: %v", r)
+		}
+	}
+	if receivedTraceparent == "" {
+		t.Error("expected traceparent header to be injected")
+	}
+	expected := span.Traceparent()
+	if receivedTraceparent != expected {
+		t.Errorf("traceparent = %q, want %q", receivedTraceparent, expected)
+	}
+}

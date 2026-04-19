@@ -205,3 +205,39 @@ func TestValidate_DockerImageExists_MissingImage(t *testing.T) {
 		t.Error("expected validation error for empty docker_image_exists.image")
 	}
 }
+
+func TestValidate_OTelTraceRequiresJaegerURL(t *testing.T) {
+	cfg := &SmokeConfig{
+		Version: 1,
+		Project: "test",
+		Tests: []Test{{
+			Name: "otel",
+			Expect: Expect{
+				OTelTrace: &OTelTraceCheck{MinSpans: 1},
+			},
+		}},
+	}
+	err := Validate(cfg)
+	if err == nil {
+		t.Fatal("expected validation error for otel_trace without jaeger_url")
+	}
+	if !strings.Contains(err.Error(), "otel_trace.jaeger_url") {
+		t.Errorf("unexpected error: %v", err)
+	}
+}
+
+func TestValidate_OTelEnabledRequiresJaegerURL(t *testing.T) {
+	cfg := &SmokeConfig{
+		Version: 1,
+		Project: "test",
+		OTel:    OTelConfig{Enabled: true},
+		Tests:   []Test{{Name: "t", Run: "true"}},
+	}
+	err := Validate(cfg)
+	if err == nil {
+		t.Fatal("expected validation error for otel enabled without jaeger_url")
+	}
+	if !strings.Contains(err.Error(), "otel.jaeger_url") {
+		t.Errorf("unexpected error: %v", err)
+	}
+}

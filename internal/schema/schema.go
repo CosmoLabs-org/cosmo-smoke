@@ -18,6 +18,7 @@ type SmokeConfig struct {
 	Description string         `yaml:"description,omitempty"`
 	Includes    []string       `yaml:"includes,omitempty"`
 	Settings    Settings       `yaml:"settings,omitempty"`
+	OTel        OTelConfig     `yaml:"otel,omitempty"`
 	Prereqs     []Prerequisite `yaml:"prerequisites,omitempty"`
 	Tests       []Test         `yaml:"tests"`
 }
@@ -29,6 +30,14 @@ type Settings struct {
 	Parallel        bool     `yaml:"parallel,omitempty"`
 	Monorepo        bool     `yaml:"monorepo,omitempty"`
 	MonorepoExclude []string `yaml:"monorepo_exclude,omitempty"`
+}
+
+// OTelConfig configures OpenTelemetry trace context propagation.
+type OTelConfig struct {
+	Enabled          bool   `yaml:"enabled,omitempty"`
+	JaegerURL        string `yaml:"jaeger_url,omitempty"`
+	ServiceName      string `yaml:"service_name,omitempty"`
+	TracePropagation bool   `yaml:"trace_propagation,omitempty"`
 }
 
 // Prerequisite is a command that must succeed before tests run.
@@ -97,6 +106,7 @@ type Expect struct {
 	S3Bucket         *S3BucketCheck         `yaml:"s3_bucket,omitempty"`
 	VersionCheck     *VersionCheck          `yaml:"version_check,omitempty"`
 	WebSocket        *WebSocketCheck        `yaml:"websocket,omitempty"`
+	OTelTrace        *OTelTraceCheck        `yaml:"otel_trace,omitempty"`
 }
 
 // PortCheck defines parameters for checking if a port is open and listening.
@@ -164,10 +174,11 @@ type HTTPCheck struct {
 
 // GRPCHealthCheck queries the grpc.health.v1.Health/Check endpoint.
 type GRPCHealthCheck struct {
-	Address string   `yaml:"address"`           // host:port
-	Service string   `yaml:"service,omitempty"` // "" = overall server health
-	UseTLS  bool     `yaml:"use_tls,omitempty"` // default false (insecure)
-	Timeout Duration `yaml:"timeout,omitempty"` // default 5s
+	Address  string            `yaml:"address"`            // host:port
+	Service  string            `yaml:"service,omitempty"`  // "" = overall server health
+	UseTLS   bool              `yaml:"use_tls,omitempty"`  // default false (insecure)
+	Timeout  Duration          `yaml:"timeout,omitempty"`  // default 5s
+	Metadata map[string]string `yaml:"-"`                  // runtime-only, injected by runner
 }
 
 // JSONFieldCheck defines parameters for asserting on JSON fields in stdout.
@@ -206,11 +217,20 @@ type VersionCheck struct {
 
 // WebSocketCheck verifies a WebSocket endpoint is reachable and responds as expected.
 type WebSocketCheck struct {
-	URL            string   `yaml:"url"`
-	Send           string   `yaml:"send,omitempty"`
-	ExpectContains string   `yaml:"expect_contains,omitempty"`
-	ExpectMatches  string   `yaml:"expect_matches,omitempty"`
-	Timeout        Duration `yaml:"timeout,omitempty"`
+	URL            string            `yaml:"url"`
+	Send           string            `yaml:"send,omitempty"`
+	ExpectContains string            `yaml:"expect_contains,omitempty"`
+	ExpectMatches  string            `yaml:"expect_matches,omitempty"`
+	Timeout        Duration          `yaml:"timeout,omitempty"`
+	Headers        map[string]string `yaml:"headers,omitempty"`
+}
+
+// OTelTraceCheck verifies that a trace arrived at a Jaeger-compatible collector.
+type OTelTraceCheck struct {
+	JaegerURL   string   `yaml:"jaeger_url,omitempty"`
+	ServiceName string   `yaml:"service_name,omitempty"`
+	MinSpans    int      `yaml:"min_spans,omitempty"`
+	Timeout     Duration `yaml:"timeout,omitempty"`
 }
 
 // Duration wraps time.Duration for YAML unmarshaling from strings like "5s".

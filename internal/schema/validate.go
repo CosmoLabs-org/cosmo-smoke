@@ -95,6 +95,23 @@ func Validate(cfg *SmokeConfig) error {
 				}
 			}
 		}
+		if e := t.Expect.OTelTrace; e != nil {
+			if e.JaegerURL == "" && cfg.OTel.JaegerURL == "" {
+				errs = append(errs, fmt.Sprintf("%s: otel_trace.jaeger_url is required (or set otel.jaeger_url globally)", prefix))
+			} else if e.JaegerURL != "" && !strings.HasPrefix(e.JaegerURL, "http://") && !strings.HasPrefix(e.JaegerURL, "https://") {
+				errs = append(errs, fmt.Sprintf("%s: otel_trace.jaeger_url must start with http:// or https://", prefix))
+			}
+			if e.MinSpans < 0 {
+				errs = append(errs, fmt.Sprintf("%s: otel_trace.min_spans must be >= 0", prefix))
+			}
+		}
+	}
+
+	if cfg.OTel.Enabled && cfg.OTel.JaegerURL == "" {
+		errs = append(errs, "otel.jaeger_url is required when otel is enabled")
+	}
+	if cfg.OTel.Enabled && cfg.OTel.JaegerURL != "" && !strings.HasPrefix(cfg.OTel.JaegerURL, "http://") && !strings.HasPrefix(cfg.OTel.JaegerURL, "https://") {
+		errs = append(errs, "otel.jaeger_url must start with http:// or https://")
 	}
 
 	if len(errs) > 0 {
@@ -121,5 +138,6 @@ func hasStandaloneAssertions(e Expect) bool {
 		e.ServiceReachable != nil ||
 		e.S3Bucket != nil ||
 		e.VersionCheck != nil ||
-		e.WebSocket != nil
+		e.WebSocket != nil ||
+		e.OTelTrace != nil
 }

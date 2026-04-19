@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"context"
 	"fmt"
+	"net/http"
 	"os"
 	"os/exec"
 	"strings"
@@ -53,6 +54,7 @@ type Runner struct {
 	Config    *schema.SmokeConfig
 	Reporter  reporter.Reporter
 	ConfigDir string
+	trace     *TraceContext
 }
 
 // Run executes all tests per the options and returns the suite result.
@@ -86,6 +88,11 @@ func (r *Runner) Run(opts RunOptions) (*SuiteResult, error) {
 
 	// Filter tests by tags
 	tests := filterTests(r.Config.Tests, opts.Tags, opts.ExcludeTags)
+
+	// Initialize trace context if otel is enabled
+	if r.Config.OTel.Enabled {
+		r.trace = NewTraceContext()
+	}
 
 	suite := &SuiteResult{
 		Project: r.Config.Project,
@@ -257,6 +264,12 @@ func (r *Runner) runTestOnce(t schema.Test, opts RunOptions) TestResult {
 		return tr
 	}
 
+	// Create trace span for this test
+	var span *SpanContext
+	if r.trace != nil && r.trace.Enabled {
+		span = r.trace.NewSpan()
+	}
+
 	// Determine timeout
 	timeout := opts.Timeout
 	if timeout == 0 {
@@ -378,7 +391,12 @@ func (r *Runner) runTestOnce(t schema.Test, opts RunOptions) TestResult {
 		}
 	}
 	if t.Expect.HTTP != nil {
-		httpResults := CheckHTTP(t.Expect.HTTP)
+		var httpResults []AssertionResult
+		if span != nil && r.Config.OTel.TracePropagation {
+			httpResults = CheckHTTPWithTrace(t.Expect.HTTP, span)
+		} else {
+			httpResults = CheckHTTP(t.Expect.HTTP)
+		}
 		for _, a := range httpResults {
 			assertions = append(assertions, a)
 			if !a.Passed {
@@ -431,9 +449,14 @@ func (r *Runner) runTestOnce(t schema.Test, opts RunOptions) TestResult {
 		}
 	}
 	if t.Expect.GRPCHealth != nil {
-		a := CheckGRPCHealth(t.Expect.GRPCHealth)
-		assertions = append(assertions, a)
-		if !a.Passed {
+		var grpcResult AssertionResult
+		if span != nil && r.Config.OTel.TracePropagation {
+			grpcResult = CheckGRPCHealthWithTrace(t.Expect.GRPCHealth, span)
+		} else {
+			grpcResult = CheckGRPCHealth(t.Expect.GRPCHealth)
+		}
+		assertions = append(assertions, grpcResult)
+		if !grpcResult.Passed {
 			allPassed = false
 		}
 	}
@@ -480,7 +503,38 @@ func (r *Runner) runTestOnce(t schema.Test, opts RunOptions) TestResult {
 		}
 	}
 	if t.Expect.WebSocket != nil {
-		a := CheckWebSocket(t.Expect.WebSocket)
+		var wsResult AssertionResult
+		if span != nil && r.Config.OTel.TracePropagation {
+			wsResult = CheckWebSocketWithTrace(t.Expect.WebSocket, span)
+		} else {
+			wsResult = CheckWebSocket(t.Expect.WebSocket)
+		}
+		assertions = append(assertions, wsResult)
+		if !wsResult.Passed {
+			allPassed = false
+		}
+	}
+
+	if t.Expect.OTelTrace != nil {
+		check := t.Expect.OTelTrace
+		if check.JaegerURL == "" {
+			check.JaegerURL = r.Config.OTel.JaegerURL
+		}
+		if check.ServiceName == "" {
+			check.ServiceName = r.Config.OTel.ServiceName
+		}
+		if check.ServiceName == "" {
+			check.ServiceName = "smoke"
+		}
+		traceID := ""
+		if r.trace != nil && r.trace.Enabled {
+			traceID = r.trace.TraceID()
+		}
+		client := &http.Client{Timeout: check.Timeout.Duration + 5*time.Second}
+		if client.Timeout <= 5*time.Second {
+			client.Timeout = 10 * time.Second
+		}
+		a := CheckOTelTrace(check, traceID, client)
 		assertions = append(assertions, a)
 		if !a.Passed {
 			allPassed = false

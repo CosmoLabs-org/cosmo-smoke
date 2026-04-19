@@ -15,3 +15,8 @@ func CheckGRPCHealth(check *schema.GRPCHealthCheck) AssertionResult {
 		Passed:   false,
 	}
 }
+
+// CheckGRPCHealthWithTrace is the stub version (delegates to stub).
+func CheckGRPCHealthWithTrace(check *schema.GRPCHealthCheck, span *SpanContext) AssertionResult {
+	return CheckGRPCHealth(check)
+}

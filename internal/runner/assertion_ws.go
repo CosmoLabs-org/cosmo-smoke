@@ -20,12 +20,17 @@ import (
 const websocketGUID = "258EAFA5-E914-47DA-95CA-C5AB0DC85B11"
 
 // wsUpgrade performs a WebSocket handshake over a raw TCP connection.
-func wsUpgrade(conn net.Conn, host, path string, timeout time.Duration) error {
+func wsUpgrade(conn net.Conn, host, path string, timeout time.Duration, extraHeaders map[string]string) error {
 	key := make([]byte, 16)
 	rand.Read(key)
 	clientKey := base64.StdEncoding.EncodeToString(key)
 
-	upgradeReq := fmt.Sprintf("GET %s HTTP/1.1\r\nHost: %s\r\nUpgrade: websocket\r\nConnection: Upgrade\r\nSec-WebSocket-Key: %s\r\nSec-WebSocket-Version: 13\r\n\r\n", path, host, clientKey)
+	var hdrs strings.Builder
+	for k, v := range extraHeaders {
+		hdrs.WriteString(fmt.Sprintf("%s: %s\r\n", k, v))
+	}
+
+	upgradeReq := fmt.Sprintf("GET %s HTTP/1.1\r\nHost: %s\r\nUpgrade: websocket\r\nConnection: Upgrade\r\nSec-WebSocket-Key: %s\r\nSec-WebSocket-Version: 13\r\n%s\r\n", path, host, clientKey, hdrs.String())
 	conn.SetDeadline(time.Now().Add(timeout))
 	conn.Write([]byte(upgradeReq))
 
@@ -206,7 +211,7 @@ func CheckWebSocket(check *schema.WebSocketCheck) AssertionResult {
 	elapsed := time.Since(start)
 
 	// Upgrade
-	if err := wsUpgrade(conn, host, path, timeout); err != nil {
+	if err := wsUpgrade(conn, host, path, timeout, check.Headers); err != nil {
 		return AssertionResult{
 			Type:     "websocket",
 			Expected: fmt.Sprintf("%s upgrade", check.URL),
@@ -297,4 +302,13 @@ func CheckWebSocket(check *schema.WebSocketCheck) AssertionResult {
 			}
 		}
 	}
+}
+
+// CheckWebSocketWithTrace is like CheckWebSocket but injects a traceparent header.
+func CheckWebSocketWithTrace(check *schema.WebSocketCheck, span *SpanContext) AssertionResult {
+	if check.Headers == nil {
+		check.Headers = make(map[string]string)
+	}
+	check.Headers["traceparent"] = span.Traceparent()
+	return CheckWebSocket(check)
 }

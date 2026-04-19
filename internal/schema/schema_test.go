@@ -377,3 +377,45 @@ tests:
 		})
 	}
 }
+
+func TestSmokeConfig_OTel(t *testing.T) {
+	input := `
+version: 1
+project: test
+otel:
+  enabled: true
+  jaeger_url: "http://jaeger:16686"
+  service_name: "my-service"
+  trace_propagation: true
+tests:
+  - name: otel check
+    expect:
+      otel_trace:
+        jaeger_url: "http://jaeger:16686"
+        service_name: "my-service"
+        min_spans: 1
+        timeout: 5s
+`
+	cfg, err := Parse([]byte(input))
+	if err != nil {
+		t.Fatalf("parse error: %v", err)
+	}
+	if !cfg.OTel.Enabled {
+		t.Error("expected otel.enabled = true")
+	}
+	if cfg.OTel.JaegerURL != "http://jaeger:16686" {
+		t.Errorf("jaeger_url = %q, want http://jaeger:16686", cfg.OTel.JaegerURL)
+	}
+	if cfg.OTel.ServiceName != "my-service" {
+		t.Errorf("service_name = %q, want my-service", cfg.OTel.ServiceName)
+	}
+	if !cfg.OTel.TracePropagation {
+		t.Error("expected trace_propagation = true")
+	}
+	if cfg.Tests[0].Expect.OTelTrace == nil {
+		t.Fatal("expected otel_trace assertion")
+	}
+	if cfg.Tests[0].Expect.OTelTrace.MinSpans != 1 {
+		t.Errorf("min_spans = %d, want 1", cfg.Tests[0].Expect.OTelTrace.MinSpans)
+	}
+}

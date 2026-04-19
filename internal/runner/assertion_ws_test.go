@@ -140,3 +140,25 @@ func TestCheckWebSocket_ConnectOnly(t *testing.T) {
 		t.Errorf("expected pass for connect-only, got: %s", result.Actual)
 	}
 }
+
+func TestCheckWebSocket_TraceparentInjected(t *testing.T) {
+	ts := wsTestServer(func(conn net.Conn, msg string) string {
+		return "ok:" + msg
+	})
+	defer ts.Close()
+
+	check := &schema.WebSocketCheck{
+		URL:            "ws://" + strings.TrimPrefix(ts.URL, "http://") + "/ws",
+		Send:           "ping",
+		ExpectContains: "ok:",
+	}
+	span := NewTraceContext().NewSpan()
+	result := CheckWebSocketWithTrace(check, span)
+	if !result.Passed {
+		t.Errorf("expected pass, got: %s", result.Actual)
+	}
+	// The traceparent was injected into check.Headers before the call
+	if check.Headers["traceparent"] != span.Traceparent() {
+		t.Errorf("headers traceparent = %q, want %q", check.Headers["traceparent"], span.Traceparent())
+	}
+}

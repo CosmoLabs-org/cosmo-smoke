@@ -304,3 +304,12 @@ func CheckJSONField(jsonStr string, check *schema.JSONFieldCheck) []AssertionRes
 
 	return results
 }
+
+// CheckHTTPWithTrace is like CheckHTTP but injects a traceparent header.
+func CheckHTTPWithTrace(check *schema.HTTPCheck, span *SpanContext) []AssertionResult {
+	if check.Headers == nil {
+		check.Headers = make(map[string]string)
+	}
+	check.Headers["traceparent"] = span.Traceparent()
+	return CheckHTTP(check)
+}
