@@ -10,13 +10,17 @@ Runs lightweight smoke tests defined in `.smoke.yaml` to verify a project is fun
 | `smoke run --tag <tag>` | Run only tests matching the given tag |
 | `smoke run --exclude-tag <tag>` | Run all tests except those with the given tag |
 | `smoke run --format json` | Output results as JSON (for CI pipelines) |
-| `smoke run --format junit` | Output results as JUnit XML (for CI test reporting) |
+| `smoke run --format junit` | Output results as JUnit XML |
+| `smoke run --format tap` | Output results in TAP format |
+| `smoke run --format prometheus` | Output Prometheus metrics |
 | `smoke run --fail-fast` | Stop immediately on the first failure |
 | `smoke run --timeout <dur>` | Override per-test timeout (e.g. `60s`, `2m`) |
 | `smoke run --dry-run` | List matching tests without executing them |
+| `smoke run --watch` | Re-run tests on file changes (500ms debounce) |
 | `smoke run -f <path>` | Use a config file at a non-default path |
 | `smoke init` | Auto-detect project type and generate `.smoke.yaml` |
 | `smoke init --force` | Overwrite an existing `.smoke.yaml` |
+| `smoke init --from-running <container>` | Generate config from a running Docker container |
 | `smoke version` | Print the binary version |
 
 ## Workflow
@@ -25,7 +29,9 @@ Runs lightweight smoke tests defined in `.smoke.yaml` to verify a project is fun
 2. Edit the generated config — add real commands, adjust timeouts, tag tests.
 3. Run `smoke run` to execute all tests.
 4. Use `--tag` to run focused subsets (e.g. `--tag build` in CI, `--tag runtime` locally).
-5. Use `--format json` to integrate results into CI pipelines or monitoring systems. Use `--format junit` for CI systems that consume JUnit XML (GitHub Actions, Jenkins, GitLab CI).
+5. Use `--format json` or `--format junit` to integrate results into CI pipelines.
+6. Use `--watch` during development to re-run on file changes.
+7. Add `.pre-commit-hooks.yaml` integration for automatic smoke testing on commit.
 
 ## Flags Reference
 
@@ -36,16 +42,18 @@ Runs lightweight smoke tests defined in `.smoke.yaml` to verify a project is fun
 | `-f, --file` | string | `.smoke.yaml` | Config file path |
 | `--tag` | string (repeatable) | — | Include only tests with this tag |
 | `--exclude-tag` | string (repeatable) | — | Exclude tests with this tag |
-| `--format` | string | `terminal` | Output format: `terminal`, `json`, or `junit` |
+| `--format` | string | `terminal` | Output format: `terminal`, `json`, `junit`, `tap`, `prometheus` |
 | `--fail-fast` | bool | `false` | Stop on first failure |
 | `--timeout` | duration | _(from config)_ | Per-test timeout override |
 | `--dry-run` | bool | `false` | List tests without running |
+| `--watch` | bool | `false` | Re-run tests on file changes |
 
 ### `smoke init`
 
 | Flag | Type | Default | Description |
 |------|------|---------|-------------|
 | `-f, --force` | bool | `false` | Overwrite existing `.smoke.yaml` |
+| `--from-running` | string | — | Generate config from a running Docker container |
 
 ## Conventions
 
@@ -57,6 +65,60 @@ Runs lightweight smoke tests defined in `.smoke.yaml` to verify a project is fun
 - Tags are free-form strings. A test with no tags is always included unless `--tag` is set.
 - `cleanup` runs after the test regardless of pass/fail, but its exit code is ignored.
 - Prerequisites run before all tests. If any prerequisite fails, the run aborts.
+
+## Test Modifiers
+
+| Modifier | Field | Description |
+|----------|-------|-------------|
+| **Retry** | `retry: {count: N, backoff: <dur>}` | Retry flaky tests with exponential backoff. `backoff` doubles each retry. |
+| **Allow failure** | `allow_failure: true` | Test passes even if assertions fail. Useful for flaky external dependencies. |
+| **Skip conditions** | `skip_if: {env_unset, env_equals, file_missing}` | Conditionally skip a test without failing. |
+| **Tags** | `tags: [build, runtime]` | Free-form labels for `--tag`/`--exclude-tag` filtering. |
+| **Timeout** | `timeout: 60s` | Per-test timeout override. |
+| **Cleanup** | `cleanup: "rm -f /tmp/test"` | Runs after the test regardless of pass/fail. |
+
+## Conditional Execution
+
+Skip tests based on environment conditions:
+
+```yaml
+tests:
+  - name: "Docker build"
+    run: "docker build ."
+    expect:
+      exit_code: 0
+    skip_if:
+      env_unset: "DOCKER_HOST"      # skip if DOCKER_HOST not set
+    # skip_if:
+    #   env_equals: { var: "CI", value: "true" }
+    #   file_missing: "Dockerfile"
+```
+
+## Config Inheritance
+
+Use `includes:` to share tests across multiple configs:
+
+```yaml
+# .smoke.yaml
+version: 1
+project: my-api
+includes:
+  - .smoke.common.yaml
+tests:
+  - name: "Project-specific test"
+    run: "..."
+```
+
+## Multi-Environment Configs
+
+Load environment-specific overrides:
+
+```bash
+# Base config + staging overrides
+smoke run -f .smoke.yaml -f .smoke.staging.yaml
+```
+
+Environment configs append tests and override settings.
 
 ## Exit Codes
 

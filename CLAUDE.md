@@ -6,7 +6,7 @@ Universal smoke test runner. Standalone Go binary that reads `.smoke.yaml` and r
 
 **Repository**: `github.com/CosmoLabs-org/cosmo-smoke`
 **Company**: CosmoLabs
-**Version**: 0.1.0 (beta)
+**Version**: 0.6.0
 
 ## Architecture
 
@@ -38,7 +38,7 @@ internal/
 
 ```bash
 go build ./...                    # Build
-go test ./...                     # Run all tests (64 total)
+go test ./...                     # Run all tests (246 total)
 smoke run                         # Self-smoke (6 tests)
 go build -ldflags "-s -w -X github.com/CosmoLabs-org/cosmo-smoke/cmd.Version=X.Y.Z" -o smoke .
 ```
@@ -75,6 +75,10 @@ smoke version
 | grpc_health | `{address, service?, use_tls?, timeout?}` | grpc.health.v1 Health/Check returns SERVING |
 | docker_container_running | `{name}` | Named Docker container is currently running |
 | docker_image_exists | `{image}` | Docker image exists locally |
+| url_reachable | `{url, timeout?, status_code?}` | HTTP/HTTPS connectivity check |
+| service_reachable | `{url, timeout?}` | External service dependency check |
+| s3_bucket | `{bucket, region?, endpoint?}` | S3-compatible bucket accessibility (anonymous HEAD) |
+| version_check | `{command, pattern}` | Tool version verification via shell command + regex |
 
 Plus `allow_failure: true` on Test for flaky/allowed-failure tests.
 
