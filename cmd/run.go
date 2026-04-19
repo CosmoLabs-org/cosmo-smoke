@@ -41,6 +41,19 @@ func withOTelExport(rep reporter.Reporter, cfg *schema.SmokeConfig) reporter.Rep
 	return reporter.NewMultiReporter(rep, otel)
 }
 
+// withPushReport wraps the reporter with a PushReporter if --report-url is set.
+func withPushReport(rep reporter.Reporter) reporter.Reporter {
+	if reportURL == "" {
+		return rep
+	}
+	if _, err := url.Parse(reportURL); err != nil {
+		fmt.Fprintf(os.Stderr, "warning: invalid report-url: %v\n", err)
+		return rep
+	}
+	push := reporter.NewPushReporter(reportURL, reportAPIKey)
+	return reporter.NewMultiReporter(rep, push)
+}
+
 var runCmd = &cobra.Command{
 	Use:   "run",
 	Short: "Run smoke tests",
@@ -61,6 +74,8 @@ var (
 	monorepoMode bool
 	otelCollector string
 	noOtel       bool
+	reportURL    string
+	reportAPIKey string
 )
 
 func init() {
@@ -77,6 +92,8 @@ func init() {
 	runCmd.Flags().BoolVar(&monorepoMode, "monorepo", false, "Auto-discover .smoke.yaml in subdirectories")
 	runCmd.Flags().StringVar(&otelCollector, "otel-collector", "", "Override otel.jaeger_url and enable tracing")
 	runCmd.Flags().BoolVar(&noOtel, "no-otel", false, "Disable otel trace propagation for this run")
+	runCmd.Flags().StringVar(&reportURL, "report-url", "", "POST results to this URL after run")
+	runCmd.Flags().StringVar(&reportAPIKey, "report-api-key", "", "API key for report-url endpoint (X-API-Key header)")
 }
 
 func runSmoke(cmd *cobra.Command, args []string) error {
@@ -131,6 +148,7 @@ func runSmoke(cmd *cobra.Command, args []string) error {
 			rep = reporter.NewTerminal(os.Stdout)
 		}
 		rep = withOTelExport(rep, cfg)
+		rep = withPushReport(rep)
 
 		configs, err := monorepo.Discover(configDir, cfg.Settings.MonorepoExclude)
 		if err != nil {

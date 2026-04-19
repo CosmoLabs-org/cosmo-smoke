@@ -11,6 +11,7 @@ import (
 	"syscall"
 	"time"
 
+	"github.com/CosmoLabs-org/cosmo-smoke/internal/dashboard"
 	"github.com/CosmoLabs-org/cosmo-smoke/internal/reporter"
 	"github.com/CosmoLabs-org/cosmo-smoke/internal/runner"
 	"github.com/CosmoLabs-org/cosmo-smoke/internal/schema"
@@ -28,6 +29,9 @@ var (
 	servePort       string
 	servePath       string
 	serveConfigFile string
+	serveDashboard  bool
+	serveAPIKey     string
+	serveDBPath     string
 )
 
 func init() {
@@ -35,6 +39,9 @@ func init() {
 	serveCmd.Flags().StringVarP(&servePort, "port", "p", "8080", "Port to listen on")
 	serveCmd.Flags().StringVar(&servePath, "path", "/healthz", "Health endpoint path")
 	serveCmd.Flags().StringVarP(&serveConfigFile, "file", "f", ".smoke.yaml", "Config file path")
+	serveCmd.Flags().BoolVar(&serveDashboard, "dashboard", false, "Enable dashboard aggregation mode")
+	serveCmd.Flags().StringVar(&serveAPIKey, "api-key", "", "API key for POST /api/results (X-API-Key header)")
+	serveCmd.Flags().StringVar(&serveDBPath, "db-path", "smoke-dashboard.db", "SQLite database path")
 }
 
 // noopReporter satisfies reporter.Reporter without emitting any output.
@@ -133,6 +140,17 @@ func runServe(cmd *cobra.Command, args []string) error {
 
 	mux := http.NewServeMux()
 	mux.HandleFunc(servePath, buildHandler(serveConfigFile))
+
+	if serveDashboard {
+		store, err := dashboard.NewStore(serveDBPath, 1000)
+		if err != nil {
+			return fmt.Errorf("open dashboard database: %w", err)
+		}
+		defer store.Close()
+		dashboard.RegisterRoutes(mux, store, serveAPIKey)
+		mux.Handle("/dashboard", dashboard.DashboardHandler())
+		fmt.Fprintf(os.Stderr, "Dashboard mode: %s/api/results\n", "http://localhost"+addr)
+	}
 
 	srv := &http.Server{
 		Addr:    addr,

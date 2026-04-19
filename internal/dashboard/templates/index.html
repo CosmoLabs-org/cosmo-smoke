@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CosmoLabs Smoke Dashboard</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { font-family: 'SF Mono', 'Menlo', 'Monaco', monospace; background: #1a1b26; color: #c0caf5; padding: 20px; }
+h1 { color: #7aa2f7; font-size: 1.2em; margin-bottom: 4px; }
+.header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
+.summary { font-size: 0.85em; color: #565f89; margin-bottom: 16px; }
+.summary .healthy { color: #9ece6a; }
+.summary .failing { color: #f7768e; }
+.updated { color: #565f89; font-size: 0.8em; }
+table { width: 100%; border-collapse: collapse; }
+th { text-align: left; color: #565f89; font-size: 0.75em; text-transform: uppercase; letter-spacing: 0.05em; padding: 8px 12px; border-bottom: 1px solid #292e42; }
+td { padding: 8px 12px; border-bottom: 1px solid #1f2335; font-size: 0.85em; }
+tr:hover { background: #1f2335; }
+.badge { display: inline-block; padding: 2px 8px; border-radius: 3px; font-size: 0.75em; font-weight: 600; }
+.badge.healthy { background: #1a2b1a; color: #9ece6a; }
+.badge.failing { background: #2b1a1a; color: #f7768e; }
+.age { color: #565f89; }
+.empty { text-align: center; padding: 40px; color: #565f89; }
+</style>
+</head>
+<body>
+<div class="header">
+  <h1>CosmoLabs Smoke Dashboard</h1>
+  <span class="updated" id="updated"></span>
+</div>
+<div class="summary" id="summary"></div>
+<table>
+  <thead>
+    <tr><th>Project</th><th>Tests</th><th>Pass</th><th>Fail</th><th>Status</th><th>Last Run</th></tr>
+  </thead>
+  <tbody id="projects"></tbody>
+</table>
+<div class="empty" id="empty" style="display:none">No projects reporting yet.</div>
+<script>
+function ageHuman(seconds) {
+  if (seconds < 60) return seconds + 's';
+  if (seconds < 3600) return Math.floor(seconds / 60) + 'm';
+  if (seconds < 86400) return Math.floor(seconds / 3600) + 'h';
+  return Math.floor(seconds / 86400) + 'd';
+}
+
+function text(parent, text) {
+  var el = document.createElement('span');
+  el.textContent = text;
+  parent.appendChild(el);
+  return el;
+}
+
+function refresh() {
+  fetch('/api/projects')
+    .then(function(r) { return r.json(); })
+    .then(function(data) {
+      document.getElementById('updated').textContent = 'Updated ' + new Date().toLocaleTimeString();
+      var s = data.summary || {};
+      var summaryEl = document.getElementById('summary');
+      summaryEl.textContent = '';
+      var h = text(summaryEl, (s.healthy || 0) + ' healthy');
+      h.className = 'healthy';
+      text(summaryEl, ' | ');
+      var f = text(summaryEl, (s.failing || 0) + ' failing');
+      f.className = 'failing';
+      text(summaryEl, ' | ' + (s.total_projects || 0) + ' total');
+
+      var tbody = document.getElementById('projects');
+      var empty = document.getElementById('empty');
+      if (!data.projects || data.projects.length === 0) {
+        tbody.textContent = '';
+        empty.style.display = 'block';
+        return;
+      }
+      empty.style.display = 'none';
+      tbody.textContent = '';
+
+      data.projects.forEach(function(p) {
+        var tr = document.createElement('tr');
+        var cols = [p.name, p.total_tests, p.passed, p.failed];
+        cols.forEach(function(val) {
+          var td = document.createElement('td');
+          td.textContent = val;
+          tr.appendChild(td);
+        });
+
+        var statusTd = document.createElement('td');
+        var badge = document.createElement('span');
+        badge.className = 'badge ' + p.latest_status;
+        badge.textContent = p.latest_status;
+        statusTd.appendChild(badge);
+        tr.appendChild(statusTd);
+
+        var ageTd = document.createElement('td');
+        ageTd.className = 'age';
+        ageTd.textContent = ageHuman(p.last_run_age_seconds) + ' ago';
+        tr.appendChild(ageTd);
+
+        tbody.appendChild(tr);
+      });
+    })
+    .catch(function() {});
+}
+
+refresh();
+setInterval(refresh, 30000);
+</script>
+</body>
+</html>
