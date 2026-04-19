@@ -1,18 +1,20 @@
 ---
-title: "cosmo-smoke v0.7 — Monorepo, WebSocket, gRPC Build Tag"
-created: 2026-04-18
-status: PENDING
-priority: high
 branch: master
-origin: "/brainplan"
-tags: [continuation, implementation, v0.7]
+completed: "2026-04-18"
+created: "2026-04-18"
+goals_completed: 8
 goals_total: 8
-goals_completed: 0
+origin: /brainplan
+priority: high
 related_prompts:
-  - docs/brainstorming/2026-04-18-v0-7-monorepo-websocket-grpc-buildtag.md
-  - docs/planning-mode/2026-04-18-v0-7-monorepo-websocket-grpc-buildtag.md
-brainstorm_ref: docs/brainstorming/2026-04-18-v0-7-monorepo-websocket-grpc-buildtag.md
-plan_ref: docs/planning-mode/2026-04-18-v0-7-monorepo-websocket-grpc-buildtag.md
+    - docs/brainstorming/2026-04-18-v0-7-monorepo-websocket-grpc-buildtag.md
+    - docs/planning-mode/2026-04-18-v0-7-monorepo-websocket-grpc-buildtag.md
+status: COMPLETED
+tags:
+    - continuation
+    - implementation
+    - v0.7
+title: cosmo-smoke v0.7 — Monorepo, WebSocket, gRPC Build Tag
 ---
 
 # cosmo-smoke v0.7 — Monorepo, WebSocket, gRPC Build Tag
@@ -26,35 +28,35 @@ Implementation plan: `docs/planning-mode/2026-04-18-v0-7-monorepo-websocket-grpc
 
 ## Goals
 
-### [ ] 1. Add WebSocket schema struct + validation
+### [x] 1. Add WebSocket schema struct + validation
 
 Add WebSocketCheck struct to schema.go, wire into Expect, add validation rules for url format and regex.
 
-### [ ] 2. Implement WebSocket client + Check function
+### [x] 2. Implement WebSocket client + Check function
 
 Create assertion_ws.go with stdlib-only WebSocket client (upgrade, frame parsing, send). Add CheckWebSocket function. Wire into runner.go.
 
-### [ ] 3. Write WebSocket tests
+### [x] 3. Write WebSocket tests
 
 Create assertion_ws_test.go with httptest-based test server. 5 tests: expect_contains pass, expect_matches pass, no match fail, connection refused, connect-only.
 
-### [ ] 4. Split gRPC code into build-tagged files
+### [x] 4. Split gRPC code into build-tagged files
 
 Move CheckGRPCHealth + gRPC imports to assertion_grpc.go (`//go:build grpc`). Create assertion_grpc_stub.go (`//go:build !grpc`). Remove gRPC from assertion.go.
 
-### [ ] 5. Move gRPC tests and add stub test
+### [x] 5. Move gRPC tests and add stub test
 
 Move existing gRPC tests to assertion_grpc_test.go (`//go:build grpc`). Add stub test in assertion_grpc_stub_test.go (`//go:build !grpc`). Verify both build modes.
 
-### [ ] 6. Create monorepo discovery package
+### [x] 6. Create monorepo discovery package
 
 Create internal/monorepo/discover.go with Discover() function. 5 tests: finds sub-configs, skips ignored dirs, custom exclude, deep nesting, no smoke files.
 
-### [ ] 7. Add monorepo schema + CLI flag + runner integration
+### [x] 7. Add monorepo schema + CLI flag + runner integration
 
 Add Settings.Monorepo + MonorepoExclude. Add --monorepo flag. Add RunMonorepo to runner. Wire in run.go.
 
-### [ ] 8. Update docs + release v0.7.0
+### [x] 8. Update docs + release v0.7.0
 
 Update CLAUDE.md, README.md, USAGE.md, FEATURES.md. Run self-smoke. Bump version, tag.
 

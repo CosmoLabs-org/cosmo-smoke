@@ -2,7 +2,7 @@
 id: IDEA-MO53CPEM
 title: Split assertion.go into per-domain files
 created: "2026-04-18T22:32:28.70252-03:00"
-status: seed
+status: harvested
 source: agent
 origin:
     session: 2027
@@ -10,7 +10,10 @@ origin:
 tags:
     - architecture
     - v0.7
+promoted_to: FEAT-011
 ---
+
+# Split assertion.go into per-domain files
 
 # Split assertion.go into per-domain files
 

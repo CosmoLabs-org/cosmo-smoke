@@ -1,11 +1,8 @@
 ---
-title: "cosmo-smoke v0.7 — Monorepo, WebSocket, gRPC Build Tag"
-created: 2026-04-18
-status: approved
-roadmap:
-  - ROAD-010
-  - ROAD-031
-  - ROAD-030
+completed: "2026-04-18"
+created: "2026-04-18"
+status: COMPLETED
+title: cosmo-smoke v0.7 — Monorepo, WebSocket, gRPC Build Tag
 ---
 
 # cosmo-smoke v0.7 — Monorepo, WebSocket, gRPC Build Tag

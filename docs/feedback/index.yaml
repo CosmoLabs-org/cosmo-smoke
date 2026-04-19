@@ -1,9 +1,9 @@
 version: "1.0"
-next_id: 6
-last_updated: "2026-04-16"
+next_id: 8
+last_updated: "2026-04-18"
 stats:
-    total: 6
-    pending: 6
+    total: 8
+    pending: 8
     implemented: 0
     rejected: 0
     converted: 0
@@ -38,3 +38,13 @@ entries:
       status: pending
       from_project: cosmo-smoke
       created: "2026-04-16T20:43:28.041057-03:00"
+    - id: FB-007
+      title: commit-batch JSON requires array even for single commit
+      status: pending
+      from_project: cosmo-smoke
+      created: "2026-04-18T22:35:54.527387-03:00"
+    - id: FB-008
+      title: session-end-finalize fails on missing .claude/release-context/
+      status: pending
+      from_project: cosmo-smoke
+      created: "2026-04-18T22:36:05.856799-03:00"
