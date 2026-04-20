@@ -1,0 +1,13 @@
+---
+id: IDEA-MO7RL70S
+title: go test exclusion for GOrchestra archives
+created: "2026-04-20T19:26:27.916945-03:00"
+status: seed
+source: human
+origin:
+    session: 2027
+---
+
+# go test exclusion for GOrchestra archives
+
+GOrchestra/glm-agents/*/files/ contains .go copies that break go test ./... with compilation errors. Options: (1) add GOrchestra/ to go.work exclude, (2) strip .go files from archives, (3) use go test ./cmd/... ./internal/... as the standard command. Currently using option 3 as workaround.
