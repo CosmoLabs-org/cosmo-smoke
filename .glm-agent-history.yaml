@@ -107,3 +107,11 @@ entries:
       files_changed:
         - cmd/init_extra_test.go
       commit: 8a2b015113882484896324b4889a0f9667140e1b
+    - id: "0020"
+      task: 'Add tests to internal/detector/ package. Create file internal/detector/detector_extra_test.go in package detector. Test cases: detect Go project from go.mod presence, detect Node project from package.json, detect Docker project from Dockerfile, detect Python project from requirements.txt or pyproject.toml, detect Rust project from Cargo.toml, unknown project type returns default template. Verify: go test ./internal/detector/ -v passes.'
+      started: 2026-04-20T18:37:56.904135-03:00
+      completed: 2026-04-20T19:05:33.938795-03:00
+      status: merged
+      files_changed:
+        - internal/detector/detector_extra_test.go
+      commit: f721c0d81eb09ce0d5579babe07c3c1c3275271c

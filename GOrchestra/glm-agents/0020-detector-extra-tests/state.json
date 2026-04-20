@@ -1,0 +1,15 @@
+{
+  "id": "0020",
+  "pid": 2742,
+  "tmux_session": "glm-0020",
+  "worktree_path": "/Users/gab/PROJECTS/cosmo-smoke-worktrees/_glm-agent-0020-detector-extra-tests",
+  "branch": "_glm-agent-0020-detector-extra-tests",
+  "base_branch": "master",
+  "status": "done",
+  "started_at": "2026-04-20T18:37:56.904135-03:00",
+  "task": "Add tests to internal/detector/ package. Create file internal/detector/detector_extra_test.go in package detector. Test cases: detect Go project from go.mod presence, detect Node project from package.json, detect Docker project from Dockerfile, detect Python project from requirements.txt or pyproject.toml, detect Rust project from Cargo.toml, unknown project type returns default template. Verify: go test ./internal/detector/ -v passes.",
+  "exit_code": 0,
+  "idle_timeout": 120000000000,
+  "max_timeout": 1800000000000,
+  "on_done_executed": false
+}

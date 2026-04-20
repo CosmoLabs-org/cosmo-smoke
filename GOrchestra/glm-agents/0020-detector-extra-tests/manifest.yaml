@@ -1,0 +1,12 @@
+id: "0020"
+task: "Add tests to internal/detector/ package. Create file internal/detector/detector_extra_test.go in package detector. Test cases: detect Go project from go.mod presence, detect Node project from package.json, detect Docker project from Dockerfile, detect Python project from requirements.txt or pyproject.toml, detect Rust project from Cargo.toml, unknown project type returns default template. Verify: go test ./internal/detector/ -v passes."
+status: merged
+started: 2026-04-20T18:37:56-03:00
+completed: 2026-04-20T19:05:34-03:00
+duration: 27m37s
+exit_code: 0
+commit: f721c0d81eb09ce0d5579babe07c3c1c3275271c
+branch: _glm-agent-0020-detector-extra-tests
+summary: "Added 14 extra tests to internal/detector/ covering each project type detection path, unknown/empty defaults, HasBun, GenerateConfig defaults, all-types combined, and Node lint script handling."
+files_changed:
+  - "internal/detector/detector_extra_test.go"

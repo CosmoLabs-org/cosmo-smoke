@@ -1,0 +1,5 @@
+{
+  "summary": "Added 14 extra tests to internal/detector/ covering each project type detection path, unknown/empty defaults, HasBun, GenerateConfig defaults, all-types combined, and Node lint script handling.",
+  "files_changed": ["internal/detector/detector_extra_test.go"],
+  "errors": []
+}
