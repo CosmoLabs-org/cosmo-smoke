@@ -1,0 +1,16 @@
+{
+  "id": "0012",
+  "pid": 10639,
+  "tmux_session": "glm-0012",
+  "worktree_path": "/Users/gab/PROJECTS/cosmo-smoke-worktrees/_glm-agent-0012-tests-internalreporterpushgo-f",
+  "branch": "_glm-agent-0012-tests-internalreporterpushgo-f",
+  "base_branch": "master",
+  "status": "done",
+  "started_at": "2026-04-20T18:13:57.048096-03:00",
+  "task": "Add tests to internal/reporter/push.go. Create file internal/reporter/push_test.go. Test cases: successful POST to httptest.Server endpoint returns nil, endpoint returns non-200 returns error, timeout handling with short context, empty API key handled gracefully, empty URL returns error, malformed URL returns error. Verify: go test ./internal/reporter/ -run TestPush -v passes.",
+  "exit_code": 0,
+  "idle_timeout": 120000000000,
+  "max_timeout": 1800000000000,
+  "on_done_executed": false,
+  "conductor_ticket": "cond-rz"
+}
