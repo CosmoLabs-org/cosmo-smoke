@@ -1,8 +1,8 @@
 {
   "version": "1.0",
-  "updated_at": "2026-04-20T18:00:34.699093-03:00",
-  "expires_at": "2026-04-20T19:00:34.699093-03:00",
-  "project_path": "/Users/gab/PROJECTS/cosmo-smoke-worktrees/_glm-agent-0006-prometheus-tests",
+  "updated_at": "2026-04-20T18:13:53.919062-03:00",
+  "expires_at": "2026-04-20T19:13:53.919062-03:00",
+  "project_path": "/Users/gab/PROJECTS/cosmo-smoke-worktrees/_glm-agent-0012-tests-internalreporterpushgo-f",
   "context": "",
-  "glm_enhanced": true
+  "glm_enhanced": false
 }
