@@ -4,7 +4,9 @@ import (
 	"encoding/xml"
 	"fmt"
 	"io"
+	"os"
 	"strings"
+	"time"
 )
 
 // JUnit collects all results and emits JUnit XML on Summary.
@@ -39,12 +41,24 @@ type junitTestSuites struct {
 }
 
 type junitTestSuite struct {
-	Name     string          `xml:"name,attr"`
-	Tests    int             `xml:"tests,attr"`
-	Failures int             `xml:"failures,attr"`
-	Skipped  int             `xml:"skipped,attr,omitempty"`
-	Time     string          `xml:"time,attr"`
-	Cases    []junitTestCase `xml:"testcase"`
+	Name      string            `xml:"name,attr"`
+	Tests     int               `xml:"tests,attr"`
+	Failures  int               `xml:"failures,attr"`
+	Skipped   int               `xml:"skipped,attr,omitempty"`
+	Time      string            `xml:"time,attr"`
+	Timestamp string            `xml:"timestamp,attr,omitempty"`
+	Hostname  string            `xml:"hostname,attr,omitempty"`
+	Properties *junitProperties `xml:"properties,omitempty"`
+	Cases     []junitTestCase   `xml:"testcase"`
+}
+
+type junitProperties struct {
+	Props []junitProperty `xml:"property"`
+}
+
+type junitProperty struct {
+	Name  string `xml:"name,attr"`
+	Value string `xml:"value,attr"`
 }
 
 type junitTestCase struct {
@@ -68,12 +82,26 @@ func formatSeconds(d float64) string {
 func (j *JUnit) Summary(s SuiteResultData) {
 	totalSeconds := s.Duration.Seconds()
 
+	hostname, _ := os.Hostname()
+
+	props := &junitProperties{
+		Props: []junitProperty{
+			{Name: "project", Value: s.Project},
+			{Name: "passed", Value: fmt.Sprintf("%d", s.Passed)},
+			{Name: "failed", Value: fmt.Sprintf("%d", s.Failed)},
+			{Name: "skipped", Value: fmt.Sprintf("%d", s.Skipped)},
+		},
+	}
+
 	suite := junitTestSuite{
-		Name:     s.Project,
-		Tests:    s.Total,
-		Failures: s.Failed,
-		Skipped:  s.Skipped,
-		Time:     formatSeconds(totalSeconds),
+		Name:      s.Project,
+		Tests:     s.Total,
+		Failures:  s.Failed,
+		Skipped:   s.Skipped,
+		Time:      formatSeconds(totalSeconds),
+		Timestamp: time.Now().UTC().Format(time.RFC3339),
+		Hostname:  hostname,
+		Properties: props,
 	}
 
 	for _, t := range j.tests {

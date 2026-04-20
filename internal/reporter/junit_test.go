@@ -20,12 +20,24 @@ type xmlTestSuites struct {
 }
 
 type xmlTestSuite struct {
-	Name     string        `xml:"name,attr"`
-	Tests    int           `xml:"tests,attr"`
-	Failures int           `xml:"failures,attr"`
-	Skipped  int           `xml:"skipped,attr"`
-	Time     string        `xml:"time,attr"`
-	Cases    []xmlTestCase `xml:"testcase"`
+	Name      string           `xml:"name,attr"`
+	Tests     int              `xml:"tests,attr"`
+	Failures  int              `xml:"failures,attr"`
+	Skipped   int              `xml:"skipped,attr"`
+	Time      string           `xml:"time,attr"`
+	Timestamp string           `xml:"timestamp,attr,omitempty"`
+	Hostname  string           `xml:"hostname,attr,omitempty"`
+	Properties *xmlProperties  `xml:"properties,omitempty"`
+	Cases     []xmlTestCase    `xml:"testcase"`
+}
+
+type xmlProperties struct {
+	Props []xmlProperty `xml:"property"`
+}
+
+type xmlProperty struct {
+	Name  string `xml:"name,attr"`
+	Value string `xml:"value,attr"`
 }
 
 type xmlTestCase struct {
@@ -245,4 +257,46 @@ func min(a, b int) int {
 		return a
 	}
 	return b
+}
+
+func TestJUnit_HasTimestampAndHostname(t *testing.T) {
+	var buf bytes.Buffer
+	r := NewJUnit(&buf)
+	r.Summary(SuiteResultData{Project: "meta-test", Total: 1, Passed: 1, Duration: 100 * time.Millisecond})
+
+	result := parseJUnit(t, &buf)
+	suite := result.Suites[0]
+
+	if suite.Timestamp == "" {
+		t.Error("expected timestamp to be set")
+	}
+	if suite.Hostname == "" {
+		t.Error("expected hostname to be set")
+	}
+}
+
+func TestJUnit_HasProperties(t *testing.T) {
+	var buf bytes.Buffer
+	r := NewJUnit(&buf)
+	r.Summary(SuiteResultData{Project: "prop-test", Total: 3, Passed: 2, Failed: 1, Duration: 200 * time.Millisecond})
+
+	result := parseJUnit(t, &buf)
+	suite := result.Suites[0]
+
+	if suite.Properties == nil {
+		t.Fatal("expected properties element")
+	}
+	propMap := make(map[string]string)
+	for _, p := range suite.Properties.Props {
+		propMap[p.Name] = p.Value
+	}
+	if propMap["project"] != "prop-test" {
+		t.Errorf("project property = %q, want %q", propMap["project"], "prop-test")
+	}
+	if propMap["passed"] != "2" {
+		t.Errorf("passed property = %q, want %q", propMap["passed"], "2")
+	}
+	if propMap["failed"] != "1" {
+		t.Errorf("failed property = %q, want %q", propMap["failed"], "1")
+	}
 }
