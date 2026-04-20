@@ -1,0 +1,16 @@
+{
+  "id": "0009",
+  "pid": 74035,
+  "tmux_session": "glm-0009",
+  "worktree_path": "/Users/gab/PROJECTS/cosmo-smoke-worktrees/_glm-agent-0009-validate-extra-tests",
+  "branch": "_glm-agent-0009-validate-extra-tests",
+  "base_branch": "master",
+  "status": "done",
+  "started_at": "2026-04-20T18:01:55.142904-03:00",
+  "task": "Add tests to cmd/ package for validate command. Create file cmd/validate_extra_test.go in package cmd. Test cases: config with all 28 assertion types valid, config with OTel enabled and valid jaeger_url, config with retry policy (count and backoff), config with skip_if conditions, config with env-specific overrides. Each test should create a temp YAML file, run the validate command, and check for success. Verify: go test ./cmd/ -run TestValidate -v passes.",
+  "exit_code": 0,
+  "idle_timeout": 120000000000,
+  "max_timeout": 1800000000000,
+  "on_done_executed": false,
+  "conductor_ticket": "cond-rc"
+}

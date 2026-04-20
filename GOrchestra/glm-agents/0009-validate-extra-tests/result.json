@@ -1,0 +1,5 @@
+{
+  "summary": "Added cmd/validate_extra_test.go with 5 test cases for validate command: all 28 assertion types, OTel enabled, retry policy, skip_if conditions, and Go template env overrides. All 9 validate tests pass (4 existing + 5 new).",
+  "files_changed": ["cmd/validate_extra_test.go"],
+  "errors": []
+}

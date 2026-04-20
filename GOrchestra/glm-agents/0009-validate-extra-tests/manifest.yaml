@@ -1,0 +1,12 @@
+id: "0009"
+task: "Add tests to cmd/ package for validate command. Create file cmd/validate_extra_test.go in package cmd. Test cases: config with all 28 assertion types valid, config with OTel enabled and valid jaeger_url, config with retry policy (count and backoff), config with skip_if conditions, config with env-specific overrides. Each test should create a temp YAML file, run the validate command, and check for success. Verify: go test ./cmd/ -run TestValidate -v passes."
+status: merged
+started: 2026-04-20T18:01:55-03:00
+completed: 2026-04-20T18:11:16-03:00
+duration: 9m21s
+exit_code: 0
+commit: 542d1a62f2cead476a62bfbfe31bcb08c5cf6b1e
+branch: _glm-agent-0009-validate-extra-tests
+summary: "Added cmd/validate_extra_test.go with 5 test cases for validate command: all 28 assertion types, OTel enabled, retry policy, skip_if conditions, and Go template env overrides. All 9 validate tests pass (4 existing + 5 new)."
+files_changed:
+  - "cmd/validate_extra_test.go"
