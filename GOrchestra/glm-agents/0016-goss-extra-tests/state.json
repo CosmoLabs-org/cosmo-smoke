@@ -1,0 +1,16 @@
+{
+  "id": "0016",
+  "pid": 91415,
+  "tmux_session": "glm-0016",
+  "worktree_path": "/Users/gab/PROJECTS/cosmo-smoke-worktrees/_glm-agent-0016-goss-extra-tests",
+  "branch": "_glm-agent-0016-goss-extra-tests",
+  "base_branch": "master",
+  "status": "done",
+  "started_at": "2026-04-20T18:35:48.433288-03:00",
+  "task": "Add tests to internal/migrate/goss/ for Goss migration. Create file internal/migrate/goss/goss_extra_test.go in package goss. Test cases: parse valid Gossfile with all assertion types, parse Gossfile with empty vars section, parse Gossfile with HTTP tests, parse Gossfile with process tests, convert Goss HTTP test to smoke HTTP assertion, convert Goss process test to process_running assertion. Verify: go test ./internal/migrate/goss/ -v passes.",
+  "exit_code": 0,
+  "idle_timeout": 120000000000,
+  "max_timeout": 1800000000000,
+  "on_done_executed": false,
+  "conductor_ticket": "cond-tl"
+}

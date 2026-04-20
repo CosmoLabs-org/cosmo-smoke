@@ -1,0 +1,5 @@
+{
+  "summary": "Added 6 test cases to internal/migrate/goss/goss_extra_test.go covering Goss file parsing (all assertion types, empty vars, HTTP tests, process tests) and translation (HTTP to smoke assertion, process to process_running). All 25 tests pass.",
+  "files_changed": ["internal/migrate/goss/goss_extra_test.go"],
+  "errors": []
+}

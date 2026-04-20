@@ -155,3 +155,11 @@ entries:
       files_changed:
         - internal/mcp/mcp_extra_test.go
       commit: 5a344eac5bb4f9d847ab517611fcb2b23083ae00
+    - id: "0016"
+      task: 'Add tests to internal/migrate/goss/ for Goss migration. Create file internal/migrate/goss/goss_extra_test.go in package goss. Test cases: parse valid Gossfile with all assertion types, parse Gossfile with empty vars section, parse Gossfile with HTTP tests, parse Gossfile with process tests, convert Goss HTTP test to smoke HTTP assertion, convert Goss process test to process_running assertion. Verify: go test ./internal/migrate/goss/ -v passes.'
+      started: 2026-04-20T18:35:48.433288-03:00
+      completed: 2026-04-20T19:05:49.893882-03:00
+      status: merged
+      files_changed:
+        - internal/migrate/goss/goss_extra_test.go
+      commit: d26760f94b9fc36d4afbb874d8280f725590af67
