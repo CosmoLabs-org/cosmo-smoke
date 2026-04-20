@@ -1,10 +1,10 @@
 {
   "version": "1.0",
-  "generated_at": "2026-04-20T11:30:47.970082-03:00",
+  "generated_at": "2026-04-20T16:56:12.339244-03:00",
   "generated_by": "GLM-4.7",
-  "expires_at": "2026-04-21T11:30:47.970082-03:00",
-  "last_analyzed_commit": "0fe92a1005c21d810c2abd20190e200038dbf645",
-  "summary": "A Go-based CLI tool named 'Ralph' that integrates with MCP to run, detect, and validate infrastructure tests, featuring Goss migration and a dashboard.",
+  "expires_at": "2026-04-21T16:56:12.339244-03:00",
+  "last_analyzed_commit": "499e611c82a68dcc8b53ae4c3e59df1d11e1eb1c",
+  "summary": "A Go-based CLI tool called cosmo-smoke for validating, migrating, and running infrastructure smoke tests with MCP integration and Goss compatibility.",
   "architecture": "monolith",
   "primary_language": "Go",
   "hot_files": [
@@ -12,25 +12,25 @@
     "internal/mcp/handlers.go",
     "internal/migrate/goss/translator.go",
     "internal/schema/validate_test.go",
-    "internal/detector/detector.go"
+    "internal/baseline/baseline.go"
   ],
   "patterns": [
+    "Standard Go project layout",
     "MCP (Model Context Protocol) integration",
-    "Goss migration/translation",
-    "Test runner with assertion validation",
-    "Schema validation",
-    "Watch cycle with reporter recreation"
+    "Migration adapter pattern (Goss translator)",
+    "Test-driven development (high test-to-source ratio)",
+    "Command-line interface (CLI) pattern"
   ],
   "concerns": [
-    "Reporter state leak across watch cycles required a recent fix",
-    "Uncommitted changes (10 modified, 6 untracked) suggest instability",
-    "Monorepo handling logic mixed with core runner concerns",
-    "Bootstrap phase indicated by recent commits"
+    "Uncommitted work (11 modified, 4 staged, 6 untracked) suggests instability",
+    "Goss migration module implies legacy dependency that may need ongoing maintenance",
+    "Monolithic internal package could become unwieldy as the codebase grows",
+    "Scattered test specs across .goralph/specs and ClaudeDesktop/specs"
   ],
   "suggestions": [
-    "Commit or stash the 16 uncommitted files to stabilize the branch",
-    "Add integration tests for the MCP handlers",
-    "Isolate monorepo detection logic from the runner execution path",
-    "Document the Goss migration mapping rules"
+    "Commit or stash the current working tree changes to establish a clean baseline",
+    "Consolidate test specification directories into a single location",
+    "Document the MCP handler endpoints and schema validation rules",
+    "Consider extracting the Goss migration into a standalone tool once migration is complete"
   ]
 }
