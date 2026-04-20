@@ -1,34 +1,35 @@
 {
   "version": "1.0",
-  "generated_at": "2026-04-20T16:58:22.967999-03:00",
+  "generated_at": "2026-04-20T17:06:01.970908-03:00",
   "generated_by": "GLM-4.7",
-  "expires_at": "2026-04-21T16:58:22.967999-03:00",
-  "last_analyzed_commit": "52162c3201ea8595e976b568257fb98e189de731",
-  "summary": "A Go-based CLI tool for infrastructure validation, Goss migration, and MCP-integrated reporting.",
-  "architecture": "monolith",
+  "expires_at": "2026-04-21T17:06:01.970908-03:00",
+  "last_analyzed_commit": "79826beccddd485a864d9dcc457df217b1b1a43f",
+  "summary": "A Go-based modular CLI tool that integrates MCP for AI context, migrates Goss configurations, and runs structured assertions with schema validation.",
+  "architecture": "modular monolith",
   "primary_language": "Go",
   "hot_files": [
     "internal/runner/runner.go",
     "internal/mcp/handlers.go",
     "internal/migrate/goss/translator.go",
     "internal/schema/validate_test.go",
-    "internal/reporter/reporter.go"
+    "internal/runner/assertion_test.go"
   ],
   "patterns": [
     "MCP (Model Context Protocol) integration",
-    "Goss configuration migration/translation",
+    "Goss migration/translation",
     "Test-driven development",
     "Internal package encapsulation",
     "CLI command pattern"
   ],
   "concerns": [
-    "Uncommitted changes (1 modified, 1 staged) may indicate incomplete work",
-    "Heavy reliance on internal packages could hinder external contribution",
-    "Migration logic tightly coupled to Goss format"
+    "Scattered test directories (.goralph/specs, ClaudeDesktop/specs) may indicate fragmented testing strategy",
+    "Heavy reliance on internal packages could limit extensibility",
+    "Migration logic (goss translator) might become a maintenance burden if source format evolves"
   ],
   "suggestions": [
-    "Commit or stash the pending changes to maintain a clean working tree",
-    "Document the MCP handler endpoints and expected payloads",
-    "Expand test coverage for the dashboard and baseline modules"
+    "Consolidate test specifications into a single location",
+    "Document the MCP handler API surface",
+    "Consider adding integration tests that span multiple internal packages",
+    "Review goss translator for edge case coverage based on recent migration docs"
   ]
 }
