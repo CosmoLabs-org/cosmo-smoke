@@ -1,0 +1,16 @@
+{
+  "id": "0018",
+  "pid": 95157,
+  "tmux_session": "glm-0018",
+  "worktree_path": "/Users/gab/PROJECTS/cosmo-smoke-worktrees/_glm-agent-0018-run-extra-tests",
+  "branch": "_glm-agent-0018-run-extra-tests",
+  "base_branch": "master",
+  "status": "done",
+  "started_at": "2026-04-20T18:36:33.907112-03:00",
+  "task": "Add tests to cmd/ package for the run command. Create file cmd/run_extra_test.go in package cmd. Test cases: run with --dry-run flag outputs plan without executing, run with --tag filter selects matching tests only, run with --exclude-tag skips tagged tests, run with --timeout flag overrides default, run with --fail-fast stops after first failure. Use os.TempDir for config files. Verify: go test ./cmd/ -run TestRun -v passes.",
+  "exit_code": 0,
+  "idle_timeout": 120000000000,
+  "max_timeout": 1800000000000,
+  "on_done_executed": false,
+  "conductor_ticket": "cond-ue"
+}

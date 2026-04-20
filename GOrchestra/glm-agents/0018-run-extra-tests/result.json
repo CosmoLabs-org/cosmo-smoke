@@ -1,0 +1,5 @@
+{
+  "summary": "Added cmd/run_extra_test.go with 5 tests for run command options: --dry-run, --tag, --exclude-tag, --timeout, --fail-fast. All 30 cmd tests pass.",
+  "files_changed": ["cmd/run_extra_test.go"],
+  "errors": []
+}

@@ -1,0 +1,12 @@
+id: "0018"
+task: "Add tests to cmd/ package for the run command. Create file cmd/run_extra_test.go in package cmd. Test cases: run with --dry-run flag outputs plan without executing, run with --tag filter selects matching tests only, run with --exclude-tag skips tagged tests, run with --timeout flag overrides default, run with --fail-fast stops after first failure. Use os.TempDir for config files. Verify: go test ./cmd/ -run TestRun -v passes."
+status: merged
+started: 2026-04-20T18:36:33-03:00
+completed: 2026-04-20T19:05:32-03:00
+duration: 28m58s
+exit_code: 0
+commit: 0ebc476004e51c4175e3c4ff40c1c1ffb7279989
+branch: _glm-agent-0018-run-extra-tests
+summary: "Added cmd/run_extra_test.go with 5 tests for run command options: --dry-run, --tag, --exclude-tag, --timeout, --fail-fast. All 30 cmd tests pass."
+files_changed:
+  - "cmd/run_extra_test.go"
