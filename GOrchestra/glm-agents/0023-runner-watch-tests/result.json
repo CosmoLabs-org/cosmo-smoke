@@ -1,0 +1,5 @@
+{
+  "summary": "Added 11 tests to internal/runner/runner_watch_test.go covering watch mode, prerequisites, cleanup, dry-run, and skip_if conditions (env_exists, file_exists). All tests pass.",
+  "files_changed": ["internal/runner/runner_watch_test.go"],
+  "errors": []
+}

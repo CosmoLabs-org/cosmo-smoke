@@ -1,0 +1,15 @@
+{
+  "id": "0023",
+  "pid": 13534,
+  "tmux_session": "glm-0023",
+  "worktree_path": "/Users/gab/PROJECTS/cosmo-smoke-worktrees/_glm-agent-0023-runner-watch-tests",
+  "branch": "_glm-agent-0023-runner-watch-tests",
+  "base_branch": "master",
+  "status": "done",
+  "started_at": "2026-04-20T18:39:50.053191-03:00",
+  "task": "Add tests to internal/runner/ for watch mode and prerequisites. Create file internal/runner/runner_watch_test.go in package runner. Test cases: runPrereq executes prerequisite commands, runTest with cleanup command runs cleanup after test, dry-run mode outputs plan without execution, skip_if condition evaluates correctly for env_exists and file_exists. Use noopReporter and newConfig helpers from runner_test.go. Verify: go test ./internal/runner/ -run TestWatch -v passes.",
+  "exit_code": 0,
+  "idle_timeout": 120000000000,
+  "max_timeout": 1800000000000,
+  "on_done_executed": false
+}

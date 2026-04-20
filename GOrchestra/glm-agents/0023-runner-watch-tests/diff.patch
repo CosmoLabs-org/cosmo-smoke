@@ -1,0 +1,1652 @@
+diff --git a/.glm-agent-counter b/.glm-agent-counter
+index 7273c0f..60d3b2f 100644
+--- a/.glm-agent-counter
++++ b/.glm-agent-counter
+@@ -1 +1 @@
+-25
++15
+diff --git a/.glm-agent-history.yaml b/.glm-agent-history.yaml
+index a1eed47..d8eac5b 100644
+--- a/.glm-agent-history.yaml
++++ b/.glm-agent-history.yaml
+@@ -83,51 +83,3 @@ entries:
+       files_changed:
+         - internal/reporter/chain_test.go
+       commit: 4c836f4f710de4a8ec0430d2608bf4f7390552cf
+-    - id: "0017"
+-      task: 'Add tests to cmd/ package for root command and version command. Create file cmd/root_extra_test.go in package cmd. Test cases: root command has expected subcommands (run, validate, schema, init, version, serve), version command outputs version string, --help flag produces output, unknown subcommand returns error. Verify: go test ./cmd/ -run TestRoot -v passes.'
+-      started: 2026-04-20T18:35:53.631802-03:00
+-      completed: 2026-04-20T19:05:31.067308-03:00
+-      status: merged
+-      files_changed:
+-        - cmd/root_extra_test.go
+-      commit: 9bd89fe9710c1c249fbe2e160065ef28d4d006ce
+-    - id: "0018"
+-      task: 'Add tests to cmd/ package for the run command. Create file cmd/run_extra_test.go in package cmd. Test cases: run with --dry-run flag outputs plan without executing, run with --tag filter selects matching tests only, run with --exclude-tag skips tagged tests, run with --timeout flag overrides default, run with --fail-fast stops after first failure. Use os.TempDir for config files. Verify: go test ./cmd/ -run TestRun -v passes.'
+-      started: 2026-04-20T18:36:33.907112-03:00
+-      completed: 2026-04-20T19:05:32.062407-03:00
+-      status: merged
+-      files_changed:
+-        - cmd/run_extra_test.go
+-      commit: 0ebc476004e51c4175e3c4ff40c1c1ffb7279989
+-    - id: "0019"
+-      task: 'Add tests to cmd/ package for the init command. Create file cmd/init_extra_test.go in package cmd. Test cases: init in empty directory creates .smoke.yaml, init with --force overwrites existing config, init detects project type from go.mod, init detects project type from package.json. Verify: go test ./cmd/ -run TestInit -v passes.'
+-      started: 2026-04-20T18:36:46.299942-03:00
+-      completed: 2026-04-20T19:05:32.963401-03:00
+-      status: merged
+-      files_changed:
+-        - cmd/init_extra_test.go
+-      commit: 8a2b015113882484896324b4889a0f9667140e1b
+-    - id: "0020"
+-      task: 'Add tests to internal/detector/ package. Create file internal/detector/detector_extra_test.go in package detector. Test cases: detect Go project from go.mod presence, detect Node project from package.json, detect Docker project from Dockerfile, detect Python project from requirements.txt or pyproject.toml, detect Rust project from Cargo.toml, unknown project type returns default template. Verify: go test ./internal/detector/ -v passes.'
+-      started: 2026-04-20T18:37:56.904135-03:00
+-      completed: 2026-04-20T19:05:33.938795-03:00
+-      status: merged
+-      files_changed:
+-        - internal/detector/detector_extra_test.go
+-      commit: f721c0d81eb09ce0d5579babe07c3c1c3275271c
+-    - id: "0021"
+-      task: 'Add tests to internal/runner/ for parallel execution and retry. Create file internal/runner/runner_parallel_test.go in package runner. Test cases: parallel execution runs all tests concurrently (verify via timing), fail-fast stops after first failure and skips remaining, retry with count=2 retries failed tests, retry_on_trace_only skips retry when trace assertion passes. Use noopReporter and newConfig helpers from runner_test.go. Verify: go test ./internal/runner/ -run TestParallel -v passes.'
+-      started: 2026-04-20T18:38:47.234848-03:00
+-      completed: 2026-04-20T19:05:34.966264-03:00
+-      status: merged
+-      files_changed:
+-        - internal/runner/runner_parallel_test.go
+-      commit: 991e61d8b1401dc6a5496d1396b5cee5dd7276d2
+-    - id: "0022"
+-      task: 'Add tests to internal/dashboard/ for concurrent writes and edge cases. Create file internal/dashboard/dashboard_extra_test.go in package dashboard. Test cases: concurrent writes from multiple goroutines complete without data loss, result with empty project name handled, result with special characters in test names (unicode, quotes) stored correctly, pagination returns correct subset. Use testStore and makePayload helpers from store_test.go. Verify: go test ./internal/dashboard/ -v passes.'
+-      started: 2026-04-20T18:39:01.528331-03:00
+-      completed: 2026-04-20T19:05:35.92187-03:00
+-      status: merged
+-      files_changed:
+-        - internal/dashboard/dashboard_extra_test.go
+-      commit: 177a2d67d9a0741f4dbce7e78639ab26fb5f8242
+diff --git a/.gorchestra/fingerprint-cache.json b/.gorchestra/fingerprint-cache.json
+index 931b374..a08c0be 100644
+--- a/.gorchestra/fingerprint-cache.json
++++ b/.gorchestra/fingerprint-cache.json
+@@ -1,13 +1,12 @@
+ {
+-  "hash": "42e0ae2008c86fa255dde98d82d4df2802126f673a39806132704abd6199e9d2",
+-  "project_name": "cosmo-smoke",
++  "hash": "4c5c5fecc4d01c287a2dee0e087aa303d15b845cd29e828af6bc0c2f68758239",
++  "project_name": "_glm-agent-0023-runner-watch-tests",
+   "language": "go",
+   "framework": "cli",
+   "directories": [
+     "ClaudeDesktop",
+     "GOrchestra",
+     "GeminiAI",
+-    "bin",
+     "cmd",
+     "docs",
+     "examples",
+@@ -28,5 +27,5 @@
+   ],
+   "has_tests": true,
+   "has_ci": true,
+-  "generated_at": "2026-04-20T19:05:20.302241-03:00"
++  "generated_at": "2026-04-20T18:39:45.534827-03:00"
+ }
+\ No newline at end of file
+diff --git a/.version-registry.json b/.version-registry.json
+index 5c06bc5..a2eed1e 100644
+--- a/.version-registry.json
++++ b/.version-registry.json
+@@ -1,13 +1,13 @@
+ {
+   "repository": {
+     "version": "0.11.1",
+-    "build": 275,
++    "build": 298,
+     "name": "cosmo-smoke",
+-    "lastUpdated": "2026-04-20T22:05:36Z",
++    "lastUpdated": "2026-04-20T21:26:10Z",
+     "derived_from": "git tag"
+   },
+   "metadata": {
+-    "last_synced": "2026-04-20T20:35:38Z",
++    "last_synced": "2026-04-20T21:39:53Z",
+     "sync_method": "git_history_analysis"
+   },
+   "releaseContext": {
+diff --git a/CLAUDE.md b/CLAUDE.md
+index 2087552..a01caa8 100644
+--- a/CLAUDE.md
++++ b/CLAUDE.md
+@@ -46,7 +46,7 @@ internal/
+ 
+ ```bash
+ go build ./...                    # Build
+-go test ./...                     # Run all tests (619 total)
++go test ./...                     # Run all tests (590 total)
+ smoke run                         # Self-smoke (6 tests)
+ go build -ldflags "-s -w -X github.com/CosmoLabs-org/cosmo-smoke/cmd.Version=X.Y.Z" -o smoke .
+ ```
+diff --git a/GOrchestra/intel/architecture.json b/GOrchestra/intel/architecture.json
+index f1598c1..65a7415 100644
+--- a/GOrchestra/intel/architecture.json
++++ b/GOrchestra/intel/architecture.json
+@@ -1,10 +1,10 @@
+ {
+   "version": "1.0",
+-  "generated_at": "2026-04-20T19:05:31.093516-03:00",
++  "generated_at": "2026-04-20T18:26:07.734492-03:00",
+   "generated_by": "GLM-4.7",
+-  "expires_at": "2026-04-21T19:05:31.093516-03:00",
+-  "last_analyzed_commit": "9bd89fe9710c1c249fbe2e160065ef28d4d006ce",
+-  "summary": "A Go-based monolith utilizing the Model Context Protocol to run and validate infrastructure tests, currently undergoing massive automated test expansion via parallel AI agents.",
++  "expires_at": "2026-04-21T18:26:07.734492-03:00",
++  "last_analyzed_commit": "3637d065c3498ff0894acb62493e09ffb02d3244",
++  "summary": "A Go-based monolithic tool leveraging MCP for test orchestration and Goss configuration migration, currently undergoing AI-agent-driven test expansion.",
+   "architecture": "monolith",
+   "primary_language": "Go",
+   "hot_files": [
+@@ -16,20 +16,18 @@
+   ],
+   "patterns": [
+     "MCP (Model Context Protocol) handler pattern",
+-    "Test-Driven Development via AI agents (GOrchestra/glm-agents)",
+-    "Goss-to-custom schema migration/translation",
+-    "Standard Go project layout (cmd, internal, bin)"
++    "Test-Driven Development via AI agents (glm-agents)",
++    "Goss configuration migration/translation",
++    "Structured test extensions (*_extra_test.go)"
+   ],
+   "concerns": [
+-    "Build failure: undefined 'TestResult' type in internal/reporter/tap.go",
+-    "Highly fragmented test generation via multiple AI agent branches (0005-0015)",
+-    "1 staged file with potential merge conflicts given the parallel agent branches",
+-    "Over-reliance on extra test files (*_extra_test.go) suggests incomplete original test coverage"
++    "Build failure in agent 0011 due to undefined TestResult type in tap.go",
++    "Proliferation of agent-generated test directories suggests fragmented test coverage strategy",
++    "Potential code duplication across multiple agent-generated internal/ test folders"
+   ],
+   "suggestions": [
+-    "Fix the undefined TestResul[t] build error in the TAP reporter immediately",
+-    "Consolidate and deduplicate the AI-generated test files from the various agent branches",
+-    "Resolve the staged changes and synchronize the main branch with the agent outputs",
+-    "Review the core runner and schema logic to ensure it drives the tests, not the other way around"
++    "Fix the undefined TestResul... build error in internal/reporter/tap.go immediately",
++    "Consolidate agent-generated extra tests into the main test files to reduce maintenance overhead",
++    "Verify the MCP handlers are properly covered by integration tests"
+   ]
+ }
+\ No newline at end of file
+diff --git a/GOrchestra/intel/status.json b/GOrchestra/intel/status.json
+index 06afbe5..e34110c 100644
+--- a/GOrchestra/intel/status.json
++++ b/GOrchestra/intel/status.json
+@@ -1,8 +1,8 @@
+ {
+   "version": "1.0",
+-  "updated_at": "2026-04-20T18:35:50.586399-03:00",
+-  "expires_at": "2026-04-20T19:35:50.586399-03:00",
+-  "project_path": "/Users/gab/PROJECTS/cosmo-smoke-worktrees/_glm-agent-0017-root-extra-tests",
++  "updated_at": "2026-04-20T18:39:47.004286-03:00",
++  "expires_at": "2026-04-20T19:39:47.004286-03:00",
++  "project_path": "/Users/gab/PROJECTS/cosmo-smoke-worktrees/_glm-agent-0023-runner-watch-tests",
+   "context": "",
+-  "glm_enhanced": true
++  "glm_enhanced": false
+ }
+\ No newline at end of file
+diff --git a/cmd/init_extra_test.go b/cmd/init_extra_test.go
+deleted file mode 100644
+index df57fda..0000000
+--- a/cmd/init_extra_test.go
++++ /dev/null
+@@ -1,173 +0,0 @@
+-package cmd
+-
+-import (
+-	"os"
+-	"path/filepath"
+-	"testing"
+-
+-	"github.com/CosmoLabs-org/cosmo-smoke/internal/schema"
+-	"gopkg.in/yaml.v3"
+-)
+-
+-// TestInit_EmptyDir creates a .smoke.yaml in an empty directory.
+-func TestInit_EmptyDir(t *testing.T) {
+-	dir := t.TempDir()
+-	origDir, _ := os.Getwd()
+-	if err := os.Chdir(dir); err != nil {
+-		t.Fatal(err)
+-	}
+-	defer os.Chdir(origDir)
+-
+-	forceOverwrite = false
+-	fromRunning = ""
+-
+-	if err := runInit(nil, nil); err != nil {
+-		t.Fatalf("runInit failed: %v", err)
+-	}
+-
+-	data, err := os.ReadFile(filepath.Join(dir, ".smoke.yaml"))
+-	if err != nil {
+-		t.Fatalf("reading .smoke.yaml: %v", err)
+-	}
+-
+-	var cfg schema.SmokeConfig
+-	if err := yaml.Unmarshal(data, &cfg); err != nil {
+-		t.Fatalf("parsing .smoke.yaml: %v", err)
+-	}
+-	if cfg.Version != 1 {
+-		t.Errorf("expected version 1, got %d", cfg.Version)
+-	}
+-	if cfg.Project != filepath.Base(dir) {
+-		t.Errorf("expected project %q, got %q", filepath.Base(dir), cfg.Project)
+-	}
+-}
+-
+-// TestInit_ForceOverwrite overwrites an existing .smoke.yaml when --force is set.
+-func TestInit_ForceOverwrite(t *testing.T) {
+-	dir := t.TempDir()
+-	origDir, _ := os.Getwd()
+-	if err := os.Chdir(dir); err != nil {
+-		t.Fatal(err)
+-	}
+-	defer os.Chdir(origDir)
+-
+-	// Create an initial config
+-	if err := os.WriteFile(".smoke.yaml", []byte("version: 1\nproject: old\n"), 0644); err != nil {
+-		t.Fatal(err)
+-	}
+-
+-	// Without --force it should fail
+-	forceOverwrite = false
+-	fromRunning = ""
+-	if err := runInit(nil, nil); err == nil {
+-		t.Fatal("expected error when .smoke.yaml exists without --force")
+-	}
+-
+-	// With --force it should succeed
+-	forceOverwrite = true
+-	if err := runInit(nil, nil); err != nil {
+-		t.Fatalf("runInit with --force failed: %v", err)
+-	}
+-
+-	data, err := os.ReadFile(filepath.Join(dir, ".smoke.yaml"))
+-	if err != nil {
+-		t.Fatalf("reading .smoke.yaml: %v", err)
+-	}
+-
+-	var cfg schema.SmokeConfig
+-	if err := yaml.Unmarshal(data, &cfg); err != nil {
+-		t.Fatalf("parsing .smoke.yaml: %v", err)
+-	}
+-	if cfg.Project == "old" {
+-		t.Error("expected config to be overwritten, but project is still 'old'")
+-	}
+-}
+-
+-// TestInit_DetectGoProject detects a Go project from go.mod.
+-func TestInit_DetectGoProject(t *testing.T) {
+-	dir := t.TempDir()
+-	origDir, _ := os.Getwd()
+-	if err := os.Chdir(dir); err != nil {
+-		t.Fatal(err)
+-	}
+-	defer os.Chdir(origDir)
+-
+-	// Create go.mod marker
+-	if err := os.WriteFile("go.mod", []byte("module example.com/test\ngo 1.22\n"), 0644); err != nil {
+-		t.Fatal(err)
+-	}
+-
+-	forceOverwrite = false
+-	fromRunning = ""
+-
+-	if err := runInit(nil, nil); err != nil {
+-		t.Fatalf("runInit failed: %v", err)
+-	}
+-
+-	data, err := os.ReadFile(filepath.Join(dir, ".smoke.yaml"))
+-	if err != nil {
+-		t.Fatalf("reading .smoke.yaml: %v", err)
+-	}
+-
+-	var cfg schema.SmokeConfig
+-	if err := yaml.Unmarshal(data, &cfg); err != nil {
+-		t.Fatalf("parsing .smoke.yaml: %v", err)
+-	}
+-
+-	// Go project should have "go build" and "go test" tests
+-	found := false
+-	for _, tc := range cfg.Tests {
+-		if tc.Run == "go build ./..." {
+-			found = true
+-			break
+-		}
+-	}
+-	if !found {
+-		t.Error("expected Go project to have 'go build ./...' test")
+-	}
+-}
+-
+-// TestInit_DetectNodeProject detects a Node project from package.json.
+-func TestInit_DetectNodeProject(t *testing.T) {
+-	dir := t.TempDir()
+-	origDir, _ := os.Getwd()
+-	if err := os.Chdir(dir); err != nil {
+-		t.Fatal(err)
+-	}
+-	defer os.Chdir(origDir)
+-
+-	// Create package.json marker (npm project, no bun.lock)
+-	pkg := `{"name": "test-app", "scripts": {"test": "jest"}}`
+-	if err := os.WriteFile("package.json", []byte(pkg), 0644); err != nil {
+-		t.Fatal(err)
+-	}
+-
+-	forceOverwrite = false
+-	fromRunning = ""
+-
+-	if err := runInit(nil, nil); err != nil {
+-		t.Fatalf("runInit failed: %v", err)
+-	}
+-
+-	data, err := os.ReadFile(filepath.Join(dir, ".smoke.yaml"))
+-	if err != nil {
+-		t.Fatalf("reading .smoke.yaml: %v", err)
+-	}
+-
+-	var cfg schema.SmokeConfig
+-	if err := yaml.Unmarshal(data, &cfg); err != nil {
+-		t.Fatalf("parsing .smoke.yaml: %v", err)
+-	}
+-
+-	// Node/npm project should have "npm install" test
+-	found := false
+-	for _, tc := range cfg.Tests {
+-		if tc.Run == "npm install" {
+-			found = true
+-			break
+-		}
+-	}
+-	if !found {
+-		t.Error("expected Node project to have 'npm install' test")
+-	}
+-}
+diff --git a/cmd/root_extra_test.go b/cmd/root_extra_test.go
+deleted file mode 100644
+index 7eb4968..0000000
+--- a/cmd/root_extra_test.go
++++ /dev/null
+@@ -1,78 +0,0 @@
+-package cmd
+-
+-import (
+-	"bytes"
+-	"io"
+-	"os"
+-	"strings"
+-	"testing"
+-)
+-
+-func TestRootHasExpectedSubcommands(t *testing.T) {
+-	expected := []string{"run", "validate", "schema", "init", "version", "serve"}
+-	for _, name := range expected {
+-		found := false
+-		for _, cmd := range rootCmd.Commands() {
+-			if cmd.Name() == name {
+-				found = true
+-				break
+-			}
+-		}
+-		if !found {
+-			t.Errorf("root command missing subcommand %q", name)
+-		}
+-	}
+-}
+-
+-func TestVersionOutputsVersionString(t *testing.T) {
+-	origVersion := Version
+-	Version = "test-version"
+-	defer func() { Version = origVersion }()
+-
+-	// Capture stdout since versionCmd uses fmt.Printf
+-	old := os.Stdout
+-	r, w, _ := os.Pipe()
+-	os.Stdout = w
+-	versionCmd.Run(versionCmd, []string{})
+-	w.Close()
+-	os.Stdout = old
+-
+-	var buf bytes.Buffer
+-	io.Copy(&buf, r)
+-	out := buf.String()
+-
+-	if !strings.Contains(out, "test-version") {
+-		t.Errorf("version output should contain version string, got: %q", out)
+-	}
+-	if !strings.HasPrefix(out, "smoke ") {
+-		t.Errorf("version output should start with 'smoke ', got: %q", out)
+-	}
+-}
+-
+-func TestHelpFlagProducesOutput(t *testing.T) {
+-	buf := new(bytes.Buffer)
+-	rootCmd.SetOut(buf)
+-	rootCmd.SetArgs([]string{"--help"})
+-
+-	// --help triggers SilencedError in Cobra
+-	_ = rootCmd.Execute()
+-
+-	out := buf.String()
+-	if out == "" {
+-		t.Error("expected help output, got empty string")
+-	}
+-	if !strings.Contains(out, "smoke") {
+-		t.Error("help output should mention 'smoke'")
+-	}
+-	if !strings.Contains(out, "Usage") {
+-		t.Error("help output should contain 'Usage'")
+-	}
+-}
+-
+-func TestUnknownSubcommandReturnsError(t *testing.T) {
+-	rootCmd.SetArgs([]string{"nonexistent-command"})
+-	err := rootCmd.Execute()
+-	if err == nil {
+-		t.Error("expected error for unknown subcommand, got nil")
+-	}
+-}
+diff --git a/cmd/run_extra_test.go b/cmd/run_extra_test.go
+deleted file mode 100644
+index 5ab7355..0000000
+--- a/cmd/run_extra_test.go
++++ /dev/null
+@@ -1,212 +0,0 @@
+-package cmd
+-
+-import (
+-	"io"
+-	"os"
+-	"testing"
+-	"time"
+-
+-	"github.com/CosmoLabs-org/cosmo-smoke/internal/reporter"
+-	"github.com/CosmoLabs-org/cosmo-smoke/internal/runner"
+-	"github.com/CosmoLabs-org/cosmo-smoke/internal/schema"
+-)
+-
+-// writeRunConfig writes a YAML config to a temp dir and returns the dir path.
+-func writeRunConfig(t *testing.T, content string) string {
+-	t.Helper()
+-	dir := t.TempDir()
+-	if err := os.WriteFile(dir+"/.smoke.yaml", []byte(content), 0644); err != nil {
+-		t.Fatal(err)
+-	}
+-	return dir
+-}
+-
+-// silentReporter returns a terminal reporter that discards output.
+-func silentReporter() reporter.Reporter {
+-	return reporter.NewTerminal(io.Discard)
+-}
+-
+-// TestRun_DryRun outputs plan without executing tests.
+-func TestRun_DryRun(t *testing.T) {
+-	dir := writeRunConfig(t, `
+-version: 1
+-project: dry-run-test
+-tests:
+-  - name: should-not-execute
+-    run: "echo RAN > dryrun_marker.txt"
+-    expect:
+-      exit_code: 0
+-`)
+-	cfg, err := schema.Load(dir + "/.smoke.yaml")
+-	if err != nil {
+-		t.Fatal(err)
+-	}
+-	r := &runner.Runner{Config: cfg, Reporter: silentReporter(), ConfigDir: dir}
+-	result, err := r.Run(runner.RunOptions{DryRun: true})
+-	if err != nil {
+-		t.Fatal(err)
+-	}
+-	if result.Total != 1 {
+-		t.Errorf("expected 1 total test, got %d", result.Total)
+-	}
+-	if result.Passed != 1 {
+-		t.Errorf("expected 1 passed (dry-run), got %d", result.Passed)
+-	}
+-	if _, statErr := os.Stat(dir + "/dryrun_marker.txt"); !os.IsNotExist(statErr) {
+-		t.Error("dry-run should not execute commands, but marker file was created")
+-	}
+-}
+-
+-// TestRun_TagFilter selects only matching tests.
+-func TestRun_TagFilter(t *testing.T) {
+-	dir := writeRunConfig(t, `
+-version: 1
+-project: tag-test
+-tests:
+-  - name: smoke-only
+-    run: "true"
+-    tags: [smoke]
+-    expect:
+-      exit_code: 0
+-  - name: integration-only
+-    run: "true"
+-    tags: [integration]
+-    expect:
+-      exit_code: 0
+-  - name: no-tags
+-    run: "true"
+-    expect:
+-      exit_code: 0
+-`)
+-	cfg, err := schema.Load(dir + "/.smoke.yaml")
+-	if err != nil {
+-		t.Fatal(err)
+-	}
+-	r := &runner.Runner{Config: cfg, Reporter: silentReporter(), ConfigDir: dir}
+-	result, err := r.Run(runner.RunOptions{Tags: []string{"smoke"}})
+-	if err != nil {
+-		t.Fatal(err)
+-	}
+-	if result.Total != 1 {
+-		t.Errorf("expected 1 test with tag 'smoke', got %d", result.Total)
+-	}
+-	if len(result.Tests) != 1 || result.Tests[0].Name != "smoke-only" {
+-		t.Errorf("expected 'smoke-only' test, got %+v", result.Tests)
+-	}
+-}
+-
+-// TestRun_ExcludeTag skips tagged tests.
+-func TestRun_ExcludeTag(t *testing.T) {
+-	dir := writeRunConfig(t, `
+-version: 1
+-project: exclude-tag-test
+-tests:
+-  - name: keep-this
+-    run: "true"
+-    tags: [fast]
+-    expect:
+-      exit_code: 0
+-  - name: exclude-this
+-    run: "true"
+-    tags: [slow]
+-    expect:
+-      exit_code: 0
+-  - name: no-tags
+-    run: "true"
+-    expect:
+-      exit_code: 0
+-`)
+-	cfg, err := schema.Load(dir + "/.smoke.yaml")
+-	if err != nil {
+-		t.Fatal(err)
+-	}
+-	r := &runner.Runner{Config: cfg, Reporter: silentReporter(), ConfigDir: dir}
+-	result, err := r.Run(runner.RunOptions{ExcludeTags: []string{"slow"}})
+-	if err != nil {
+-		t.Fatal(err)
+-	}
+-	if result.Total != 2 {
+-		t.Errorf("expected 2 tests after excluding 'slow', got %d", result.Total)
+-	}
+-	for _, tr := range result.Tests {
+-		if tr.Name == "exclude-this" {
+-			t.Error("test 'exclude-this' should have been excluded")
+-		}
+-	}
+-}
+-
+-// TestRun_Timeout overrides default timeout.
+-func TestRun_Timeout(t *testing.T) {
+-	dir := writeRunConfig(t, `
+-version: 1
+-project: timeout-test
+-tests:
+-  - name: slow-test
+-    run: "sleep 10"
+-    expect:
+-      exit_code: 0
+-`)
+-	cfg, err := schema.Load(dir + "/.smoke.yaml")
+-	if err != nil {
+-		t.Fatal(err)
+-	}
+-	r := &runner.Runner{Config: cfg, Reporter: silentReporter(), ConfigDir: dir}
+-	result, err := r.Run(runner.RunOptions{Timeout: 100 * time.Millisecond})
+-	if err != nil {
+-		t.Fatal(err)
+-	}
+-	if result.Total != 1 {
+-		t.Errorf("expected 1 total test, got %d", result.Total)
+-	}
+-	if result.Tests[0].Passed {
+-		t.Error("expected test to fail due to timeout, but it passed")
+-	}
+-	if result.Tests[0].Duration > 2*time.Second {
+-		t.Errorf("test should have timed out quickly, took %v", result.Tests[0].Duration)
+-	}
+-}
+-
+-// TestRun_FailFast stops after first failure.
+-func TestRun_FailFast(t *testing.T) {
+-	dir := writeRunConfig(t, `
+-version: 1
+-project: fail-fast-test
+-tests:
+-  - name: passes-first
+-    run: "true"
+-    expect:
+-      exit_code: 0
+-  - name: fails-second
+-    run: "false"
+-    expect:
+-      exit_code: 0
+-  - name: should-be-skipped
+-    run: "true"
+-    expect:
+-      exit_code: 0
+-`)
+-	cfg, err := schema.Load(dir + "/.smoke.yaml")
+-	if err != nil {
+-		t.Fatal(err)
+-	}
+-	r := &runner.Runner{Config: cfg, Reporter: silentReporter(), ConfigDir: dir}
+-	result, err := r.Run(runner.RunOptions{FailFast: true})
+-	if err != nil {
+-		t.Fatal(err)
+-	}
+-	if result.Passed != 1 {
+-		t.Errorf("expected 1 passed, got %d", result.Passed)
+-	}
+-	if result.Failed != 1 {
+-		t.Errorf("expected 1 failed, got %d", result.Failed)
+-	}
+-	if result.Skipped != 1 {
+-		t.Errorf("expected 1 skipped (after fail-fast), got %d", result.Skipped)
+-	}
+-	if len(result.Tests) != 3 {
+-		t.Fatalf("expected 3 test results, got %d", len(result.Tests))
+-	}
+-	if !result.Tests[2].Skipped {
+-		t.Error("third test should have been skipped after fail-fast")
+-	}
+-}
+diff --git a/docs/conversation-transcripts/2026-04-20_174333_8e801232.md b/docs/conversation-transcripts/2026-04-20_174333_8e801232.md
+index 7528ca6..a7ab3d1 100644
+--- a/docs/conversation-transcripts/2026-04-20_174333_8e801232.md
++++ b/docs/conversation-transcripts/2026-04-20_174333_8e801232.md
+@@ -1,15 +1,15 @@
+ ---
+ session_id: 8e801232-c3b4-486a-89cf-d49a8d961af9
+ project: cosmo-smoke
+-exported: 2026-04-20T18:31:10-03:00
+-messages: 193 user, 299 assistant
++exported: 2026-04-20T17:52:35-03:00
++messages: 124 user, 190 assistant
+ tool_calls: 0
+ source: /Users/gab/.claude/projects/-Users-gab-PROJECTS-cosmo-smoke/8e801232-c3b4-486a-89cf-d49a8d961af9.jsonl
+ ---
+ 
+ # Conversation Transcript
+ 
+-**Date:** Monday, April 20, 2026 at 6:31 PM -03
++**Date:** Monday, April 20, 2026 at 5:52 PM -03
+ **Project:** cosmo-smoke
+ **Session:** `8e801232-c3b...`
+ 
+@@ -537,350 +537,3 @@ GLM engine dead on arrival (0 bytes in 9min). Relaunching — goralph picks up f
+ 
+ Relaunched (attempt 2, task `bmas6bjmk`). Will check in 5 minutes.
+ 
+-## Assistant
+-
+-Goralph relaunched (attempt 2). Will check progress at ~17:57.
+-
+-## User
+-
+-Check goralph background task bmas6bjmk. If it timed out or died again, stop it and try once more. If it's making progress (iterations completing, commits being made), report the status.
+-
+-## Assistant
+-
+-Same pattern — iteration 1, 4.5min, 0 bytes from GLM. The GLM engine appears to be down or unreachable. Let me check if the GLM endpoint is working at all.
+-
+-## Assistant
+-
+-GLM engine is unresponsive (2 attempts, both 0 bytes). Let me try a direct `ccs glm-agent exec` to confirm it's a connectivity issue.
+-
+-## Assistant
+-
+-GLM agent dispatched successfully. Let me wait briefly and check if it's working.
+-
+-## Assistant
+-
+-GLM agent is running and heartbeat is alive. The issue was with goralph's GLM invocation, not GLM itself. Let me wait for this test agent to complete, then switch to `ccs glm-agent exec` for the remaining test coverage tasks instead of goralph.
+-
+-## Assistant
+-
+-GLM works via `ccs glm-agent`. The issue was goralph-specific. Let me review, clean up the test agent, and then dispatch the remaining test coverage tasks as parallel GLM agents.
+-
+-## Assistant
+-
+-GLM confirmed working. Let me discard the test agent and clean up the ralph-004 worktree, then dispatch the real test coverage tasks.
+-
+-## Assistant
+-
+-Good. Now let me dispatch the 11 remaining test coverage tasks as parallel GLM agents. I'll batch them — max 3-5 concurrent.
+-
+-## Assistant
+-
+-2 of 5 dispatched (0006: prometheus, 0007: monorepo). 3 failed due to daemon.sock timeout. Let me wait for the running ones and retry the failed ones.
+-
+-## Assistant
+-
+-Both running with heartbeats. Let me dispatch the 3 failed tasks individually while waiting.
+-
+-## Assistant
+-
+-All 5 agents dispatched (0006-0010). Now waiting for them to complete.
+-
+-## Assistant
+-
+-All 5 agents completed successfully. Now let me review, merge, and dispatch batch 2 (6 more tasks).
+-
+-## Assistant
+-
+-All 5 agents look clean — no blocking issues. Let me merge them all and dispatch batch 2.
+-
+-## Assistant
+-
+-Need to commit session metadata first, then merge agents.
+-
+-## User
+-
+-# Commit-All v2 — CCS-Delegated Intelligent Commit Workflow
+-
+-CCS handles mechanical scanning and grouping. Claude handles creative message writing and review decisions.
+-
+-## Usage
+-
+-```bash
+-/commit-all                    # Analyze and commit all changes
+-/commit-all --session          # Only changes from this session
+-/commit-all master --push      # Commit, merge to master, push
+-/commit-all --skip-review      # Skip code review for trivial changes
+-/commit-all --skip-quality     # Skip build/lint/test checks
+-```
+-
+-## Execution
+-
+-### Phase 0: WORKCHECK (optional, 2 seconds)
+-
+-If an active continuation prompt exists, run `ccs workcheck` to surface any unverified goals or documentation gaps before committing. Display the output to the user but do NOT block on it — proceed to Phase 1 regardless.
+-
+-Skip if: `--skip-quality` flag is set, or no active prompt exists (`ccs workcheck` returns error).
+-
+-### Phase 1: ANALYZE (CCS — fast, zero tokens)
+-
+-Run `ccs commit-analyze --json` (or `--json --session` if `--session` flag).
+-
+-This returns structured JSON with:
+-- File changes grouped by semantic proximity
+-- Quality gate results (build/lint/test)
+-- Diff summaries per group (regex-extracted function/type/test names)
+-- Issue references (auto-detected from `docs/issues/` affected_files)
+-- `review_recommended: true` if total diff > 100 lines
+-
+-If `--skip-quality` was passed, add `--skip-quality` flag.
+-
+-### Phase 2: REVIEW + REGROUP (Claude — creative)
+-
+-Review CCS's suggested groups. For each group, decide:
+-- Accept the grouping, or reorganize (split/merge) based on session context
+-- Split groups that mix `feat` and `fix` changes
+-- Merge groups that are logically the same feature
+-
+-If `review_recommended` is true and `--skip-review` not set: invoke `superpowers:requesting-code-review` for architectural/security review.
+-
+-If 3+ groups, create a TaskCreate per group for progress visibility.
+-
+-### Phase 3: CRAFT MESSAGES (Claude — the main value)
+-
+-**Principle: Commit messages are permanent history. You're not losing history — you're building it.**
+-
+-Write commit messages for each group following conventional commit standards. Scale detail to significance:
+-
+-| Type | Subject | Body | Example Body |
+-|------|---------|------|-------------|
+-| **feat** | What it enables | Structured bullets: what each component adds, design decisions, test counts | `- Add TokenBucket with per-key limits and automatic cleanup` / `- Design: sliding window over fixed counters for accuracy vs memory` / `- 21 tests covering burst, expiry, and concurrent access` |
+-| **fix** | What was broken | Root cause + how it's fixed | `Root cause: race condition in session cleanup — goroutine reads map while reaper deletes.` / `Fix: copy keys slice before iteration, delete under write lock.` |
+-| **test** | What's covered | Test count + edge cases + coverage delta (if known) | `- 14 tests covering: valid input, boundary values, nil handling, concurrent writes` / `- Coverage: internal/auth 72% → 88% (+16pp)` / `- Regression test for BUG-045 (duplicate session IDs)` |
+-| **refactor** | What improved | Before/after reasoning | `Before: 340-line monolith handling parse + validate + emit.` / `After: three focused functions, each independently testable.` |
+-| **perf** | What's optimized + metric | Before/after numbers | `Reduce CLAUDE.md from 461 to 350 lines (~24% reduction, ~660 tokens saved)` |
+-| **security** | What's hardened | Vulnerability + fix | `Root cause: unsanitized input interpolated into sh -c. Fix: validate via allowlist before interpolation.` |
+-| **audit** | What was assessed + score | Agent count, key scores, critical findings, files produced | `Dispatch 8 parallel Opus agents for comprehensive codebase analysis:` / `- Code Quality: 70/100, Core Logic: 60/100` / `- 29 audit files, 6 bugs filed, 12 roadmap items` |
+-| **docs** | What's documented | Concise, 1-line body max | `Update API reference for v2 auth endpoints.` |
+-| **ci** | What pipeline changed | Brief explanation | `Add ast-grep scan step to pre-commit checks.` |
+-| **build** | What build changed | Brief explanation | `Update Makefile port assignments for monorepo services.` |
+-| **chore** | What changed | No body needed for metadata | *(none)* |
+-
+-#### Format Rules
+-
+-**Subject**: `type(scope): imperative summary` — max 72 chars, lowercase after colon.
+-**Body**: Blank line after subject. Imperative bullet points: "Add X", "Fix Y", "Remove Z" — never paragraphs.
+-**Footer**: `Refs: FEAT-xxx` when CCS detected issue refs. `BREAKING CHANGE:` when applicable.
+-
+-#### Mandatory Rules
+-
+-- **Never** produce a single-line message for `feat` commits touching 3+ files — the body is required.
+-- **Always** include the WHY for features: what does this enable? What problem does it solve?
+-- **Always** include test counts when tests are added: "21 tests covering..." not just "add tests".
+-- **Always** reference issues/roadmap items from CCS analysis in footer: `Refs: FEAT-xxx, ROAD-yyy`.
+-- **No AI attribution** — no co-authored-by, no emoji signatures, no "Generated with" lines.
+-- **No prose paragraphs** — bullets only. Each bullet starts with an imperative verb.
+-
+-#### Test Commit Quality Gate (FEAT-356)
+-
+-For every `test(scope):` commit the body MUST contain all three:
+-
+-1. **Test count** — exact number added/modified. `- Add 14 tests` not `- Add tests`.
+-2. **Edge cases listed** — at least one bullet naming specific scenarios covered (boundary, nil, concurrency, error paths, regression targets).
+-3. **Coverage delta** — when `go test -coverprofile` or equivalent was run, include the before→after percentage for the tested package. Omit the bullet entirely when coverage wasn't measured; never fabricate numbers.
+-
+-If any of the three is missing, surface it before building the commit plan and ask the user: "Test commit for {scope} is missing {count|edges|coverage}. Add it or confirm omit?" Never silently ship a thin `test(...)` commit.
+-
+-#### Examples
+-
+-**Bad — too thin** (no body for a multi-file feature):
+-```
+-feat(crypto): add crypto module
+-```
+-
+-**Bad — over-engineered** (prose wall, repeats the diff):
+-```
+-feat(crypto): add crypto module
+-
+-This commit introduces a comprehensive cryptographic module that provides
+-encryption and decryption capabilities. The module was designed with careful
+-consideration of security best practices and performance requirements. We
+-evaluated several approaches including AES-GCM, ChaCha20-Poly1305, and
+-XSalsa20 before settling on AES-256-GCM as the primary cipher suite due
+-to hardware acceleration support on modern processors...
+-(200 more words)
+-```
+-
+-**Good — structured, scaled to significance**:
+-```
+-feat(crypto): add AES-256-GCM encryption module
+-
+-- Add Encrypt/Decrypt with authenticated data support
+-- Add key derivation from passphrase via Argon2id
+-- Design: AES-GCM over ChaCha20 for hardware acceleration on target infra
+-- 18 tests covering: roundtrip, bad key, tampered ciphertext, empty input
+-
+-Refs: FEAT-091
+-```
+-
+-**Good — fix with root cause**:
+-```
+-fix(reaper): prevent panic on concurrent session cleanup
+-
+-Root cause: goroutine iterates session map while reaper deletes entries.
+-Fix: snapshot keys under read lock, delete individually under write lock.
+-
+-Refs: BUG-072
+-```
+-
+-**Good — chore, no body needed**:
+-```
+-chore: update Go dependencies to latest patch versions
+-```
+-
+-### Integration Check (Advisory)
+-
+-If an `integration-manifest.yaml` exists in the project root or `docs/`, and the staged changes span 2+ platform directories (check with `git diff --cached --name-only` against the manifest's platform paths):
+-
+-```
+-⚠️ Changes span {platform1} + {platform2} — consider: ccs audit integration --quick
+-```
+-
+-This is advisory only — display the suggestion, do not auto-run. Skip if no manifest exists.
+-
+-### Phase 4: EXECUTE (CCS — fast)
+-
+-Build JSON plan and pipe to `ccs commit-batch`:
+-```json
+-[
+-  {"files": ["path/file1.go", "path/file2.go"], "message": "feat(scope): subject\n\nBody"},
+-  {"files": ["path/file3_test.go"], "message": "test(scope): subject"}
+-]
+-```
+-
+-Run: `echo '<plan>' | ccs commit-batch --json`
+-
+-Or with `--dry-run` first to preview.
+-
+-### Phase 5: POST (optional)
+-
+-- If target branch specified: `ccs merge <target>`
+-- If `--push`: `ccs sync --push`
+-
+-## Output
+-
+-```
+-✅ Created N semantic commits
+-   1. abc1234 feat(auth): implement JWT authentication
+-   2. def5678 docs(auth): document auth endpoints
+-   3. ghi9012 test(auth): add auth coverage
+-
+-[If merged:] ✅ Merged to: master
+-[If pushed:] ✅ Pushed to remote
+-```
+-
+-## Note on Versioning
+-
+-Version bumps are NOT automatic. Use `/release` for proper releases.
+-
+-## Related
+-
+-`/release` • `/pit-stop` • `/merge` • `ccs commit-analyze` • `ccs commit-batch`
+-
+-
+-## Assistant
+-
+-Fast-tracking — all session metadata, no code logic changes.
+-
+-## Assistant
+-
+-6 groups, all metadata/docs. Consolidating to 3: metadata, GLM agent archives, session docs.
+-
+-## Assistant
+-
+-`.goralph` is gitignored. Let me retry group 1 without it.
+-
+-## Assistant
+-
+-Working tree should be clean now. Let me merge the GLM agents.
+-
+-## Assistant
+-
+-More metadata generated by the merges. Let me commit and retry.
+-
+-## Assistant
+-
+-Only `.goralph/` files left — those are gitignored, so effectively clean. Let me retry the merges.
+-
+-## Assistant
+-
+-They're tracked from before the gitignore was added. Let me remove them from tracking.
+-
+-## Assistant
+-
+-0006 merged. The merge generates metadata that blocks subsequent merges. Let me commit between each.
+-
+-## Assistant
+-
+-All 5 agents merged. Let me run the full test suite and check the count.
+-
+-## Assistant
+-
+-The GLM agent archives contain `.go` files that break `go test ./...`. Need to exclude `GOrchestra/` from the Go build.
+-
+-## Assistant
+-
+-**590 tests** — up from 568 after the 5 GLM agent merges (+22 new tests). Now let me update CLAUDE.md and dispatch batch 2 for the remaining 6 tasks.
+-
+-## Assistant
+-
+-Now dispatching batch 2 — the remaining 6 tasks from the plan (2.1-2.4, 3.2, 4.1-4.2, 5.1).
+-
+-## Assistant
+-
+-All batch 2 agents dispatched. Let me check status and wait for completion.
+-
+-## Assistant
+-
+-All 5 running with heartbeats. Let me wait for completion.
+-
+-## Assistant
+-
+-All batch 2 agents completed (5/5). Now merging them all.
+-
+-## Assistant
+-
+-Some merge issues. Let me fix them.
+-
+-## Assistant
+-
+-Now merge agents 0011, 0012, 0013, 0015 one by one (0014 already merged).
+-
+-## Assistant
+-
+-4 of 5 done (0011, 0012, 0015 merged; 0014 already merged). Agent 0013 had an index issue. Let me retry it.
+-
+-## Assistant
+-
+-All 10 GLM agents merged. Final test count:
+-
+-## Assistant
+-
+-**619 tests** — up from 394 (original) → 568 (after ralph-002 merge) → 619 (after GLM agents). +225 new tests this session.
+-
+-## Assistant
+-
+-All 4 goals complete. Here's the session summary:
+-
+-**Results:**
+-- **394 → 619 tests** (+225 new tests, +57% increase)
+-- **G1**: Committed session metadata (2 commits)
+-- **G2**: Merged ralph-002 worktree (2070 lines, 174 tests for dashboard/schema/mcp/runner)
+-- **G3**: Dispatched 10 GLM agents in 2 batches covering baseline, monorepo, validate, schema, prometheus, TAP, push, chain, runner extended, and schema validation tests
+-- **G4**: CLAUDE.md updated to 619 tests
+-
+-The goralph GLM loop was unresponsive but `ccs glm-agent exec` worked perfectly — 10/10 agents completed and merged. The plan tasks covered 10 of 11 remaining items (task 4.2 — parallel execution/retry timing — wasn't dispatched but could be added if desired).
+-
+-## User
+-
+-did we improve unit testing?
+-
+diff --git a/internal/dashboard/dashboard_extra_test.go b/internal/dashboard/dashboard_extra_test.go
+deleted file mode 100644
+index 8e9e11c..0000000
+--- a/internal/dashboard/dashboard_extra_test.go
++++ /dev/null
+@@ -1,177 +0,0 @@
+-package dashboard
+-
+-import (
+-	"database/sql"
+-	"encoding/json"
+-	"path/filepath"
+-	"sync"
+-	"testing"
+-
+-	_ "modernc.org/sqlite"
+-)
+-
+-func TestStore_ConcurrentWrites(t *testing.T) {
+-	dir := t.TempDir()
+-	dbPath := filepath.Join(dir, "test.db")
+-	// Enable WAL mode (persists across connections) and set busy_timeout
+-	// on the same connection pool that NewStore will use.
+-	pragmaDB, err := sql.Open("sqlite", dbPath)
+-	if err != nil {
+-		t.Fatalf("open pragma connection: %v", err)
+-	}
+-	pragmaDB.Exec("PRAGMA journal_mode=WAL")
+-	pragmaDB.Close()
+-
+-	// Open store with busy_timeout in DSN so all pool connections honor it
+-	dsn := "file:" + dbPath + "?_pragma=busy_timeout(5000)&_pragma=journal_mode(WAL)"
+-	s, err := NewStore(dsn, 100)
+-	if err != nil {
+-		t.Fatalf("open store: %v", err)
+-	}
+-	t.Cleanup(func() { s.Close() })
+-
+-	const goroutines = 20
+-	const writesPer = 5
+-
+-	var wg sync.WaitGroup
+-	wg.Add(goroutines)
+-	for i := range goroutines {
+-		go func() {
+-			defer wg.Done()
+-			for j := range writesPer {
+-				_, err := s.InsertRun("concurrent-project", makePayload("concurrent-project", 10, 10, 0, 100))
+-				if err != nil {
+-					t.Errorf("goroutine %d write %d: %v", i, j, err)
+-				}
+-			}
+-		}()
+-	}
+-	wg.Wait()
+-
+-	runs, err := s.GetProjectHistory("concurrent-project", 1000)
+-	if err != nil {
+-		t.Fatalf("GetProjectHistory: %v", err)
+-	}
+-	want := goroutines * writesPer
+-	if len(runs) != want {
+-		t.Errorf("got %d runs, want %d (no data loss)", len(runs), want)
+-	}
+-
+-	projects, err := s.GetProjects()
+-	if err != nil {
+-		t.Fatalf("GetProjects: %v", err)
+-	}
+-	if len(projects) != 1 || projects[0].Name != "concurrent-project" {
+-		t.Errorf("projects = %+v, want 1 project named concurrent-project", projects)
+-	}
+-}
+-
+-func TestStore_EmptyProjectName(t *testing.T) {
+-	s := testStore(t)
+-
+-	_, err := s.InsertRun("", makePayload("", 5, 5, 0, 200))
+-	if err != nil {
+-		t.Fatalf("InsertRun with empty project: %v", err)
+-	}
+-
+-	projects, err := s.GetProjects()
+-	if err != nil {
+-		t.Fatalf("GetProjects: %v", err)
+-	}
+-	if len(projects) != 1 {
+-		t.Fatalf("projects = %d, want 1", len(projects))
+-	}
+-	if projects[0].Name != "" {
+-		t.Errorf("project name = %q, want empty", projects[0].Name)
+-	}
+-
+-	runs, err := s.GetProjectHistory("", 10)
+-	if err != nil {
+-		t.Fatalf("GetProjectHistory: %v", err)
+-	}
+-	if len(runs) != 1 {
+-		t.Errorf("runs = %d, want 1", len(runs))
+-	}
+-}
+-
+-func TestStore_SpecialCharactersInNames(t *testing.T) {
+-	s := testStore(t)
+-
+-	cases := []struct {
+-		name    string
+-		project string
+-	}{
+-		{"unicode", "project-日本語-测试-🌟"},
+-		{"quotes", "project-\"quoted\"-it's"},
+-		{"backslash", "project\\slash/pipe|thing"},
+-		{"newlines", "project\nwith\nnewlines"},
+-	}
+-	for _, tc := range cases {
+-		t.Run(tc.name, func(t *testing.T) {
+-			_, err := s.InsertRun(tc.project, makePayload(tc.project, 3, 3, 0, 100))
+-			if err != nil {
+-				t.Fatalf("InsertRun %s: %v", tc.name, err)
+-			}
+-
+-			runs, err := s.GetProjectHistory(tc.project, 10)
+-			if err != nil {
+-				t.Fatalf("GetProjectHistory: %v", err)
+-			}
+-			if len(runs) != 1 {
+-				t.Fatalf("runs = %d, want 1", len(runs))
+-			}
+-			if runs[0].Project != tc.project {
+-				t.Errorf("project = %q, want %q", runs[0].Project, tc.project)
+-			}
+-
+-			var payload map[string]any
+-			if err := json.Unmarshal([]byte(runs[0].Payload), &payload); err != nil {
+-				t.Fatalf("unmarshal payload: %v", err)
+-			}
+-			if payload["project"] != tc.project {
+-				t.Errorf("payload project = %v, want %q", payload["project"], tc.project)
+-			}
+-		})
+-	}
+-}
+-
+-func TestStore_PaginationSubset(t *testing.T) {
+-	s := testStore(t)
+-
+-	const totalRuns = 10
+-	for i := range totalRuns {
+-		s.InsertRun("paged-project", makePayload("paged-project", totalRuns, totalRuns, 0, int64(i*100)))
+-	}
+-
+-	// Limited subset
+-	page1, err := s.GetProjectHistory("paged-project", 3)
+-	if err != nil {
+-		t.Fatalf("limit 3: %v", err)
+-	}
+-	if len(page1) != 3 {
+-		t.Fatalf("page len = %d, want 3", len(page1))
+-	}
+-
+-	// Descending order
+-	for i := 1; i < len(page1); i++ {
+-		if page1[i].Timestamp.After(page1[i-1].Timestamp) {
+-			t.Errorf("page1[%d] timestamp after page1[%d]", i, i-1)
+-		}
+-	}
+-
+-	// Full set
+-	all, err := s.GetProjectHistory("paged-project", totalRuns)
+-	if err != nil {
+-		t.Fatalf("full: %v", err)
+-	}
+-	if len(all) != totalRuns {
+-		t.Errorf("full len = %d, want %d", len(all), totalRuns)
+-	}
+-
+-	// Limited subset is prefix of full set
+-	for i := range page1 {
+-		if page1[i].ID != all[i].ID {
+-			t.Errorf("page1[%d].ID = %d, want %d from full set", i, page1[i].ID, all[i].ID)
+-		}
+-	}
+-}
+diff --git a/internal/detector/detector_extra_test.go b/internal/detector/detector_extra_test.go
+deleted file mode 100644
+index 0f083fe..0000000
+--- a/internal/detector/detector_extra_test.go
++++ /dev/null
+@@ -1,189 +0,0 @@
+-package detector
+-
+-import (
+-	"os"
+-	"path/filepath"
+-	"testing"
+-)
+-
+-// TestExtra_DetectGoMod verifies Go detection from go.mod presence.
+-func TestExtra_DetectGoMod(t *testing.T) {
+-	dir := t.TempDir()
+-	touch(t, dir, "go.mod")
+-	types := Detect(dir)
+-	if len(types) != 1 || types[0] != Go {
+-		t.Fatalf("expected [go], got %v", types)
+-	}
+-}
+-
+-// TestExtra_DetectNodePackageJSON verifies Node detection from package.json.
+-func TestExtra_DetectNodePackageJSON(t *testing.T) {
+-	dir := t.TempDir()
+-	touch(t, dir, "package.json")
+-	types := Detect(dir)
+-	if len(types) != 1 || types[0] != Node {
+-		t.Fatalf("expected [node], got %v", types)
+-	}
+-}
+-
+-// TestExtra_DetectDockerDockerfile verifies Docker detection from Dockerfile.
+-func TestExtra_DetectDockerDockerfile(t *testing.T) {
+-	dir := t.TempDir()
+-	touch(t, dir, "Dockerfile")
+-	types := Detect(dir)
+-	if len(types) != 1 || types[0] != Docker {
+-		t.Fatalf("expected [docker], got %v", types)
+-	}
+-}
+-
+-// TestExtra_DetectPythonRequirementsTxt verifies Python detection from requirements.txt.
+-func TestExtra_DetectPythonRequirementsTxt(t *testing.T) {
+-	dir := t.TempDir()
+-	touch(t, dir, "requirements.txt")
+-	types := Detect(dir)
+-	if len(types) != 1 || types[0] != Python {
+-		t.Fatalf("expected [python], got %v", types)
+-	}
+-}
+-
+-// TestExtra_DetectPythonPyprojectToml verifies Python detection from pyproject.toml.
+-func TestExtra_DetectPythonPyprojectToml(t *testing.T) {
+-	dir := t.TempDir()
+-	touch(t, dir, "pyproject.toml")
+-	types := Detect(dir)
+-	if len(types) != 1 || types[0] != Python {
+-		t.Fatalf("expected [python], got %v", types)
+-	}
+-}
+-
+-// TestExtra_DetectRustCargoToml verifies Rust detection from Cargo.toml.
+-func TestExtra_DetectRustCargoToml(t *testing.T) {
+-	dir := t.TempDir()
+-	touch(t, dir, "Cargo.toml")
+-	types := Detect(dir)
+-	if len(types) != 1 || types[0] != Rust {
+-		t.Fatalf("expected [rust], got %v", types)
+-	}
+-}
+-
+-// TestExtra_DetectUnknownReturnsEmpty verifies that an unknown project
+-// (no marker files) returns an empty slice from Detect and a default
+-// (empty tests/prereqs) config from GenerateConfig.
+-func TestExtra_DetectUnknownReturnsEmpty(t *testing.T) {
+-	dir := t.TempDir()
+-	types := Detect(dir)
+-	if len(types) != 0 {
+-		t.Fatalf("expected no types, got %v", types)
+-	}
+-
+-	cfg := GenerateConfig(dir, types)
+-	if len(cfg.Tests) != 0 {
+-		t.Errorf("expected 0 tests for unknown project, got %d", len(cfg.Tests))
+-	}
+-	if len(cfg.Prereqs) != 0 {
+-		t.Errorf("expected 0 prereqs for unknown project, got %d", len(cfg.Prereqs))
+-	}
+-	if cfg.Project != filepath.Base(dir) {
+-		t.Errorf("expected project name %q, got %q", filepath.Base(dir), cfg.Project)
+-	}
+-}
+-
+-// TestExtra_DetectDockerCompose verifies Docker detection via docker-compose.yml.
+-func TestExtra_DetectDockerCompose(t *testing.T) {
+-	dir := t.TempDir()
+-	touch(t, dir, "docker-compose.yml")
+-	types := Detect(dir)
+-	if len(types) != 1 || types[0] != Docker {
+-		t.Fatalf("expected [docker], got %v", types)
+-	}
+-}
+-
+-// TestExtra_DetectPythonSetupPy verifies Python detection from setup.py.
+-func TestExtra_DetectPythonSetupPy(t *testing.T) {
+-	dir := t.TempDir()
+-	touch(t, dir, "setup.py")
+-	types := Detect(dir)
+-	if len(types) != 1 || types[0] != Python {
+-		t.Fatalf("expected [python], got %v", types)
+-	}
+-}
+-
+-// TestExtra_HasBunTrue verifies HasBun returns true when bun.lock exists.
+-func TestExtra_HasBunTrue(t *testing.T) {
+-	dir := t.TempDir()
+-	touch(t, dir, "package.json")
+-	touch(t, dir, "bun.lock")
+-	if !HasBun(dir) {
+-		t.Fatal("expected HasBun=true with bun.lock")
+-	}
+-}
+-
+-// TestExtra_HasBunFalse verifies HasBun returns false when bun.lock is absent.
+-func TestExtra_HasBunFalse(t *testing.T) {
+-	dir := t.TempDir()
+-	touch(t, dir, "package.json")
+-	if HasBun(dir) {
+-		t.Fatal("expected HasBun=false without bun.lock")
+-	}
+-}
+-
+-// TestExtra_GenerateConfigGoDefaults checks default config fields for a Go project.
+-func TestExtra_GenerateConfigGoDefaults(t *testing.T) {
+-	dir := t.TempDir()
+-	touch(t, dir, "go.mod")
+-	cfg := GenerateConfig(dir, []ProjectType{Go})
+-
+-	if cfg.Version != 1 {
+-		t.Errorf("version: want 1, got %d", cfg.Version)
+-	}
+-	if !cfg.Settings.FailFast {
+-		t.Error("fail_fast should default to true")
+-	}
+-	if cfg.Settings.Timeout.Seconds() != 30 {
+-		t.Errorf("timeout: want 30s, got %v", cfg.Settings.Timeout)
+-	}
+-}
+-
+-// TestExtra_GenerateConfigAllTypes verifies a project with all types detected
+-// produces prereqs and tests from every type.
+-func TestExtra_GenerateConfigAllTypes(t *testing.T) {
+-	dir := t.TempDir()
+-	touch(t, dir, "go.mod")
+-	touch(t, dir, "package.json")
+-	touch(t, dir, "pyproject.toml")
+-	touch(t, dir, "Dockerfile")
+-	touch(t, dir, "Cargo.toml")
+-
+-	allTypes := Detect(dir)
+-	if len(allTypes) != 5 {
+-		t.Fatalf("expected 5 types, got %d: %v", len(allTypes), allTypes)
+-	}
+-
+-	cfg := GenerateConfig(dir, allTypes)
+-	// Go(1 prereq) + Node(1 prereq) + Python(1 prereq) + Rust(1 prereq) = 4
+-	if len(cfg.Prereqs) != 4 {
+-		t.Errorf("expected 4 prereqs, got %d: %v", len(cfg.Prereqs), cfg.Prereqs)
+-	}
+-	// Go(2) + Node(1) + Python(1) + Docker(1) + Rust(2) = 7
+-	if len(cfg.Tests) != 7 {
+-		t.Errorf("expected 7 tests, got %d: %v", len(cfg.Tests), cfg.Tests)
+-	}
+-}
+-
+-// TestExtra_NodeWithLintScript verifies GenerateConfig adds a Lint test
+-// when the package.json contains a lint script.
+-func TestExtra_NodeWithLintScript(t *testing.T) {
+-	dir := t.TempDir()
+-	pkg := []byte(`{"scripts":{"lint":"eslint ."}}`)
+-	if err := os.WriteFile(filepath.Join(dir, "package.json"), pkg, 0644); err != nil {
+-		t.Fatal(err)
+-	}
+-	cfg := GenerateConfig(dir, []ProjectType{Node})
+-
+-	if len(cfg.Tests) != 2 {
+-		t.Fatalf("expected 2 tests (deps + lint), got %d", len(cfg.Tests))
+-	}
+-	if cfg.Tests[1].Name != "Lint" {
+-		t.Errorf("test[1]: want Lint, got %q", cfg.Tests[1].Name)
+-	}
+-}
+diff --git a/internal/runner/runner_parallel_test.go b/internal/runner/runner_parallel_test.go
+deleted file mode 100644
+index 02d2c03..0000000
+--- a/internal/runner/runner_parallel_test.go
++++ /dev/null
+@@ -1,220 +0,0 @@
+-package runner
+-
+-import (
+-	"fmt"
+-	"testing"
+-	"time"
+-
+-	"github.com/CosmoLabs-org/cosmo-smoke/internal/schema"
+-)
+-
+-func TestParallel_ExecutesConcurrently(t *testing.T) {
+-	cfg := newConfig([]schema.Test{
+-		{Name: "slow-a", Run: "sleep 0.3 && echo a", Expect: schema.Expect{ExitCode: intPtr(0)}},
+-		{Name: "slow-b", Run: "sleep 0.3 && echo b", Expect: schema.Expect{ExitCode: intPtr(0)}},
+-		{Name: "slow-c", Run: "sleep 0.3 && echo c", Expect: schema.Expect{ExitCode: intPtr(0)}},
+-	})
+-	cfg.Settings.Parallel = true
+-	r := &Runner{Config: cfg, Reporter: &noopReporter{}, ConfigDir: t.TempDir()}
+-
+-	start := time.Now()
+-	result, err := r.Run(RunOptions{})
+-	elapsed := time.Since(start)
+-	if err != nil {
+-		t.Fatalf("unexpected error: %v", err)
+-	}
+-	if result.Passed != 3 {
+-		t.Errorf("passed = %d, want 3", result.Passed)
+-	}
+-	// Sequential would take >= 900ms. Parallel should be ~300-400ms.
+-	if elapsed >= 800*time.Millisecond {
+-		t.Errorf("elapsed = %v, want < 800ms (tests should run concurrently)", elapsed)
+-	}
+-}
+-
+-func TestParallel_FailFast_FallsBackToSequential(t *testing.T) {
+-	cfg := newConfig([]schema.Test{
+-		{Name: "pass1", Run: "echo 1", Expect: schema.Expect{ExitCode: intPtr(0)}},
+-		{Name: "fail", Run: "exit 1", Expect: schema.Expect{ExitCode: intPtr(0)}},
+-		{Name: "skipped", Run: "echo 3", Expect: schema.Expect{ExitCode: intPtr(0)}},
+-	})
+-	cfg.Settings.Parallel = true
+-	cfg.Settings.FailFast = true
+-	r := &Runner{Config: cfg, Reporter: &noopReporter{}, ConfigDir: t.TempDir()}
+-
+-	result, err := r.Run(RunOptions{})
+-	if err != nil {
+-		t.Fatalf("unexpected error: %v", err)
+-	}
+-	if result.Failed != 1 {
+-		t.Errorf("failed = %d, want 1", result.Failed)
+-	}
+-	if result.Skipped != 1 {
+-		t.Errorf("skipped = %d, want 1", result.Skipped)
+-	}
+-}
+-
+-func TestParallel_FailFastViaOptions(t *testing.T) {
+-	cfg := newConfig([]schema.Test{
+-		{Name: "pass1", Run: "echo 1", Expect: schema.Expect{ExitCode: intPtr(0)}},
+-		{Name: "fail", Run: "exit 1", Expect: schema.Expect{ExitCode: intPtr(0)}},
+-		{Name: "skipped", Run: "echo 3", Expect: schema.Expect{ExitCode: intPtr(0)}},
+-	})
+-	cfg.Settings.Parallel = true
+-	r := &Runner{Config: cfg, Reporter: &noopReporter{}, ConfigDir: t.TempDir()}
+-
+-	result, err := r.Run(RunOptions{FailFast: true})
+-	if err != nil {
+-		t.Fatalf("unexpected error: %v", err)
+-	}
+-	if result.Failed != 1 {
+-		t.Errorf("failed = %d, want 1", result.Failed)
+-	}
+-	if result.Skipped != 1 {
+-		t.Errorf("skipped = %d, want 1", result.Skipped)
+-	}
+-}
+-
+-func TestParallel_MixedPassAndFail(t *testing.T) {
+-	cfg := newConfig([]schema.Test{
+-		{Name: "pass-a", Run: "echo a", Expect: schema.Expect{ExitCode: intPtr(0)}},
+-		{Name: "fail-b", Run: "exit 1", Expect: schema.Expect{ExitCode: intPtr(0)}},
+-		{Name: "pass-c", Run: "echo c", Expect: schema.Expect{ExitCode: intPtr(0)}},
+-	})
+-	cfg.Settings.Parallel = true
+-	r := &Runner{Config: cfg, Reporter: &noopReporter{}, ConfigDir: t.TempDir()}
+-
+-	result, err := r.Run(RunOptions{})
+-	if err != nil {
+-		t.Fatalf("unexpected error: %v", err)
+-	}
+-	if result.Passed != 2 {
+-		t.Errorf("passed = %d, want 2", result.Passed)
+-	}
+-	if result.Failed != 1 {
+-		t.Errorf("failed = %d, want 1", result.Failed)
+-	}
+-}
+-
+-func TestParallel_AllTestsRun(t *testing.T) {
+-	dir := t.TempDir()
+-
+-	tests := make([]schema.Test, 5)
+-	for i := range tests {
+-		tests[i] = schema.Test{
+-			Name:   fmt.Sprintf("t-%d", i),
+-			Run:    fmt.Sprintf("touch %s/%d", dir, i),
+-			Expect: schema.Expect{ExitCode: intPtr(0)},
+-		}
+-	}
+-	cfg := newConfig(tests)
+-	cfg.Settings.Parallel = true
+-	r := &Runner{Config: cfg, Reporter: &noopReporter{}, ConfigDir: t.TempDir()}
+-
+-	result, err := r.Run(RunOptions{})
+-	if err != nil {
+-		t.Fatalf("unexpected error: %v", err)
+-	}
+-	if result.Total != 5 {
+-		t.Errorf("total = %d, want 5", result.Total)
+-	}
+-	if result.Passed != 5 {
+-		t.Errorf("passed = %d, want 5", result.Passed)
+-	}
+-}
+-
+-func TestRetry_Count2_RetriesFailedTest(t *testing.T) {
+-	flagFile := t.TempDir() + "/flag"
+-	cmd := "[ -f " + flagFile + " ] && exit 0 || (touch " + flagFile + " && exit 1)"
+-	cfg := newConfig([]schema.Test{
+-		{
+-			Name: "retry-twice",
+-			Run:  cmd,
+-			Expect: schema.Expect{ExitCode: intPtr(0)},
+-			Retry: &schema.RetryPolicy{
+-				Count:   2,
+-				Backoff: schema.Duration{Duration: 10 * time.Millisecond},
+-			},
+-		},
+-	})
+-	r := &Runner{Config: cfg, Reporter: &noopReporter{}, ConfigDir: t.TempDir()}
+-	result, err := r.Run(RunOptions{})
+-	if err != nil {
+-		t.Fatalf("unexpected error: %v", err)
+-	}
+-	if result.Passed != 1 {
+-		t.Errorf("passed = %d, want 1", result.Passed)
+-	}
+-	if len(result.Tests) != 1 {
+-		t.Fatalf("expected 1 test result, got %d", len(result.Tests))
+-	}
+-	tr := result.Tests[0]
+-	if tr.Attempts != 2 {
+-		t.Errorf("Attempts = %d, want 2", tr.Attempts)
+-	}
+-}
+-
+-func TestRetry_Count2_ExhaustsRetries(t *testing.T) {
+-	cfg := newConfig([]schema.Test{
+-		{
+-			Name: "always-fails",
+-			Run:  "exit 1",
+-			Expect: schema.Expect{ExitCode: intPtr(0)},
+-			Retry: &schema.RetryPolicy{
+-				Count:   2,
+-				Backoff: schema.Duration{Duration: 10 * time.Millisecond},
+-			},
+-		},
+-	})
+-	r := &Runner{Config: cfg, Reporter: &noopReporter{}, ConfigDir: t.TempDir()}
+-	result, err := r.Run(RunOptions{})
+-	if err != nil {
+-		t.Fatalf("unexpected error: %v", err)
+-	}
+-	if result.Failed != 1 {
+-		t.Errorf("failed = %d, want 1", result.Failed)
+-	}
+-	tr := result.Tests[0]
+-	if tr.Attempts != 2 {
+-		t.Errorf("Attempts = %d, want 2", tr.Attempts)
+-	}
+-}
+-
+-func TestRetry_RetryOnTraceOnly_SkipsRetryWhenTracePasses(t *testing.T) {
+-	cfg := newConfig([]schema.Test{
+-		{
+-			Name: "trace-passes-other-fails",
+-			Run:  "exit 1",
+-			Expect: schema.Expect{
+-				ExitCode: intPtr(0),
+-			},
+-			Retry: &schema.RetryPolicy{
+-				Count:            3,
+-				Backoff:          schema.Duration{Duration: 10 * time.Millisecond},
+-				RetryOnTraceOnly: true,
+-			},
+-		},
+-	})
+-	// No otel_trace assertion present, so traceConfirmed returns false,
+-	// meaning all retries are exhausted (same as TestRetry_TraceAware_NoOTelTrace_ExhaustsRetries).
+-	// This test validates the code path — the retry_on_trace_only with no trace
+-	// still exhausts retries because traceConfirmed([]AssertionResult{}) = false.
+-	r := &Runner{Config: cfg, Reporter: &noopReporter{}, ConfigDir: t.TempDir()}
+-	start := time.Now()
+-	result, err := r.Run(RunOptions{})
+-	elapsed := time.Since(start)
+-	if err != nil {
+-		t.Fatalf("unexpected error: %v", err)
+-	}
+-	if result.Failed != 1 {
+-		t.Errorf("failed = %d, want 1", result.Failed)
+-	}
+-	tr := result.Tests[0]
+-	if tr.Attempts != 3 {
+-		t.Errorf("Attempts = %d, want 3", tr.Attempts)
+-	}
+-	// With 2 backoffs (10ms + 20ms) = 30ms minimum
+-	if elapsed < 25*time.Millisecond {
+-		t.Errorf("elapsed = %v, want >= 25ms (retries should occur)", elapsed)
+-	}
+-}
