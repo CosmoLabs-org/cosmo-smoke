@@ -1,10 +1,10 @@
 {
   "version": "1.0",
-  "generated_at": "2026-04-20T17:34:32.052593-03:00",
+  "generated_at": "2026-04-20T17:34:59.086467-03:00",
   "generated_by": "GLM-4.7",
-  "expires_at": "2026-04-21T17:34:32.052593-03:00",
-  "last_analyzed_commit": "99076c2e62e6c4c1b1c53d382f63ea2f58893a12",
-  "summary": "A Go-based CLI tool integrating MCP for infrastructure validation, featuring Goss migration capabilities and a structured runner/reporter pipeline.",
+  "expires_at": "2026-04-21T17:34:59.086467-03:00",
+  "last_analyzed_commit": "9d1c31e8aa0a1b5be8c41e9fbc94c58a78c2ac25",
+  "summary": "A Go-based CLI tool that integrates with MCP for infrastructure validation, featuring Goss migration, baseline detection, and a dashboard reporter.",
   "architecture": "monolith",
   "primary_language": "Go",
   "hot_files": [
@@ -12,22 +12,25 @@
     "internal/mcp/handlers.go",
     "internal/migrate/goss/translator.go",
     "internal/schema/validate_test.go",
-    "internal/runner/assertion_test.go"
+    "internal/detector/detector.go"
   ],
   "patterns": [
     "Standard Go project layout",
     "MCP (Model Context Protocol) integration",
     "Migration/Translator pattern",
-    "Test-driven development"
+    "Test-driven development",
+    "Session-based workflow management"
   ],
   "concerns": [
-    "6 untracked files in git status indicating incomplete commits or ignored artifacts",
-    "Archived session specs suggest possible instability in AI-assisted development workflows",
-    "Heavy reliance on internal packages may limit extensibility"
+    "6 untracked files in git status indicating incomplete commits",
+    "Heavy reliance on auto-commits for session metadata",
+    "Test specs split across non-standard directories (.goralph/specs, ClaudeDesktop/specs)",
+    "Potential over-automation of chore tasks in commit history"
   ],
   "suggestions": [
-    "Resolve the 6 untracked files by committing or adding to .gitignore",
-    "Review and stabilize the MCP handler logic as it appears to be a core integration point",
-    "Ensure Goss migration translator has comprehensive edge-case coverage"
+    "Consolidate test specifications into a single standard location",
+    "Address untracked files and establish stricter commit hygiene",
+    "Review auto-commit automation to reduce noisy commit history",
+    "Add documentation for the MCP handler endpoints"
   ]
 }

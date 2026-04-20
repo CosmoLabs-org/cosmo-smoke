@@ -4,10 +4,10 @@ base: master
 status: conflict
 created: 2026-04-20
 archived: 2026-04-20
-commits: 10
-files_changed: 46
-lines_added: 2098
-lines_removed: 7793
+commits: 11
+files_changed: 51
+lines_added: 2104
+lines_removed: 7998
 review_status: passed
 ---
 
@@ -16,10 +16,11 @@ review_status: passed
 ## Summary
 
 Branch merged via `ccs merg` on 2026-04-20.
-10 commits, 46 files changed (+2098/-7793).
+11 commits, 51 files changed (+2104/-7998).
 
 ## Commits
 
+- `73a49c9` chore: update review.json with acknowledged issues
 - `96480aa` test: document helper sources, fix ResponseTimeMs test fragility
 - `cbaa1e6` chore: remove GoRalph-history from tracking (already in .gitignore)
 - `73ef9b6` chore: gitignore goralph metadata, remove from tracking
@@ -45,11 +46,16 @@ Branch merged via `ccs merg` on 2026-04-20.
  .goralph/state.yaml                                |    1 -
  .goralph/task.md                                   |    1 -
  .gorchestra/fingerprint-cache.json                 |    4 +-
+ .review.json                                       |   11 +-
  .version-registry.json                             |   10 +-
  CHANGELOG.md                                       |   26 -
  CLAUDE.md                                          |   11 +-
- GOrchestra/intel/architecture.json                 |   34 +-
+ GOrchestra/intel/architecture.json                 |   31 +-
  GOrchestra/intel/status.json                       |    4 +-
+ .../.ccsession.json                                |   32 -
+ .../.review.json                                   |   12 -
+ .../HISTORY.md                                     |   84 -
+ .../session.json                                   |   75 -
  cmd/run.go                                         |   61 +-
  cmd/schema.go                                      |   26 -
  cmd/validate.go                                    |   53 -
@@ -80,5 +86,5 @@ Branch merged via `ccs merg` on 2026-04-20.
  internal/schema/export.go                          |  213 --
  internal/schema/export_test.go                     |   47 -
  internal/schema/schema_extra_test.go               |  743 ++++++
- 46 files changed, 2098 insertions(+), 7793 deletions(-)
+ 51 files changed, 2104 insertions(+), 7998 deletions(-)
 ```
