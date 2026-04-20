@@ -42,3 +42,5 @@ node_modules/
 go.work
 go.work.sum
 cover.out
+.goralph/
+GoRalph-history/

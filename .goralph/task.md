@@ -1,1 +1,0 @@
-Increase unit test coverage for cosmo-smoke. Follow the plan in .goralph/plan.md strictly — one task per iteration. Each task targets a specific package. Write tests only, do not modify production code.
