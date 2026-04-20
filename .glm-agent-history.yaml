@@ -37,3 +37,11 @@ entries:
       files_changed:
         - cmd/validate_extra_test.go
       commit: 542d1a62f2cead476a62bfbfe31bcb08c5cf6b1e
+    - id: "0010"
+      task: 'Add tests to cmd/ package for schema command. Create file cmd/schema_extra_test.go in package cmd. Test cases: JSON output is valid JSON and roundtrips, schema contains all expected assertion type names (exit_code, stdout_contains, http, json_field, ssl_cert, redis_ping, websocket, docker_container_running, url_reachable, s3_bucket, version_check, otel_trace, credential_check, graphql), each assertion type has at least one field, all field types are non-empty strings. Verify: go test ./cmd/ -run TestSchema -v passes.'
+      started: 2026-04-20T18:02:44.66427-03:00
+      completed: 2026-04-20T18:11:17.502876-03:00
+      status: merged
+      files_changed:
+        - cmd/schema_extra_test.go
+      commit: 103a3ec548edd5df8be6ea43ccdc918a228a4e08

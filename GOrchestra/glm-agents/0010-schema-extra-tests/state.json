@@ -1,0 +1,15 @@
+{
+  "id": "0010",
+  "pid": 80402,
+  "tmux_session": "glm-0010",
+  "worktree_path": "/Users/gab/PROJECTS/cosmo-smoke-worktrees/_glm-agent-0010-schema-extra-tests",
+  "branch": "_glm-agent-0010-schema-extra-tests",
+  "base_branch": "master",
+  "status": "done",
+  "started_at": "2026-04-20T18:02:44.66427-03:00",
+  "task": "Add tests to cmd/ package for schema command. Create file cmd/schema_extra_test.go in package cmd. Test cases: JSON output is valid JSON and roundtrips, schema contains all expected assertion type names (exit_code, stdout_contains, http, json_field, ssl_cert, redis_ping, websocket, docker_container_running, url_reachable, s3_bucket, version_check, otel_trace, credential_check, graphql), each assertion type has at least one field, all field types are non-empty strings. Verify: go test ./cmd/ -run TestSchema -v passes.",
+  "exit_code": 0,
+  "idle_timeout": 120000000000,
+  "max_timeout": 1800000000000,
+  "on_done_executed": false
+}

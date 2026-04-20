@@ -1,0 +1,12 @@
+id: "0010"
+task: "Add tests to cmd/ package for schema command. Create file cmd/schema_extra_test.go in package cmd. Test cases: JSON output is valid JSON and roundtrips, schema contains all expected assertion type names (exit_code, stdout_contains, http, json_field, ssl_cert, redis_ping, websocket, docker_container_running, url_reachable, s3_bucket, version_check, otel_trace, credential_check, graphql), each assertion type has at least one field, all field types are non-empty strings. Verify: go test ./cmd/ -run TestSchema -v passes."
+status: merged
+started: 2026-04-20T18:02:44-03:00
+completed: 2026-04-20T18:11:17-03:00
+duration: 8m33s
+exit_code: 0
+commit: 103a3ec548edd5df8be6ea43ccdc918a228a4e08
+branch: _glm-agent-0010-schema-extra-tests
+summary: "Created cmd/schema_extra_test.go with 5 test functions validating schema JSON export: valid JSON output, roundtrip serialization, expected assertion type names present, each assertion has fields, all field types non-empty strings. All tests pass."
+files_changed:
+  - "cmd/schema_extra_test.go"

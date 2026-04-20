@@ -1,0 +1,5 @@
+{
+  "summary": "Created cmd/schema_extra_test.go with 5 test functions validating schema JSON export: valid JSON output, roundtrip serialization, expected assertion type names present, each assertion has fields, all field types non-empty strings. All tests pass.",
+  "files_changed": ["cmd/schema_extra_test.go"],
+  "errors": []
+}
