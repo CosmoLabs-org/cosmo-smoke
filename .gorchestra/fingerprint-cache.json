@@ -1,13 +1,12 @@
 {
-  "hash": "1d87a84db832d1b1fe6584e60d9b4949c43b414d110108cddb8ef562c99da339",
-  "project_name": "cosmo-smoke",
+  "hash": "6e8e2aca95530bf4ff659eaacf0e2b6b6aa181e99ce25eab1fa08681aa076914",
+  "project_name": "_glm-agent-0007-tests-internalmonorepo-package",
   "language": "go",
   "framework": "cli",
   "directories": [
     "ClaudeDesktop",
     "GOrchestra",
     "GeminiAI",
-    "bin",
     "cmd",
     "docs",
     "examples",
@@ -28,5 +27,5 @@
   ],
   "has_tests": true,
   "has_ci": true,
-  "generated_at": "2026-04-20T11:30:18.797089-03:00"
+  "generated_at": "2026-04-20T18:00:38.049574-03:00"
 }
