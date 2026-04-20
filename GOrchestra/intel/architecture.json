@@ -1,10 +1,10 @@
 {
   "version": "1.0",
-  "generated_at": "2026-04-20T16:56:12.339244-03:00",
+  "generated_at": "2026-04-20T16:58:22.967999-03:00",
   "generated_by": "GLM-4.7",
-  "expires_at": "2026-04-21T16:56:12.339244-03:00",
-  "last_analyzed_commit": "499e611c82a68dcc8b53ae4c3e59df1d11e1eb1c",
-  "summary": "A Go-based CLI tool called cosmo-smoke for validating, migrating, and running infrastructure smoke tests with MCP integration and Goss compatibility.",
+  "expires_at": "2026-04-21T16:58:22.967999-03:00",
+  "last_analyzed_commit": "52162c3201ea8595e976b568257fb98e189de731",
+  "summary": "A Go-based CLI tool for infrastructure validation, Goss migration, and MCP-integrated reporting.",
   "architecture": "monolith",
   "primary_language": "Go",
   "hot_files": [
@@ -12,25 +12,23 @@
     "internal/mcp/handlers.go",
     "internal/migrate/goss/translator.go",
     "internal/schema/validate_test.go",
-    "internal/baseline/baseline.go"
+    "internal/reporter/reporter.go"
   ],
   "patterns": [
-    "Standard Go project layout",
     "MCP (Model Context Protocol) integration",
-    "Migration adapter pattern (Goss translator)",
-    "Test-driven development (high test-to-source ratio)",
-    "Command-line interface (CLI) pattern"
+    "Goss configuration migration/translation",
+    "Test-driven development",
+    "Internal package encapsulation",
+    "CLI command pattern"
   ],
   "concerns": [
-    "Uncommitted work (11 modified, 4 staged, 6 untracked) suggests instability",
-    "Goss migration module implies legacy dependency that may need ongoing maintenance",
-    "Monolithic internal package could become unwieldy as the codebase grows",
-    "Scattered test specs across .goralph/specs and ClaudeDesktop/specs"
+    "Uncommitted changes (1 modified, 1 staged) may indicate incomplete work",
+    "Heavy reliance on internal packages could hinder external contribution",
+    "Migration logic tightly coupled to Goss format"
   ],
   "suggestions": [
-    "Commit or stash the current working tree changes to establish a clean baseline",
-    "Consolidate test specification directories into a single location",
-    "Document the MCP handler endpoints and schema validation rules",
-    "Consider extracting the Goss migration into a standalone tool once migration is complete"
+    "Commit or stash the pending changes to maintain a clean working tree",
+    "Document the MCP handler endpoints and expected payloads",
+    "Expand test coverage for the dashboard and baseline modules"
   ]
 }
