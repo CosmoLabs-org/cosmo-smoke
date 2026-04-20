@@ -162,3 +162,104 @@ func TestPrometheus_AllowedFailure(t *testing.T) {
 		t.Errorf("missing allowed_failure_total 1 in:\n%s", out)
 	}
 }
+
+func TestPrometheus_AllFailing(t *testing.T) {
+	var buf bytes.Buffer
+	r := NewPrometheus(&buf)
+
+	r.TestResult(TestResultData{Name: "fail-a", Passed: false, Duration: 10 * time.Millisecond})
+	r.TestResult(TestResultData{Name: "fail-b", Passed: false, Duration: 20 * time.Millisecond})
+	r.TestResult(TestResultData{Name: "fail-c", Passed: false, Duration: 30 * time.Millisecond})
+	r.Summary(SuiteResultData{Total: 3, Passed: 0, Failed: 3, Duration: 60 * time.Millisecond})
+
+	out := buf.String()
+
+	if !containsLine(out, "smoke_test_passed_total 0") {
+		t.Errorf("expected passed_total 0 in:\n%s", out)
+	}
+	if !containsLine(out, "smoke_test_failed_total 3") {
+		t.Errorf("expected failed_total 3 in:\n%s", out)
+	}
+	if !containsLine(out, `smoke_test_status{name="fail_a",allowed_failure="false"} 0`) {
+		t.Errorf("missing fail-a status line in:\n%s", out)
+	}
+	if !containsLine(out, `smoke_test_status{name="fail_b",allowed_failure="false"} 0`) {
+		t.Errorf("missing fail-b status line in:\n%s", out)
+	}
+	if !containsLine(out, `smoke_test_status{name="fail_c",allowed_failure="false"} 0`) {
+		t.Errorf("missing fail-c status line in:\n%s", out)
+	}
+}
+
+func TestPrometheus_MixedPassFailSkip(t *testing.T) {
+	var buf bytes.Buffer
+	r := NewPrometheus(&buf)
+
+	r.TestResult(TestResultData{Name: "pass1", Passed: true, Skipped: false, Duration: 10 * time.Millisecond})
+	r.TestResult(TestResultData{Name: "fail1", Passed: false, Skipped: false, Duration: 5 * time.Millisecond})
+	r.TestResult(TestResultData{Name: "skip1", Passed: false, Skipped: true, Duration: 0})
+	r.Summary(SuiteResultData{Total: 3, Passed: 1, Failed: 1, Skipped: 1, Duration: 15 * time.Millisecond})
+
+	out := buf.String()
+
+	if !containsLine(out, "smoke_test_total 3") {
+		t.Errorf("missing total 3 in:\n%s", out)
+	}
+	if !containsLine(out, "smoke_test_passed_total 1") {
+		t.Errorf("missing passed_total 1 in:\n%s", out)
+	}
+	if !containsLine(out, "smoke_test_failed_total 1") {
+		t.Errorf("missing failed_total 1 in:\n%s", out)
+	}
+	if !containsLine(out, `smoke_test_status{name="pass1",allowed_failure="false"} 1`) {
+		t.Errorf("missing pass1 status=1 in:\n%s", out)
+	}
+	if !containsLine(out, `smoke_test_status{name="fail1",allowed_failure="false"} 0`) {
+		t.Errorf("missing fail1 status=0 in:\n%s", out)
+	}
+	if !containsLine(out, `smoke_test_status{name="skip1",allowed_failure="false"} 0`) {
+		t.Errorf("missing skip1 status=0 in:\n%s", out)
+	}
+}
+
+func TestPrometheus_ZeroDuration(t *testing.T) {
+	var buf bytes.Buffer
+	r := NewPrometheus(&buf)
+
+	r.TestResult(TestResultData{Name: "instant-test", Passed: true, Duration: 0})
+	r.Summary(SuiteResultData{Total: 1, Passed: 1, Failed: 0, Duration: 0})
+
+	out := buf.String()
+
+	if !containsLine(out, "smoke_test_duration_seconds 0") {
+		t.Errorf("missing suite duration 0 in:\n%s", out)
+	}
+	if !containsLine(out, `smoke_test_duration_seconds_per_test{name="instant_test"} 0`) {
+		t.Errorf("missing per-test zero duration in:\n%s", out)
+	}
+	if !containsLine(out, `smoke_test_status{name="instant_test",allowed_failure="false"} 1`) {
+		t.Errorf("missing instant-test status line in:\n%s", out)
+	}
+}
+
+func TestPrometheus_LongNameSpecialChars(t *testing.T) {
+	var buf bytes.Buffer
+	r := NewPrometheus(&buf)
+
+	longName := "a-really/long.test:name(with)[many]{special}chars&and symbols!@#$%^&*"
+	r.TestResult(TestResultData{Name: longName, Passed: true, Duration: 100 * time.Millisecond})
+	r.Summary(SuiteResultData{Total: 1, Passed: 1, Duration: 100 * time.Millisecond})
+
+	out := buf.String()
+
+	// All non [a-zA-Z0-9_] should become underscores
+	sanitized := `smoke_test_status{name="a_really_long_test_name_with__many__special_chars_and_symbols________",allowed_failure="false"} 1`
+	if !containsLine(out, sanitized) {
+		t.Errorf("long name not sanitized correctly in:\n%s", out)
+	}
+
+	durationLine := `smoke_test_duration_seconds_per_test{name="a_really_long_test_name_with__many__special_chars_and_symbols________"} 0.1`
+	if !containsLine(out, durationLine) {
+		t.Errorf("sanitized duration line for long name missing in:\n%s", out)
+	}
+}
