@@ -115,3 +115,11 @@ entries:
       files_changed:
         - internal/detector/detector_extra_test.go
       commit: f721c0d81eb09ce0d5579babe07c3c1c3275271c
+    - id: "0021"
+      task: 'Add tests to internal/runner/ for parallel execution and retry. Create file internal/runner/runner_parallel_test.go in package runner. Test cases: parallel execution runs all tests concurrently (verify via timing), fail-fast stops after first failure and skips remaining, retry with count=2 retries failed tests, retry_on_trace_only skips retry when trace assertion passes. Use noopReporter and newConfig helpers from runner_test.go. Verify: go test ./internal/runner/ -run TestParallel -v passes.'
+      started: 2026-04-20T18:38:47.234848-03:00
+      completed: 2026-04-20T19:05:34.966264-03:00
+      status: merged
+      files_changed:
+        - internal/runner/runner_parallel_test.go
+      commit: 991e61d8b1401dc6a5496d1396b5cee5dd7276d2

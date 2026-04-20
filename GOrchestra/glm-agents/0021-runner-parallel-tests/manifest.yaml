@@ -1,0 +1,12 @@
+id: "0021"
+task: "Add tests to internal/runner/ for parallel execution and retry. Create file internal/runner/runner_parallel_test.go in package runner. Test cases: parallel execution runs all tests concurrently (verify via timing), fail-fast stops after first failure and skips remaining, retry with count=2 retries failed tests, retry_on_trace_only skips retry when trace assertion passes. Use noopReporter and newConfig helpers from runner_test.go. Verify: go test ./internal/runner/ -run TestParallel -v passes."
+status: merged
+started: 2026-04-20T18:38:47-03:00
+completed: 2026-04-20T19:05:35-03:00
+duration: 26m47s
+exit_code: 0
+commit: 991e61d8b1401dc6a5496d1396b5cee5dd7276d2
+branch: _glm-agent-0021-runner-parallel-tests
+summary: "Added 8 tests to internal/runner/runner_parallel_test.go covering parallel execution, fail-fast with parallel, retry with count=2, and retry_on_trace_only behavior"
+files_changed:
+  - "internal/runner/runner_parallel_test.go"

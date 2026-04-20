@@ -1,0 +1,5 @@
+{
+  "summary": "Added 8 tests to internal/runner/runner_parallel_test.go covering parallel execution, fail-fast with parallel, retry with count=2, and retry_on_trace_only behavior",
+  "files_changed": ["internal/runner/runner_parallel_test.go"],
+  "errors": []
+}

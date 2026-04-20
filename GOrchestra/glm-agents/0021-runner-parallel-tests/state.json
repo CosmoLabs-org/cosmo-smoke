@@ -1,0 +1,15 @@
+{
+  "id": "0021",
+  "pid": 6206,
+  "tmux_session": "glm-0021",
+  "worktree_path": "/Users/gab/PROJECTS/cosmo-smoke-worktrees/_glm-agent-0021-runner-parallel-tests",
+  "branch": "_glm-agent-0021-runner-parallel-tests",
+  "base_branch": "master",
+  "status": "done",
+  "started_at": "2026-04-20T18:38:47.234848-03:00",
+  "task": "Add tests to internal/runner/ for parallel execution and retry. Create file internal/runner/runner_parallel_test.go in package runner. Test cases: parallel execution runs all tests concurrently (verify via timing), fail-fast stops after first failure and skips remaining, retry with count=2 retries failed tests, retry_on_trace_only skips retry when trace assertion passes. Use noopReporter and newConfig helpers from runner_test.go. Verify: go test ./internal/runner/ -run TestParallel -v passes.",
+  "exit_code": 0,
+  "idle_timeout": 120000000000,
+  "max_timeout": 1800000000000,
+  "on_done_executed": false
+}
