@@ -1,0 +1,5 @@
+{
+  "summary": "Added connectivity_test.go with TestConnectivity that logs 'glm is alive'",
+  "files_changed": ["internal/baseline/connectivity_test.go"],
+  "errors": []
+}

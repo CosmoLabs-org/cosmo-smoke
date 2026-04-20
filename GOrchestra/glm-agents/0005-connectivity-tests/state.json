@@ -1,0 +1,16 @@
+{
+  "id": "0005",
+  "pid": 56692,
+  "tmux_session": "glm-0005",
+  "worktree_path": "/Users/gab/PROJECTS/cosmo-smoke-worktrees/_glm-agent-0005-connectivity-tests",
+  "branch": "_glm-agent-0005-connectivity-tests",
+  "base_branch": "master",
+  "status": "done",
+  "started_at": "2026-04-20T17:57:52.746336-03:00",
+  "task": "Write a simple test file internal/baseline/connectivity_test.go with one test: func TestConnectivity(t *testing.T) { t.Log(\"glm is alive\") }. Verify: test compiles and passes with go test ./internal/baseline/ -run TestConnectivity.",
+  "exit_code": 0,
+  "idle_timeout": 120000000000,
+  "max_timeout": 1800000000000,
+  "on_done_executed": false,
+  "conductor_ticket": "cond-qx"
+}

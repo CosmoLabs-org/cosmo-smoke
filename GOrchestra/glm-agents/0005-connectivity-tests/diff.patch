@@ -1,0 +1,78 @@
+diff --git a/.gorchestra/fingerprint-cache.json b/.gorchestra/fingerprint-cache.json
+index a8e9669..7392735 100644
+--- a/.gorchestra/fingerprint-cache.json
++++ b/.gorchestra/fingerprint-cache.json
+@@ -1,13 +1,12 @@
+ {
+-  "hash": "1d87a84db832d1b1fe6584e60d9b4949c43b414d110108cddb8ef562c99da339",
+-  "project_name": "cosmo-smoke",
++  "hash": "afb0bb41249b989aaf2787229bd50cf0961556fa05e86c4f7b2f2415fc244c40",
++  "project_name": "_glm-agent-0005-connectivity-tests",
+   "language": "go",
+   "framework": "cli",
+   "directories": [
+     "ClaudeDesktop",
+     "GOrchestra",
+     "GeminiAI",
+-    "bin",
+     "cmd",
+     "docs",
+     "examples",
+@@ -28,5 +27,5 @@
+   ],
+   "has_tests": true,
+   "has_ci": true,
+-  "generated_at": "2026-04-20T11:30:18.797089-03:00"
++  "generated_at": "2026-04-20T17:57:47.957825-03:00"
+ }
+\ No newline at end of file
+diff --git a/.version-registry.json b/.version-registry.json
+index 887a3b4..154fe60 100644
+--- a/.version-registry.json
++++ b/.version-registry.json
+@@ -1,13 +1,13 @@
+ {
+   "repository": {
+     "version": "0.11.1",
+-    "build": 248,
++    "build": 259,
+     "name": "cosmo-smoke",
+     "lastUpdated": "2026-04-20T20:40:18Z",
+     "derived_from": "git tag"
+   },
+   "metadata": {
+-    "last_synced": "2026-04-20T20:35:38Z",
++    "last_synced": "2026-04-20T20:57:55Z",
+     "sync_method": "git_history_analysis"
+   },
+   "releaseContext": {
+diff --git a/GOrchestra/intel/status.json b/GOrchestra/intel/status.json
+index 3226e40..c3a82f2 100644
+--- a/GOrchestra/intel/status.json
++++ b/GOrchestra/intel/status.json
+@@ -1,8 +1,8 @@
+ {
+   "version": "1.0",
+-  "updated_at": "2026-04-20T17:35:36.444187-03:00",
+-  "expires_at": "2026-04-20T18:35:36.444187-03:00",
+-  "project_path": "/Users/gab/PROJECTS/cosmo-smoke",
++  "updated_at": "2026-04-20T17:57:49.628016-03:00",
++  "expires_at": "2026-04-20T18:57:49.628016-03:00",
++  "project_path": "/Users/gab/PROJECTS/cosmo-smoke-worktrees/_glm-agent-0005-connectivity-tests",
+   "context": "",
+   "glm_enhanced": false
+ }
+\ No newline at end of file
+diff --git a/internal/baseline/connectivity_test.go b/internal/baseline/connectivity_test.go
+new file mode 100644
+index 0000000..6c16e13
+--- /dev/null
++++ b/internal/baseline/connectivity_test.go
+@@ -0,0 +1,7 @@
++package baseline
++
++import "testing"
++
++func TestConnectivity(t *testing.T) {
++	t.Log("glm is alive")
++}
