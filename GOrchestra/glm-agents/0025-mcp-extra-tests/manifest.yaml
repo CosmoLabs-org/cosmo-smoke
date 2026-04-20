@@ -1,0 +1,12 @@
+id: "0025"
+task: "Add tests to internal/mcp/ for remaining helpers. Create file internal/mcp/mcp_extra_test.go in package mcp. Test cases: generateExpectBlock with all assertion types, generateExpectBlock with empty assertions, boolArg with various string values, parseAssertion from YAML map, template rendering with environment variables. Verify: go test ./internal/mcp/ -v passes."
+status: merged
+started: 2026-04-20T18:40:38-03:00
+completed: 2026-04-20T19:05:38-03:00
+duration: 24m59s
+exit_code: 0
+commit: 5a344eac5bb4f9d847ab517611fcb2b23083ae00
+branch: _glm-agent-0025-mcp-extra-tests
+summary: "Added comprehensive tests in internal/mcp/mcp_extra_test.go covering generateExpectBlock for all assertion types with detailed output verification, empty/nil param defaults, unknown type fallback, boolArg with string values, sanitize edge cases, GetSuggestions match/no-match/unknown scenarios, and generateTestYAML with environment variable template patterns. All 231 tests pass."
+files_changed:
+  - "internal/mcp/mcp_extra_test.go"

@@ -1,0 +1,16 @@
+{
+  "id": "0025",
+  "pid": 21360,
+  "tmux_session": "glm-0025",
+  "worktree_path": "/Users/gab/PROJECTS/cosmo-smoke-worktrees/_glm-agent-0025-mcp-extra-tests",
+  "branch": "_glm-agent-0025-mcp-extra-tests",
+  "base_branch": "master",
+  "status": "done",
+  "started_at": "2026-04-20T18:40:38.915122-03:00",
+  "task": "Add tests to internal/mcp/ for remaining helpers. Create file internal/mcp/mcp_extra_test.go in package mcp. Test cases: generateExpectBlock with all assertion types, generateExpectBlock with empty assertions, boolArg with various string values, parseAssertion from YAML map, template rendering with environment variables. Verify: go test ./internal/mcp/ -v passes.",
+  "exit_code": 0,
+  "idle_timeout": 120000000000,
+  "max_timeout": 1800000000000,
+  "on_done_executed": false,
+  "tokens_out": 11
+}

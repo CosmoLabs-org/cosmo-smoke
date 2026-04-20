@@ -1,0 +1,5 @@
+{
+  "summary": "Added comprehensive tests in internal/mcp/mcp_extra_test.go covering generateExpectBlock for all assertion types with detailed output verification, empty/nil param defaults, unknown type fallback, boolArg with string values, sanitize edge cases, GetSuggestions match/no-match/unknown scenarios, and generateTestYAML with environment variable template patterns. All 231 tests pass.",
+  "files_changed": ["internal/mcp/mcp_extra_test.go"],
+  "errors": []
+}

@@ -147,3 +147,11 @@ entries:
       files_changed:
         - internal/reporter/junit_extra_test.go
       commit: a47f015bddf57d4947ce6ca220e23a47d2fad5a8
+    - id: "0025"
+      task: 'Add tests to internal/mcp/ for remaining helpers. Create file internal/mcp/mcp_extra_test.go in package mcp. Test cases: generateExpectBlock with all assertion types, generateExpectBlock with empty assertions, boolArg with various string values, parseAssertion from YAML map, template rendering with environment variables. Verify: go test ./internal/mcp/ -v passes.'
+      started: 2026-04-20T18:40:38.915122-03:00
+      completed: 2026-04-20T19:05:38.748182-03:00
+      status: merged
+      files_changed:
+        - internal/mcp/mcp_extra_test.go
+      commit: 5a344eac5bb4f9d847ab517611fcb2b23083ae00
