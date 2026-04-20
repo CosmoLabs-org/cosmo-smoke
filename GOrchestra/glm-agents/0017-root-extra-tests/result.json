@@ -1,0 +1,5 @@
+{
+  "summary": "Added cmd/root_extra_test.go with 4 tests for root command: subcommand presence, version output, --help flag, unknown subcommand error.",
+  "files_changed": ["cmd/root_extra_test.go"],
+  "errors": []
+}

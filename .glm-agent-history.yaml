@@ -83,3 +83,11 @@ entries:
       files_changed:
         - internal/reporter/chain_test.go
       commit: 4c836f4f710de4a8ec0430d2608bf4f7390552cf
+    - id: "0017"
+      task: 'Add tests to cmd/ package for root command and version command. Create file cmd/root_extra_test.go in package cmd. Test cases: root command has expected subcommands (run, validate, schema, init, version, serve), version command outputs version string, --help flag produces output, unknown subcommand returns error. Verify: go test ./cmd/ -run TestRoot -v passes.'
+      started: 2026-04-20T18:35:53.631802-03:00
+      completed: 2026-04-20T19:05:31.067308-03:00
+      status: merged
+      files_changed:
+        - cmd/root_extra_test.go
+      commit: 9bd89fe9710c1c249fbe2e160065ef28d4d006ce

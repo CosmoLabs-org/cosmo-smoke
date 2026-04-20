@@ -1,0 +1,12 @@
+id: "0017"
+task: "Add tests to cmd/ package for root command and version command. Create file cmd/root_extra_test.go in package cmd. Test cases: root command has expected subcommands (run, validate, schema, init, version, serve), version command outputs version string, --help flag produces output, unknown subcommand returns error. Verify: go test ./cmd/ -run TestRoot -v passes."
+status: merged
+started: 2026-04-20T18:35:53-03:00
+completed: 2026-04-20T19:05:31-03:00
+duration: 29m37s
+exit_code: 0
+commit: 9bd89fe9710c1c249fbe2e160065ef28d4d006ce
+branch: _glm-agent-0017-root-extra-tests
+summary: "Added cmd/root_extra_test.go with 4 tests for root command: subcommand presence, version output, --help flag, unknown subcommand error."
+files_changed:
+  - "cmd/root_extra_test.go"

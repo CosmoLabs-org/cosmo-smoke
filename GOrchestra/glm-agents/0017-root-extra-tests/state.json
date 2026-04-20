@@ -1,0 +1,16 @@
+{
+  "id": "0017",
+  "pid": 92017,
+  "tmux_session": "glm-0017",
+  "worktree_path": "/Users/gab/PROJECTS/cosmo-smoke-worktrees/_glm-agent-0017-root-extra-tests",
+  "branch": "_glm-agent-0017-root-extra-tests",
+  "base_branch": "master",
+  "status": "done",
+  "started_at": "2026-04-20T18:35:53.631802-03:00",
+  "task": "Add tests to cmd/ package for root command and version command. Create file cmd/root_extra_test.go in package cmd. Test cases: root command has expected subcommands (run, validate, schema, init, version, serve), version command outputs version string, --help flag produces output, unknown subcommand returns error. Verify: go test ./cmd/ -run TestRoot -v passes.",
+  "exit_code": 0,
+  "idle_timeout": 120000000000,
+  "max_timeout": 1800000000000,
+  "on_done_executed": false,
+  "conductor_ticket": "cond-tr"
+}
