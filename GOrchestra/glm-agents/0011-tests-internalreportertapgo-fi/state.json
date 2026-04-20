@@ -1,0 +1,16 @@
+{
+  "id": "0011",
+  "pid": 8503,
+  "tmux_session": "glm-0011",
+  "worktree_path": "/Users/gab/PROJECTS/cosmo-smoke-worktrees/_glm-agent-0011-tests-internalreportertapgo-fi",
+  "branch": "_glm-agent-0011-tests-internalreportertapgo-fi",
+  "base_branch": "master",
+  "status": "done",
+  "started_at": "2026-04-20T18:13:40.574483-03:00",
+  "task": "Add tests to internal/reporter/tap.go. Create file internal/reporter/tap_test.go. Test cases: TAP plan line format (1..N), passing tests output 'ok N - name', failing tests output 'not ok N - name', skipped tests with SKIP directive, multiple tests ordering preserved. Verify: go test ./internal/reporter/ -run TestTAP -v passes.",
+  "exit_code": 0,
+  "idle_timeout": 120000000000,
+  "max_timeout": 1800000000000,
+  "on_done_executed": false,
+  "conductor_ticket": "cond-ry"
+}

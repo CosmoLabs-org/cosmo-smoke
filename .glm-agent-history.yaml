@@ -53,3 +53,9 @@ entries:
       files_changed:
         - internal/runner/runner_extended_test.go
       commit: 8699f5a4ad1cfabfdff666ec05dec7ca9af0381d
+    - id: "0011"
+      task: 'Add tests to internal/reporter/tap.go. Create file internal/reporter/tap_test.go. Test cases: TAP plan line format (1..N), passing tests output ''ok N - name'', failing tests output ''not ok N - name'', skipped tests with SKIP directive, multiple tests ordering preserved. Verify: go test ./internal/reporter/ -run TestTAP -v passes.'
+      started: 2026-04-20T18:13:40.574483-03:00
+      completed: 2026-04-20T18:25:45.278202-03:00
+      status: merged
+      commit: ed574cd273238df09cf9b53d8f2c0022560b4aaa
