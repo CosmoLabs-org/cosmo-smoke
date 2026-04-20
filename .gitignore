@@ -41,3 +41,4 @@ node_modules/
 .worktree-origin
 go.work
 go.work.sum
+cover.out
