@@ -5,8 +5,50 @@ import (
 	"os"
 	"path/filepath"
 	"strings"
+	"sync"
 	"testing"
+	"time"
 )
+
+// recordingReporter captures every method call for verification.
+type recordingReporter struct {
+	mu            sync.Mutex
+	prereqStarts  []string
+	prereqResults []PrereqResultData
+	testStarts    []string
+	testResults   []TestResultData
+	summaries     []SuiteResultData
+}
+
+func (r *recordingReporter) PrereqStart(name string) {
+	r.mu.Lock()
+	r.prereqStarts = append(r.prereqStarts, name)
+	r.mu.Unlock()
+}
+
+func (r *recordingReporter) PrereqResult(d PrereqResultData) {
+	r.mu.Lock()
+	r.prereqResults = append(r.prereqResults, d)
+	r.mu.Unlock()
+}
+
+func (r *recordingReporter) TestStart(name string) {
+	r.mu.Lock()
+	r.testStarts = append(r.testStarts, name)
+	r.mu.Unlock()
+}
+
+func (r *recordingReporter) TestResult(d TestResultData) {
+	r.mu.Lock()
+	r.testResults = append(r.testResults, d)
+	r.mu.Unlock()
+}
+
+func (r *recordingReporter) Summary(d SuiteResultData) {
+	r.mu.Lock()
+	r.summaries = append(r.summaries, d)
+	r.mu.Unlock()
+}
 
 func TestChain_SingleFormat_NoFilesCreated(t *testing.T) {
 	rep, closers, err := Chain("terminal", os.Stdout)
@@ -148,4 +190,117 @@ func TestChain_FileNaming(t *testing.T) {
 			}
 		})
 	}
+}
+
+func TestChain_ThreeFormats_CreatesAllFiles(t *testing.T) {
+	tmp := t.TempDir()
+	orig, _ := os.Getwd()
+	os.Chdir(tmp)
+	defer os.Chdir(orig)
+
+	rep, closers, err := Chain("terminal,json,prometheus", os.Stdout)
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+	if rep == nil {
+		t.Fatal("expected non-nil reporter")
+	}
+	if len(closers) != 2 {
+		t.Fatalf("expected 2 closers (json+prometheus), got %d", len(closers))
+	}
+	for _, name := range []string{"smoke-results.json", "smoke-metrics.prom"} {
+		if _, err := os.Stat(filepath.Join(tmp, name)); err != nil {
+			t.Fatalf("expected %s to exist: %v", name, err)
+		}
+	}
+	for _, c := range closers {
+		c.Close()
+	}
+}
+
+func TestMultiReporter_FansOutToAllReporters(t *testing.T) {
+	r1 := &recordingReporter{}
+	r2 := &recordingReporter{}
+	r3 := &recordingReporter{}
+
+	multi := NewMultiReporter(r1, r2, r3)
+
+	multi.PrereqStart("docker")
+	multi.PrereqResult(PrereqResultData{Name: "docker", Passed: true, Output: "running"})
+	multi.TestStart("build")
+	multi.TestResult(TestResultData{
+		Name:     "build",
+		Passed:   true,
+		Duration: 100 * time.Millisecond,
+	})
+	multi.Summary(SuiteResultData{
+		Project: "test-project",
+		Total:   1,
+		Passed:  1,
+	})
+
+	for i, rec := range []*recordingReporter{r1, r2, r3} {
+		if len(rec.prereqStarts) != 1 || rec.prereqStarts[0] != "docker" {
+			t.Errorf("reporter %d: prereqStarts = %v", i, rec.prereqStarts)
+		}
+		if len(rec.prereqResults) != 1 || rec.prereqResults[0].Name != "docker" {
+			t.Errorf("reporter %d: prereqResults = %v", i, rec.prereqResults)
+		}
+		if len(rec.testStarts) != 1 || rec.testStarts[0] != "build" {
+			t.Errorf("reporter %d: testStarts = %v", i, rec.testStarts)
+		}
+		if len(rec.testResults) != 1 || rec.testResults[0].Name != "build" {
+			t.Errorf("reporter %d: testResults = %v", i, rec.testResults)
+		}
+		if rec.testResults[0].Duration != 100*time.Millisecond {
+			t.Errorf("reporter %d: duration = %v", i, rec.testResults[0].Duration)
+		}
+		if len(rec.summaries) != 1 || rec.summaries[0].Project != "test-project" {
+			t.Errorf("reporter %d: summaries = %v", i, rec.summaries)
+		}
+	}
+}
+
+func TestMultiReporter_SameEventData(t *testing.T) {
+	r1 := &recordingReporter{}
+	r2 := &recordingReporter{}
+
+	multi := NewMultiReporter(r1, r2)
+
+	td := TestResultData{
+		Name:     "identical-check",
+		Passed:   false,
+		Duration: 250 * time.Millisecond,
+		Assertions: []AssertionDetail{
+			{Type: "stdout_contains", Expected: "hello", Actual: "world", Passed: false},
+		},
+	}
+	multi.TestResult(td)
+
+	if len(r1.testResults) != 1 || len(r2.testResults) != 1 {
+		t.Fatal("both reporters should have exactly 1 test result")
+	}
+	if r1.testResults[0].Name != r2.testResults[0].Name {
+		t.Errorf("name mismatch: %q vs %q", r1.testResults[0].Name, r2.testResults[0].Name)
+	}
+	if r1.testResults[0].Passed != r2.testResults[0].Passed {
+		t.Errorf("passed mismatch: %v vs %v", r1.testResults[0].Passed, r2.testResults[0].Passed)
+	}
+	if r1.testResults[0].Duration != r2.testResults[0].Duration {
+		t.Errorf("duration mismatch: %v vs %v", r1.testResults[0].Duration, r2.testResults[0].Duration)
+	}
+	if len(r1.testResults[0].Assertions) != len(r2.testResults[0].Assertions) {
+		t.Errorf("assertion count mismatch: %d vs %d", len(r1.testResults[0].Assertions), len(r2.testResults[0].Assertions))
+	}
+}
+
+func TestMultiReporter_EmptyList_NoPanics(t *testing.T) {
+	multi := NewMultiReporter()
+
+	// None of these should panic
+	multi.PrereqStart("noop")
+	multi.PrereqResult(PrereqResultData{Name: "noop", Passed: true})
+	multi.TestStart("noop")
+	multi.TestResult(TestResultData{Name: "noop", Passed: true})
+	multi.Summary(SuiteResultData{Project: "empty", Total: 0})
 }
