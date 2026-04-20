@@ -7,6 +7,32 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.11.1] - 2026-04-20
+
+### Added
+- smoke validate command — standalone config validation
+- performance baseline tracking (--baseline, --baseline-threshold)
+- smoke schema command — export assertion types as JSON
+- JUnit XML CI metadata (timestamp, hostname, properties)
+- add timestamp, hostname, and properties to JUnit XML (commit:50118869)
+- add smoke schema command for JSON export (commit:591251de)
+- add smoke validate command (commit:f4533c8a)
+- add performance baseline tracking (commit:7557d744)
+
+### Fixed
+- # BUG-001: Watch mode reporter state reset
+
+**Type**: bug
+**Status**: closed
+**Severity**: medium
+**Created**: 2026-04-19
+
+## Description
+
+Watch mode accumulates reporter state across re-runs. File-based reporter (and potentially others) may grow unbounded as results accumulate on each watch cycle. Needs investigation to determine if accumulation is in reporter layer, runner layer, or watch orchestration.
+- watch mode reporter state reset
+- recreate reporters per watch cycle to prevent state accumulation (commit:b224f524)
+
 ## [0.11.0] - 2026-04-19
 
 ### Added
