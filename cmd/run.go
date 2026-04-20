@@ -9,6 +9,7 @@ import (
 	"syscall"
 	"time"
 
+	"github.com/CosmoLabs-org/cosmo-smoke/internal/baseline"
 	"github.com/CosmoLabs-org/cosmo-smoke/internal/monorepo"
 	"github.com/CosmoLabs-org/cosmo-smoke/internal/reporter"
 	"github.com/CosmoLabs-org/cosmo-smoke/internal/runner"
@@ -94,8 +95,10 @@ var (
 	monorepoMode bool
 	otelCollector string
 	noOtel       bool
-	reportURL    string
-	reportAPIKey string
+	reportURL      string
+	reportAPIKey   string
+	baselineFlag   bool
+	baselineThresh float64
 )
 
 func init() {
@@ -114,6 +117,8 @@ func init() {
 	runCmd.Flags().BoolVar(&noOtel, "no-otel", false, "Disable otel trace propagation for this run")
 	runCmd.Flags().StringVar(&reportURL, "report-url", "", "POST results to this URL after run")
 	runCmd.Flags().StringVar(&reportAPIKey, "report-api-key", "", "API key for report-url endpoint (X-API-Key header)")
+	runCmd.Flags().BoolVar(&baselineFlag, "baseline", false, "Save and compare test timings against baseline")
+	runCmd.Flags().Float64Var(&baselineThresh, "baseline-threshold", 50, "Regression threshold %% (flag if current > baseline * (1+threshold/100))")
 }
 
 func runSmoke(cmd *cobra.Command, args []string) error {
@@ -208,6 +213,7 @@ func runSmoke(cmd *cobra.Command, args []string) error {
 		if err != nil {
 			return err
 		}
+			handleBaseline(result, configDir)
 		if result.Failed > 0 {
 			os.Exit(1)
 		}
@@ -263,10 +269,61 @@ func runSmoke(cmd *cobra.Command, args []string) error {
 	if err != nil {
 		return err
 	}
+	handleBaseline(result, configDir)
 	if result.Failed > 0 {
 		os.Exit(1)
 	}
 	return nil
+}
+
+// handleBaseline compares current timings against saved baseline, reports
+// regressions, and updates the baseline file.
+func handleBaseline(suite *runner.SuiteResult, configDir string) {
+	if !baselineFlag {
+		return
+	}
+
+	current := make(map[string]int64)
+	for _, tr := range suite.Tests {
+		current[tr.Name] = tr.Duration.Milliseconds()
+	}
+
+	blPath := filepath.Join(configDir, baseline.DefaultFile)
+	bl, err := baseline.Load(blPath)
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "⚠ baseline: %v\n", err)
+		return
+	}
+
+	if len(bl) > 0 {
+		comps := bl.Compare(current, baselineThresh)
+		var regressions []baseline.Comparison
+		var newTests []baseline.Comparison
+		for _, c := range comps {
+			if c.Regressed {
+				regressions = append(regressions, c)
+			}
+			if c.NewTest {
+				newTests = append(newTests, c)
+			}
+		}
+		if len(regressions) > 0 || len(newTests) > 0 {
+			fmt.Fprintln(os.Stderr, "\n📊 Baseline Comparison:")
+			for _, r := range regressions {
+				fmt.Fprintf(os.Stderr, "  ⚠ %s: %dms → %dms (%+.0f%%)\n", r.Name, r.BaselineMs, r.CurrentMs, r.DeltaPct)
+			}
+			for _, r := range newTests {
+				fmt.Fprintf(os.Stderr, "  + %s: %dms (new)\n", r.Name, r.CurrentMs)
+			}
+		} else {
+			fmt.Fprintln(os.Stderr, "\n📊 Baseline: no regressions")
+		}
+	}
+
+	bl.Update(current)
+	if err := bl.Save(blPath); err != nil {
+		fmt.Fprintf(os.Stderr, "⚠ baseline save: %v\n", err)
+	}
 }
 
 func runWatch(configDir, configFile string, runOnce func() error) error {
