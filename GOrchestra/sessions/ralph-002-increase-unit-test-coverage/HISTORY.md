@@ -6,8 +6,8 @@ created: 2026-04-20
 archived: 2026-04-20
 commits: 11
 files_changed: 51
-lines_added: 2104
-lines_removed: 7998
+lines_added: 2106
+lines_removed: 8015
 review_status: passed
 ---
 
@@ -16,7 +16,7 @@ review_status: passed
 ## Summary
 
 Branch merged via `ccs merg` on 2026-04-20.
-11 commits, 51 files changed (+2104/-7998).
+11 commits, 51 files changed (+2106/-8015).
 
 ## Commits
 
@@ -47,15 +47,15 @@ Branch merged via `ccs merg` on 2026-04-20.
  .goralph/task.md                                   |    1 -
  .gorchestra/fingerprint-cache.json                 |    4 +-
  .review.json                                       |   11 +-
- .version-registry.json                             |   10 +-
+ .version-registry.json                             |   12 +-
  CHANGELOG.md                                       |   26 -
  CLAUDE.md                                          |   11 +-
- GOrchestra/intel/architecture.json                 |   31 +-
- GOrchestra/intel/status.json                       |    4 +-
+ GOrchestra/intel/architecture.json                 |   34 +-
+ GOrchestra/intel/status.json                       |    6 +-
  .../.ccsession.json                                |   32 -
  .../.review.json                                   |   12 -
- .../HISTORY.md                                     |   84 -
- .../session.json                                   |   75 -
+ .../HISTORY.md                                     |   90 -
+ .../session.json                                   |   81 -
  cmd/run.go                                         |   61 +-
  cmd/schema.go                                      |   26 -
  cmd/validate.go                                    |   53 -
@@ -86,5 +86,5 @@ Branch merged via `ccs merg` on 2026-04-20.
  internal/schema/export.go                          |  213 --
  internal/schema/export_test.go                     |   47 -
  internal/schema/schema_extra_test.go               |  743 ++++++
- 51 files changed, 2104 insertions(+), 7998 deletions(-)
+ 51 files changed, 2106 insertions(+), 8015 deletions(-)
 ```
