@@ -1,0 +1,15 @@
+{
+  "id": "0022",
+  "pid": 7545,
+  "tmux_session": "glm-0022",
+  "worktree_path": "/Users/gab/PROJECTS/cosmo-smoke-worktrees/_glm-agent-0022-dashboard-extra-tests",
+  "branch": "_glm-agent-0022-dashboard-extra-tests",
+  "base_branch": "master",
+  "status": "done",
+  "started_at": "2026-04-20T18:39:01.528331-03:00",
+  "task": "Add tests to internal/dashboard/ for concurrent writes and edge cases. Create file internal/dashboard/dashboard_extra_test.go in package dashboard. Test cases: concurrent writes from multiple goroutines complete without data loss, result with empty project name handled, result with special characters in test names (unicode, quotes) stored correctly, pagination returns correct subset. Use testStore and makePayload helpers from store_test.go. Verify: go test ./internal/dashboard/ -v passes.",
+  "exit_code": 0,
+  "idle_timeout": 120000000000,
+  "max_timeout": 1800000000000,
+  "on_done_executed": false
+}

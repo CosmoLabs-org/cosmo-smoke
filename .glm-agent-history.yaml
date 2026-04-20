@@ -123,3 +123,11 @@ entries:
       files_changed:
         - internal/runner/runner_parallel_test.go
       commit: 991e61d8b1401dc6a5496d1396b5cee5dd7276d2
+    - id: "0022"
+      task: 'Add tests to internal/dashboard/ for concurrent writes and edge cases. Create file internal/dashboard/dashboard_extra_test.go in package dashboard. Test cases: concurrent writes from multiple goroutines complete without data loss, result with empty project name handled, result with special characters in test names (unicode, quotes) stored correctly, pagination returns correct subset. Use testStore and makePayload helpers from store_test.go. Verify: go test ./internal/dashboard/ -v passes.'
+      started: 2026-04-20T18:39:01.528331-03:00
+      completed: 2026-04-20T19:05:35.92187-03:00
+      status: merged
+      files_changed:
+        - internal/dashboard/dashboard_extra_test.go
+      commit: 177a2d67d9a0741f4dbce7e78639ab26fb5f8242

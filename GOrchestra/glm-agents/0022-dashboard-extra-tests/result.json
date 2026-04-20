@@ -1,0 +1,5 @@
+{
+  "summary": "Added 4 test functions (8 test cases total) to internal/dashboard/dashboard_extra_test.go covering concurrent writes, empty project names, special characters in test names, and pagination subset correctness",
+  "files_changed": ["internal/dashboard/dashboard_extra_test.go"],
+  "errors": []
+}

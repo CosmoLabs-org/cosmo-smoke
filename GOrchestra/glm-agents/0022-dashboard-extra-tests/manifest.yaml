@@ -1,0 +1,12 @@
+id: "0022"
+task: "Add tests to internal/dashboard/ for concurrent writes and edge cases. Create file internal/dashboard/dashboard_extra_test.go in package dashboard. Test cases: concurrent writes from multiple goroutines complete without data loss, result with empty project name handled, result with special characters in test names (unicode, quotes) stored correctly, pagination returns correct subset. Use testStore and makePayload helpers from store_test.go. Verify: go test ./internal/dashboard/ -v passes."
+status: merged
+started: 2026-04-20T18:39:01-03:00
+completed: 2026-04-20T19:05:36-03:00
+duration: 26m34s
+exit_code: 0
+commit: 177a2d67d9a0741f4dbce7e78639ab26fb5f8242
+branch: _glm-agent-0022-dashboard-extra-tests
+summary: "Added 4 test functions (8 test cases total) to internal/dashboard/dashboard_extra_test.go covering concurrent writes, empty project names, special characters in test names, and pagination subset correctness"
+files_changed:
+  - "internal/dashboard/dashboard_extra_test.go"
