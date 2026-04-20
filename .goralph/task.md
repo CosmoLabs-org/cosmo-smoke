@@ -1,0 +1,1 @@
+Continue unit test coverage plan. Follow .goralph/plan.md — pick the NEXT unfinished task. One task per iteration. Write tests only, do not modify production code. Run go test ./... after each change.

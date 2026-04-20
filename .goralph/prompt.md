@@ -38,10 +38,11 @@ Each iteration:
 ## Project Context
 
 **Project Name**: cosmo-smoke
-**Description**: 
-**Tech Stack**: 
-**Features**:
-- (No specific features defined)
+**Description**: Universal smoke test runner — Go binary that reads .smoke.yaml and runs 28 assertion types
+**Tech Stack**: Go 1.23, Cobra CLI, Lipgloss, yaml.v3, gjson
+**Architecture**: cmd/ (Cobra commands), internal/schema/ (config), internal/runner/ (assertions), internal/reporter/ (output formats), internal/baseline/ (perf tracking)
+**Current test count**: ~394 tests, targeting 450+
+**Key constraint**: Only write tests. Do NOT modify production code. Run `go test ./...` after each task.
 
 ## File References
 

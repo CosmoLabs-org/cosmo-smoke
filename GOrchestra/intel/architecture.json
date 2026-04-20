@@ -1,10 +1,10 @@
 {
   "version": "1.0",
-  "generated_at": "2026-04-19T19:06:14.861058-03:00",
+  "generated_at": "2026-04-20T11:30:47.970082-03:00",
   "generated_by": "GLM-4.7",
-  "expires_at": "2026-04-20T19:06:14.861058-03:00",
-  "last_analyzed_commit": "b224f52478bdbbe594839e7390748893420580c3",
-  "summary": "A Go-based MCP server tool that migrates Goss tests, runs assertions against infrastructure, and chains multi-format reports.",
+  "expires_at": "2026-04-21T11:30:47.970082-03:00",
+  "last_analyzed_commit": "0fe92a1005c21d810c2abd20190e200038dbf645",
+  "summary": "A Go-based CLI tool named 'Ralph' that integrates with MCP to run, detect, and validate infrastructure tests, featuring Goss migration and a dashboard.",
   "architecture": "monolith",
   "primary_language": "Go",
   "hot_files": [
@@ -12,23 +12,25 @@
     "internal/mcp/handlers.go",
     "internal/migrate/goss/translator.go",
     "internal/schema/validate_test.go",
-    "internal/reporter/reporter.go"
+    "internal/detector/detector.go"
   ],
   "patterns": [
-    "MCP (Model Context Protocol) server",
+    "MCP (Model Context Protocol) integration",
     "Goss migration/translation",
-    "Reporter chaining",
-    "Watch mode with lifecycle management",
-    "Schema validation"
+    "Test runner with assertion validation",
+    "Schema validation",
+    "Watch cycle with reporter recreation"
   ],
   "concerns": [
-    "Reporter state leakage in watch cycles requiring recreation",
-    "Uncommitted changes in working directory",
-    "Heavy coupling between runner, detector, and reporter components"
+    "Reporter state leak across watch cycles required a recent fix",
+    "Uncommitted changes (10 modified, 6 untracked) suggest instability",
+    "Monorepo handling logic mixed with core runner concerns",
+    "Bootstrap phase indicated by recent commits"
   ],
   "suggestions": [
-    "Commit or stash the pending changes before release",
-    "Investigate root cause of reporter state accumulation in watch mode",
-    "Add integration tests for the multi-format reporter chaining feature"
+    "Commit or stash the 16 uncommitted files to stabilize the branch",
+    "Add integration tests for the MCP handlers",
+    "Isolate monorepo detection logic from the runner execution path",
+    "Document the Goss migration mapping rules"
   ]
 }
