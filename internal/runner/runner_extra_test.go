@@ -1,3 +1,5 @@
+// Test helpers noopReporter and intPtr defined in runner_test.go (same package).
+
 package runner
 
 import (
@@ -341,18 +343,18 @@ func TestRunner_StderrMatches(t *testing.T) {
 }
 
 func TestRunner_ResponseTimeMs(t *testing.T) {
+	rtms := 5000
 	cfg := newConfig([]schema.Test{
 		{
 			Name: "fast-test",
 			Run:  "echo ok",
 			Expect: schema.Expect{
 				ExitCode:       intPtr(0),
+				ResponseTimeMs: &rtms,
 			},
 			Timeout: schema.Duration{Duration: 5 * time.Second},
 		},
 	})
-	rtms := 5000
-	cfg.Tests[0].Expect.ResponseTimeMs = &rtms
 
 	r := &Runner{Config: cfg, Reporter: &noopReporter{}, ConfigDir: t.TempDir()}
 	result, err := r.Run(RunOptions{})

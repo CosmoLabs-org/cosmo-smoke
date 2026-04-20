@@ -1,3 +1,5 @@
+// Test helpers testStore() and makePayload() defined in store_test.go (same package).
+
 package dashboard
 
 import (
