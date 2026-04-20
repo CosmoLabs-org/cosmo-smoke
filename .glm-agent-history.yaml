@@ -99,3 +99,11 @@ entries:
       files_changed:
         - cmd/run_extra_test.go
       commit: 0ebc476004e51c4175e3c4ff40c1c1ffb7279989
+    - id: "0019"
+      task: 'Add tests to cmd/ package for the init command. Create file cmd/init_extra_test.go in package cmd. Test cases: init in empty directory creates .smoke.yaml, init with --force overwrites existing config, init detects project type from go.mod, init detects project type from package.json. Verify: go test ./cmd/ -run TestInit -v passes.'
+      started: 2026-04-20T18:36:46.299942-03:00
+      completed: 2026-04-20T19:05:32.963401-03:00
+      status: merged
+      files_changed:
+        - cmd/init_extra_test.go
+      commit: 8a2b015113882484896324b4889a0f9667140e1b

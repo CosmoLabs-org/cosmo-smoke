@@ -1,0 +1,12 @@
+id: "0019"
+task: "Add tests to cmd/ package for the init command. Create file cmd/init_extra_test.go in package cmd. Test cases: init in empty directory creates .smoke.yaml, init with --force overwrites existing config, init detects project type from go.mod, init detects project type from package.json. Verify: go test ./cmd/ -run TestInit -v passes."
+status: merged
+started: 2026-04-20T18:36:46-03:00
+completed: 2026-04-20T19:05:33-03:00
+duration: 28m46s
+exit_code: 0
+commit: 8a2b015113882484896324b4889a0f9667140e1b
+branch: _glm-agent-0019-init-extra-tests
+summary: "Added 4 tests to cmd/ for the init command in cmd/init_extra_test.go: empty directory creates .smoke.yaml, --force overwrites existing config, Go project detection from go.mod, Node project detection from package.json"
+files_changed:
+  - "cmd/init_extra_test.go"

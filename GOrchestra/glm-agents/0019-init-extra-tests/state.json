@@ -1,0 +1,16 @@
+{
+  "id": "0019",
+  "pid": 96549,
+  "tmux_session": "glm-0019",
+  "worktree_path": "/Users/gab/PROJECTS/cosmo-smoke-worktrees/_glm-agent-0019-init-extra-tests",
+  "branch": "_glm-agent-0019-init-extra-tests",
+  "base_branch": "master",
+  "status": "done",
+  "started_at": "2026-04-20T18:36:46.299942-03:00",
+  "task": "Add tests to cmd/ package for the init command. Create file cmd/init_extra_test.go in package cmd. Test cases: init in empty directory creates .smoke.yaml, init with --force overwrites existing config, init detects project type from go.mod, init detects project type from package.json. Verify: go test ./cmd/ -run TestInit -v passes.",
+  "exit_code": 0,
+  "idle_timeout": 120000000000,
+  "max_timeout": 1800000000000,
+  "on_done_executed": false,
+  "conductor_ticket": "cond-uf"
+}

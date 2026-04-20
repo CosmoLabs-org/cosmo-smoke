@@ -1,0 +1,5 @@
+{
+  "summary": "Added 4 tests to cmd/ for the init command in cmd/init_extra_test.go: empty directory creates .smoke.yaml, --force overwrites existing config, Go project detection from go.mod, Node project detection from package.json",
+  "files_changed": ["cmd/init_extra_test.go"],
+  "errors": []
+}
