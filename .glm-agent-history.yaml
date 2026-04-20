@@ -13,3 +13,11 @@ entries:
       files_changed:
         - internal/reporter/prometheus_test.go
       commit: 36923fbd592f6669a123ff75007742ec57a4f445
+    - id: "0007"
+      task: 'Add tests to internal/monorepo package. Create file internal/monorepo/monorepo_extra_test.go. Test cases: nested subdirectories 3+ levels deep with .smoke.yaml files, .smoke.yaml in hidden dirs should be excluded, empty directories skipped gracefully, monorepo with zero configs returns empty list, duplicate project names handled. Verify: go test ./internal/monorepo/ -v passes.'
+      started: 2026-04-20T18:00:42.797828-03:00
+      completed: 2026-04-20T18:11:13.989258-03:00
+      status: merged
+      files_changed:
+        - internal/monorepo/monorepo_extra_test.go
+      commit: 42c2268ac6d040e4a06ffbd5de528fd223e9bd9a

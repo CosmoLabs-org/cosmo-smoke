@@ -1,0 +1,5 @@
+{
+  "summary": "Added 5 edge-case tests to internal/monorepo package in monorepo_extra_test.go: nested 3+ levels deep, hidden dirs excluded, empty dirs skipped, zero configs returns empty, duplicate project names handled. All 10 tests pass.",
+  "files_changed": ["internal/monorepo/monorepo_extra_test.go"],
+  "errors": []
+}

@@ -1,0 +1,16 @@
+{
+  "id": "0007",
+  "pid": 69461,
+  "tmux_session": "glm-0007",
+  "worktree_path": "/Users/gab/PROJECTS/cosmo-smoke-worktrees/_glm-agent-0007-tests-internalmonorepo-package",
+  "branch": "_glm-agent-0007-tests-internalmonorepo-package",
+  "base_branch": "master",
+  "status": "done",
+  "started_at": "2026-04-20T18:00:42.797828-03:00",
+  "task": "Add tests to internal/monorepo package. Create file internal/monorepo/monorepo_extra_test.go. Test cases: nested subdirectories 3+ levels deep with .smoke.yaml files, .smoke.yaml in hidden dirs should be excluded, empty directories skipped gracefully, monorepo with zero configs returns empty list, duplicate project names handled. Verify: go test ./internal/monorepo/ -v passes.",
+  "exit_code": 0,
+  "idle_timeout": 120000000000,
+  "max_timeout": 1800000000000,
+  "on_done_executed": false,
+  "conductor_ticket": "cond-r4"
+}

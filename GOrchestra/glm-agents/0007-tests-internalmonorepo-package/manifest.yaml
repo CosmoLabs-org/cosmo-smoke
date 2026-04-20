@@ -1,0 +1,12 @@
+id: "0007"
+task: "Add tests to internal/monorepo package. Create file internal/monorepo/monorepo_extra_test.go. Test cases: nested subdirectories 3+ levels deep with .smoke.yaml files, .smoke.yaml in hidden dirs should be excluded, empty directories skipped gracefully, monorepo with zero configs returns empty list, duplicate project names handled. Verify: go test ./internal/monorepo/ -v passes."
+status: merged
+started: 2026-04-20T18:00:42-03:00
+completed: 2026-04-20T18:11:14-03:00
+duration: 10m31s
+exit_code: 0
+commit: 42c2268ac6d040e4a06ffbd5de528fd223e9bd9a
+branch: _glm-agent-0007-tests-internalmonorepo-package
+summary: "Added 5 edge-case tests to internal/monorepo package in monorepo_extra_test.go: nested 3+ levels deep, hidden dirs excluded, empty dirs skipped, zero configs returns empty, duplicate project names handled. All 10 tests pass."
+files_changed:
+  - "internal/monorepo/monorepo_extra_test.go"
