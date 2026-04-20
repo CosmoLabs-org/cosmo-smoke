@@ -1,0 +1,5 @@
+{
+  "summary": "Added 4 new test cases to internal/reporter/prometheus_test.go: TestPrometheus_AllFailing, TestPrometheus_MixedPassFailSkip, TestPrometheus_ZeroDuration, TestPrometheus_LongNameSpecialChars",
+  "files_changed": ["internal/reporter/prometheus_test.go"],
+  "errors": []
+}

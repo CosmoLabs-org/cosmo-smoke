@@ -1,0 +1,16 @@
+{
+  "id": "0006",
+  "pid": 68867,
+  "tmux_session": "glm-0006",
+  "worktree_path": "/Users/gab/PROJECTS/cosmo-smoke-worktrees/_glm-agent-0006-prometheus-tests",
+  "branch": "_glm-agent-0006-prometheus-tests",
+  "base_branch": "master",
+  "status": "done",
+  "started_at": "2026-04-20T18:00:37.75958-03:00",
+  "task": "Add tests to internal/reporter/prometheus package. Create file internal/reporter/prometheus_test.go if not exists, or extend existing. Test cases: all tests passing produces valid metric format with smoke_test_passed total, all tests failing produces smoke_test_failed metric, mixed pass/fail/skip, zero duration tests produce valid metrics, very long test names with special characters. Verify: go test ./internal/reporter/ -run TestPrometheus -v passes.",
+  "exit_code": 0,
+  "idle_timeout": 120000000000,
+  "max_timeout": 1800000000000,
+  "on_done_executed": false,
+  "conductor_ticket": "cond-r2"
+}
