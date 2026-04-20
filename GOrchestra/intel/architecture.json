@@ -1,10 +1,10 @@
 {
   "version": "1.0",
-  "generated_at": "2026-04-20T17:33:01.084942-03:00",
+  "generated_at": "2026-04-20T17:33:53.697327-03:00",
   "generated_by": "GLM-4.7",
-  "expires_at": "2026-04-21T17:33:01.084942-03:00",
-  "last_analyzed_commit": "2e5339ac87602a9f36010be80caada574811fc1e",
-  "summary": "A Go-based modular CLI tool integrating MCP for orchestration, featuring Goss migration capabilities and structured test validation.",
+  "expires_at": "2026-04-21T17:33:53.697328-03:00",
+  "last_analyzed_commit": "320b4c423de09f2af89c15399c1a859d18a1441b",
+  "summary": "A Go-based modular tool that integrates MCP, migrates Goss configurations, runs assertions, and generates reports via an internal dashboard.",
   "architecture": "modular monolith",
   "primary_language": "Go",
   "hot_files": [
@@ -12,25 +12,25 @@
     "internal/mcp/handlers.go",
     "internal/migrate/goss/translator.go",
     "internal/schema/validate_test.go",
-    "internal/runner/assertion_test.go"
+    "internal/detector/detector.go"
   ],
   "patterns": [
-    "MCP (Model Context Protocol) integration",
-    "Goss migration/translation",
-    "Test-driven development",
-    "Internal package encapsulation",
-    "Command-line interface (CLI)"
+    "MCP (Model Context Protocol) handler pattern",
+    "migration/translation pattern (Goss to internal schema)",
+    "runner/assertion execution pattern",
+    "internal package encapsulation (Go idiom)",
+    "test-driven development (test files mirror source)"
   ],
   "concerns": [
-    "6 untracked files indicate incomplete commits or workspace clutter",
-    "Recent commits are heavily skewed towards chore/docs/metadata rather than feature development",
-    "Monorepo handling logic might introduce unnecessary complexity",
-    "Potential tight coupling between runner, detector, and reporter modules"
+    "repetitive auto-commit metadata noise in recent history",
+    "6 untracked files indicating possible incomplete work or ignored artifacts",
+    "test specs split across two non-standard directories (.goralph/specs, ClaudeDesktop/specs)",
+    "heavy reliance on internal packages may hinder external reuse"
   ],
   "suggestions": [
-    "Commit or gitignore the 6 untracked files to maintain a clean repository state",
-    "Focus development efforts on core features rather than session metadata and documentation",
-    "Add integration tests bridging the MCP handlers and the runner",
-    "Document the Goss migration strategy if it is a temporary tooling effort"
+    "consolidate test specifications into a single standard location",
+    "clean up git history by squashing auto-commit metadata churn",
+    "investigate and resolve the 6 untracked files",
+    "document the MCP integration and Goss migration strategy"
   ]
 }

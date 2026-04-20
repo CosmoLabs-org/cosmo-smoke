@@ -1,0 +1,75 @@
+{
+  "branch": "ralph-002-increase-unit-test-coverage",
+  "base_branch": "master",
+  "status": "conflict",
+  "created": "2026-04-20T11:44:55-03:00",
+  "archived": "2026-04-20T17:34:13.071313-03:00",
+  "commits": [
+    {
+      "hash": "96480aa",
+      "author": "GΛB",
+      "message": "test: document helper sources, fix ResponseTimeMs test fragility",
+      "date": 1776716307
+    },
+    {
+      "hash": "cbaa1e6",
+      "author": "GΛB",
+      "message": "chore: remove GoRalph-history from tracking (already in .gitignore)",
+      "date": 1776716121
+    },
+    {
+      "hash": "73ef9b6",
+      "author": "GΛB",
+      "message": "chore: gitignore goralph metadata, remove from tracking",
+      "date": 1776716002
+    },
+    {
+      "hash": "ff73079",
+      "author": "GΛB",
+      "message": "chore: remove cover.out, add to .gitignore",
+      "date": 1776715839
+    },
+    {
+      "hash": "eb29379",
+      "author": "GΛB",
+      "message": "chore: remove scratch TODO.md, clarify test comment",
+      "date": 1776715741
+    },
+    {
+      "hash": "edf892e",
+      "author": "GΛB",
+      "message": "docs: update TODO.md with final coverage summary",
+      "date": 1776697520
+    },
+    {
+      "hash": "65dd4d2",
+      "author": "GΛB",
+      "message": "test(runner): add monorepo, port listening, process, and assertion tests",
+      "date": 1776697229
+    },
+    {
+      "hash": "0be42c2",
+      "author": "GΛB",
+      "message": "test(mcp): add comprehensive tests for helper functions",
+      "date": 1776696929
+    },
+    {
+      "hash": "5df2b97",
+      "author": "GΛB",
+      "message": "test(schema): add coverage for MarshalYAML, LoadDefault, Validate paths",
+      "date": 1776696541
+    },
+    {
+      "hash": "256e993",
+      "author": "GΛB",
+      "message": "test(dashboard): add handler and static file tests",
+      "date": 1776696295
+    }
+  ],
+  "total_commits": 10,
+  "files_changed": 46,
+  "lines_added": 2098,
+  "lines_removed": 7793,
+  "diff_stat": ".gitignore                                         |    3 +\n .goralph/config.yaml                               |   12 -\n .goralph/logs/.gitkeep                             |    1 -\n .goralph/plan.md                                   |   66 -\n .goralph/prompt.md                                 |   68 -\n .goralph/skills/project-init.md                    |   36 -\n .goralph/skills/session-end.md                     |   46 -\n .goralph/specs/README.md                           |   72 -\n .goralph/state.yaml                                |    1 -\n .goralph/task.md                                   |    1 -\n .gorchestra/fingerprint-cache.json                 |    4 +-\n .version-registry.json                             |   10 +-\n CHANGELOG.md                                       |   26 -\n CLAUDE.md                                          |   11 +-\n GOrchestra/intel/architecture.json                 |   34 +-\n GOrchestra/intel/status.json                       |    4 +-\n cmd/run.go                                         |   61 +-\n cmd/schema.go                                      |   26 -\n cmd/validate.go                                    |   53 -\n cmd/validate_test.go                               |   81 -\n .../2026-04-19_170647_e7a99f76.md                  |  237 +-\n .../2026-04-19_192235_ace50f4f.md                  | 2778 --------------------\n ...tup-edit-tool-fails-to-match-tab-indented-go.md |   73 -\n .../2026-04-19-watch-mode-reporter-state-reset.md  |   12 +-\n docs/issues.yaml                                   |   14 +-\n docs/issues/BUG-001.yaml                           |   15 -\n .../2026-04-20-v0.11-test-coverage-continuation.md |  103 -\n ...moke-v0.11.1-ReleaseNotes-features-and-fixes.md |   68 -\n docs/roadmap/index.yaml                            |   31 +-\n docs/roadmap/items/ROAD-040.yaml                   |    9 -\n docs/roadmap/items/ROAD-041.yaml                   |    9 -\n docs/roadmap/items/ROAD-042.yaml                   |    9 -\n docs/roadmap/items/ROAD-043.yaml                   |    9 -\n docs/roadmap/items/ROAD-044.yaml                   |    9 -\n ...4-20_ace50f4f-bd16-42ba-9468-aaf1c223eccc.jsonl | 1759 -------------\n ...4-19_e7a99f76-4edf-451d-814a-268dc99f1c29.jsonl | 1469 -----------\n internal/baseline/baseline.go                      |  103 -\n internal/baseline/baseline_test.go                 |  152 --\n internal/dashboard/handler_test.go                 |  374 +++\n internal/mcp/helpers_test.go                       |  515 ++++\n internal/reporter/junit.go                         |   50 +-\n internal/reporter/junit_test.go                    |   66 +-\n internal/runner/runner_extra_test.go               |  408 +++\n internal/schema/export.go                          |  213 --\n internal/schema/export_test.go                     |   47 -\n internal/schema/schema_extra_test.go               |  743 ++++++\n 46 files changed, 2098 insertions(+), 7793 deletions(-)",
+  "review_status": "passed"
+}
