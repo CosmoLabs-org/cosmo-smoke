@@ -1,0 +1,14 @@
+{
+  "branch": "ralph-004-continue-goralph-plan-md-test",
+  "base_branch": "master",
+  "status": "killed",
+  "created": "0001-01-01T00:00:00Z",
+  "archived": "2026-04-20T17:59:46.394691-03:00",
+  "commits": null,
+  "total_commits": 0,
+  "files_changed": 0,
+  "lines_added": 0,
+  "lines_removed": 0,
+  "diff_stat": "",
+  "review_status": "passed"
+}

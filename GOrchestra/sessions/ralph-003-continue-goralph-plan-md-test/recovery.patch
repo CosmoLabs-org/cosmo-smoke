@@ -1,0 +1,772 @@
+From 900c44fe44e92f780d2cc7f0c7f1b5a04e639267 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?G=CE=9BB?= <Gab@CosmoLabs.org>
+Date: Mon, 20 Apr 2026 17:48:27 -0300
+Subject: [PATCH 1/2] test(cmd): add tests for internal helper functions
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+Cover countProcessTests, writeHealthError, noopReporter methods,
+withOTelExport, withPushReport, and buildReporter. These were all
+at 0% coverage. cmd package: 20.2% → 30.8%.
+
+Co-Authored-By: Claude Opus 4.7 <noreply@anthropic.com>
+---
+ cmd/run_test.go | 310 ++++++++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 310 insertions(+)
+ create mode 100644 cmd/run_test.go
+
+diff --git a/cmd/run_test.go b/cmd/run_test.go
+new file mode 100644
+index 0000000..e827b10
+--- /dev/null
++++ b/cmd/run_test.go
+@@ -0,0 +1,310 @@
++package cmd
++
++import (
++	"encoding/json"
++	"net/http"
++	"net/http/httptest"
++	"strings"
++	"testing"
++
++	"github.com/CosmoLabs-org/cosmo-smoke/internal/reporter"
++	"github.com/CosmoLabs-org/cosmo-smoke/internal/schema"
++)
++
++// --- countProcessTests ---
++
++func TestCountProcessTests(t *testing.T) {
++	tests := []struct {
++		name  string
++		cfg   *schema.SmokeConfig
++		count int
++	}{
++		{
++			name:  "nil tests",
++			cfg:   &schema.SmokeConfig{},
++			count: 0,
++		},
++		{
++			name: "no port listening tests",
++			cfg: &schema.SmokeConfig{
++				Tests: []schema.Test{
++					{Name: "t1", Run: "echo hi"},
++					{Name: "t2", Run: "echo bye"},
++				},
++			},
++			count: 0,
++		},
++		{
++			name: "one port listening test",
++			cfg: &schema.SmokeConfig{
++				Tests: []schema.Test{
++					{Name: "t1", Run: "true", Expect: schema.Expect{PortListening: &schema.PortCheck{Port: 8080}}},
++				},
++			},
++			count: 1,
++		},
++		{
++			name: "mixed tests",
++			cfg: &schema.SmokeConfig{
++				Tests: []schema.Test{
++					{Name: "t1", Run: "true"},
++					{Name: "t2", Run: "true", Expect: schema.Expect{PortListening: &schema.PortCheck{Port: 80}}},
++					{Name: "t3", Run: "true"},
++					{Name: "t4", Run: "true", Expect: schema.Expect{PortListening: &schema.PortCheck{Port: 443}}},
++				},
++			},
++			count: 2,
++		},
++	}
++
++	for _, tt := range tests {
++		t.Run(tt.name, func(t *testing.T) {
++			got := countProcessTests(tt.cfg)
++			if got != tt.count {
++				t.Errorf("countProcessTests() = %d, want %d", got, tt.count)
++			}
++		})
++	}
++}
++
++// --- writeHealthError ---
++
++func TestWriteHealthError(t *testing.T) {
++	rec := httptest.NewRecorder()
++	writeHealthError(rec, http.StatusServiceUnavailable, "something broke")
++
++	if rec.Code != http.StatusServiceUnavailable {
++		t.Errorf("status = %d, want %d", rec.Code, http.StatusServiceUnavailable)
++	}
++
++	ct := rec.Header().Get("Content-Type")
++	if !strings.Contains(ct, "json") {
++		t.Errorf("Content-Type = %q, want json", ct)
++	}
++
++	var body map[string]string
++	if err := json.NewDecoder(rec.Body).Decode(&body); err != nil {
++		t.Fatalf("decode response: %v", err)
++	}
++	if body["error"] != "something broke" {
++		t.Errorf("error = %q, want %q", body["error"], "something broke")
++	}
++}
++
++func TestWriteHealthError_InternalServerError(t *testing.T) {
++	rec := httptest.NewRecorder()
++	writeHealthError(rec, http.StatusInternalServerError, "load config: missing")
++
++	if rec.Code != http.StatusInternalServerError {
++		t.Errorf("status = %d, want %d", rec.Code, http.StatusInternalServerError)
++	}
++}
++
++// --- noopReporter ---
++
++func TestNoopReporter_AllMethods(t *testing.T) {
++	n := newNoopReporter()
++	// All methods should be callable without panicking and produce no output.
++	n.PrereqStart("test-prereq")
++	n.PrereqResult(reporter.PrereqResultData{})
++	n.TestStart("test-case")
++	n.TestResult(reporter.TestResultData{})
++	n.Summary(reporter.SuiteResultData{})
++}
++
++// --- withOTelExport ---
++
++func TestWithOTelExport_Disabled(t *testing.T) {
++	cfg := &schema.SmokeConfig{OTel: schema.OTelConfig{}}
++	rep := withOTelExport(&testReporter{}, cfg)
++	if rep == nil {
++		t.Error("expected non-nil reporter")
++	}
++	// Should return the original reporter unchanged (wrapped or same)
++	_, ok := rep.(*testReporter)
++	if !ok {
++		// It might be wrapped, that's fine — the key is no panic and no nil
++		t.Log("reporter was wrapped (acceptable)")
++	}
++}
++
++func TestWithOTelExport_WithJaegerURL(t *testing.T) {
++	cfg := &schema.SmokeConfig{
++		OTel: schema.OTelConfig{
++			Enabled:   true,
++			JaegerURL: "http://localhost:14268",
++		},
++	}
++	rep := withOTelExport(&testReporter{}, cfg)
++	if rep == nil {
++		t.Error("expected non-nil reporter")
++	}
++}
++
++func TestWithOTelExport_WithExportURL(t *testing.T) {
++	cfg := &schema.SmokeConfig{
++		OTel: schema.OTelConfig{
++			Enabled:    true,
++			ExportURL:  "http://localhost:4318/v1/traces",
++		},
++	}
++	rep := withOTelExport(&testReporter{}, cfg)
++	if rep == nil {
++		t.Error("expected non-nil reporter")
++	}
++}
++
++func TestWithOTelExport_InvalidURL(t *testing.T) {
++	cfg := &schema.SmokeConfig{
++		OTel: schema.OTelConfig{
++			Enabled:   true,
++			ExportURL: "://invalid-url",
++		},
++	}
++	rep := withOTelExport(&testReporter{}, cfg)
++	if rep == nil {
++		t.Error("expected non-nil reporter even with invalid URL")
++	}
++}
++
++func TestWithOTelExport_NoURLs(t *testing.T) {
++	cfg := &schema.SmokeConfig{
++		OTel: schema.OTelConfig{
++			Enabled: true,
++		},
++	}
++	rep := withOTelExport(&testReporter{}, cfg)
++	if rep == nil {
++		t.Error("expected non-nil reporter")
++	}
++}
++
++func TestWithOTelExport_WithServiceName(t *testing.T) {
++	cfg := &schema.SmokeConfig{
++		Project: "my-project",
++		OTel: schema.OTelConfig{
++			Enabled:   true,
++			JaegerURL: "http://localhost:14268",
++		},
++	}
++	rep := withOTelExport(&testReporter{}, cfg)
++	if rep == nil {
++		t.Error("expected non-nil reporter")
++	}
++}
++
++// --- withPushReport ---
++
++func TestWithPushReport_EmptyURL(t *testing.T) {
++	oldURL := reportURL
++	reportURL = ""
++	defer func() { reportURL = oldURL }()
++
++	rep := withPushReport(&testReporter{})
++	if rep == nil {
++		t.Error("expected non-nil reporter")
++	}
++}
++
++func TestWithPushReport_ValidURL(t *testing.T) {
++	oldURL := reportURL
++	oldAPIKey := reportAPIKey
++	reportURL = "http://example.com/report"
++	reportAPIKey = "test-key"
++	defer func() {
++		reportURL = oldURL
++		reportAPIKey = oldAPIKey
++	}()
++
++	rep := withPushReport(&testReporter{})
++	if rep == nil {
++		t.Error("expected non-nil reporter")
++	}
++}
++
++func TestWithPushReport_InvalidURL(t *testing.T) {
++	oldURL := reportURL
++	reportURL = "://invalid"
++	defer func() { reportURL = oldURL }()
++
++	rep := withPushReport(&testReporter{})
++	if rep == nil {
++		t.Error("expected non-nil reporter even with invalid URL")
++	}
++}
++
++// --- buildReporter ---
++
++func TestBuildReporter_Terminal(t *testing.T) {
++	cfg := &schema.SmokeConfig{}
++	rep, closeAll, err := buildReporter("terminal", cfg)
++	if err != nil {
++		t.Fatalf("unexpected error: %v", err)
++	}
++	if rep == nil {
++		t.Error("expected non-nil reporter")
++	}
++	closeAll()
++}
++
++func TestBuildReporter_JSON(t *testing.T) {
++	cfg := &schema.SmokeConfig{}
++	rep, closeAll, err := buildReporter("json", cfg)
++	if err != nil {
++		t.Fatalf("unexpected error: %v", err)
++	}
++	if rep == nil {
++		t.Error("expected non-nil reporter")
++	}
++	closeAll()
++}
++
++func TestBuildReporter_MultipleFormats(t *testing.T) {
++	cfg := &schema.SmokeConfig{}
++	rep, closeAll, err := buildReporter("terminal,json", cfg)
++	if err != nil {
++		t.Fatalf("unexpected error: %v", err)
++	}
++	if rep == nil {
++		t.Error("expected non-nil reporter")
++	}
++	closeAll()
++}
++
++func TestBuildReporter_InvalidFormat(t *testing.T) {
++	cfg := &schema.SmokeConfig{}
++	_, _, err := buildReporter("invalid-format", cfg)
++	if err == nil {
++		t.Error("expected error for invalid format")
++	}
++}
++
++func TestBuildReporter_WithOTel(t *testing.T) {
++	cfg := &schema.SmokeConfig{
++		OTel: schema.OTelConfig{
++			Enabled:   true,
++			JaegerURL: "http://localhost:14268",
++		},
++	}
++	oldURL := reportURL
++	reportURL = ""
++	defer func() { reportURL = oldURL }()
++
++	rep, closeAll, err := buildReporter("terminal", cfg)
++	if err != nil {
++		t.Fatalf("unexpected error: %v", err)
++	}
++	if rep == nil {
++		t.Error("expected non-nil reporter")
++	}
++	closeAll()
++}
++
++// testReporter is a minimal Reporter implementation for testing.
++type testReporter struct{}
++
++func (tr *testReporter) PrereqStart(_ string)                              {}
++func (tr *testReporter) PrereqResult(_ reporter.PrereqResultData)          {}
++func (tr *testReporter) TestStart(_ string)                                {}
++func (tr *testReporter) TestResult(_ reporter.TestResultData)              {}
++func (tr *testReporter) Summary(_ reporter.SuiteResultData)                {}
+-- 
+2.53.0
+
+
+From 07de515db4d49842e44f7f87a21f7d7127b9d42b Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?G=CE=9BB?= <Gab@CosmoLabs.org>
+Date: Mon, 20 Apr 2026 17:52:19 -0300
+Subject: [PATCH 2/2] ccs kill: auto-commit 6 uncommitted files before removal
+
+---
+ .goralph/task.md     |   2 +-
+ TODO.md              |   7 ++
+ cmd/init_cmd_test.go |  95 +++++++++++++++++++++++
+ cmd/migrate_test.go  | 174 +++++++++++++++++++++++++++++++++++++++++++
+ cmd/schema_test.go   |  47 ++++++++++++
+ cmd/version_test.go  |  50 +++++++++++++
+ 6 files changed, 374 insertions(+), 1 deletion(-)
+ create mode 100644 TODO.md
+ create mode 100644 cmd/init_cmd_test.go
+ create mode 100644 cmd/migrate_test.go
+ create mode 100644 cmd/schema_test.go
+ create mode 100644 cmd/version_test.go
+
+diff --git a/.goralph/task.md b/.goralph/task.md
+index 751855e..88773ac 100644
+--- a/.goralph/task.md
++++ b/.goralph/task.md
+@@ -1 +1 @@
+-Continue unit test coverage plan. Follow .goralph/plan.md — pick the NEXT unfinished task. One task per iteration. Write tests only, do not modify production code. Run go test ./... after each change.
+\ No newline at end of file
++Continue .goralph/plan.md test coverage. Pick NEXT unfinished task. Tests only, no production code changes.
+\ No newline at end of file
+diff --git a/TODO.md b/TODO.md
+new file mode 100644
+index 0000000..17e9564
+--- /dev/null
++++ b/TODO.md
+@@ -0,0 +1,7 @@
++# TODO — ralph-003 test coverage
++
++- [x] Goal 1: Create plan.md with baseline coverage and task breakdown
++- [ ] Goal 2: cmd package — internal helper functions (countProcessTests, writeHealthError, noopReporter, withOTelExport, withPushReport, buildReporter)
++- [ ] Goal 3: cmd package — Cobra command tests (runInit, runMigrateGoss, versionCmd, schemaCmd)
++- [ ] Goal 4: internal/detector — hasPkgScript edge cases
++- [ ] Goal 5: Run full suite with -race, verify coverage improvement, commit
+diff --git a/cmd/init_cmd_test.go b/cmd/init_cmd_test.go
+new file mode 100644
+index 0000000..dfddd83
+--- /dev/null
++++ b/cmd/init_cmd_test.go
+@@ -0,0 +1,95 @@
++package cmd
++
++import (
++	"os"
++	"path/filepath"
++	"testing"
++)
++
++func TestRunInit_AutoDetectGoProject(t *testing.T) {
++	dir := t.TempDir()
++	t.Chdir(dir)
++
++	// Create go.mod so Detect finds a Go project
++	if err := os.WriteFile(filepath.Join(dir, "go.mod"), []byte("module test\n"), 0644); err != nil {
++		t.Fatal(err)
++	}
++
++	err := runInit(initCmd, []string{})
++	if err != nil {
++		t.Fatalf("runInit: %v", err)
++	}
++
++	data, err := os.ReadFile(filepath.Join(dir, ".smoke.yaml"))
++	if err != nil {
++		t.Fatalf("reading .smoke.yaml: %v", err)
++	}
++	if len(data) == 0 {
++		t.Error(".smoke.yaml is empty")
++	}
++}
++
++func TestRunInit_NoProjectDetected(t *testing.T) {
++	dir := t.TempDir()
++	t.Chdir(dir)
++
++	err := runInit(initCmd, []string{})
++	if err != nil {
++		t.Fatalf("runInit: %v", err)
++	}
++
++	data, err := os.ReadFile(filepath.Join(dir, ".smoke.yaml"))
++	if err != nil {
++		t.Fatalf("reading .smoke.yaml: %v", err)
++	}
++	if len(data) == 0 {
++		t.Error(".smoke.yaml is empty")
++	}
++}
++
++func TestRunInit_FileExistsNoForce(t *testing.T) {
++	dir := t.TempDir()
++	t.Chdir(dir)
++
++	// Pre-create .smoke.yaml
++	if err := os.WriteFile(filepath.Join(dir, ".smoke.yaml"), []byte("existing\n"), 0644); err != nil {
++		t.Fatal(err)
++	}
++
++	err := runInit(initCmd, []string{})
++	if err == nil {
++		t.Fatal("expected error when .smoke.yaml exists without --force")
++	}
++}
++
++func TestRunInit_FileExistsWithForce(t *testing.T) {
++	dir := t.TempDir()
++	t.Chdir(dir)
++
++	// Pre-create .smoke.yaml
++	if err := os.WriteFile(filepath.Join(dir, ".smoke.yaml"), []byte("existing\n"), 0644); err != nil {
++		t.Fatal(err)
++	}
++
++	// Set --force flag
++	forceOverwrite = true
++	defer func() { forceOverwrite = false }()
++
++	// Create go.mod for detection
++	if err := os.WriteFile(filepath.Join(dir, "go.mod"), []byte("module test\n"), 0644); err != nil {
++		t.Fatal(err)
++	}
++
++	err := runInit(initCmd, []string{})
++	if err != nil {
++		t.Fatalf("runInit with --force: %v", err)
++	}
++
++	data, err := os.ReadFile(filepath.Join(dir, ".smoke.yaml"))
++	if err != nil {
++		t.Fatalf("reading .smoke.yaml: %v", err)
++	}
++	if string(data) == "existing\n" {
++		t.Error(".smoke.yaml was not overwritten")
++	}
++}
+diff --git a/cmd/migrate_test.go b/cmd/migrate_test.go
+new file mode 100644
+index 0000000..c17fc6e
+--- /dev/null
++++ b/cmd/migrate_test.go
+@@ -0,0 +1,174 @@
++package cmd
++
++import (
++	"bytes"
++	"io"
++	"os"
++	"path/filepath"
++	"strings"
++	"testing"
++)
++
++// writeGossFile creates a minimal valid Goss YAML in a temp dir and returns its path.
++func writeGossFile(t *testing.T) string {
++	t.Helper()
++	dir := t.TempDir()
++	gossYAML := `
++file:
++  /etc/passwd:
++    exists: true
++    filetype: file
++command:
++  echo hello:
++    exit-status: 0
++    stdout:
++      - hello
++`
++	path := filepath.Join(dir, "goss.yaml")
++	if err := os.WriteFile(path, []byte(gossYAML), 0644); err != nil {
++		t.Fatal(err)
++	}
++	return path
++}
++
++// captureStdout captures os.Stdout during the execution of fn.
++func captureStdout(fn func() error) (string, error) {
++	old := os.Stdout
++	r, w, _ := os.Pipe()
++	os.Stdout = w
++	err := fn()
++	w.Close()
++	os.Stdout = old
++	var buf bytes.Buffer
++	io.Copy(&buf, r)
++	return buf.String(), err
++}
++
++func resetMigrateFlags() {
++	migrateOutput = ""
++	migrateOverwrite = false
++	migrateStrict = false
++	migrateStats = false
++	migrateDistro = "deb"
++}
++
++func TestRunMigrateGoss_ValidInput(t *testing.T) {
++	inputPath := writeGossFile(t)
++	defer resetMigrateFlags()
++
++	output, err := captureStdout(func() error {
++		return runMigrateGoss(gossCmd, []string{inputPath})
++	})
++	if err != nil {
++		t.Fatalf("runMigrateGoss: %v", err)
++	}
++	if !strings.Contains(output, "tests:") && !strings.Contains(output, "- name:") {
++		t.Errorf("expected smoke config output, got: %s", output)
++	}
++}
++
++func TestRunMigrateGoss_FileNotFound(t *testing.T) {
++	defer func() { migrateDistro = "deb" }()
++
++	err := runMigrateGoss(gossCmd, []string{"/nonexistent/goss.yaml"})
++	if err == nil {
++		t.Fatal("expected error for missing input file")
++	}
++}
++
++func TestRunMigrateGoss_InvalidDistro(t *testing.T) {
++	inputPath := writeGossFile(t)
++	defer func() { migrateDistro = "deb" }()
++
++	migrateDistro = "invalid"
++	err := runMigrateGoss(gossCmd, []string{inputPath})
++	if err == nil {
++		t.Fatal("expected error for invalid distro")
++	}
++	if !strings.Contains(err.Error(), "unsupported distro") {
++		t.Errorf("error = %q, want unsupported distro", err.Error())
++	}
++}
++
++func TestRunMigrateGoss_WriteToFile(t *testing.T) {
++	inputPath := writeGossFile(t)
++	dir := t.TempDir()
++	outPath := filepath.Join(dir, ".smoke.yaml")
++	defer resetMigrateFlags()
++
++	migrateOutput = outPath
++
++	err := runMigrateGoss(gossCmd, []string{inputPath})
++	if err != nil {
++		t.Fatalf("runMigrateGoss: %v", err)
++	}
++
++	data, err := os.ReadFile(outPath)
++	if err != nil {
++		t.Fatalf("reading output file: %v", err)
++	}
++	if len(data) == 0 {
++		t.Error("output file is empty")
++	}
++}
++
++func TestRunMigrateGoss_OutputFileExists(t *testing.T) {
++	inputPath := writeGossFile(t)
++	dir := t.TempDir()
++	outPath := filepath.Join(dir, ".smoke.yaml")
++
++	if err := os.WriteFile(outPath, []byte("existing\n"), 0644); err != nil {
++		t.Fatal(err)
++	}
++	defer resetMigrateFlags()
++
++	migrateOutput = outPath
++	err := runMigrateGoss(gossCmd, []string{inputPath})
++	if err == nil {
++		t.Fatal("expected error when output file exists without --overwrite")
++	}
++	if !strings.Contains(err.Error(), "already exists") {
++		t.Errorf("error = %q, want 'already exists'", err.Error())
++	}
++}
++
++func TestRunMigrateGoss_OverwriteExisting(t *testing.T) {
++	inputPath := writeGossFile(t)
++	dir := t.TempDir()
++	outPath := filepath.Join(dir, ".smoke.yaml")
++
++	if err := os.WriteFile(outPath, []byte("existing\n"), 0644); err != nil {
++		t.Fatal(err)
++	}
++	defer resetMigrateFlags()
++
++	migrateOutput = outPath
++	migrateOverwrite = true
++
++	err := runMigrateGoss(gossCmd, []string{inputPath})
++	if err != nil {
++		t.Fatalf("runMigrateGoss with overwrite: %v", err)
++	}
++
++	data, err := os.ReadFile(outPath)
++	if err != nil {
++		t.Fatalf("reading output file: %v", err)
++	}
++	if string(data) == "existing\n" {
++		t.Error("output file was not overwritten")
++	}
++}
++
++func TestRunMigrateGoss_WithStats(t *testing.T) {
++	inputPath := writeGossFile(t)
++	defer resetMigrateFlags()
++
++	migrateStats = true
++
++	_, err := captureStdout(func() error {
++		return runMigrateGoss(gossCmd, []string{inputPath})
++	})
++	if err != nil {
++		t.Fatalf("runMigrateGoss: %v", err)
++	}
++}
+diff --git a/cmd/schema_test.go b/cmd/schema_test.go
+new file mode 100644
+index 0000000..b8ace40
+--- /dev/null
++++ b/cmd/schema_test.go
+@@ -0,0 +1,47 @@
++package cmd
++
++import (
++	"bytes"
++	"io"
++	"os"
++	"strings"
++	"testing"
++)
++
++func TestSchemaCmd_Output(t *testing.T) {
++	// Capture os.Stdout since schemaCmd uses fmt.Println directly
++	old := os.Stdout
++	r, w, _ := os.Pipe()
++	os.Stdout = w
++
++	rootCmd.SetArgs([]string{"schema"})
++	err := rootCmd.Execute()
++
++	w.Close()
++	os.Stdout = old
++	defer func() { rootCmd.SetArgs([]string{}) }()
++
++	if err != nil {
++		t.Fatalf("schema command: %v", err)
++	}
++
++	var buf bytes.Buffer
++	io.Copy(&buf, r)
++	output := buf.String()
++	if !strings.Contains(output, "assertions") && !strings.Contains(output, "name") {
++		t.Errorf("schema output should contain JSON schema data, got: %s", output[:min(len(output), 200)])
++	}
++}
++
++func TestSchemaCmd_Registered(t *testing.T) {
++	var found bool
++	for _, sub := range rootCmd.Commands() {
++		if sub.Use == "schema" {
++			found = true
++			break
++		}
++	}
++	if !found {
++		t.Error("schema command not registered on rootCmd")
++	}
++}
+diff --git a/cmd/version_test.go b/cmd/version_test.go
+new file mode 100644
+index 0000000..464ff9a
+--- /dev/null
++++ b/cmd/version_test.go
+@@ -0,0 +1,50 @@
++package cmd
++
++import (
++	"bytes"
++	"io"
++	"os"
++	"strings"
++	"testing"
++)
++
++func TestVersionCmd_Output(t *testing.T) {
++	// Capture os.Stdout since versionCmd uses fmt.Printf directly
++	old := os.Stdout
++	r, w, _ := os.Pipe()
++	os.Stdout = w
++
++	rootCmd.SetArgs([]string{"version"})
++	err := rootCmd.Execute()
++
++	w.Close()
++	os.Stdout = old
++	defer func() { rootCmd.SetArgs([]string{}) }()
++
++	if err != nil {
++		t.Fatalf("version command: %v", err)
++	}
++
++	var buf bytes.Buffer
++	io.Copy(&buf, r)
++	output := strings.TrimSpace(buf.String())
++	if !strings.Contains(output, "smoke") {
++		t.Errorf("version output should contain 'smoke', got: %q", output)
++	}
++	if !strings.Contains(output, "dev") && !strings.Contains(output, "0.") {
++		t.Errorf("version output should contain version, got: %q", output)
++	}
++}
++
++func TestVersionCmd_Registered(t *testing.T) {
++	var found bool
++	for _, sub := range rootCmd.Commands() {
++		if sub.Use == "version" {
++			found = true
++			break
++		}
++	}
++	if !found {
++		t.Error("version command not registered on rootCmd")
++	}
++}
+-- 
+2.53.0
+

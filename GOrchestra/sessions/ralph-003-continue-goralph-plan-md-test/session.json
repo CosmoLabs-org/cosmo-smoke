@@ -1,0 +1,21 @@
+{
+  "branch": "ralph-003-continue-goralph-plan-md-test",
+  "base_branch": "master",
+  "status": "killed",
+  "created": "2026-04-20T17:48:27-03:00",
+  "archived": "2026-04-20T17:52:19.197509-03:00",
+  "commits": [
+    {
+      "hash": "900c44f",
+      "author": "GΛB",
+      "message": "test(cmd): add tests for internal helper functions",
+      "date": 1776718107
+    }
+  ],
+  "total_commits": 1,
+  "files_changed": 1,
+  "lines_added": 310,
+  "lines_removed": 0,
+  "diff_stat": "cmd/run_test.go | 310 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++\n 1 file changed, 310 insertions(+)",
+  "review_status": "passed"
+}

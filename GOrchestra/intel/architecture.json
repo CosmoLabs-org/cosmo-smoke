@@ -1,36 +1,36 @@
 {
   "version": "1.0",
-  "generated_at": "2026-04-20T17:35:36.386363-03:00",
+  "generated_at": "2026-04-20T18:09:28.930954-03:00",
   "generated_by": "GLM-4.7",
-  "expires_at": "2026-04-21T17:35:36.386363-03:00",
-  "last_analyzed_commit": "77f45cdc3a4aece0c92df5c7226a4edacc96d804",
-  "summary": "A Go-based CLI tool that integrates with MCP for infrastructure validation, featuring Goss migration capabilities and a structured test runner.",
-  "architecture": "monolith",
+  "expires_at": "2026-04-21T18:09:28.930954-03:00",
+  "last_analyzed_commit": "3cd0258047f780709d52fcdfac64dc3f43208ccd",
+  "summary": "A Go-based modular monolith that runs connectivity tests, translates Goss configurations, and exposes functionality via MCP handlers.",
+  "architecture": "modular-monolith",
   "primary_language": "Go",
   "hot_files": [
     "internal/runner/runner.go",
     "internal/mcp/handlers.go",
     "internal/migrate/goss/translator.go",
-    "internal/schema/validate_test.go",
-    "internal/detector/detector.go"
+    "internal/schema/schema_extra_test.go",
+    "internal/runner/assertion_test.go"
   ],
   "patterns": [
-    "Standard Go project layout",
+    "MCP (Model Context Protocol) handler pattern",
+    "Test-driven development",
+    "Goss migration/translation",
     "Internal package encapsulation",
-    "MCP (Model Context Protocol) integration",
-    "Migration/Translator pattern",
-    "Test-driven development"
+    "CLI command pattern"
   ],
   "concerns": [
-    "6 untracked files in git status indicating incomplete commits",
-    "Heavy reliance on automated session metadata commits reducing meaningful history",
-    "Test coverage appears to be a recent focus suggesting prior gaps",
-    "Goss migration logic could become legacy tech debt if not fully completed"
+    "Duplicate internal/baseline directory structure across GOrchestra and root",
+    "Uncommitted changes (6 modified, 3 untracked) indicating possible WIP instability",
+    "Archived agent sessions cluttering the repository structure",
+    "Heavy reliance on test files for understanding core logic"
   ],
   "suggestions": [
-    "Commit or explicitly gitignore the 6 untracked files",
-    "Review and clean up automated commit hooks to keep git history meaningful",
-    "Complete the Goss migration path and consider deprecation timeline",
-    "Focus testing efforts on the MCP handlers given their integration complexity"
+    "Clean up the duplicate GOrchestra/glm-agents/.../internal/ paths",
+    "Commit or stash the 6 modified and 3 untracked files to stabilize the branch",
+    "Move archived agent sessions to a separate repository or .gitignored archive folder",
+    "Document the MCP integration and Goss translation workflows"
   ]
 }

@@ -160,3 +160,21 @@
   branch: mcp-extension
   base: master
   outcome: archived
+- name: ralph-002-increase-unit-test-coverage
+  created: '2026-04-20T17:41:38-03:00'
+  status: killed
+  branch: ralph-002-increase-unit-test-coverage
+  base: master
+  outcome: archived
+- name: ralph-003-continue-goralph-plan-md-test
+  created: '2026-04-20T17:52:19-03:00'
+  status: killed
+  branch: ralph-003-continue-goralph-plan-md-test
+  base: master
+  outcome: archived
+- name: ralph-004-continue-goralph-plan-md-test
+  created: '2026-04-20T17:59:46-03:00'
+  status: killed
+  branch: ralph-004-continue-goralph-plan-md-test
+  base: master
+  outcome: archived

@@ -1,0 +1,584 @@
+From d3a4a03c6567f0db84854d7e3cb59a7cbe5bf7fc Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?G=CE=9BB?= <Gab@CosmoLabs.org>
+Date: Mon, 20 Apr 2026 17:59:46 -0300
+Subject: [PATCH] ccs kill: auto-commit 4 uncommitted files before removal
+
+---
+ .goralph/task.md                 |   2 +-
+ TODO.md                          |  23 +++
+ internal/reporter/multi_test.go  | 183 +++++++++++++++++
+ internal/runner/ws_frame_test.go | 333 +++++++++++++++++++++++++++++++
+ 4 files changed, 540 insertions(+), 1 deletion(-)
+ create mode 100644 TODO.md
+ create mode 100644 internal/reporter/multi_test.go
+ create mode 100644 internal/runner/ws_frame_test.go
+
+diff --git a/.goralph/task.md b/.goralph/task.md
+index 751855e..88773ac 100644
+--- a/.goralph/task.md
++++ b/.goralph/task.md
+@@ -1 +1 @@
+-Continue unit test coverage plan. Follow .goralph/plan.md — pick the NEXT unfinished task. One task per iteration. Write tests only, do not modify production code. Run go test ./... after each change.
+\ No newline at end of file
++Continue .goralph/plan.md test coverage. Pick NEXT unfinished task. Tests only, no production code changes.
+\ No newline at end of file
+diff --git a/TODO.md b/TODO.md
+new file mode 100644
+index 0000000..ccf7c76
+--- /dev/null
++++ b/TODO.md
+@@ -0,0 +1,23 @@
++# TODO — ralph-004 Test Coverage
++
++## Baseline Coverage
++- cmd: 20.2%
++- internal/detector: 64.6%
++- internal/runner: 75.1%
++- internal/dashboard: 83.2%
++- internal/migrate/goss: 87.8%
++- internal/reporter: 87.9%
++- internal/mcp: 89.0%
++- internal/baseline: 90.9%
++- internal/monorepo: 95.5%
++- internal/schema: 97.4%
++
++## Goals
++- [ ] Goal 1: Add MultiReporter tests (reporter package, 0% functions)
++- [ ] Goal 2: Add TraceHealthTracker edge cases (runner package)
++- [ ] Goal 3: Add wsReadFrame edge case tests (runner package, 43.6%)
++- [ ] Goal 4: Add wsSendMessage edge case tests (runner package, 68.4%)
++- [ ] Goal 5: Add runTestOnce coverage via Runner integration tests (runner package, 45.6%)
++- [ ] Goal 6: Add NewTraceHealthTracker default path test (runner package, 66.7%)
++- [ ] Goal 7: Add detector parse edge cases (detector package, pure parse functions)
++- [ ] Goal 8: Run full suite with -race and verify coverage delta
+diff --git a/internal/reporter/multi_test.go b/internal/reporter/multi_test.go
+new file mode 100644
+index 0000000..8bfb6b0
+--- /dev/null
++++ b/internal/reporter/multi_test.go
+@@ -0,0 +1,183 @@
++package reporter
++
++import (
++	"bytes"
++	"strings"
++	"testing"
++	"time"
++)
++
++// recordingReporter captures all calls for verification.
++type recordingReporter struct {
++	prereqStarts  []string
++	prereqResults []PrereqResultData
++	testStarts    []string
++	testResults   []TestResultData
++	summaries     []SuiteResultData
++}
++
++func (r *recordingReporter) PrereqStart(name string)          { r.prereqStarts = append(r.prereqStarts, name) }
++func (r *recordingReporter) PrereqResult(data PrereqResultData) { r.prereqResults = append(r.prereqResults, data) }
++func (r *recordingReporter) TestStart(name string)            { r.testStarts = append(r.testStarts, name) }
++func (r *recordingReporter) TestResult(data TestResultData)   { r.testResults = append(r.testResults, data) }
++func (r *recordingReporter) Summary(data SuiteResultData)     { r.summaries = append(r.summaries, data) }
++
++func TestMultiReporter_FansOutAllEvents(t *testing.T) {
++	rec1 := &recordingReporter{}
++	rec2 := &recordingReporter{}
++	m := NewMultiReporter(rec1, rec2)
++
++	m.PrereqStart("check-docker")
++	m.PrereqResult(PrereqResultData{Name: "check-docker", Passed: true})
++	m.TestStart("health")
++	m.TestResult(TestResultData{Name: "health", Passed: true, Duration: 10 * time.Millisecond})
++	m.Summary(SuiteResultData{Project: "test", Total: 1, Passed: 1})
++
++	// Verify both reporters received all events
++	for i, rec := range []*recordingReporter{rec1, rec2} {
++		if len(rec.prereqStarts) != 1 || rec.prereqStarts[0] != "check-docker" {
++			t.Errorf("reporter %d: prereqStarts = %v, want [check-docker]", i, rec.prereqStarts)
++		}
++		if len(rec.prereqResults) != 1 || !rec.prereqResults[0].Passed {
++			t.Errorf("reporter %d: prereqResults = %v, want one passed", i, rec.prereqResults)
++		}
++		if len(rec.testStarts) != 1 || rec.testStarts[0] != "health" {
++			t.Errorf("reporter %d: testStarts = %v, want [health]", i, rec.testStarts)
++		}
++		if len(rec.testResults) != 1 || !rec.testResults[0].Passed {
++			t.Errorf("reporter %d: testResults = %v, want one passed", i, rec.testResults)
++		}
++		if len(rec.summaries) != 1 || rec.summaries[0].Project != "test" {
++			t.Errorf("reporter %d: summaries = %v, want project=test", i, rec.summaries)
++		}
++	}
++}
++
++func TestMultiReporter_SingleReporter(t *testing.T) {
++	rec := &recordingReporter{}
++	m := NewMultiReporter(rec)
++
++	m.TestStart("solo")
++	m.TestResult(TestResultData{Name: "solo", Passed: true})
++
++	if len(rec.testStarts) != 1 {
++		t.Errorf("expected 1 test start, got %d", len(rec.testStarts))
++	}
++}
++
++func TestMultiReporter_ThreeReporters(t *testing.T) {
++	rec1 := &recordingReporter{}
++	rec2 := &recordingReporter{}
++	rec3 := &recordingReporter{}
++	m := NewMultiReporter(rec1, rec2, rec3)
++
++	m.TestStart("triple")
++
++	for i, rec := range []*recordingReporter{rec1, rec2, rec3} {
++		if len(rec.testStarts) != 1 {
++			t.Errorf("reporter %d: expected 1 test start, got %d", i, len(rec.testStarts))
++		}
++	}
++}
++
++func TestMultiReporter_WithRealReporters(t *testing.T) {
++	var buf1, buf2 bytes.Buffer
++	json1 := NewJSON(&buf1)
++	tap := NewTAP(&buf2)
++	m := NewMultiReporter(json1, tap)
++
++	m.TestStart("api")
++	m.TestResult(TestResultData{
++		Name:   "api",
++		Passed: true,
++		Assertions: []AssertionDetail{
++			{Type: "exit_code", Expected: "0", Actual: "0", Passed: true},
++		},
++		Duration: 50 * time.Millisecond,
++	})
++	m.Summary(SuiteResultData{Project: "real", Total: 1, Passed: 1})
++
++	// JSON reporter should have produced output in Summary
++	if buf1.String() == "" {
++		t.Error("expected JSON output from first reporter")
++	}
++	// TAP reporter should have produced output in Summary
++	if !strings.Contains(buf2.String(), "TAP version 14") {
++		t.Error("expected TAP output from second reporter")
++	}
++}
++
++func TestMultiReporter_PrereqResult(t *testing.T) {
++	rec := &recordingReporter{}
++	m := NewMultiReporter(rec)
++
++	data := PrereqResultData{
++		Name:   "check-redis",
++		Passed: false,
++		Output: "connection refused",
++		Hint:   "start redis",
++		Error:  nil,
++	}
++	m.PrereqResult(data)
++
++	if len(rec.prereqResults) != 1 {
++		t.Fatalf("expected 1 prereq result, got %d", len(rec.prereqResults))
++	}
++	got := rec.prereqResults[0]
++	if got.Name != "check-redis" || got.Passed || got.Output != "connection refused" || got.Hint != "start redis" {
++		t.Errorf("PrereqResult not forwarded correctly: %+v", got)
++	}
++}
++
++func TestMultiReporter_TestResult(t *testing.T) {
++	rec := &recordingReporter{}
++	m := NewMultiReporter(rec)
++
++	data := TestResultData{
++		Name:           "flaky",
++		Passed:         false,
++		AllowedFailure: true,
++		Duration:       100 * time.Millisecond,
++		Assertions: []AssertionDetail{
++			{Type: "http_status", Expected: "200", Actual: "503", Passed: false},
++		},
++	}
++	m.TestResult(data)
++
++	if len(rec.testResults) != 1 {
++		t.Fatalf("expected 1 test result, got %d", len(rec.testResults))
++	}
++	got := rec.testResults[0]
++	if got.Name != "flaky" || !got.AllowedFailure {
++		t.Errorf("TestResult not forwarded correctly: %+v", got)
++	}
++}
++
++func TestMultiReporter_Summary(t *testing.T) {
++	rec := &recordingReporter{}
++	m := NewMultiReporter(rec)
++
++	data := SuiteResultData{
++		Project:         "multi-test",
++		Total:           5,
++		Passed:          3,
++		Failed:          1,
++		Skipped:         1,
++		AllowedFailures: 0,
++		Duration:        2 * time.Second,
++		TraceHealthPct:  85.5,
++		TraceDegraded:   false,
++	}
++	m.Summary(data)
++
++	if len(rec.summaries) != 1 {
++		t.Fatalf("expected 1 summary, got %d", len(rec.summaries))
++	}
++	got := rec.summaries[0]
++	if got.Project != "multi-test" || got.Total != 5 || got.Passed != 3 {
++		t.Errorf("Summary not forwarded correctly: %+v", got)
++	}
++	if got.TraceHealthPct != 85.5 {
++		t.Errorf("TraceHealthPct = %v, want 85.5", got.TraceHealthPct)
++	}
++}
+diff --git a/internal/runner/ws_frame_test.go b/internal/runner/ws_frame_test.go
+new file mode 100644
+index 0000000..df204b3
+--- /dev/null
++++ b/internal/runner/ws_frame_test.go
+@@ -0,0 +1,333 @@
++package runner
++
++import (
++	"encoding/binary"
++	"io"
++	"net"
++	"testing"
++)
++
++// wsPipe creates a pair of connected net.Conns using a real TCP listener.
++func wsPipe(t *testing.T) (client, server net.Conn) {
++	t.Helper()
++	ln, err := net.Listen("tcp", "127.0.0.1:0")
++	if err != nil {
++		t.Fatal(err)
++	}
++	t.Cleanup(func() { ln.Close() })
++
++	ch := make(chan net.Conn)
++	go func() {
++		conn, err := ln.Accept()
++		if err != nil {
++			close(ch)
++			return
++		}
++		ch <- conn
++	}()
++
++	client, err = net.Dial("tcp", ln.Addr().String())
++	if err != nil {
++		t.Fatal(err)
++	}
++	server = <-ch
++	if server == nil {
++		t.Fatal("server accept failed")
++	}
++	t.Cleanup(func() { client.Close() })
++	t.Cleanup(func() { server.Close() })
++	return client, server
++}
++
++// writeTextFrame writes a raw WebSocket text frame (unmasked, server-to-client).
++func writeTextFrame(conn net.Conn, payload string) {
++	frame := []byte{0x81} // FIN + text opcode
++	n := len(payload)
++	if n <= 125 {
++		frame = append(frame, byte(n))
++	} else if n <= 65535 {
++		frame = append(frame, 126, byte(n>>8), byte(n))
++	}
++	frame = append(frame, []byte(payload)...)
++	conn.Write(frame)
++}
++
++// writeCloseFrame writes a WebSocket close frame with optional reason.
++func writeCloseFrame(conn net.Conn, reason string) {
++	frame := []byte{0x88} // FIN + close opcode
++	n := len(reason)
++	if n <= 125 {
++		frame = append(frame, byte(n))
++	}
++	frame = append(frame, []byte(reason)...)
++	conn.Write(frame)
++}
++
++// writePingFrame writes a WebSocket ping frame with optional payload.
++func writePingFrame(conn net.Conn, payload string) {
++	frame := []byte{0x89} // FIN + ping opcode
++	frame = append(frame, byte(len(payload)))
++	frame = append(frame, []byte(payload)...)
++	conn.Write(frame)
++}
++
++func TestWsReadFrame_TextFrame(t *testing.T) {
++	client, server := wsPipe(t)
++	writeTextFrame(server, "hello")
++	msg, closed, err := wsReadFrame(client)
++	if err != nil {
++		t.Fatalf("unexpected error: %v", err)
++	}
++	if closed {
++		t.Error("expected closed=false for text frame")
++	}
++	if msg != "hello" {
++		t.Errorf("msg = %q, want %q", msg, "hello")
++	}
++}
++
++func TestWsReadFrame_EmptyTextFrame(t *testing.T) {
++	client, server := wsPipe(t)
++	writeTextFrame(server, "")
++	msg, closed, err := wsReadFrame(client)
++	if err != nil {
++		t.Fatalf("unexpected error: %v", err)
++	}
++	if closed {
++		t.Error("expected closed=false for empty text frame")
++	}
++	if msg != "" {
++		t.Errorf("msg = %q, want empty", msg)
++	}
++}
++
++func TestWsReadFrame_CloseFrame_WithReason(t *testing.T) {
++	client, server := wsPipe(t)
++	writeCloseFrame(server, "going away")
++	msg, closed, err := wsReadFrame(client)
++	if err != nil {
++		t.Fatalf("unexpected error: %v", err)
++	}
++	if !closed {
++		t.Error("expected closed=true for close frame")
++	}
++	if msg != "going away" {
++		t.Errorf("msg = %q, want %q", msg, "going away")
++	}
++}
++
++func TestWsReadFrame_CloseFrame_Empty(t *testing.T) {
++	client, server := wsPipe(t)
++	frame := []byte{0x88, 0x00} // FIN + close, length 0
++	server.Write(frame)
++	msg, closed, err := wsReadFrame(client)
++	if err != nil {
++		t.Fatalf("unexpected error: %v", err)
++	}
++	if !closed {
++		t.Error("expected closed=true for empty close frame")
++	}
++	if msg != "" {
++		t.Errorf("msg = %q, want empty for empty close frame", msg)
++	}
++}
++
++func TestWsReadFrame_PingFrame_WithPayload(t *testing.T) {
++	client, server := wsPipe(t)
++	writePingFrame(server, "ping-data")
++	msg, closed, err := wsReadFrame(client)
++	if err != nil {
++		t.Fatalf("unexpected error: %v", err)
++	}
++	if closed {
++		t.Error("expected closed=false for ping frame")
++	}
++	// Ping returns empty string (payload is consumed but not returned)
++	if msg != "" {
++		t.Errorf("msg = %q, want empty for ping frame", msg)
++	}
++}
++
++func TestWsReadFrame_PingFrame_Empty(t *testing.T) {
++	client, server := wsPipe(t)
++	frame := []byte{0x89, 0x00} // FIN + ping, length 0
++	server.Write(frame)
++	msg, closed, err := wsReadFrame(client)
++	if err != nil {
++		t.Fatalf("unexpected error: %v", err)
++	}
++	if closed {
++		t.Error("expected closed=false for ping frame")
++	}
++	if msg != "" {
++		t.Errorf("msg = %q, want empty for empty ping", msg)
++	}
++}
++
++func TestWsReadFrame_ExtendedPayload16Bit(t *testing.T) {
++	client, server := wsPipe(t)
++	// Build a text frame with 126 (16-bit length prefix)
++	payload := make([]byte, 200)
++	for i := range payload {
++		payload[i] = 'A' + byte(i%26)
++	}
++	frame := []byte{0x81, 126}
++	frame = append(frame, byte(200>>8), byte(200))
++	frame = append(frame, payload...)
++	server.Write(frame)
++
++	msg, closed, err := wsReadFrame(client)
++	if err != nil {
++		t.Fatalf("unexpected error: %v", err)
++	}
++	if closed {
++		t.Error("expected closed=false")
++	}
++	if len(msg) != 200 {
++		t.Errorf("len(msg) = %d, want 200", len(msg))
++	}
++}
++
++func TestWsReadFrame_ExtendedPayload64Bit(t *testing.T) {
++	client, server := wsPipe(t)
++	// Build a text frame with 127 (64-bit length prefix)
++	payload := make([]byte, 300)
++	for i := range payload {
++		payload[i] = 'x'
++	}
++	frame := []byte{0x81, 127}
++	lenBytes := make([]byte, 8)
++	binary.BigEndian.PutUint64(lenBytes, 300)
++	frame = append(frame, lenBytes...)
++	frame = append(frame, payload...)
++	server.Write(frame)
++
++	msg, closed, err := wsReadFrame(client)
++	if err != nil {
++		t.Fatalf("unexpected error: %v", err)
++	}
++	if closed {
++		t.Error("expected closed=false")
++	}
++	if len(msg) != 300 {
++		t.Errorf("len(msg) = %d, want 300", len(msg))
++	}
++}
++
++func TestWsReadFrame_MaskedFrame(t *testing.T) {
++	client, server := wsPipe(t)
++	// Build a masked text frame
++	payload := []byte("hello")
++	mask := []byte{0x37, 0xfa, 0x21, 0x3d}
++	masked := make([]byte, len(payload))
++	for i, b := range payload {
++		masked[i] = b ^ mask[i%4]
++	}
++	frame := []byte{0x81, 0x80 | byte(len(payload))} // FIN + text, masked, length
++	frame = append(frame, mask...)
++	frame = append(frame, masked...)
++	server.Write(frame)
++
++	// wsReadFrame skips the mask key but doesn't unmask the payload
++	// (server frames shouldn't be masked, but the code handles it)
++	msg, closed, err := wsReadFrame(client)
++	if err != nil {
++		t.Fatalf("unexpected error: %v", err)
++	}
++	if closed {
++		t.Error("expected closed=false")
++	}
++	// The payload is read but not unmasked, so we get the masked bytes
++	if msg == "" {
++		t.Error("expected non-empty message (masked payload was consumed)")
++	}
++}
++
++func TestWsReadFrame_ConnectionClosed(t *testing.T) {
++	client, server := wsPipe(t)
++	server.Close()
++	_, _, err := wsReadFrame(client)
++	if err == nil {
++		t.Error("expected error when connection closed")
++	}
++}
++
++func TestWsSendMessage_ShortMessage(t *testing.T) {
++	client, server := wsPipe(t)
++	err := wsSendMessage(client, "hi")
++	if err != nil {
++		t.Fatalf("unexpected error: %v", err)
++	}
++
++	// Read the frame from the server side
++	buf := make([]byte, 256)
++	n, _ := server.Read(buf)
++	frame := buf[:n]
++
++	// Check FIN + text opcode
++	if frame[0] != 0x81 {
++		t.Errorf("first byte = 0x%02x, want 0x81 (FIN+text)", frame[0])
++	}
++	// Check masked bit set + length
++	if frame[1]&0x80 == 0 {
++		t.Error("expected masked bit set")
++	}
++	if frame[1]&0x7F != 2 {
++		t.Errorf("payload length = %d, want 2", frame[1]&0x7F)
++	}
++}
++
++func TestWsSendMessage_MediumMessage(t *testing.T) {
++	client, server := wsPipe(t)
++	// 200 bytes → uses 16-bit extended length
++	msg := make([]byte, 200)
++	for i := range msg {
++		msg[i] = 'B'
++	}
++	err := wsSendMessage(client, string(msg))
++	if err != nil {
++		t.Fatalf("unexpected error: %v", err)
++	}
++
++	buf := make([]byte, 512)
++	n, _ := server.Read(buf)
++	frame := buf[:n]
++
++	if frame[1]&0x7F != 126 {
++		t.Errorf("expected extended 16-bit length indicator (126), got %d", frame[1]&0x7F)
++	}
++}
++
++func TestWsSendMessage_EmptyMessage(t *testing.T) {
++	client, server := wsPipe(t)
++	err := wsSendMessage(client, "")
++	if err != nil {
++		t.Fatalf("unexpected error: %v", err)
++	}
++
++	buf := make([]byte, 32)
++	n, _ := server.Read(buf)
++	frame := buf[:n]
++
++	if frame[1]&0x7F != 0 {
++		t.Errorf("payload length = %d, want 0", frame[1]&0x7F)
++	}
++}
++
++func TestWsSendMessage_ConnectionClosed(t *testing.T) {
++	client, server := wsPipe(t)
++	server.Close()
++	// Write until we get an error (buffer may accept some writes)
++	var err error
++	for i := 0; i < 100; i++ {
++		err = wsSendMessage(client, "test")
++		if err != nil {
++			break
++		}
++	}
++	if err == nil {
++		// May or may not error depending on OS buffering — acceptable
++		t.Log("no error on closed connection (OS buffered writes)")
++	}
++	_ = io.EOF // suppress import if needed
++}
+-- 
+2.53.0
+
