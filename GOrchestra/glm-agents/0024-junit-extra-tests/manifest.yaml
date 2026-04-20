@@ -1,0 +1,12 @@
+id: "0024"
+task: "Add tests to internal/reporter/ for JUnit XML format. Create file internal/reporter/junit_extra_test.go in package reporter. Test cases: JUnit output is valid XML, testsuite has correct test count, testcase elements have name and classname, failed tests have failure element with message, skipped tests have skipped element, properties include hostname and timestamp. Verify: go test ./internal/reporter/ -run TestJUnit -v passes."
+status: merged
+started: 2026-04-20T18:40:20-03:00
+completed: 2026-04-20T19:05:37-03:00
+duration: 25m17s
+exit_code: 0
+commit: a47f015bddf57d4947ce6ca220e23a47d2fad5a8
+branch: _glm-agent-0024-junit-extra-tests
+summary: "Added 7 test functions in junit_extra_test.go covering JUnit XML validity, test counts, testcase names, failure elements, skipped elements, allowed-failure handling, and properties with hostname/timestamp."
+files_changed:
+  - "internal/reporter/junit_extra_test.go"

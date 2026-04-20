@@ -1,0 +1,15 @@
+{
+  "id": "0024",
+  "pid": 16875,
+  "tmux_session": "glm-0024",
+  "worktree_path": "/Users/gab/PROJECTS/cosmo-smoke-worktrees/_glm-agent-0024-junit-extra-tests",
+  "branch": "_glm-agent-0024-junit-extra-tests",
+  "base_branch": "master",
+  "status": "done",
+  "started_at": "2026-04-20T18:40:20.296407-03:00",
+  "task": "Add tests to internal/reporter/ for JUnit XML format. Create file internal/reporter/junit_extra_test.go in package reporter. Test cases: JUnit output is valid XML, testsuite has correct test count, testcase elements have name and classname, failed tests have failure element with message, skipped tests have skipped element, properties include hostname and timestamp. Verify: go test ./internal/reporter/ -run TestJUnit -v passes.",
+  "exit_code": 0,
+  "idle_timeout": 120000000000,
+  "max_timeout": 1800000000000,
+  "on_done_executed": false
+}

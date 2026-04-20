@@ -1,0 +1,5 @@
+{
+  "summary": "Added 7 test functions in junit_extra_test.go covering JUnit XML validity, test counts, testcase names, failure elements, skipped elements, allowed-failure handling, and properties with hostname/timestamp.",
+  "files_changed": ["internal/reporter/junit_extra_test.go"],
+  "errors": []
+}
