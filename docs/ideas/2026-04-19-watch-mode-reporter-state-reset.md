@@ -2,11 +2,21 @@
 id: IDEA-MO6B5E6M
 title: Watch mode reporter state reset
 created: "2026-04-19T18:58:30.670295-03:00"
-status: seed
+status: withered
 source: human
 origin:
     session: 2027
+promoted_to: BUG-001
+resolution:
+    reason: implemented
+    date: "2026-04-19"
+    ref: BUG-001
+    note: Resolved via BUG-001 (closed)
 ---
+
+# Watch mode reporter state reset
+
+# Watch mode reporter state reset
 
 # Watch mode reporter state reset
 

@@ -1,0 +1,15 @@
+id: BUG-001
+type: bug
+created_at: 2026-04-19T19:24:54.741554-03:00
+updated_at: 2026-04-19T19:40:59.570143-03:00
+source: local
+severity: medium
+status: closed
+origin:
+    idea_slug: 2026-04-19-watch-mode-reporter-state-reset
+title: Watch mode reporter state reset
+description: Watch mode accumulates reporter state across re-runs. File-based reporter (and potentially others) may grow unbounded as results accumulate on each watch cycle. Needs investigation to determine if accumulation is in reporter layer, runner layer, or watch orchestration.
+fix_direction: 'Investigate watch mode lifecycle: check if reporters are reused across cycles or recreated. Look at reporter state reset between runs in cmd/run.go watch loop.'
+affected_files:
+    - cmd/run.go
+    - internal/reporter/

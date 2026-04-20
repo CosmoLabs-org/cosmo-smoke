@@ -6,7 +6,7 @@ Universal smoke test runner. Standalone Go binary that reads `.smoke.yaml` and r
 
 **Repository**: `github.com/CosmoLabs-org/cosmo-smoke`
 **Company**: CosmoLabs
-**Version**: 0.9.0
+**Version**: 0.11.0
 
 ## Architecture
 
@@ -14,10 +14,13 @@ Universal smoke test runner. Standalone Go binary that reads `.smoke.yaml` and r
 cmd/
 ├── root.go          # Cobra root command with banner
 ├── run.go           # smoke run — main entry point
+├── validate.go      # smoke validate — config validation without running
+├── schema.go        # smoke schema — export assertion types as JSON
 ├── init_cmd.go      # smoke init — auto-detect + generate config
 └── version.go       # smoke version (ldflags-injected)
 internal/
 ├── schema/          # SmokeConfig structs, YAML parsing, validation
+├── baseline/        # Performance baseline storage and comparison
 ├── runner/          # Assertion engine (29 types), prereq runner, test execution
 ├── reporter/        # Terminal (Lipgloss) + JSON + Push reporters
 ├── monorepo/        # Sub-config discovery for monorepo projects
@@ -43,7 +46,7 @@ internal/
 
 ```bash
 go build ./...                    # Build
-go test ./...                     # Run all tests (314 total)
+go test ./...                     # Run all tests (394 total)
 smoke run                         # Self-smoke (6 tests)
 go build -ldflags "-s -w -X github.com/CosmoLabs-org/cosmo-smoke/cmd.Version=X.Y.Z" -o smoke .
 ```
@@ -51,7 +54,9 @@ go build -ldflags "-s -w -X github.com/CosmoLabs-org/cosmo-smoke/cmd.Version=X.Y
 ## Commands
 
 ```bash
-smoke run [--tag X] [--exclude-tag X] [--format terminal,json,junit,tap,prometheus] [--fail-fast] [--timeout 30s] [-f path] [--dry-run] [--watch] [--monorepo] [--otel-collector URL] [--no-otel] [--report-url URL] [--report-api-key KEY]
+smoke run [--tag X] [--exclude-tag X] [--format terminal,json,junit,tap,prometheus] [--fail-fast] [--timeout 30s] [-f path] [--dry-run] [--watch] [--monorepo] [--otel-collector URL] [--no-otel] [--report-url URL] [--report-api-key KEY] [--baseline] [--baseline-threshold 50]
+smoke validate [-f path]
+smoke schema
 smoke serve [--port 8080] [--dashboard] [--api-key KEY] [--db-path PATH]
 smoke init [--force] [--from-running CONTAINER]
 smoke version

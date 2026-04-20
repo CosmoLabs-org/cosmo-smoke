@@ -1,11 +1,15 @@
 version: "1.0"
 project: cosmo-smoke
-last_updated: 2026-04-19T03:38:01.34079-03:00
-next_bug_id: 1
+last_updated: 2026-04-20T16:52:34.332238-03:00
+next_bug_id: 2
 next_feat_id: 13
 next_task_id: 1
 next_imp_id: 1
 issues:
+    - id: ""
+      type: ""
+      status: ""
+      title: ""
     - id: FEAT-001
       type: feature
       status: done
@@ -66,3 +70,9 @@ issues:
       status: done
       title: OpenTelemetry Trace Correlation
       created_at: 2026-04-19T00:41:58.692992-03:00
+    - id: BUG-001
+      type: bug
+      status: closed
+      title: Watch mode reporter state reset
+      severity: medium
+      created_at: 2026-04-19T19:24:54.741554-03:00
