@@ -1,13 +1,12 @@
 {
-  "hash": "5bcf05027593e68c62d69342f5681b5db247f3b26a37ee33662cbb573303b750",
-  "project_name": "cosmo-smoke",
+  "hash": "cb44dca8ce494e884f7da3ae99e98e4ca558f854f8472cfa9eab9363b8cc33f8",
+  "project_name": "_glm-agent-0016-goss-extra-tests",
   "language": "go",
   "framework": "cli",
   "directories": [
     "ClaudeDesktop",
     "GOrchestra",
     "GeminiAI",
-    "bin",
     "cmd",
     "docs",
     "examples",
@@ -28,5 +27,5 @@
   ],
   "has_tests": true,
   "has_ci": true,
-  "generated_at": "2026-04-20T18:23:35.449951-03:00"
+  "generated_at": "2026-04-20T18:35:43.504751-03:00"
 }
