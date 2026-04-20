@@ -271,9 +271,9 @@ func TestHandleProjectHistory_TrailingSlash_NoName(t *testing.T) {
 	mux := http.NewServeMux()
 	RegisterRoutes(mux, store, "")
 
-	// Go's http.ServeMux redirects /api/projects//history → /api/projects/history (307).
-	// To hit the empty-name guard, use the exact path that the "/api/projects/" pattern matches
-	// with no name segment — TrimPrefix yields "" which triggers the guard.
+	// ServeMux registers "/api/projects/" as a subtree pattern → handleProjectHistory.
+	// Requesting exactly "/api/projects/" reaches handleProjectHistory (no redirect).
+	// TrimPrefix("/api/projects/", "/api/projects/") = "" → triggers the empty-name guard at line 104.
 	req := httptest.NewRequest(http.MethodGet, "/api/projects/", nil)
 	w := httptest.NewRecorder()
 	mux.ServeHTTP(w, req)

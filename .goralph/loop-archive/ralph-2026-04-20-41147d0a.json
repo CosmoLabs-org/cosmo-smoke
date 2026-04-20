@@ -1,0 +1,37 @@
+{
+  "loop_id": "ralph-2026-04-20-41147d0a",
+  "task": "## Universal Rules\n\n### Intelligence Awareness\n- Before starting, check if GoRalph-history/insights/project-profile.yaml exists\n- If it does, read it and adapt your strategy based on:\n  - effectiveness_matrix: what worked/failed in previous loops\n  - recurring_errors: patterns to watch for and avoid\n  - coverage_plateaus: areas that stalled and may need different approaches\n\n### Loop Lifecycle\n- Signal completion with AGENT_DONE when all objectives are met\n- If you get stuck for 3+ iterations on...",
+  "goal": "",
+  "created_at": "2026-04-20T11:37:32-03:00",
+  "updated_at": "2026-04-20T11:37:32-03:00",
+  "iteration": {
+    "current": 1,
+    "max": 15,
+    "started_at": "2026-04-20T11:37:32-03:00"
+  },
+  "status": "failed",
+  "history": [],
+  "accumulated_state": {
+    "files_modified": [],
+    "total_tokens_used": 0,
+    "approaches_tried": [],
+    "approaches_failed": [],
+    "key_insights": []
+  },
+  "stall_detection": {
+    "consecutive_no_progress": 0,
+    "repeated_approaches": {},
+    "is_stalled": false
+  },
+  "next_iteration_guidance": "Engine error on first iteration: 1. `test(dashboard): add handler and static file tests` — 16 new tests for HTTP handlers, API key auth, DashboardHandler",
+  "rate_limit": {
+    "is_limited": false,
+    "total_pauses": 0,
+    "consecutive_hits": 0
+  },
+  "worktree": {
+    "name": "ralph-002-increase-unit-test-coverage",
+    "path": "/Users/gab/PROJECTS/cosmo-smoke-worktrees/ralph-002-increase-unit-test-coverage",
+    "branch": "ralph-002-increase-unit-test-coverage"
+  }
+}

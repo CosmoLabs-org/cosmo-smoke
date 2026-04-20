@@ -1,0 +1,15 @@
+loop_id: ralph-2026-04-20-41147d0a
+status: failed
+created_at: "2026-04-20T12:06:38-03:00"
+total_iterations: 0
+wasted_iterations: 0
+waste_ratio: 0
+first_iteration_success: false
+time_efficiency:
+    total_wall_clock: ""
+    productive_time: ""
+    wasted_time: ""
+    avg_iteration_dur: ""
+total_lines_added: 0
+total_lines_removed: 0
+total_commits: 0
