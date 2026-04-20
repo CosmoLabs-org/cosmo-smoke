@@ -1,8 +1,8 @@
 {
   "version": "1.0",
-  "updated_at": "2026-04-20T18:15:48.391231-03:00",
-  "expires_at": "2026-04-20T19:15:48.391231-03:00",
-  "project_path": "/Users/gab/PROJECTS/cosmo-smoke-worktrees/_glm-agent-0014-tests-internalrunner-extended",
+  "updated_at": "2026-04-20T18:35:50.586399-03:00",
+  "expires_at": "2026-04-20T19:35:50.586399-03:00",
+  "project_path": "/Users/gab/PROJECTS/cosmo-smoke-worktrees/_glm-agent-0017-root-extra-tests",
   "context": "",
-  "glm_enhanced": true
+  "glm_enhanced": false
 }
