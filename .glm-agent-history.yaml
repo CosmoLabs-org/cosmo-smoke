@@ -67,3 +67,11 @@ entries:
       files_changed:
         - internal/reporter/push_test.go
       commit: ce8b05a9bf2b8a31f9509355637606fee97ea98b
+    - id: "0015"
+      task: 'Add tests to internal/schema/ for validation edge cases. Create file internal/schema/validation_extra_test.go. Test cases: Validate with websocket valid config (url, send, expect_contains), Validate with graphql valid config (url, query), Validate with credential_check all three sources (env, file, exec), Validate with s3_bucket with custom endpoint. Verify: go test ./internal/schema/ -run TestValidationExtra -v passes.'
+      started: 2026-04-20T18:16:44.930351-03:00
+      completed: 2026-04-20T18:25:48.51449-03:00
+      status: merged
+      files_changed:
+        - internal/schema/validation_extra_test.go
+      commit: deb1404b22e214f9f16ecbc1d4e2d852409728e7

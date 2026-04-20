@@ -1,0 +1,5 @@
+{
+  "summary": "Added validation_extra_test.go with 4 test cases covering websocket, graphql, credential_check (all 3 sources), and s3_bucket with custom endpoint. All 7 tests (4 top-level + 3 subtests) pass.",
+  "files_changed": ["internal/schema/validation_extra_test.go"],
+  "errors": []
+}

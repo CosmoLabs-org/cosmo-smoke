@@ -1,0 +1,12 @@
+id: "0015"
+task: "Add tests to internal/schema/ for validation edge cases. Create file internal/schema/validation_extra_test.go. Test cases: Validate with websocket valid config (url, send, expect_contains), Validate with graphql valid config (url, query), Validate with credential_check all three sources (env, file, exec), Validate with s3_bucket with custom endpoint. Verify: go test ./internal/schema/ -run TestValidationExtra -v passes."
+status: merged
+started: 2026-04-20T18:16:44-03:00
+completed: 2026-04-20T18:25:48-03:00
+duration: 9m3s
+exit_code: 0
+commit: deb1404b22e214f9f16ecbc1d4e2d852409728e7
+branch: _glm-agent-0015-tests-internalschema-validatio
+summary: "Added validation_extra_test.go with 4 test cases covering websocket, graphql, credential_check (all 3 sources), and s3_bucket with custom endpoint. All 7 tests (4 top-level + 3 subtests) pass."
+files_changed:
+  - "internal/schema/validation_extra_test.go"

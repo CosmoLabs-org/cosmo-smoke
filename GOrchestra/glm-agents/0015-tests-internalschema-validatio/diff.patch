@@ -1,0 +1,490 @@
+diff --git a/.glm-agent-counter b/.glm-agent-counter
+index 60d3b2f..f599e28 100644
+--- a/.glm-agent-counter
++++ b/.glm-agent-counter
+@@ -1 +1 @@
+-15
++10
+diff --git a/.glm-agent-history.yaml b/.glm-agent-history.yaml
+index c51322a..55bd19b 100644
+--- a/.glm-agent-history.yaml
++++ b/.glm-agent-history.yaml
+@@ -45,25 +45,3 @@ entries:
+       files_changed:
+         - cmd/schema_extra_test.go
+       commit: 103a3ec548edd5df8be6ea43ccdc918a228a4e08
+-    - id: "0014"
+-      task: 'Add tests to internal/runner/ for extended functionality. Create file internal/runner/runner_extended_test.go. Test cases: filterTests with multiple include tags, filterTests with exclude only, runTest with allow_failure flag, shouldSkip with FileMissing for absolute vs relative paths. Verify: go test ./internal/runner/ -run TestExtended -v passes.'
+-      started: 2026-04-20T18:15:51.861778-03:00
+-      completed: 2026-04-20T18:23:36.798772-03:00
+-      status: merged
+-      files_changed:
+-        - internal/runner/runner_extended_test.go
+-      commit: 8699f5a4ad1cfabfdff666ec05dec7ca9af0381d
+-    - id: "0011"
+-      task: 'Add tests to internal/reporter/tap.go. Create file internal/reporter/tap_test.go. Test cases: TAP plan line format (1..N), passing tests output ''ok N - name'', failing tests output ''not ok N - name'', skipped tests with SKIP directive, multiple tests ordering preserved. Verify: go test ./internal/reporter/ -run TestTAP -v passes.'
+-      started: 2026-04-20T18:13:40.574483-03:00
+-      completed: 2026-04-20T18:25:45.278202-03:00
+-      status: merged
+-      commit: ed574cd273238df09cf9b53d8f2c0022560b4aaa
+-    - id: "0012"
+-      task: 'Add tests to internal/reporter/push.go. Create file internal/reporter/push_test.go. Test cases: successful POST to httptest.Server endpoint returns nil, endpoint returns non-200 returns error, timeout handling with short context, empty API key handled gracefully, empty URL returns error, malformed URL returns error. Verify: go test ./internal/reporter/ -run TestPush -v passes.'
+-      started: 2026-04-20T18:13:57.048096-03:00
+-      completed: 2026-04-20T18:25:46.500063-03:00
+-      status: merged
+-      files_changed:
+-        - internal/reporter/push_test.go
+-      commit: ce8b05a9bf2b8a31f9509355637606fee97ea98b
+diff --git a/.gorchestra/fingerprint-cache.json b/.gorchestra/fingerprint-cache.json
+index b7b31be..93b757d 100644
+--- a/.gorchestra/fingerprint-cache.json
++++ b/.gorchestra/fingerprint-cache.json
+@@ -1,13 +1,12 @@
+ {
+-  "hash": "5bcf05027593e68c62d69342f5681b5db247f3b26a37ee33662cbb573303b750",
+-  "project_name": "cosmo-smoke",
++  "hash": "40d3ce842971888ceeadea6c68a148b58430a15fcfd000f0877b8134d48834fe",
++  "project_name": "_glm-agent-0015-tests-internalschema-validatio",
+   "language": "go",
+   "framework": "cli",
+   "directories": [
+     "ClaudeDesktop",
+     "GOrchestra",
+     "GeminiAI",
+-    "bin",
+     "cmd",
+     "docs",
+     "examples",
+@@ -28,5 +27,5 @@
+   ],
+   "has_tests": true,
+   "has_ci": true,
+-  "generated_at": "2026-04-20T18:23:35.449951-03:00"
++  "generated_at": "2026-04-20T18:16:37.976415-03:00"
+ }
+\ No newline at end of file
+diff --git a/.version-registry.json b/.version-registry.json
+index e4b077f..e4389c3 100644
+--- a/.version-registry.json
++++ b/.version-registry.json
+@@ -1,13 +1,13 @@
+ {
+   "repository": {
+     "version": "0.11.1",
+-    "build": 264,
++    "build": 279,
+     "name": "cosmo-smoke",
+-    "lastUpdated": "2026-04-20T21:25:47Z",
++    "lastUpdated": "2026-04-20T21:11:18Z",
+     "derived_from": "git tag"
+   },
+   "metadata": {
+-    "last_synced": "2026-04-20T20:35:38Z",
++    "last_synced": "2026-04-20T21:16:55Z",
+     "sync_method": "git_history_analysis"
+   },
+   "releaseContext": {
+diff --git a/CLAUDE.md b/CLAUDE.md
+index a01caa8..0d5fd0a 100644
+--- a/CLAUDE.md
++++ b/CLAUDE.md
+@@ -46,7 +46,7 @@ internal/
+ 
+ ```bash
+ go build ./...                    # Build
+-go test ./...                     # Run all tests (590 total)
++go test ./...                     # Run all tests (568 total)
+ smoke run                         # Self-smoke (6 tests)
+ go build -ldflags "-s -w -X github.com/CosmoLabs-org/cosmo-smoke/cmd.Version=X.Y.Z" -o smoke .
+ ```
+diff --git a/GOrchestra/intel/architecture.json b/GOrchestra/intel/architecture.json
+index 364fe81..3a94eab 100644
+--- a/GOrchestra/intel/architecture.json
++++ b/GOrchestra/intel/architecture.json
+@@ -1,33 +1,35 @@
+ {
+   "version": "1.0",
+-  "generated_at": "2026-04-20T18:25:41.962946-03:00",
++  "generated_at": "2026-04-20T18:11:16.501903-03:00",
+   "generated_by": "GLM-4.7",
+-  "expires_at": "2026-04-21T18:25:41.962947-03:00",
+-  "last_analyzed_commit": "36afa7b0143ec258220a3e7a4b40781043251631",
+-  "summary": "A Go-based monolithic tool leveraging MCP for orchestration and providing Goss migration capabilities via an internal runner.",
++  "expires_at": "2026-04-21T18:11:16.501903-03:00",
++  "last_analyzed_commit": "542d1a62f2cead476a62bfbfe31bcb08c5cf6b1e",
++  "summary": "A Go-based testing and migration tool that translates Goss tests, runs assertions, and exposes functionality via MCP handlers, heavily utilizing AI-agent driven development.",
+   "architecture": "monolith",
+   "primary_language": "Go",
+   "hot_files": [
+     "internal/runner/runner.go",
+     "internal/mcp/handlers.go",
+     "internal/migrate/goss/translator.go",
+-    "internal/schema/schema_extra_test.go",
+-    "internal/runner/assertion_test.go"
++    "internal/runner/assertion_test.go",
++    "internal/schema/schema_extra_test.go"
+   ],
+   "patterns": [
+-    "Runner/Worker pattern",
+     "MCP (Model Context Protocol) handler pattern",
+-    "Translator/Migration pattern",
+-    "Test-per-package isolation"
++    "Test Runner pattern",
++    "Goss migration/translation pattern",
++    "Monorepo orchestration (GOrchestra)",
++    "AI-agent driven development"
+   ],
+   "concerns": [
+-    "High volume of agent-generated extra tests (*_extra_test.go) suggests potential test fragility or over-testing",
+-    "Scattered baseline and reporter implementations across agent directories indicate possible merge conflicts or duplication",
+-    "Clean git status with recent metadata commits implies heavy automated CI/agent-driven development workflow"
++    "Scattered duplicate directories (e.g., internal/baseline and GOrchestra/.../internal/baseline) suggest agent-generated code conflicts or incomplete merges",
++    "Heavy reliance on automated agent commits (glm-agents) may introduce inconsistent code quality",
++    "Metadata churn in commits indicates possible tooling overhead"
+   ],
+   "suggestions": [
+-    "Consolidate duplicated internal packages (baseline, reporter) from agent directories into the main internal/ tree",
+-    "Evaluate if extra test files provide unique value or just inflate test runtime",
+-    "Focus on core runner.go and MCP handlers for actual feature development rather than test expansion"
++    "Consolidate duplicate internal packages generated by different agents",
++    "Establish strict merge guidelines for AI-generated code to prevent directory sprawl",
++    "Focus testing efforts on the core runner and MCP handlers",
++    "Review and clean up GOrchestra artifact directories"
+   ]
+ }
+\ No newline at end of file
+diff --git a/GOrchestra/intel/status.json b/GOrchestra/intel/status.json
+index f8dbe99..6dd51d3 100644
+--- a/GOrchestra/intel/status.json
++++ b/GOrchestra/intel/status.json
+@@ -1,8 +1,8 @@
+ {
+   "version": "1.0",
+-  "updated_at": "2026-04-20T18:15:48.391231-03:00",
+-  "expires_at": "2026-04-20T19:15:48.391231-03:00",
+-  "project_path": "/Users/gab/PROJECTS/cosmo-smoke-worktrees/_glm-agent-0014-tests-internalrunner-extended",
++  "updated_at": "2026-04-20T18:16:41.796065-03:00",
++  "expires_at": "2026-04-20T19:16:41.796065-03:00",
++  "project_path": "/Users/gab/PROJECTS/cosmo-smoke-worktrees/_glm-agent-0015-tests-internalschema-validatio",
+   "context": "",
+-  "glm_enhanced": true
++  "glm_enhanced": false
+ }
+\ No newline at end of file
+diff --git a/internal/reporter/push_test.go b/internal/reporter/push_test.go
+index eede45d..21fba23 100644
+--- a/internal/reporter/push_test.go
++++ b/internal/reporter/push_test.go
+@@ -132,39 +132,6 @@ func TestPushReporter_FailedTestWithError(t *testing.T) {
+ 	}
+ }
+ 
+-func TestPushReporter_Non200Response(t *testing.T) {
+-	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+-		w.WriteHeader(http.StatusInternalServerError)
+-	}))
+-	defer srv.Close()
+-
+-	p := NewPushReporter(srv.URL, "key")
+-	p.TestResult(TestResultData{Name: "test", Passed: true})
+-	p.Summary(SuiteResultData{Project: "test", Total: 1, Passed: 1})
+-}
+-
+-func TestPushReporter_Timeout(t *testing.T) {
+-	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+-		time.Sleep(200 * time.Millisecond)
+-		w.WriteHeader(http.StatusOK)
+-	}))
+-	defer srv.Close()
+-
+-	p := NewPushReporter(srv.URL, "")
+-	p.client.Timeout = 10 * time.Millisecond
+-	p.Summary(SuiteResultData{Project: "test", Total: 1, Passed: 1})
+-}
+-
+-func TestPushReporter_EmptyURL(t *testing.T) {
+-	p := NewPushReporter("", "")
+-	p.Summary(SuiteResultData{Project: "test", Total: 1, Passed: 1})
+-}
+-
+-func TestPushReporter_MalformedURL(t *testing.T) {
+-	p := NewPushReporter("://not-valid", "")
+-	p.Summary(SuiteResultData{Project: "test", Total: 1, Passed: 1})
+-}
+-
+ var errTest = &testError{"test error"}
+ 
+ type testError struct{ msg string }
+diff --git a/internal/runner/runner_extended_test.go b/internal/runner/runner_extended_test.go
+deleted file mode 100644
+index 45433a4..0000000
+--- a/internal/runner/runner_extended_test.go
++++ /dev/null
+@@ -1,267 +0,0 @@
+-package runner
+-
+-import (
+-	"os"
+-	"path/filepath"
+-	"testing"
+-
+-	"github.com/CosmoLabs-org/cosmo-smoke/internal/schema"
+-)
+-
+-// --- filterTests extended coverage ---
+-
+-func TestExtended_FilterTests_MultipleIncludeTags(t *testing.T) {
+-	tests := []schema.Test{
+-		{Name: "build-unit", Tags: []string{"build", "unit"}},
+-		{Name: "build-integration", Tags: []string{"build", "integration"}},
+-		{Name: "deploy", Tags: []string{"deploy"}},
+-		{Name: "untagged"},
+-	}
+-
+-	got := filterTests(tests, []string{"build", "deploy"}, nil)
+-	if len(got) != 3 {
+-		t.Fatalf("got %d tests, want 3", len(got))
+-	}
+-
+-	names := make(map[string]bool)
+-	for _, tt := range got {
+-		names[tt.Name] = true
+-	}
+-	for _, want := range []string{"build-unit", "build-integration", "deploy"} {
+-		if !names[want] {
+-			t.Errorf("missing test %q in filtered results", want)
+-		}
+-	}
+-	if names["untagged"] {
+-		t.Error("untagged test should not be included when include tags are specified")
+-	}
+-}
+-
+-func TestExtended_FilterTests_IncludeCaseInsensitive(t *testing.T) {
+-	tests := []schema.Test{
+-		{Name: "lower", Tags: []string{"build"}},
+-		{Name: "upper", Tags: []string{"BUILD"}},
+-	}
+-
+-	got := filterTests(tests, []string{"Build"}, nil)
+-	if len(got) != 2 {
+-		t.Errorf("got %d tests, want 2 (case-insensitive match)", len(got))
+-	}
+-}
+-
+-func TestExtended_FilterTests_MultipleIncludeNoMatch(t *testing.T) {
+-	tests := []schema.Test{
+-		{Name: "a", Tags: []string{"unit"}},
+-		{Name: "b", Tags: []string{"integration"}},
+-	}
+-
+-	got := filterTests(tests, []string{"smoke", "e2e"}, nil)
+-	if len(got) != 0 {
+-		t.Errorf("got %d tests, want 0 (no tags match)", len(got))
+-	}
+-}
+-
+-func TestExtended_FilterTests_ExcludeOnly_MultipleTags(t *testing.T) {
+-	tests := []schema.Test{
+-		{Name: "fast", Tags: []string{"fast"}},
+-		{Name: "slow", Tags: []string{"slow"}},
+-		{Name: "flaky", Tags: []string{"flaky"}},
+-		{Name: "untagged"},
+-	}
+-
+-	got := filterTests(tests, nil, []string{"slow", "flaky"})
+-	if len(got) != 2 {
+-		t.Fatalf("got %d tests, want 2", len(got))
+-	}
+-
+-	names := make(map[string]bool)
+-	for _, tt := range got {
+-		names[tt.Name] = true
+-	}
+-	if !names["fast"] {
+-		t.Error("missing 'fast' test")
+-	}
+-	if !names["untagged"] {
+-		t.Error("missing 'untagged' test")
+-	}
+-}
+-
+-func TestExtended_FilterTests_ExcludeOnly_ExcludesAll(t *testing.T) {
+-	tests := []schema.Test{
+-		{Name: "a", Tags: []string{"skip"}},
+-		{Name: "b", Tags: []string{"skip", "also-skip"}},
+-	}
+-
+-	got := filterTests(tests, nil, []string{"skip"})
+-	if len(got) != 0 {
+-		t.Errorf("got %d tests, want 0 (all excluded)", len(got))
+-	}
+-}
+-
+-func TestExtended_FilterTests_IncludeAndExclude(t *testing.T) {
+-	tests := []schema.Test{
+-		{Name: "build-fast", Tags: []string{"build", "fast"}},
+-		{Name: "build-slow", Tags: []string{"build", "slow"}},
+-		{Name: "test-fast", Tags: []string{"test", "fast"}},
+-	}
+-
+-	// Include "build" but exclude "slow"
+-	got := filterTests(tests, []string{"build"}, []string{"slow"})
+-	if len(got) != 1 {
+-		t.Fatalf("got %d tests, want 1", len(got))
+-	}
+-	if got[0].Name != "build-fast" {
+-		t.Errorf("got %q, want build-fast", got[0].Name)
+-	}
+-}
+-
+-// --- runTest with allow_failure ---
+-
+-func TestExtended_RunTest_AllowFailure_Failed(t *testing.T) {
+-	cfg := newConfig([]schema.Test{
+-		{
+-			Name:         "allowed-fail",
+-			Run:          "exit 1",
+-			Expect:       schema.Expect{ExitCode: intPtr(0)},
+-			AllowFailure: true,
+-		},
+-	})
+-	r := &Runner{Config: cfg, Reporter: &noopReporter{}, ConfigDir: t.TempDir()}
+-
+-	tr := r.runTest(cfg.Tests[0], RunOptions{})
+-	if tr.Passed {
+-		t.Error("Passed should be false (test failed)")
+-	}
+-	if !tr.AllowedFailure {
+-		t.Error("AllowedFailure should be true")
+-	}
+-}
+-
+-func TestExtended_RunTest_AllowFailure_Passed(t *testing.T) {
+-	cfg := newConfig([]schema.Test{
+-		{
+-			Name:         "allowed-pass",
+-			Run:          "echo ok",
+-			Expect:       schema.Expect{ExitCode: intPtr(0)},
+-			AllowFailure: true,
+-		},
+-	})
+-	r := &Runner{Config: cfg, Reporter: &noopReporter{}, ConfigDir: t.TempDir()}
+-
+-	tr := r.runTest(cfg.Tests[0], RunOptions{})
+-	if !tr.Passed {
+-		t.Error("Passed should be true (test succeeded)")
+-	}
+-	if tr.AllowedFailure {
+-		t.Error("AllowedFailure should be false when test passes")
+-	}
+-}
+-
+-func TestExtended_RunTest_AllowFailure_StdoutMismatch(t *testing.T) {
+-	cfg := newConfig([]schema.Test{
+-		{
+-			Name:         "wrong-output",
+-			Run:          "echo wrong",
+-			Expect:       schema.Expect{StdoutContains: "expected"},
+-			AllowFailure: true,
+-		},
+-	})
+-	r := &Runner{Config: cfg, Reporter: &noopReporter{}, ConfigDir: t.TempDir()}
+-
+-	tr := r.runTest(cfg.Tests[0], RunOptions{})
+-	if tr.Passed {
+-		t.Error("Passed should be false (stdout mismatch)")
+-	}
+-	if !tr.AllowedFailure {
+-		t.Error("AllowedFailure should be true")
+-	}
+-}
+-
+-func TestExtended_RunTest_NoAllowFailure_FailsNormally(t *testing.T) {
+-	cfg := newConfig([]schema.Test{
+-		{
+-			Name:   "normal-fail",
+-			Run:    "exit 1",
+-			Expect: schema.Expect{ExitCode: intPtr(0)},
+-		},
+-	})
+-	r := &Runner{Config: cfg, Reporter: &noopReporter{}, ConfigDir: t.TempDir()}
+-
+-	tr := r.runTest(cfg.Tests[0], RunOptions{})
+-	if tr.Passed {
+-		t.Error("Passed should be false")
+-	}
+-	if tr.AllowedFailure {
+-		t.Error("AllowedFailure should be false (no allow_failure flag)")
+-	}
+-}
+-
+-// --- shouldSkip with FileMissing: absolute vs relative paths ---
+-
+-func TestExtended_ShouldSkip_FileMissing_AbsolutePath(t *testing.T) {
+-	dir := t.TempDir()
+-	absFile := filepath.Join(dir, "absolute.txt")
+-	os.WriteFile(absFile, []byte("data"), 0644)
+-
+-	// Existing absolute path → don't skip
+-	si := &schema.SkipIf{FileMissing: absFile}
+-	if shouldSkip(si, dir) {
+-		t.Error("absolute path exists → should not skip")
+-	}
+-
+-	// Missing absolute path → skip
+-	missing := filepath.Join(dir, "nope.txt")
+-	si = &schema.SkipIf{FileMissing: missing}
+-	if !shouldSkip(si, dir) {
+-		t.Error("absolute path missing → should skip")
+-	}
+-}
+-
+-func TestExtended_ShouldSkip_FileMissing_RelativePath(t *testing.T) {
+-	dir := t.TempDir()
+-	os.WriteFile(filepath.Join(dir, "relative.txt"), []byte("data"), 0644)
+-
+-	// Existing relative path → don't skip
+-	si := &schema.SkipIf{FileMissing: "relative.txt"}
+-	if shouldSkip(si, dir) {
+-		t.Error("relative file exists in configDir → should not skip")
+-	}
+-
+-	// Missing relative path → skip
+-	si = &schema.SkipIf{FileMissing: "gone.txt"}
+-	if !shouldSkip(si, dir) {
+-		t.Error("relative file missing in configDir → should skip")
+-	}
+-}
+-
+-func TestExtended_ShouldSkip_FileMissing_AbsoluteIgnoresConfigDir(t *testing.T) {
+-	dir1 := t.TempDir()
+-	dir2 := t.TempDir()
+-
+-	// File exists in dir1 but configDir is dir2 — absolute path should still find it
+-	absFile := filepath.Join(dir1, "target.txt")
+-	os.WriteFile(absFile, []byte("data"), 0644)
+-
+-	si := &schema.SkipIf{FileMissing: absFile}
+-	if shouldSkip(si, dir2) {
+-		t.Error("absolute path should resolve regardless of configDir")
+-	}
+-}
+-
+-func TestExtended_ShouldSkip_FileMissing_RelativeUsesConfigDir(t *testing.T) {
+-	dir := t.TempDir()
+-	subDir := filepath.Join(dir, "sub")
+-	os.MkdirAll(subDir, 0755)
+-	os.WriteFile(filepath.Join(subDir, "nested.txt"), []byte("data"), 0644)
+-
+-	// Relative path "nested.txt" should NOT be found when configDir is the parent
+-	si := &schema.SkipIf{FileMissing: "nested.txt"}
+-	if !shouldSkip(si, dir) {
+-		t.Error("relative file is in subdir, not configDir → should skip")
+-	}
+-
+-	// But it should be found when configDir is the subdirectory
+-	if shouldSkip(si, subDir) {
+-		t.Error("relative file exists in configDir (subDir) → should not skip")
+-	}
+-}

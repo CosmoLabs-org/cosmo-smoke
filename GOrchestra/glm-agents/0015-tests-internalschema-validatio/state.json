@@ -1,0 +1,15 @@
+{
+  "id": "0015",
+  "pid": 27232,
+  "tmux_session": "glm-0015",
+  "worktree_path": "/Users/gab/PROJECTS/cosmo-smoke-worktrees/_glm-agent-0015-tests-internalschema-validatio",
+  "branch": "_glm-agent-0015-tests-internalschema-validatio",
+  "base_branch": "master",
+  "status": "done",
+  "started_at": "2026-04-20T18:16:44.930351-03:00",
+  "task": "Add tests to internal/schema/ for validation edge cases. Create file internal/schema/validation_extra_test.go. Test cases: Validate with websocket valid config (url, send, expect_contains), Validate with graphql valid config (url, query), Validate with credential_check all three sources (env, file, exec), Validate with s3_bucket with custom endpoint. Verify: go test ./internal/schema/ -run TestValidationExtra -v passes.",
+  "exit_code": 0,
+  "idle_timeout": 120000000000,
+  "max_timeout": 1800000000000,
+  "on_done_executed": false
+}
