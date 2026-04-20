@@ -1,0 +1,16 @@
+{
+  "id": "0008",
+  "pid": 72513,
+  "tmux_session": "glm-0008",
+  "worktree_path": "/Users/gab/PROJECTS/cosmo-smoke-worktrees/_glm-agent-0008-baseline-extra-tests",
+  "branch": "_glm-agent-0008-baseline-extra-tests",
+  "base_branch": "master",
+  "status": "done",
+  "started_at": "2026-04-20T18:01:41.005331-03:00",
+  "task": "Add tests to internal/baseline package. Create file internal/baseline/baseline_extra_test.go in package baseline. Test cases: concurrent file access (use t.Parallel, multiple goroutines calling Save and Load), corrupt JSON in Load (write garbage bytes to file then call Load returns error), negative duration values in Save/Load roundtrip, missing directory for Save returns error. Verify: go test ./internal/baseline/ -v passes.",
+  "exit_code": 0,
+  "idle_timeout": 120000000000,
+  "max_timeout": 1800000000000,
+  "on_done_executed": false,
+  "conductor_ticket": "cond-rb"
+}

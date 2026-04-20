@@ -1,0 +1,12 @@
+id: "0008"
+task: "Add tests to internal/baseline package. Create file internal/baseline/baseline_extra_test.go in package baseline. Test cases: concurrent file access (use t.Parallel, multiple goroutines calling Save and Load), corrupt JSON in Load (write garbage bytes to file then call Load returns error), negative duration values in Save/Load roundtrip, missing directory for Save returns error. Verify: go test ./internal/baseline/ -v passes."
+status: merged
+started: 2026-04-20T18:01:41-03:00
+completed: 2026-04-20T18:11:15-03:00
+duration: 9m34s
+exit_code: 0
+commit: 9bc67f742d369d7229849bc079a10cc6d3b26c10
+branch: _glm-agent-0008-baseline-extra-tests
+summary: "Added 4 edge-case tests to internal/baseline package: concurrent Save/Load, corrupt JSON, negative duration roundtrip, missing directory error"
+files_changed:
+  - "internal/baseline/baseline_extra_test.go"

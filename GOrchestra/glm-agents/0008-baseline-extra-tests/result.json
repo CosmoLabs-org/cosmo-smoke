@@ -1,0 +1,5 @@
+{
+  "summary": "Added 4 edge-case tests to internal/baseline package: concurrent Save/Load, corrupt JSON, negative duration roundtrip, missing directory error",
+  "files_changed": ["internal/baseline/baseline_extra_test.go"],
+  "errors": []
+}
