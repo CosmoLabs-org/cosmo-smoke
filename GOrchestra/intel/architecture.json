@@ -1,11 +1,11 @@
 {
   "version": "1.0",
-  "generated_at": "2026-04-20T18:09:28.930954-03:00",
+  "generated_at": "2026-04-20T18:09:46.697581-03:00",
   "generated_by": "GLM-4.7",
-  "expires_at": "2026-04-21T18:09:28.930954-03:00",
-  "last_analyzed_commit": "3cd0258047f780709d52fcdfac64dc3f43208ccd",
-  "summary": "A Go-based modular monolith that runs connectivity tests, translates Goss configurations, and exposes functionality via MCP handlers.",
-  "architecture": "modular-monolith",
+  "expires_at": "2026-04-21T18:09:46.697581-03:00",
+  "last_analyzed_commit": "4ad6c3e683dadf6531b766d097ca832b29b44b85",
+  "summary": "A Go-based modular monolith providing test runners, MCP integrations, Goss migration tooling, and monorepo management capabilities.",
+  "architecture": "modular monolith",
   "primary_language": "Go",
   "hot_files": [
     "internal/runner/runner.go",
@@ -16,21 +16,21 @@
   ],
   "patterns": [
     "MCP (Model Context Protocol) handler pattern",
-    "Test-driven development",
-    "Goss migration/translation",
+    "Test-driven development with extensive test files",
+    "Goss migration/translation pattern",
     "Internal package encapsulation",
-    "CLI command pattern"
+    "Monorepo management abstraction"
   ],
   "concerns": [
     "Duplicate internal/baseline directory structure across GOrchestra and root",
-    "Uncommitted changes (6 modified, 3 untracked) indicating possible WIP instability",
-    "Archived agent sessions cluttering the repository structure",
-    "Heavy reliance on test files for understanding core logic"
+    "Archived agent artifacts (GOrchestra/glm-agents/0005) still present in tree",
+    "Uncommitted changes (2 modified, 1 staged) at time of analysis",
+    "Heavy reliance on auto-committed session metadata may clutter history"
   ],
   "suggestions": [
-    "Clean up the duplicate GOrchestra/glm-agents/.../internal/ paths",
-    "Commit or stash the 6 modified and 3 untracked files to stabilize the branch",
-    "Move archived agent sessions to a separate repository or .gitignored archive folder",
-    "Document the MCP integration and Goss translation workflows"
+    "Clean up archived GLM agent directories to reduce repository bloat",
+    "Resolve duplicate baseline paths between root and GOrchestra subdirectory",
+    "Commit or stash the pending changes to maintain a clean working tree",
+    "Consolidate runner test files (assertion_test, runner_test, runner_extra_test) if they overlap"
   ]
 }
