@@ -1,0 +1,12 @@
+id: "0014"
+task: "Add tests to internal/runner/ for extended functionality. Create file internal/runner/runner_extended_test.go. Test cases: filterTests with multiple include tags, filterTests with exclude only, runTest with allow_failure flag, shouldSkip with FileMissing for absolute vs relative paths. Verify: go test ./internal/runner/ -run TestExtended -v passes."
+status: merged
+started: 2026-04-20T18:15:51-03:00
+completed: 2026-04-20T18:23:36-03:00
+duration: 7m45s
+exit_code: 0
+commit: 8699f5a4ad1cfabfdff666ec05dec7ca9af0381d
+branch: _glm-agent-0014-tests-internalrunner-extended
+summary: "Created internal/runner/runner_extended_test.go with 14 test functions covering filterTests (multiple include tags, case-insensitive, exclude-only, include+exclude), runTest with allow_failure (pass/fail/stdout-mismatch), and shouldSkip FileMissing (absolute vs relative paths, configDir resolution). All 14 tests pass."
+files_changed:
+  - "internal/runner/runner_extended_test.go"

@@ -1,0 +1,5 @@
+{
+  "summary": "Created internal/runner/runner_extended_test.go with 14 test functions covering filterTests (multiple include tags, case-insensitive, exclude-only, include+exclude), runTest with allow_failure (pass/fail/stdout-mismatch), and shouldSkip FileMissing (absolute vs relative paths, configDir resolution). All 14 tests pass.",
+  "files_changed": ["internal/runner/runner_extended_test.go"],
+  "errors": []
+}
