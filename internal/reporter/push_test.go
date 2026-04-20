@@ -132,6 +132,39 @@ func TestPushReporter_FailedTestWithError(t *testing.T) {
 	}
 }
 
+func TestPushReporter_Non200Response(t *testing.T) {
+	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.WriteHeader(http.StatusInternalServerError)
+	}))
+	defer srv.Close()
+
+	p := NewPushReporter(srv.URL, "key")
+	p.TestResult(TestResultData{Name: "test", Passed: true})
+	p.Summary(SuiteResultData{Project: "test", Total: 1, Passed: 1})
+}
+
+func TestPushReporter_Timeout(t *testing.T) {
+	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		time.Sleep(200 * time.Millisecond)
+		w.WriteHeader(http.StatusOK)
+	}))
+	defer srv.Close()
+
+	p := NewPushReporter(srv.URL, "")
+	p.client.Timeout = 10 * time.Millisecond
+	p.Summary(SuiteResultData{Project: "test", Total: 1, Passed: 1})
+}
+
+func TestPushReporter_EmptyURL(t *testing.T) {
+	p := NewPushReporter("", "")
+	p.Summary(SuiteResultData{Project: "test", Total: 1, Passed: 1})
+}
+
+func TestPushReporter_MalformedURL(t *testing.T) {
+	p := NewPushReporter("://not-valid", "")
+	p.Summary(SuiteResultData{Project: "test", Total: 1, Passed: 1})
+}
+
 var errTest = &testError{"test error"}
 
 type testError struct{ msg string }
