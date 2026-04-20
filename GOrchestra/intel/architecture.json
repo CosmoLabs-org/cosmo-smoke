@@ -1,10 +1,10 @@
 {
   "version": "1.0",
-  "generated_at": "2026-04-20T18:25:47.827009-03:00",
+  "generated_at": "2026-04-20T18:25:57.950869-03:00",
   "generated_by": "GLM-4.7",
-  "expires_at": "2026-04-21T18:25:47.827009-03:00",
-  "last_analyzed_commit": "2bc70f66eb9090c479af5605d7ddc1ea4932ce01",
-  "summary": "A Go-based monolithic tool leveraging MCP for handling migrations and executing test runners, heavily driven by automated AI agent workflows.",
+  "expires_at": "2026-04-21T18:25:57.950869-03:00",
+  "last_analyzed_commit": "a4947a855986a8c3fe8b7ef38314e83e622f8218",
+  "summary": "A Go-based test runner and migration tool utilizing MCP handlers, currently experiencing build failures and repository bloat from AI-agent generated test artifacts.",
   "architecture": "monolith",
   "primary_language": "Go",
   "hot_files": [
@@ -15,19 +15,22 @@
     "internal/runner/assertion_test.go"
   ],
   "patterns": [
-    "Runner/Worker pattern",
     "MCP (Model Context Protocol) handler pattern",
-    "Migration/Translation pattern",
-    "Test-Driven Development (TDD)"
+    "Test Runner/Executor pattern",
+    "Goss migration/translation pattern",
+    "TAP (Test Anything Protocol) reporting",
+    "AI-agent driven test generation (GOrchestra)"
   ],
   "concerns": [
-    "Highly fragmented agent-generated test directories (0005-0014) suggest complex CI/agent orchestration overhead",
-    "Heavy reliance on extra tests (*_extra_test.go) might indicate gaps in primary test coverage",
-    "Clean git status combined with numerous post-merge metadata commits hints at automated commit noise"
+    "Build failure: undefined TestResul in tap.go indicating broken compilation",
+    "Proliferation of _extra_test.go files suggests AI-generated test bloat",
+    "Scattered agent directories (GOrchestra/glm-agents/*) polluting the repository structure",
+    "Potential code duplication across multiple baseline/ directories"
   ],
   "suggestions": [
-    "Consolidate or archive the GOrchestra/glm-agents directories to reduce repository clutter",
-    "Review primary test suites to ensure they are robust enough to reduce the need for supplementary extra tests",
-    "Focus on the core runner and MCP handler logic for performance and reliability improvements"
+    "Fix the immediate build error in internal/reporter/tap.go",
+    "Consolidate or clean up the GOrchestra agent artifact directories",
+    "Merge _extra_test.go files into standard test files to reduce clutter",
+    "Review AI-generated tests for actual value versus noise"
   ]
 }
