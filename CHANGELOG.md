@@ -7,6 +7,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.12.0] - 2026-04-21
+
+### Added
+- Add mobile deep link assertion (FEAT-013)
+- Add React Native, Flutter, iOS, Android project detection
+- add mobile project smoke init templates (commit:68e269f4)
+- wire deep_link assertion into test execution pipeline (commit:0402f91a)
+- add deep link assertion with tier 1 HTTP checks and tier 2 resolution (commit:b7fd8c2c)
+- add React Native, Flutter, iOS, Android project types (commit:8045997a)
+- add DeepLinkCheck struct for mobile deep link assertions (commit:27b1631a)
+
+### Fixed
+- Fix watch mode config reload and TraceHealth persistence
+
 ## [0.11.1] - 2026-04-20
 
 ### Added

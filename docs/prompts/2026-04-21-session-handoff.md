@@ -2,6 +2,7 @@
 title: "Session Handoff — Post FEAT-013"
 created: "2026-04-21"
 status: PENDING
+schema_version: 1
 ---
 
 # Session Handoff
