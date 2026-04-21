@@ -1,0 +1,10 @@
+id: FEAT-033
+type: feature
+created_at: 2026-04-21T18:04:24.094986-03:00
+updated_at: 2026-04-21T18:43:37.824174-03:00
+source: local
+status: done
+origin:
+    session: 2027
+title: C/C++ CMake detection (ROAD-064)
+description: 'Detect CMakeLists.txt. Template: prereq (cmake --version), configure (cmake -B build), build (cmake --build build).'

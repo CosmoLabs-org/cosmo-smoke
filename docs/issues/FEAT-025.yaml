@@ -1,0 +1,10 @@
+id: FEAT-025
+type: feature
+created_at: 2026-04-21T18:04:23.512425-03:00
+updated_at: 2026-04-21T18:43:35.830119-03:00
+source: local
+status: done
+origin:
+    session: 2027
+title: Elixir project detection (ROAD-056)
+description: 'Detect mix.exs. Template: prereq (elixir --version), dependencies (mix deps.get), compile (mix compile), test (mix test).'

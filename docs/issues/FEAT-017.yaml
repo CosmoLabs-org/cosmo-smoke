@@ -1,0 +1,10 @@
+id: FEAT-017
+type: feature
+created_at: 2026-04-21T18:03:56.704269-03:00
+updated_at: 2026-04-21T18:43:34.261146-03:00
+source: local
+status: done
+origin:
+    session: 2027
+title: Ruby project detection (ROAD-048)
+description: 'Add project type detection for Ruby projects. Detect Gemfile. Generate template with: prereq check (ruby --version), dependencies (bundle install), tests (bundle exec rake). Check for Rakefile to confirm rake task exists.'

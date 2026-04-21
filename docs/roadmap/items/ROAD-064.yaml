@@ -1,0 +1,14 @@
+id: ROAD-064
+created_at: 2026-04-21T18:03:41.249689-03:00
+updated_at: 2026-04-21T18:43:40.563474-03:00
+title: C/C++ CMake detection (CMakeLists.txt → cmake -B build, cmake --build)
+status: completed
+priority: 55
+tags:
+    - v2.1
+    - detector
+    - c
+completed_in: v0.12.0
+completed_at: 2026-04-21T18:43:40.563469-03:00
+origin:
+    session: 2027

@@ -1,0 +1,10 @@
+id: FEAT-014
+type: feature
+created_at: 2026-04-21T18:03:56.247509-03:00
+updated_at: 2026-04-21T18:43:33.559281-03:00
+source: local
+status: done
+origin:
+    session: 2027
+title: Java/Maven project detection (ROAD-045)
+description: 'Add project type detection for Java/Maven projects. Detect pom.xml and generate smoke test template with: prereq check (mvn --version), compile test (mvn compile), unit test (mvn test). Add ProjectType constant, detection logic in Detect(), and template in GenerateConfig().'

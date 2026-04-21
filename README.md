@@ -202,15 +202,58 @@ smoke version
 
 ## Auto-Detection
 
-`smoke init` inspects the current directory and generates a starter config:
+`smoke init` inspects the current directory and generates a starter config. Supports **31 project types** across languages, mobile, infrastructure, and static sites.
 
-| Marker file | Detected type | Tests generated |
-|-------------|---------------|----------------|
-| `go.mod` | Go | build, vet, short tests |
+### Languages & Frameworks
+
+| Marker file | Type | Tests generated |
+|-------------|------|----------------|
+| `go.mod` | Go | compile, test |
 | `package.json` | Node (bun/npm) | install, lint (if script exists) |
-| `pyproject.toml` / `requirements.txt` | Python | import check |
+| `pyproject.toml` / `requirements.txt` / `setup.py` | Python | import check |
 | `Cargo.toml` | Rust | build, test |
-| `Dockerfile` | Docker | docker build |
+| `pom.xml` | Java (Maven) | compile, test |
+| `build.gradle` + `package.json` | Java (Gradle) | build, test |
+| `*.csproj` / `*.sln` | .NET/C# | build, test |
+| `Gemfile` | Ruby | bundle install, rake (if Rakefile) |
+| `composer.json` | PHP | composer install, syntax lint |
+| `deno.json` / `deno.jsonc` | Deno | type check, test |
+| `build.sbt` | Scala | compile, test |
+| `mix.exs` | Elixir | deps, compile, test |
+| `Package.swift` (no xcodeproj) | Swift (server) | build, test |
+| `pubspec.yaml` (no flutter) | Dart (server) | pub get, test |
+| `build.zig` | Zig | build, test |
+| `stack.yaml` / `*.cabal` | Haskell | build, test |
+| `*.rockspec` | Lua | build (luarocks) |
+| `Makefile` | C/C++ (Make) | make |
+| `CMakeLists.txt` | C/C++ (CMake) | configure, build |
+
+### Mobile
+
+| Marker file | Type | Tests generated |
+|-------------|------|----------------|
+| `app.json` + `react-native` dep | React Native | deep link config |
+| `pubspec.yaml` + `sdk: flutter` | Flutter | universal link config |
+| `*.xcodeproj` / `*.xcworkspace` | iOS | universal link config |
+| `build.gradle` (no go.mod/package.json) | Android | universal link config |
+
+### Infrastructure & DevOps
+
+| Marker file | Type | Tests generated |
+|-------------|------|----------------|
+| `Dockerfile` / `docker-compose.yml` | Docker | docker build |
+| `*.tf` | Terraform | validate, fmt check |
+| `Chart.yaml` | Helm | lint, template render |
+| `kustomization.yaml` | Kustomize | render manifests |
+| `serverless.yml` | Serverless | validate config |
+
+### Static Sites & SSG
+
+| Marker file | Type | Tests generated |
+|-------------|------|----------------|
+| `hugo.toml` / `hugo.yaml` / `config.toml` + `content/` | Hugo | site build |
+| `astro.config.*` | Astro | type check, build |
+| `_config.yml` + `Gemfile` | Jekyll | site build |
 
 ## CI/CD Integration
 

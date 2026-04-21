@@ -1,0 +1,10 @@
+id: FEAT-029
+type: feature
+created_at: 2026-04-21T18:04:23.806463-03:00
+updated_at: 2026-04-21T18:43:36.691823-03:00
+source: local
+status: done
+origin:
+    session: 2027
+title: Hugo static site detection (ROAD-060)
+description: 'Detect hugo.toml or config.toml with Hugo content markers. Template: prereq (hugo version), build (hugo).'

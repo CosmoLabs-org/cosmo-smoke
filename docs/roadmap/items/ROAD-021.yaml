@@ -1,12 +1,14 @@
 id: ROAD-021
 created_at: 2026-04-16T08:55:55.193698-03:00
-updated_at: 2026-04-16T08:57:03.336735-03:00
+updated_at: 2026-04-21T16:48:53.726666-03:00
 title: Port listening assertion
 description: 'New assertion: port_listening. Check if TCP/UDP port is open. Syntax: port_listening: { port: 5432, protocol: tcp }. Essential for DB/service connectivity smoke.'
-status: promoted
+status: completed
 priority: 70
 tags:
     - v2.0
     - assertion
     - infra
 promoted_to: FEAT-004
+completed_in: v0.12.0
+completed_at: 2026-04-21T16:48:53.726658-03:00

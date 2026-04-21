@@ -1,0 +1,10 @@
+id: FEAT-021
+type: feature
+created_at: 2026-04-21T18:04:23.187479-03:00
+updated_at: 2026-04-21T18:43:34.906685-03:00
+source: local
+status: done
+origin:
+    session: 2027
+title: Helm chart detection (ROAD-052)
+description: 'Detect Chart.yaml. Template: prereq (helm version), lint (helm lint .), template render (helm template .).'

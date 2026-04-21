@@ -1,0 +1,14 @@
+id: ROAD-069
+created_at: 2026-04-21T18:54:49.531479-03:00
+updated_at: 2026-04-21T18:54:56.507801-03:00
+title: Docker compose health assertion
+status: completed
+priority: 70
+tags:
+    - v2.0
+    - assertion
+    - docker
+completed_in: v0.12.0
+completed_at: 2026-04-21T18:54:56.507795-03:00
+origin:
+    session: 2027

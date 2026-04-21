@@ -1,0 +1,10 @@
+id: FEAT-016
+type: feature
+created_at: 2026-04-21T18:03:56.564083-03:00
+updated_at: 2026-04-21T18:43:34.113806-03:00
+source: local
+status: done
+origin:
+    session: 2027
+title: .NET/C# project detection (ROAD-047)
+description: 'Add project type detection for .NET/C# projects. Detect *.csproj and *.sln files. Generate template with: prereq check (dotnet --version), build (dotnet build), test (dotnet test).'

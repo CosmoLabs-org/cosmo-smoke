@@ -1,0 +1,14 @@
+id: ROAD-048
+created_at: 2026-04-21T18:03:19.870849-03:00
+updated_at: 2026-04-21T18:43:39.078949-03:00
+title: Ruby project detection and smoke templates (Gemfile → bundle install, bundle exec rake)
+status: completed
+priority: 70
+tags:
+    - v2.0
+    - detector
+    - ruby
+completed_in: v0.12.0
+completed_at: 2026-04-21T18:43:39.078942-03:00
+origin:
+    session: 2027

@@ -1,0 +1,10 @@
+id: FEAT-020
+type: feature
+created_at: 2026-04-21T18:04:23.136265-03:00
+updated_at: 2026-04-21T18:43:34.713168-03:00
+source: local
+status: done
+origin:
+    session: 2027
+title: Terraform project detection (ROAD-051)
+description: 'Detect *.tf files. Template: prereq (terraform --version), validate (terraform validate), format check (terraform fmt -check -recursive).'

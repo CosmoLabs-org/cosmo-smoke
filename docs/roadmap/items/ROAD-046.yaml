@@ -1,0 +1,14 @@
+id: ROAD-046
+created_at: 2026-04-21T18:03:19.290324-03:00
+updated_at: 2026-04-21T18:43:38.896227-03:00
+title: Java/Gradle project detection (build.gradle without Android markers → gradle build, gradle test)
+status: completed
+priority: 80
+tags:
+    - v2.0
+    - detector
+    - java
+completed_in: v0.12.0
+completed_at: 2026-04-21T18:43:38.896222-03:00
+origin:
+    session: 2027

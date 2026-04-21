@@ -1,0 +1,10 @@
+id: FEAT-018
+type: feature
+created_at: 2026-04-21T18:04:23.029828-03:00
+updated_at: 2026-04-21T18:43:34.410739-03:00
+source: local
+status: done
+origin:
+    session: 2027
+title: PHP/Composer project detection (ROAD-049)
+description: 'Detect composer.json. Template: prereq (php --version), dependencies (composer install), syntax lint (find . -name ''*.php'' -exec php -l {} \;).'

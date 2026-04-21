@@ -1,0 +1,15 @@
+id: ROAD-054
+created_at: 2026-04-21T18:03:40.770982-03:00
+updated_at: 2026-04-21T18:43:39.922753-03:00
+title: Serverless framework detection (serverless.yml → sls validate)
+status: completed
+priority: 60
+tags:
+    - v2.0
+    - detector
+    - infra
+    - serverless
+completed_in: v0.12.0
+completed_at: 2026-04-21T18:43:39.922747-03:00
+origin:
+    session: 2027

@@ -1,0 +1,10 @@
+id: FEAT-027
+type: feature
+created_at: 2026-04-21T18:04:23.712392-03:00
+updated_at: 2026-04-21T18:43:36.230365-03:00
+source: local
+status: done
+origin:
+    session: 2027
+title: Swift server-side detection (ROAD-058)
+description: 'Detect Package.swift without xcodeproj/xcworkspace. Template: prereq (swift --version), build (swift build), test (swift test).'

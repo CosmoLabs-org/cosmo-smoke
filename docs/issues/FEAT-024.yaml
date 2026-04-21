@@ -1,0 +1,10 @@
+id: FEAT-024
+type: feature
+created_at: 2026-04-21T18:04:23.467099-03:00
+updated_at: 2026-04-21T18:43:35.577909-03:00
+source: local
+status: done
+origin:
+    session: 2027
+title: Zig project detection (ROAD-055)
+description: 'Detect build.zig. Template: prereq (zig version), build (zig build), test (zig build test).'

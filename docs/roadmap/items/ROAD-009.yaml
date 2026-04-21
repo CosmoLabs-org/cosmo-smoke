@@ -1,12 +1,14 @@
 id: ROAD-009
 created_at: 2026-04-15T17:36:13.727026-03:00
-updated_at: 2026-04-16T08:57:03.485892-03:00
+updated_at: 2026-04-21T16:48:53.641012-03:00
 title: allow_failure for flaky tests
 description: Mark tests that can fail without failing the suite. Useful for network-dependent tests. Reported separately in summary.
-status: promoted
+status: completed
 priority: 40
 tags:
     - v2.0
     - feature
     - resilience
 promoted_to: FEAT-007
+completed_in: v0.12.0
+completed_at: 2026-04-21T16:48:53.641007-03:00

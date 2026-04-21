@@ -1,0 +1,10 @@
+id: FEAT-028
+type: feature
+created_at: 2026-04-21T18:04:23.759953-03:00
+updated_at: 2026-04-21T18:43:36.427401-03:00
+source: local
+status: done
+origin:
+    session: 2027
+title: Dart server-side detection (ROAD-059)
+description: 'Detect pubspec.yaml without flutter SDK dependency. Template: prereq (dart --version), dependencies (dart pub get), test (dart test).'

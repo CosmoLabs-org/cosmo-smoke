@@ -1,0 +1,10 @@
+id: FEAT-031
+type: feature
+created_at: 2026-04-21T18:04:23.993458-03:00
+updated_at: 2026-04-21T18:43:37.516084-03:00
+source: local
+status: done
+origin:
+    session: 2027
+title: Jekyll static site detection (ROAD-062)
+description: 'Detect _config.yml alongside Gemfile with jekyll dependency. Template: prereq (ruby --version), dependencies (bundle install), build (bundle exec jekyll build).'

@@ -1,0 +1,10 @@
+id: FEAT-023
+type: feature
+created_at: 2026-04-21T18:04:23.413313-03:00
+updated_at: 2026-04-21T18:43:35.363826-03:00
+source: local
+status: done
+origin:
+    session: 2027
+title: Serverless framework detection (ROAD-054)
+description: 'Detect serverless.yml. Template: prereq (sls --version), validate (sls validate).'

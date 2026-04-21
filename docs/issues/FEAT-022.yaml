@@ -1,0 +1,10 @@
+id: FEAT-022
+type: feature
+created_at: 2026-04-21T18:04:23.348456-03:00
+updated_at: 2026-04-21T18:43:35.133752-03:00
+source: local
+status: done
+origin:
+    session: 2027
+title: Kustomize detection (ROAD-053)
+description: 'Detect kustomization.yaml. Template: prereq (kubectl version --client), render (kubectl kustomize .).'

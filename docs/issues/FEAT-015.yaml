@@ -1,0 +1,10 @@
+id: FEAT-015
+type: feature
+created_at: 2026-04-21T18:03:56.389371-03:00
+updated_at: 2026-04-21T18:43:33.908516-03:00
+source: local
+status: done
+origin:
+    session: 2027
+title: Java/Gradle project detection (ROAD-046)
+description: 'Add project type detection for Java/Gradle projects. Detect build.gradle without Android markers. Generate template with: prereq check (gradle --version), compile (gradle build), test (gradle test). Must distinguish from Android build.gradle (which requires go.mod or package.json absence).'

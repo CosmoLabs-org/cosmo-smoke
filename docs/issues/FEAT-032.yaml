@@ -1,0 +1,10 @@
+id: FEAT-032
+type: feature
+created_at: 2026-04-21T18:04:24.044572-03:00
+updated_at: 2026-04-21T18:43:37.673001-03:00
+source: local
+status: done
+origin:
+    session: 2027
+title: C/C++ Makefile detection (ROAD-063)
+description: 'Detect Makefile. Template: prereq (make --version), build (make), test (make test). Only add test if test target exists.'

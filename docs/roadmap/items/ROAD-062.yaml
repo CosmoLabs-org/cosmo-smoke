@@ -1,0 +1,15 @@
+id: ROAD-062
+created_at: 2026-04-21T18:03:41.155328-03:00
+updated_at: 2026-04-21T18:43:40.443108-03:00
+title: Jekyll static site detection (_config.yml + Gemfile → bundle exec jekyll build)
+status: completed
+priority: 40
+tags:
+    - v2.1
+    - detector
+    - ssg
+    - jekyll
+completed_in: v0.12.0
+completed_at: 2026-04-21T18:43:40.443103-03:00
+origin:
+    session: 2027

@@ -1,0 +1,15 @@
+id: ROAD-053
+created_at: 2026-04-21T18:03:40.720244-03:00
+updated_at: 2026-04-21T18:43:39.859483-03:00
+title: Kustomize detection (kustomization.yaml → kubectl kustomize build)
+status: completed
+priority: 60
+tags:
+    - v2.0
+    - detector
+    - infra
+    - k8s
+completed_in: v0.12.0
+completed_at: 2026-04-21T18:43:39.859467-03:00
+origin:
+    session: 2027

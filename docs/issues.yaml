@@ -1,11 +1,121 @@
 version: "1.0"
 project: cosmo-smoke
-last_updated: 2026-04-21T12:58:34.659818-03:00
+last_updated: 2026-04-21T18:43:38.264684-03:00
 next_bug_id: 2
-next_feat_id: 14
+next_feat_id: 36
 next_task_id: 2
 next_imp_id: 1
 issues:
+    - id: FEAT-035
+      type: feature
+      status: done
+      title: Lua project detection (ROAD-066)
+      created_at: 2026-04-21T18:04:24.420814-03:00
+    - id: FEAT-034
+      type: feature
+      status: done
+      title: Haskell project detection (ROAD-065)
+      created_at: 2026-04-21T18:04:24.236066-03:00
+    - id: FEAT-033
+      type: feature
+      status: done
+      title: C/C++ CMake detection (ROAD-064)
+      created_at: 2026-04-21T18:04:24.094986-03:00
+    - id: FEAT-032
+      type: feature
+      status: done
+      title: C/C++ Makefile detection (ROAD-063)
+      created_at: 2026-04-21T18:04:24.044572-03:00
+    - id: FEAT-031
+      type: feature
+      status: done
+      title: Jekyll static site detection (ROAD-062)
+      created_at: 2026-04-21T18:04:23.993458-03:00
+    - id: FEAT-030
+      type: feature
+      status: done
+      title: Astro framework detection (ROAD-061)
+      created_at: 2026-04-21T18:04:23.940622-03:00
+    - id: FEAT-029
+      type: feature
+      status: done
+      title: Hugo static site detection (ROAD-060)
+      created_at: 2026-04-21T18:04:23.806463-03:00
+    - id: FEAT-028
+      type: feature
+      status: done
+      title: Dart server-side detection (ROAD-059)
+      created_at: 2026-04-21T18:04:23.759953-03:00
+    - id: FEAT-027
+      type: feature
+      status: done
+      title: Swift server-side detection (ROAD-058)
+      created_at: 2026-04-21T18:04:23.712392-03:00
+    - id: FEAT-026
+      type: feature
+      status: done
+      title: Scala project detection (ROAD-057)
+      created_at: 2026-04-21T18:04:23.662042-03:00
+    - id: FEAT-025
+      type: feature
+      status: done
+      title: Elixir project detection (ROAD-056)
+      created_at: 2026-04-21T18:04:23.512425-03:00
+    - id: FEAT-024
+      type: feature
+      status: done
+      title: Zig project detection (ROAD-055)
+      created_at: 2026-04-21T18:04:23.467099-03:00
+    - id: FEAT-023
+      type: feature
+      status: done
+      title: Serverless framework detection (ROAD-054)
+      created_at: 2026-04-21T18:04:23.413313-03:00
+    - id: FEAT-022
+      type: feature
+      status: done
+      title: Kustomize detection (ROAD-053)
+      created_at: 2026-04-21T18:04:23.348456-03:00
+    - id: FEAT-021
+      type: feature
+      status: done
+      title: Helm chart detection (ROAD-052)
+      created_at: 2026-04-21T18:04:23.187479-03:00
+    - id: FEAT-020
+      type: feature
+      status: done
+      title: Terraform project detection (ROAD-051)
+      created_at: 2026-04-21T18:04:23.136265-03:00
+    - id: FEAT-019
+      type: feature
+      status: done
+      title: Deno project detection (ROAD-050)
+      created_at: 2026-04-21T18:04:23.084864-03:00
+    - id: FEAT-018
+      type: feature
+      status: done
+      title: PHP/Composer project detection (ROAD-049)
+      created_at: 2026-04-21T18:04:23.029828-03:00
+    - id: FEAT-017
+      type: feature
+      status: done
+      title: Ruby project detection (ROAD-048)
+      created_at: 2026-04-21T18:03:56.704269-03:00
+    - id: FEAT-016
+      type: feature
+      status: done
+      title: .NET/C# project detection (ROAD-047)
+      created_at: 2026-04-21T18:03:56.564083-03:00
+    - id: FEAT-015
+      type: feature
+      status: done
+      title: Java/Gradle project detection (ROAD-046)
+      created_at: 2026-04-21T18:03:56.389371-03:00
+    - id: FEAT-014
+      type: feature
+      status: done
+      title: Java/Maven project detection (ROAD-045)
+      created_at: 2026-04-21T18:03:56.247509-03:00
     - id: ""
       type: ""
       status: ""

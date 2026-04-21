@@ -1,8 +1,133 @@
 version: "1.0"
 project: cosmo-smoke
-last_updated: 2026-04-19T21:31:43.626751-03:00
-next_id: 45
+last_updated: 2026-04-21T18:54:56.508214-03:00
+next_id: 70
 items:
+    - id: ROAD-069
+      title: Docker compose health assertion
+      status: completed
+      completed_in: v0.12.0
+      created_at: 2026-04-21T18:54:49.531479-03:00
+    - id: ROAD-068
+      title: SMTP ping assertion type
+      status: completed
+      completed_in: v0.12.0
+      created_at: 2026-04-21T18:54:49.466046-03:00
+    - id: ROAD-067
+      title: DNS resolution assertion type
+      status: completed
+      completed_in: v0.12.0
+      created_at: 2026-04-21T18:54:49.412458-03:00
+    - id: ROAD-066
+      title: Lua project detection (*.rockspec → luarocks make, busted)
+      status: completed
+      completed_in: v0.12.0
+      created_at: 2026-04-21T18:03:41.337408-03:00
+    - id: ROAD-065
+      title: Haskell project detection (stack.yaml → stack build, stack test)
+      status: completed
+      completed_in: v0.12.0
+      created_at: 2026-04-21T18:03:41.294899-03:00
+    - id: ROAD-064
+      title: C/C++ CMake detection (CMakeLists.txt → cmake -B build, cmake --build)
+      status: completed
+      completed_in: v0.12.0
+      created_at: 2026-04-21T18:03:41.249689-03:00
+    - id: ROAD-063
+      title: C/C++ Makefile detection (Makefile → make, make test)
+      status: completed
+      completed_in: v0.12.0
+      created_at: 2026-04-21T18:03:41.20204-03:00
+    - id: ROAD-062
+      title: Jekyll static site detection (_config.yml + Gemfile → bundle exec jekyll build)
+      status: completed
+      completed_in: v0.12.0
+      created_at: 2026-04-21T18:03:41.155328-03:00
+    - id: ROAD-061
+      title: Astro framework detection (astro.config.* → astro check, astro build)
+      status: completed
+      completed_in: v0.12.0
+      created_at: 2026-04-21T18:03:41.108558-03:00
+    - id: ROAD-060
+      title: Hugo static site detection (hugo.toml/config.toml → hugo build)
+      status: completed
+      completed_in: v0.12.0
+      created_at: 2026-04-21T18:03:41.063104-03:00
+    - id: ROAD-059
+      title: Dart server-side detection (pubspec.yaml without flutter dep → dart pub get, dart test)
+      status: completed
+      completed_in: v0.12.0
+      created_at: 2026-04-21T18:03:41.01239-03:00
+    - id: ROAD-058
+      title: Swift server-side detection (Package.swift without xcodeproj → swift build, swift test)
+      status: completed
+      completed_in: v0.12.0
+      created_at: 2026-04-21T18:03:40.958192-03:00
+    - id: ROAD-057
+      title: Scala project detection (build.sbt → sbt compile, sbt test)
+      status: completed
+      completed_in: v0.12.0
+      created_at: 2026-04-21T18:03:40.911495-03:00
+    - id: ROAD-056
+      title: Elixir project detection (mix.exs → mix deps.get, mix test)
+      status: completed
+      completed_in: v0.12.0
+      created_at: 2026-04-21T18:03:40.863646-03:00
+    - id: ROAD-055
+      title: Zig project detection (build.zig → zig build, zig test)
+      status: completed
+      completed_in: v0.12.0
+      created_at: 2026-04-21T18:03:40.815317-03:00
+    - id: ROAD-054
+      title: Serverless framework detection (serverless.yml → sls validate)
+      status: completed
+      completed_in: v0.12.0
+      created_at: 2026-04-21T18:03:40.770982-03:00
+    - id: ROAD-053
+      title: Kustomize detection (kustomization.yaml → kubectl kustomize build)
+      status: completed
+      completed_in: v0.12.0
+      created_at: 2026-04-21T18:03:40.720244-03:00
+    - id: ROAD-052
+      title: Helm chart detection (Chart.yaml → helm lint, helm template)
+      status: completed
+      completed_in: v0.12.0
+      created_at: 2026-04-21T18:03:40.666769-03:00
+    - id: ROAD-051
+      title: Terraform project detection (*.tf → terraform validate, terraform fmt -check)
+      status: completed
+      completed_in: v0.12.0
+      created_at: 2026-04-21T18:03:40.62007-03:00
+    - id: ROAD-050
+      title: Deno project detection (deno.json → deno check, deno test)
+      status: completed
+      completed_in: v0.12.0
+      created_at: 2026-04-21T18:03:40.510019-03:00
+    - id: ROAD-049
+      title: PHP/Composer project detection (composer.json → composer install, php -l lint)
+      status: completed
+      completed_in: v0.12.0
+      created_at: 2026-04-21T18:03:40.463887-03:00
+    - id: ROAD-048
+      title: Ruby project detection and smoke templates (Gemfile → bundle install, bundle exec rake)
+      status: completed
+      completed_in: v0.12.0
+      created_at: 2026-04-21T18:03:19.870849-03:00
+    - id: ROAD-047
+      title: .NET/C# project detection and smoke templates (*.csproj, *.sln → dotnet build, dotnet test)
+      status: completed
+      completed_in: v0.12.0
+      created_at: 2026-04-21T18:03:19.508286-03:00
+    - id: ROAD-046
+      title: Java/Gradle project detection (build.gradle without Android markers → gradle build, gradle test)
+      status: completed
+      completed_in: v0.12.0
+      created_at: 2026-04-21T18:03:19.290324-03:00
+    - id: ROAD-045
+      title: Java/Maven project detection and smoke templates (pom.xml → mvn compile, mvn test)
+      status: completed
+      completed_in: v0.12.0
+      created_at: 2026-04-21T18:03:19.025169-03:00
     - id: ROAD-044
       title: JUnit XML enhanced CI metadata
       status: completed
@@ -134,13 +259,15 @@ items:
       created_at: 2026-04-16T08:55:58.388478-03:00
     - id: ROAD-022
       title: Process running assertion
-      status: promoted
+      status: completed
       promoted_to: FEAT-005
+      completed_in: v0.12.0
       created_at: 2026-04-16T08:55:56.343415-03:00
     - id: ROAD-021
       title: Port listening assertion
-      status: promoted
+      status: completed
       promoted_to: FEAT-004
+      completed_in: v0.12.0
       created_at: 2026-04-16T08:55:55.193698-03:00
     - id: ROAD-020
       title: Config inheritance — includes, vars, templates
@@ -203,8 +330,9 @@ items:
       created_at: 2026-04-15T17:36:21.657703-03:00
     - id: ROAD-011
       title: TAP output format
-      status: promoted
+      status: completed
       promoted_to: FEAT-006
+      completed_in: v0.12.0
       created_at: 2026-04-15T17:36:20.655481-03:00
     - id: ROAD-010
       title: Monorepo sub-config support
@@ -216,8 +344,9 @@ items:
       created_at: 2026-04-15T17:36:19.334069-03:00
     - id: ROAD-009
       title: allow_failure for flaky tests
-      status: promoted
+      status: completed
       promoted_to: FEAT-007
+      completed_in: v0.12.0
       created_at: 2026-04-15T17:36:13.727026-03:00
     - id: ROAD-008
       title: Conditional test execution
@@ -243,8 +372,9 @@ items:
       created_at: 2026-04-15T17:36:03.870495-03:00
     - id: ROAD-004
       title: JUnit XML output format
-      status: promoted
+      status: completed
       promoted_to: FEAT-003
+      completed_in: v0.12.0
       created_at: 2026-04-15T17:36:02.23498-03:00
     - id: ROAD-003
       title: Watch mode for development (--watch)
@@ -255,11 +385,13 @@ items:
       created_at: 2026-04-15T17:36:00.274911-03:00
     - id: ROAD-002
       title: env_check assertion type
-      status: promoted
+      status: completed
       promoted_to: FEAT-002
+      completed_in: v0.12.0
       created_at: 2026-04-15T17:35:56.209343-03:00
     - id: ROAD-001
       title: stderr_matches assertion type
-      status: promoted
+      status: completed
       promoted_to: FEAT-001
+      completed_in: v0.12.0
       created_at: 2026-04-15T17:35:55.360951-03:00

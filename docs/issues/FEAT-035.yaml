@@ -1,0 +1,10 @@
+id: FEAT-035
+type: feature
+created_at: 2026-04-21T18:04:24.420814-03:00
+updated_at: 2026-04-21T18:43:38.263092-03:00
+source: local
+status: done
+origin:
+    session: 2027
+title: Lua project detection (ROAD-066)
+description: 'Detect *.rockspec files. Template: prereq (luarocks --version), build (luarocks make), test (busted).'

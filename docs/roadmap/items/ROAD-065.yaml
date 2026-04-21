@@ -1,0 +1,14 @@
+id: ROAD-065
+created_at: 2026-04-21T18:03:41.294899-03:00
+updated_at: 2026-04-21T18:43:40.771262-03:00
+title: Haskell project detection (stack.yaml → stack build, stack test)
+status: completed
+priority: 35
+tags:
+    - v2.2
+    - detector
+    - haskell
+completed_in: v0.12.0
+completed_at: 2026-04-21T18:43:40.771254-03:00
+origin:
+    session: 2027

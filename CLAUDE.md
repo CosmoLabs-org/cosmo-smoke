@@ -95,6 +95,9 @@ smoke version
 | credential_check | `{source, name, contains?}` | Credential accessible without leaking value (env\|file\|exec) |
 | graphql | `{url, query?, status_code?, expect_types?, expect_contains?, timeout?}` | GraphQL introspection assertion |
 | deep_link | `{url, android_package?, ios_bundle_id?, ios_associated_domains?, check_assetlinks?, check_aasa?, tier?}` | Mobile deep link / universal link verification (two-tier: HTTP config + tool-augmented resolution) |
+| dns_resolve | `{hostname, record_type?, expected_ip?, timeout?}` | DNS resolution check (A, AAAA, TXT, MX, CNAME) |
+| smtp_ping | `{host, port?, timeout?}` | SMTP server connectivity + EHLO handshake |
+| docker_compose_healthy | `{compose_file?, services?, timeout?}` | Docker Compose service health check |
 
 Plus `allow_failure: true` on Test for flaky/allowed-failure tests.
 
@@ -118,4 +121,12 @@ Smoke test results are also exported as OTLP telemetry when `export_url` is conf
 
 ## Detected Project Types
 
-Go, Node (bun/npm), Python, Docker, Rust, React Native, Flutter, iOS, Android — each with tailored smoke test templates.
+31 project types with auto-detection and tailored smoke test templates:
+
+**Languages:** Go, Node (bun/npm), Python, Rust, Java (Maven), Java (Gradle), .NET/C#, Ruby, PHP, Deno, Scala, Elixir, Swift (server), Dart (server), Zig, Haskell, Lua, C/C++ (Make), C/C++ (CMake)
+
+**Mobile:** React Native, Flutter, iOS, Android
+
+**Infrastructure:** Docker, Terraform, Helm, Kustomize, Serverless
+
+**Static Sites:** Hugo, Astro, Jekyll

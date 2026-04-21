@@ -1,0 +1,10 @@
+id: FEAT-026
+type: feature
+created_at: 2026-04-21T18:04:23.662042-03:00
+updated_at: 2026-04-21T18:43:36.036565-03:00
+source: local
+status: done
+origin:
+    session: 2027
+title: Scala project detection (ROAD-057)
+description: 'Detect build.sbt. Template: prereq (sbt --version), compile (sbt compile), test (sbt test).'

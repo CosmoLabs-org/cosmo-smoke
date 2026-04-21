@@ -1,0 +1,14 @@
+id: ROAD-049
+created_at: 2026-04-21T18:03:40.463887-03:00
+updated_at: 2026-04-21T18:43:39.219136-03:00
+title: PHP/Composer project detection (composer.json → composer install, php -l lint)
+status: completed
+priority: 65
+tags:
+    - v2.0
+    - detector
+    - php
+completed_in: v0.12.0
+completed_at: 2026-04-21T18:43:39.219129-03:00
+origin:
+    session: 2027

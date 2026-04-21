@@ -1,0 +1,14 @@
+id: ROAD-067
+created_at: 2026-04-21T18:54:49.412458-03:00
+updated_at: 2026-04-21T18:54:56.324-03:00
+title: DNS resolution assertion type
+status: completed
+priority: 75
+tags:
+    - v2.0
+    - assertion
+    - network
+completed_in: v0.12.0
+completed_at: 2026-04-21T18:54:56.323993-03:00
+origin:
+    session: 2027

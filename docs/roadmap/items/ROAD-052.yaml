@@ -1,0 +1,15 @@
+id: ROAD-052
+created_at: 2026-04-21T18:03:40.666769-03:00
+updated_at: 2026-04-21T18:43:39.793035-03:00
+title: Helm chart detection (Chart.yaml → helm lint, helm template)
+status: completed
+priority: 70
+tags:
+    - v2.0
+    - detector
+    - infra
+    - helm
+completed_in: v0.12.0
+completed_at: 2026-04-21T18:43:39.793028-03:00
+origin:
+    session: 2027
