@@ -94,6 +94,7 @@ smoke version
 | otel_trace | `{backend?, jaeger_url, service_name?, min_spans?, timeout?, api_key?, dd_app_key?}` | Trace verification with W3C traceparent propagation. Backends: jaeger (default), tempo, honeycomb, datadog |
 | credential_check | `{source, name, contains?}` | Credential accessible without leaking value (env\|file\|exec) |
 | graphql | `{url, query?, status_code?, expect_types?, expect_contains?, timeout?}` | GraphQL introspection assertion |
+| deep_link | `{url, android_package?, ios_bundle_id?, ios_associated_domains?, check_assetlinks?, check_aasa?, tier?}` | Mobile deep link / universal link verification (two-tier: HTTP config + tool-augmented resolution) |
 
 Plus `allow_failure: true` on Test for flaky/allowed-failure tests.
 
@@ -117,4 +118,4 @@ Smoke test results are also exported as OTLP telemetry when `export_url` is conf
 
 ## Detected Project Types
 
-Go, Node (bun/npm), Python, Docker, Rust — each with tailored smoke test templates.
+Go, Node (bun/npm), Python, Docker, Rust, React Native, Flutter, iOS, Android — each with tailored smoke test templates.

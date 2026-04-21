@@ -1,19 +1,24 @@
 ---
-title: "Mobile Deep Link Assertion — Implementation"
-created: "2026-04-21"
-status: PENDING
-priority: high
-branch: master
-origin: "/brainplan"
-tags: [continuation, implementation, mobile, deep-link]
-goals_total: 7
-goals_completed: 0
 brainstorm_ref: docs/brainstorming/2026-04-21-mobile-deep-link-assertion.md
+branch: master
+completed: "2026-04-21"
+created: "2026-04-21"
+goals_completed: 7
+goals_total: 7
+origin: /brainplan
 plan_ref: docs/planning-mode/2026-04-21-mobile-deep-link-assertion.md
+priority: high
 requires_reading:
     - docs/brainstorming/2026-04-21-mobile-deep-link-assertion.md
     - docs/planning-mode/2026-04-21-mobile-deep-link-assertion.md
 schema_version: 1
+status: COMPLETED
+tags:
+    - continuation
+    - implementation
+    - mobile
+    - deep-link
+title: Mobile Deep Link Assertion — Implementation
 ---
 
 # Mobile Deep Link Assertion — Implementation
@@ -27,13 +32,13 @@ Implementation plan: `docs/planning-mode/2026-04-21-mobile-deep-link-assertion.m
 
 ## Goals
 
-- [ ] G-01: Add DeepLink struct to schema (Task 1)
-- [ ] G-02: Add mobile project types to detector (Task 2)
-- [ ] G-03: Implement assetlinks.json and AASA HTTP validation (Task 3)
-- [ ] G-04: Implement CheckDeepLink main entry with tier routing (Task 4)
-- [ ] G-05: Wire deep_link assertion into runner.go (Task 5)
-- [ ] G-06: Add mobile project smoke init templates (Task 6)
-- [ ] G-07: Update CLAUDE.md, run full test suite (Task 7)
+- [x] G-01: Add DeepLink struct to schema (Task 1)
+- [x] G-02: Add mobile project types to detector (Task 2)
+- [x] G-03: Implement assetlinks.json and AASA HTTP validation (Task 3)
+- [x] G-04: Implement CheckDeepLink main entry with tier routing (Task 4)
+- [x] G-05: Wire deep_link assertion into runner.go (Task 5)
+- [x] G-06: Add mobile project smoke init templates (Task 6)
+- [x] G-07: Update CLAUDE.md, run full test suite (Task 7)
 
 ## Execution Strategy
 
