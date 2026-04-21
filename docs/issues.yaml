@@ -1,9 +1,9 @@
 version: "1.0"
 project: cosmo-smoke
-last_updated: 2026-04-20T16:55:42.097391-03:00
+last_updated: 2026-04-21T01:27:06.592647-03:00
 next_bug_id: 2
-next_feat_id: 13
-next_task_id: 1
+next_feat_id: 14
+next_task_id: 2
 next_imp_id: 1
 issues:
     - id: ""
@@ -76,3 +76,13 @@ issues:
       title: Watch mode reporter state reset
       severity: medium
       created_at: 2026-04-19T19:24:54.741554-03:00
+    - id: TASK-001
+      type: task
+      status: closed
+      title: go test exclusion for GOrchestra archives
+      created_at: 2026-04-20T23:29:57.504665-03:00
+    - id: FEAT-013
+      type: feature
+      status: open
+      title: Mobile deep link assertion
+      created_at: 2026-04-21T01:18:13.69996-03:00

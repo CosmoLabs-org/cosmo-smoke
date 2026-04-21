@@ -1,0 +1,10 @@
+id: TASK-001
+type: task
+created_at: 2026-04-20T23:29:57.504665-03:00
+updated_at: 2026-04-20T23:30:16.529034-03:00
+source: local
+status: closed
+origin:
+    idea_slug: 2026-04-20-go-test-exclusion-for-gorchestra-archives
+title: go test exclusion for GOrchestra archives
+description: Added //go:build ignore to 25 archived Go files in GOrchestra/ so go build ./... and go test ./... work without scoped paths. Fixed by adding build ignore tag to all .go files in GOrchestra/glm-agents/*/ archives.

@@ -2,11 +2,21 @@
 id: IDEA-MO7RL70S
 title: go test exclusion for GOrchestra archives
 created: "2026-04-20T19:26:27.916945-03:00"
-status: seed
+status: withered
 source: human
 origin:
     session: 2027
+promoted_to: TASK-001
+resolution:
+    reason: implemented
+    date: "2026-04-20"
+    ref: TASK-001
+    note: Resolved via TASK-001 (closed)
 ---
+
+# go test exclusion for GOrchestra archives
+
+# go test exclusion for GOrchestra archives
 
 # go test exclusion for GOrchestra archives
 

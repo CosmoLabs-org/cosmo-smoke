@@ -1,0 +1,10 @@
+id: FEAT-013
+type: feature
+created_at: 2026-04-21T01:18:13.69996-03:00
+updated_at: 2026-04-21T01:18:13.701834-03:00
+source: local
+status: open
+origin:
+    session: 2027
+title: Mobile deep link assertion
+description: 'Two-tier progressive deep link assertion for Android, iOS, React Native, Flutter. Tier 1: zero-dep HTTP/config checks. Tier 2: adb/xcrun resolution when available. Design: docs/brainstorming/2026-04-21-mobile-deep-link-assertion.md'
