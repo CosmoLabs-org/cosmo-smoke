@@ -11,15 +11,37 @@ import (
 type ProjectType string
 
 const (
-	Go         ProjectType = "go"
-	Node       ProjectType = "node"
-	Python     ProjectType = "python"
-	Docker     ProjectType = "docker"
-	Rust       ProjectType = "rust"
+	Go          ProjectType = "go"
+	Node        ProjectType = "node"
+	Python      ProjectType = "python"
+	Docker      ProjectType = "docker"
+	Rust        ProjectType = "rust"
 	ReactNative ProjectType = "react-native"
-	Flutter    ProjectType = "flutter"
-	IOS        ProjectType = "ios"
-	Android    ProjectType = "android"
+	Flutter     ProjectType = "flutter"
+	IOS         ProjectType = "ios"
+	Android     ProjectType = "android"
+	Java        ProjectType = "java"
+	JavaGradle  ProjectType = "java-gradle"
+	DotNet      ProjectType = "dotnet"
+	Ruby        ProjectType = "ruby"
+	PHP         ProjectType = "php"
+	Deno        ProjectType = "deno"
+	Terraform   ProjectType = "terraform"
+	Helm        ProjectType = "helm"
+	Kustomize   ProjectType = "kustomize"
+	Serverless  ProjectType = "serverless"
+	Zig         ProjectType = "zig"
+	Elixir      ProjectType = "elixir"
+	Scala       ProjectType = "scala"
+	SwiftServer ProjectType = "swift-server"
+	DartServer  ProjectType = "dart-server"
+	Hugo        ProjectType = "hugo"
+	Astro       ProjectType = "astro"
+	Jekyll      ProjectType = "jekyll"
+	Make        ProjectType = "make"
+	CMake       ProjectType = "cmake"
+	Haskell     ProjectType = "haskell"
+	Lua         ProjectType = "lua"
 )
 
 // exists returns true if the given path exists under dir.
@@ -116,6 +138,97 @@ func Detect(dir string) []ProjectType {
 				types = append(types, Android)
 			}
 		}
+	}
+
+	// Java/Maven: pom.xml
+	if exists(dir, "pom.xml") {
+		types = append(types, Java)
+	}
+	// Java/Gradle: build.gradle alongside package.json (Gradle-based JS projects)
+	if hasType(types, Node) {
+		if exists(dir, "build.gradle") || exists(dir, "build.gradle.kts") {
+			types = append(types, JavaGradle)
+		}
+	}
+	// .NET/C#: csproj or sln files
+	if hasGlob(dir, "*.csproj") || hasGlob(dir, "*.sln") {
+		types = append(types, DotNet)
+	}
+	// Ruby: Gemfile
+	if exists(dir, "Gemfile") {
+		types = append(types, Ruby)
+	}
+	// PHP: composer.json
+	if exists(dir, "composer.json") {
+		types = append(types, PHP)
+	}
+	// Deno: deno.json or deno.jsonc
+	if exists(dir, "deno.json") || exists(dir, "deno.jsonc") {
+		types = append(types, Deno)
+	}
+	// Terraform: any .tf files
+	if hasGlob(dir, "*.tf") {
+		types = append(types, Terraform)
+	}
+	// Helm: Chart.yaml
+	if exists(dir, "Chart.yaml") {
+		types = append(types, Helm)
+	}
+	// Kustomize: kustomization.yaml
+	if exists(dir, "kustomization.yaml") || exists(dir, "kustomization.yml") {
+		types = append(types, Kustomize)
+	}
+	// Serverless: serverless.yml
+	if exists(dir, "serverless.yml") || exists(dir, "serverless.yaml") {
+		types = append(types, Serverless)
+	}
+	// Zig: build.zig
+	if exists(dir, "build.zig") {
+		types = append(types, Zig)
+	}
+	// Elixir: mix.exs
+	if exists(dir, "mix.exs") {
+		types = append(types, Elixir)
+	}
+	// Scala: build.sbt
+	if exists(dir, "build.sbt") {
+		types = append(types, Scala)
+	}
+	// Swift server-side: Package.swift without xcodeproj (not iOS)
+	if exists(dir, "Package.swift") && !hasGlob(dir, "*.xcodeproj") && !hasGlob(dir, "*.xcworkspace") {
+		types = append(types, SwiftServer)
+	}
+	// Dart server: pubspec.yaml without flutter dependency
+	if exists(dir, "pubspec.yaml") && !hasFlutterDep(dir) {
+		types = append(types, DartServer)
+	}
+	// Hugo: hugo.toml, hugo.yaml, or config.toml with content/ dir
+	if exists(dir, "hugo.toml") || exists(dir, "hugo.yaml") || (exists(dir, "config.toml") && exists(dir, "content")) {
+		types = append(types, Hugo)
+	}
+	// Astro: astro.config.*
+	if hasGlob(dir, "astro.config.*") {
+		types = append(types, Astro)
+	}
+	// Jekyll: _config.yml with Gemfile
+	if exists(dir, "_config.yml") && exists(dir, "Gemfile") {
+		types = append(types, Jekyll)
+	}
+	// C/Make: Makefile
+	if exists(dir, "Makefile") {
+		types = append(types, Make)
+	}
+	// C/CMake: CMakeLists.txt
+	if exists(dir, "CMakeLists.txt") {
+		types = append(types, CMake)
+	}
+	// Haskell: stack.yaml or *.cabal
+	if exists(dir, "stack.yaml") || hasGlob(dir, "*.cabal") {
+		types = append(types, Haskell)
+	}
+	// Lua: *.rockspec
+	if hasGlob(dir, "*.rockspec") {
+		types = append(types, Lua)
 	}
 
 	return types
