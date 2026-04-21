@@ -2,7 +2,7 @@
 
 Universal smoke test runner for any project, any language.
 
-**Version**: 0.6.0 | **Status**: Stable | **License**: MIT
+**Version**: 0.12.0 | **Status**: Stable | **License**: MIT
 
 ---
 
@@ -11,7 +11,6 @@ Universal smoke test runner for any project, any language.
 | Icon | Meaning |
 |------|---------|
 | ✅ | Implemented and stable |
-| 📋 | Planned |
 | ⭐ | Key differentiator |
 
 ---
@@ -21,7 +20,7 @@ Universal smoke test runner for any project, any language.
 | Feature | Status | Description |
 |---------|--------|-------------|
 | **YAML config** | ✅ | Single `.smoke.yaml` file defines all tests |
-| **24 assertion types** | ✅ ⭐ | Process, file, env, network, database, Docker, storage, tool verification |
+| **31 assertion types** | ✅ ⭐ | Process, file, env, network, database, Docker, storage, tool verification, mobile |
 | **Multiple assertions per test** | ✅ | All assertions in an `expect` block must pass |
 | **Prerequisites** | ✅ | Pre-flight checks that abort the run if they fail |
 | **Per-test cleanup** | ✅ | `cleanup` command runs after each test regardless of pass/fail |
@@ -58,6 +57,7 @@ Universal smoke test runner for any project, any language.
 |------|--------|-------------|
 | `file_exists` | ✅ | Path exists relative to config file directory |
 | `env_exists` | ✅ | Environment variable is set (non-empty) |
+| `credential_check` | ✅ | Credential accessible without leaking value (env\|file\|exec) |
 
 ### Network
 
@@ -69,6 +69,7 @@ Universal smoke test runner for any project, any language.
 | `url_reachable` | ✅ | Lightweight HTTP/HTTPS connectivity check |
 | `service_reachable` | ✅ | External service dependency check (semantic naming) |
 | `ssl_cert` | ✅ | TLS cert validity + expiry threshold |
+| `websocket` | ✅ | Connect/send/expect pattern for real-time apps |
 
 ### Database & Protocol
 
@@ -78,7 +79,7 @@ Universal smoke test runner for any project, any language.
 | `memcached_version` | ✅ | Memcached `version` returns VERSION |
 | `postgres_ping` | ✅ | Postgres SSLRequest handshake valid |
 | `mysql_ping` | ✅ | MySQL v10 handshake packet valid |
-| `grpc_health` | ✅ | grpc.health.v1 Health/Check returns SERVING |
+| `grpc_health` | ✅ | grpc.health.v1 Health/Check returns SERVING (build tag: `-tags grpc`) |
 
 ### Storage & Docker
 
@@ -88,11 +89,19 @@ Universal smoke test runner for any project, any language.
 | `docker_container_running` | ✅ | Named Docker container is running |
 | `docker_image_exists` | ✅ | Docker image exists locally |
 
-### Tool Verification
+### Observability & API
 
 | Type | Status | Description |
 |------|--------|-------------|
+| `otel_trace` | ✅ ⭐ | Trace verification with W3C traceparent (Jaeger/Tempo/Honeycomb/Datadog) |
+| `graphql` | ✅ | GraphQL introspection assertion |
 | `version_check` | ✅ | Shell command output matches regex |
+
+### Mobile
+
+| Type | Status | Description |
+|------|--------|-------------|
+| `deep_link` | ✅ ⭐ | Mobile deep link / universal link verification (Android/iOS) |
 
 ---
 
@@ -120,8 +129,37 @@ Universal smoke test runner for any project, any language.
 | **JUnit reporter** | ✅ | JUnit XML for GitHub Actions, Jenkins, GitLab CI (`--format junit`) |
 | **TAP reporter** | ✅ | Test Anything Protocol (`--format tap`) |
 | **Prometheus reporter** | ✅ | Prometheus metrics (`--format prometheus`) |
+| **Multi-reporter chaining** | ✅ ⭐ | Comma-separated: `--format terminal,json,prometheus` |
 | **Pluggable reporter interface** | ✅ | Clean interface for adding custom reporters |
 | **Exit codes** | ✅ | `0` = all pass, `1` = failures, `2` = config/arg error |
+| **Push reporter** | ✅ | Push JSON results to configurable endpoint (`--report-url`) |
+
+---
+
+## Observability
+
+| Feature | Status | Description |
+|---------|--------|-------------|
+| **OpenTelemetry trace correlation** | ✅ ⭐ | W3C traceparent propagation into HTTP, gRPC, WebSocket |
+| **OTLP telemetry export** | ✅ | Export smoke results as OTLP spans |
+| **Multi-backend trace verification** | ✅ | Jaeger, Tempo, Honeycomb, Datadog backends |
+| **Trace-aware retry** | ✅ | Skip retries when otel_trace confirms delivery |
+| **Watch mode trace health** | ✅ | Sliding window health monitoring across re-runs |
+
+---
+
+## Advanced Features
+
+| Feature | Status | Description |
+|---------|--------|-------------|
+| **Monorepo support** | ✅ | `--monorepo` auto-discovers `.smoke.yaml` in subdirectories |
+| **Performance baselines** | ✅ | `--baseline` stores and compares timing across runs |
+| **Config validation** | ✅ | `smoke validate` — standalone config validation without running |
+| **Schema export** | ✅ | `smoke schema` — export assertion types as JSON |
+| **Portfolio dashboard** | ✅ | `smoke serve` — SQLite storage, REST API, embedded HTML UI |
+| **MCP server** | ✅ ⭐ | `smoke mcp` — Claude Desktop integration (7 tools, stdio transport) |
+| **Goss migration** | ✅ | Import Goss test configs to cosmo-smoke format |
+| **Pre-commit hook** | ✅ | `.pre-commit-hooks.yaml` for zero-config integration |
 
 ---
 
@@ -134,28 +172,24 @@ Universal smoke test runner for any project, any language.
 | **Python detection** | ✅ | Detects `pyproject.toml` / `requirements.txt`, generates import check |
 | **Rust detection** | ✅ | Detects `Cargo.toml`, generates build + test checks |
 | **Docker detection** | ✅ | Detects `Dockerfile`, generates docker build check |
+| **React Native detection** | ✅ | Detects `app.json` + React Native markers |
+| **Flutter detection** | ✅ | Detects `pubspec.yaml` + Flutter markers |
+| **iOS detection** | ✅ | Detects `*.xcodeproj` / `*.xcworkspace` |
+| **Android detection** | ✅ | Detects `build.gradle` / `build.gradle.kts` |
 | **Force overwrite** | ✅ | `--force` flag regenerates config even if one already exists |
 | **From running container** | ✅ | `--from-running <container>` generates config from a running Docker container |
 
 ---
 
-## Integration
+## CI/CD Integration
 
 | Feature | Status | Description |
 |---------|--------|-------------|
-| **Pre-commit hook** | ✅ | `.pre-commit-hooks.yaml` for zero-config integration |
-| **CI/CD ready** | ✅ | JSON/JUnit output, exit codes, `--fail-fast` |
-
----
-
-## Planned
-
-| Feature | Description |
-|---------|-------------|
-| **Monorepo sub-config** | Auto-discover and run `.smoke.yaml` in subdirectories |
-| **WebSocket assertion** | Connect/send/expect pattern for real-time apps |
-| **Optional gRPC build tag** | Compile without gRPC deps for smaller binaries |
-| **Claude Desktop MCP** | Generate `.smoke.yaml` from Dockerfile/compose via MCP |
+| **GitHub Actions workflow** | ✅ | Reusable workflow at `.github/workflows/smoke.yml` |
+| **Pre-commit hook** | ✅ | `.pre-commit-hooks.yaml` for pre-commit framework |
+| **JUnit XML output** | ✅ | Native CI test result ingestion |
+| **JSON artifact output** | ✅ | Machine-readable results for pipelines |
+| **Exit code gates** | ✅ | `0`/`1`/`2` semantic exit codes |
 
 ---
 
@@ -168,6 +202,7 @@ These are intentional limitations, not gaps:
 - **Minimal dependencies** — Cobra + Lipgloss + yaml.v3 + gjson + gRPC; no Viper, no Bubbletea
 - **S3 is anonymous-only** — authenticated access uses the `http` assertion with Go template env vars
 - **version_check is Unix-only** — uses `sh -c` which doesn't exist on Windows
+- **gRPC is opt-in** — excluded from default build, use `-tags grpc` to include
 
 ---
 
@@ -175,15 +210,19 @@ These are intentional limitations, not gaps:
 
 ```
 cosmo-smoke/
-├── cmd/                # CLI commands (run, init, version)
+├── cmd/                # CLI commands (run, init, validate, schema, serve, mcp, version)
 ├── internal/
 │   ├── schema/         # SmokeConfig structs, YAML parsing, validation
-│   ├── runner/         # Assertion engine (24 types), prereq runner, test execution
-│   ├── reporter/       # Terminal (Lipgloss) + JSON + JUnit + TAP + Prometheus reporters
-│   └── detector/       # Project type detection + template generation
+│   ├── runner/         # Assertion engine (31 types), prereq runner, test execution
+│   ├── reporter/       # Terminal + JSON + JUnit + TAP + Prometheus reporters
+│   ├── dashboard/      # SQLite storage, REST API, embedded HTML frontend
+│   ├── monorepo/       # Sub-config discovery for monorepo projects
+│   ├── detector/       # Project type detection + template generation
+│   ├── baseline/       # Performance baseline storage and comparison
+│   └── mcp/            # MCP server, handlers, suggestion engine
 ├── .smoke.yaml         # Self-smoke tests for this repo
 ├── .pre-commit-hooks.yaml  # Pre-commit framework integration
-└── SPEC.md             # Full schema reference
+└── .github/workflows/  # CI + reusable smoke workflow
 ```
 
 ---
