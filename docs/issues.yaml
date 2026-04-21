@@ -1,6 +1,6 @@
 version: "1.0"
 project: cosmo-smoke
-last_updated: 2026-04-21T12:32:30.66857-03:00
+last_updated: 2026-04-21T12:58:34.659818-03:00
 next_bug_id: 2
 next_feat_id: 14
 next_task_id: 2
@@ -83,6 +83,6 @@ issues:
       created_at: 2026-04-20T23:29:57.504665-03:00
     - id: FEAT-013
       type: feature
-      status: done
+      status: closed
       title: Mobile deep link assertion
       created_at: 2026-04-21T01:18:13.69996-03:00
