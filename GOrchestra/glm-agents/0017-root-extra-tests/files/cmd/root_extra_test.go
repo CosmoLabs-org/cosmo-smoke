@@ -1,3 +1,4 @@
+//go:build ignore
 package cmd
 
 import (
