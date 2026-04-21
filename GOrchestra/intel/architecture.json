@@ -1,10 +1,10 @@
 {
   "version": "1.0",
-  "generated_at": "2026-04-21T12:09:13.634501-03:00",
+  "generated_at": "2026-04-21T12:32:52.840725-03:00",
   "generated_by": "GLM-4.7",
-  "expires_at": "2026-04-22T12:09:13.634501-03:00",
-  "last_analyzed_commit": "782131e230742dcadc6f1be25a501906ef66c2a9",
-  "summary": "A Go-based test runner and schema validation tool with MCP integration and Goss migration capabilities.",
+  "expires_at": "2026-04-22T12:32:52.840725-03:00",
+  "last_analyzed_commit": "c09c82d0397a8d69eb2855f3130072c844ad0a85",
+  "summary": "A Go-based monolithic tool featuring a test runner, MCP integration, and Goss migration capabilities, currently undergoing heavy automated test generation.",
   "architecture": "monolith",
   "primary_language": "Go",
   "hot_files": [
@@ -17,18 +17,17 @@
   "patterns": [
     "Test-Driven Development",
     "MCP (Model Context Protocol) Handler",
-    "Goss Migration/Translation",
-    "Assertion Engine"
+    "Schema Validation",
+    "Goss Migration/Translation"
   ],
   "concerns": [
-    "High volume of agent-generated extra tests (0005-0025) suggests unstable baseline coverage",
-    "Staged but uncommitted changes in a test-heavy workflow",
-    "Deep nesting of agent-generated test directories (GOrchestra/glm-agents/) pollutes repository structure"
+    "High volume of agent-generated extra test files indicates potential test fragmentation or flakiness",
+    "Untracked and unstaged files in git status suggest incomplete commits or workflow automation artifacts",
+    "Heavy reliance on isolated extra test directories may lead to test suite maintenance burden"
   ],
   "suggestions": [
-    "Consolidate agent-generated extra tests into the main test suites to reduce duplication",
-    "Clean up the GOrchestra directory artifacts if they are no longer needed for orchestration tracking",
-    "Commit or stash the staged changes to maintain a clean working state",
-    "Focus on the MCP handlers and runner core as they represent the primary business logic"
+    "Consolidate the numerous agent-generated extra test files into the standard test suites to reduce duplication",
+    "Clean up untracked files and establish a clear .gitignore policy for GOrchestra agent artifacts",
+    "Focus on the core runner and MCP handler logic as they represent the primary business value"
   ]
 }
