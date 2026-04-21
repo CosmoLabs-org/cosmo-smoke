@@ -575,6 +575,16 @@ func (r *Runner) runTestOnce(t schema.Test, opts RunOptions) TestResult {
 		}
 	}
 
+	if t.Expect.DeepLink != nil {
+		dlResults := CheckDeepLink(t.Expect.DeepLink, r.ConfigDir)
+		for _, a := range dlResults {
+			assertions = append(assertions, a)
+			if !a.Passed {
+				allPassed = false
+			}
+		}
+	}
+
 	duration := time.Since(start)
 
 	if t.Expect.ResponseTimeMs != nil {

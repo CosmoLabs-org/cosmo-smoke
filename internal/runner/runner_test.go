@@ -516,3 +516,25 @@ func TestRetry_TraceAware_NoOTelTrace_ExhaustsRetries(t *testing.T) {
 		t.Errorf("Attempts = %d, want 3 (no otel_trace assertion -> all retries exhausted)", tr.Attempts)
 	}
 }
+
+func TestRunner_DeepLink_CustomScheme(t *testing.T) {
+	dir := t.TempDir()
+	cfg := newConfig([]schema.Test{{
+		Name: "custom scheme check",
+		Expect: schema.Expect{DeepLink: &schema.DeepLinkCheck{
+			URL:  "myapp://test",
+			Tier: "config-only",
+		}},
+	}})
+	r := &Runner{Config: cfg, Reporter: &noopReporter{}, ConfigDir: dir}
+	result, err := r.Run(RunOptions{})
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+	if result.Total != 1 {
+		t.Errorf("total = %d, want 1", result.Total)
+	}
+	if result.Passed != 1 {
+		t.Errorf("passed = %d, want 1", result.Passed)
+	}
+}
