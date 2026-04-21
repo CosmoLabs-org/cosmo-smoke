@@ -585,6 +585,30 @@ func (r *Runner) runTestOnce(t schema.Test, opts RunOptions) TestResult {
 		}
 	}
 
+	if t.Expect.DNS != nil {
+		a := CheckDNS(t.Expect.DNS)
+		assertions = append(assertions, a)
+		if !a.Passed {
+			allPassed = false
+		}
+	}
+
+	if t.Expect.SMTP != nil {
+		a := CheckSMTP(t.Expect.SMTP)
+		assertions = append(assertions, a)
+		if !a.Passed {
+			allPassed = false
+		}
+	}
+
+	if t.Expect.DockerCompose != nil {
+		a := CheckDockerComposeHealthy(t.Expect.DockerCompose)
+		assertions = append(assertions, a)
+		if !a.Passed {
+			allPassed = false
+		}
+	}
+
 	duration := time.Since(start)
 
 	if t.Expect.ResponseTimeMs != nil {

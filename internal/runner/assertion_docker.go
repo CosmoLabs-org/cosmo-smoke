@@ -2,6 +2,8 @@ package runner
 
 import (
 	"context"
+	"encoding/json"
+	"fmt"
 	"os/exec"
 	"strings"
 	"time"
@@ -40,4 +42,88 @@ func CheckDockerImageExists(check *schema.DockerImageCheck) AssertionResult {
 		return AssertionResult{Type: "docker_image_exists", Expected: check.Image, Actual: "image not found or docker unavailable: " + err.Error(), Passed: false}
 	}
 	return AssertionResult{Type: "docker_image_exists", Expected: check.Image, Actual: "exists", Passed: true}
+}
+
+// composeService represents a service row from docker compose ps --format json.
+type composeService struct {
+	Name   string `json:"Name"`
+	State  string `json:"State"`
+	Health string `json:"Health"`
+}
+
+// CheckDockerComposeHealthy checks that Docker Compose services are running and healthy.
+func CheckDockerComposeHealthy(check *schema.DockerComposeCheck) AssertionResult {
+	timeout := check.Timeout.Duration
+	if timeout == 0 {
+		timeout = 30 * time.Second
+	}
+	ctx, cancel := context.WithTimeout(context.Background(), timeout)
+	defer cancel()
+
+	args := []string{"compose", "ps", "--format", "json"}
+	if check.ComposeFile != "" {
+		args = append([]string{"compose", "-f", check.ComposeFile, "ps", "--format", "json"})
+	}
+
+	out, err := exec.CommandContext(ctx, "docker", args...).Output()
+	if err != nil {
+		return AssertionResult{
+			Type:     "docker_compose_healthy",
+			Expected: "compose services running",
+			Actual:   fmt.Sprintf("docker compose ps failed: %v", err),
+			Passed:   false,
+		}
+	}
+
+	var services []composeService
+	if err := json.Unmarshal(out, &services); err != nil {
+		return AssertionResult{
+			Type:     "docker_compose_healthy",
+			Expected: "compose services running",
+			Actual:   fmt.Sprintf("parse failed: %v", err),
+			Passed:   false,
+		}
+	}
+
+	if len(services) == 0 {
+		return AssertionResult{
+			Type:     "docker_compose_healthy",
+			Expected: "compose services running",
+			Actual:   "no services found",
+			Passed:   false,
+		}
+	}
+
+	serviceFilter := make(map[string]bool)
+	for _, s := range check.Services {
+		serviceFilter[s] = true
+	}
+
+	var unhealthy []string
+	for _, svc := range services {
+		if len(serviceFilter) > 0 && !serviceFilter[svc.Name] {
+			continue
+		}
+		if svc.State != "running" {
+			unhealthy = append(unhealthy, fmt.Sprintf("%s: %s", svc.Name, svc.State))
+		} else if svc.Health != "" && svc.Health != "healthy" {
+			unhealthy = append(unhealthy, fmt.Sprintf("%s: %s", svc.Name, svc.Health))
+		}
+	}
+
+	if len(unhealthy) > 0 {
+		return AssertionResult{
+			Type:     "docker_compose_healthy",
+			Expected: "all services healthy",
+			Actual:   strings.Join(unhealthy, ", "),
+			Passed:   false,
+		}
+	}
+
+	return AssertionResult{
+		Type:     "docker_compose_healthy",
+		Expected: "all services healthy",
+		Actual:   fmt.Sprintf("%d services healthy", len(services)),
+		Passed:   true,
+	}
 }

@@ -176,5 +176,8 @@ func hasStandaloneAssertions(e Expect) bool {
 		e.WebSocket != nil ||
 		e.OTelTrace != nil ||
 		e.Credential != nil ||
-		e.GraphQL != nil
+		e.GraphQL != nil ||
+		e.DNS != nil ||
+		e.SMTP != nil ||
+		e.DockerCompose != nil
 }

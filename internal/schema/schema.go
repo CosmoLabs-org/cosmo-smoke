@@ -113,6 +113,9 @@ type Expect struct {
 	Credential       *CredentialCheck       `yaml:"credential_check,omitempty"`
 	GraphQL          *GraphQLCheck          `yaml:"graphql,omitempty"`
 	DeepLink         *DeepLinkCheck         `yaml:"deep_link,omitempty"`
+	DNS              *DNSCheck              `yaml:"dns_resolve,omitempty"`
+	SMTP             *SMTPCheck             `yaml:"smtp_ping,omitempty"`
+	DockerCompose    *DockerComposeCheck    `yaml:"docker_compose_healthy,omitempty"`
 }
 
 // PortCheck defines parameters for checking if a port is open and listening.
@@ -271,6 +274,28 @@ type DeepLinkCheck struct {
 	CheckAssetlinks      *bool    `yaml:"check_assetlinks,omitempty"`
 	CheckAASA            *bool    `yaml:"check_aasa,omitempty"`
 	Tier                 string   `yaml:"tier,omitempty"` // auto (default) | config-only | full-resolve
+}
+
+// DNSCheck verifies DNS resolution for a hostname.
+type DNSCheck struct {
+	Hostname    string   `yaml:"hostname"`
+	RecordType  string   `yaml:"record_type,omitempty"` // A (default), AAAA, TXT, MX, CNAME
+	ExpectedIP  string   `yaml:"expected_ip,omitempty"`
+	Timeout     Duration `yaml:"timeout,omitempty"`
+}
+
+// SMTPCheck verifies an SMTP server is accepting connections.
+type SMTPCheck struct {
+	Host    string   `yaml:"host"`
+	Port    int      `yaml:"port,omitempty"`
+	Timeout Duration `yaml:"timeout,omitempty"`
+}
+
+// DockerComposeCheck verifies Docker Compose services are healthy.
+type DockerComposeCheck struct {
+	ComposeFile string   `yaml:"compose_file,omitempty"`
+	Services    []string `yaml:"services,omitempty"`
+	Timeout     Duration `yaml:"timeout,omitempty"`
 }
 
 // Duration wraps time.Duration for YAML unmarshaling from strings like "5s".
