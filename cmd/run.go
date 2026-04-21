@@ -121,23 +121,20 @@ func init() {
 	runCmd.Flags().Float64Var(&baselineThresh, "baseline-threshold", 50, "Regression threshold %% (flag if current > baseline * (1+threshold/100))")
 }
 
-func runSmoke(cmd *cobra.Command, args []string) error {
+// loadConfig reads the config file, applies environment overrides and CLI flags.
+func loadConfig() (*schema.SmokeConfig, error) {
 	cfg, err := schema.Load(configFile)
 	if err != nil {
-		return fmt.Errorf("loading config: %w", err)
+		return nil, err
 	}
-
-	// Load environment-specific overrides
 	if envName != "" {
 		configDir := filepath.Dir(configFile)
 		envFile := filepath.Join(configDir, envName+".smoke.yaml")
 		cfg, err = schema.MergeEnv(cfg, envFile)
 		if err != nil {
-			return fmt.Errorf("loading env %q: %w", envName, err)
+			return nil, err
 		}
 	}
-
-	// Apply CLI otel flags
 	if noOtel {
 		cfg.OTel.Enabled = false
 	}
@@ -145,9 +142,16 @@ func runSmoke(cmd *cobra.Command, args []string) error {
 		cfg.OTel.JaegerURL = otelCollector
 		cfg.OTel.Enabled = true
 	}
-
 	if err := schema.Validate(cfg); err != nil {
-		return fmt.Errorf("invalid config: %w", err)
+		return nil, err
+	}
+	return cfg, nil
+}
+
+func runSmoke(cmd *cobra.Command, args []string) error {
+	cfg, err := loadConfig()
+	if err != nil {
+		return fmt.Errorf("loading config: %w", err)
 	}
 
 	configDir := filepath.Dir(configFile)
@@ -176,20 +180,36 @@ func runSmoke(cmd *cobra.Command, args []string) error {
 		}
 
 		if watch {
+			health := runner.NewTraceHealthTracker(10)
 			return runWatch(configDir, configFile, func() error {
+				refreshed, err := loadConfig()
+				if err != nil {
+					fmt.Fprintf(os.Stderr, "⚠ config reload: %v\n", err)
+					return nil
+				}
+				cfg = refreshed
+				subConfigs, err := monorepo.Discover(configDir, cfg.Settings.MonorepoExclude)
+				if err != nil {
+					fmt.Fprintf(os.Stderr, "⚠ monorepo discover: %v\n", err)
+					return nil
+				}
+				if len(subConfigs) == 0 {
+					fmt.Fprintln(os.Stderr, "⚠ no smoke configs found in monorepo")
+					return nil
+				}
 				rep, closeAll, err := buildReporter(format, cfg)
 				if err != nil {
 					return err
 				}
 				defer closeAll()
-				r := &runner.Runner{Config: cfg, Reporter: rep, ConfigDir: configDir}
+				r := &runner.Runner{Config: cfg, Reporter: rep, ConfigDir: configDir, TraceHealth: health}
 				_, err = r.RunMonorepo(runner.RunOptions{
 					Tags:        tags,
 					ExcludeTags: excludeTags,
 					FailFast:    failFast,
 					DryRun:      dryRun,
 					Timeout:     timeoutDur,
-				}, configs)
+				}, subConfigs)
 				if err != nil {
 					return err
 				}
@@ -213,7 +233,7 @@ func runSmoke(cmd *cobra.Command, args []string) error {
 		if err != nil {
 			return err
 		}
-			handleBaseline(result, configDir)
+		handleBaseline(result, configDir)
 		if result.Failed > 0 {
 			os.Exit(1)
 		}
@@ -230,13 +250,20 @@ func runSmoke(cmd *cobra.Command, args []string) error {
 	}
 
 	if watch {
+		health := runner.NewTraceHealthTracker(10)
 		runOnce := func() error {
+			refreshed, err := loadConfig()
+			if err != nil {
+				fmt.Fprintf(os.Stderr, "⚠ config reload: %v\n", err)
+				return nil
+			}
+			cfg = refreshed
 			rep, closeAll, err := buildReporter(format, cfg)
 			if err != nil {
 				return err
 			}
 			defer closeAll()
-			r := &runner.Runner{Config: cfg, Reporter: rep, ConfigDir: configDir}
+			r := &runner.Runner{Config: cfg, Reporter: rep, ConfigDir: configDir, TraceHealth: health}
 			_, err = r.Run(runner.RunOptions{
 				Tags:        tags,
 				ExcludeTags: excludeTags,

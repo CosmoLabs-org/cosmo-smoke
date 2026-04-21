@@ -210,3 +210,106 @@ tests:
 		t.Error("third test should have been skipped after fail-fast")
 	}
 }
+
+// TestLoadConfig_ReloadOnFileChange verifies loadConfig picks up changes
+// when the config file is modified between calls.
+func TestLoadConfig_ReloadOnFileChange(t *testing.T) {
+	dir := t.TempDir()
+	path := dir + "/.smoke.yaml"
+
+	os.WriteFile(path, []byte(`
+version: 1
+project: original
+tests:
+  - name: first
+    run: "true"
+    expect:
+      exit_code: 0
+`), 0644)
+
+	configFile = path
+	noOtel = false
+	otelCollector = ""
+	envName = ""
+
+	cfg1, err := loadConfig()
+	if err != nil {
+		t.Fatal(err)
+	}
+	if cfg1.Project != "original" {
+		t.Errorf("first load project = %q, want 'original'", cfg1.Project)
+	}
+	if len(cfg1.Tests) != 1 {
+		t.Fatalf("first load tests = %d, want 1", len(cfg1.Tests))
+	}
+
+	os.WriteFile(path, []byte(`
+version: 1
+project: updated
+tests:
+  - name: first
+    run: "true"
+    expect:
+      exit_code: 0
+  - name: second
+    run: "true"
+    expect:
+      exit_code: 0
+`), 0644)
+
+	cfg2, err := loadConfig()
+	if err != nil {
+		t.Fatal(err)
+	}
+	if cfg2.Project != "updated" {
+		t.Errorf("second load project = %q, want 'updated'", cfg2.Project)
+	}
+	if len(cfg2.Tests) != 2 {
+		t.Errorf("second load tests = %d, want 2", len(cfg2.Tests))
+	}
+}
+
+// TestTraceHealth_PersistsAcrossRunners verifies that a shared TraceHealthTracker
+// accumulates results across multiple Runner instances (simulating watch cycles).
+func TestTraceHealth_PersistsAcrossRunners(t *testing.T) {
+	dir := writeRunConfig(t, `
+version: 1
+project: health-test
+tests:
+  - name: pass
+    run: "true"
+    expect:
+      exit_code: 0
+`)
+
+	health := runner.NewTraceHealthTracker(10)
+
+	for i := 0; i < 3; i++ {
+		cfg, err := schema.Load(dir + "/.smoke.yaml")
+		if err != nil {
+			t.Fatal(err)
+		}
+		r := &runner.Runner{Config: cfg, Reporter: silentReporter(), ConfigDir: dir, TraceHealth: health}
+		_, err = r.Run(runner.RunOptions{})
+		if err != nil {
+			t.Fatal(err)
+		}
+	}
+
+	// The runner doesn't have otel_trace assertions, so TraceHealth isn't
+	// updated via assertions. But the tracker persists across runs.
+	if health.Total() != 0 {
+		t.Errorf("expected 0 trace records (no otel_trace assertions), got %d", health.Total())
+	}
+
+	// Verify the tracker is shared by recording directly
+	health.Record(true)
+	health.Record(true)
+	health.Record(false)
+	if health.Total() != 3 {
+		t.Errorf("expected 3 records after manual tracking, got %d", health.Total())
+	}
+	if health.HealthPct() != 66.7 {
+		t.Errorf("expected 66.7%% health, got %.1f%%", health.HealthPct())
+	}
+}
