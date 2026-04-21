@@ -21,7 +21,7 @@ go build -o smoke .
 # .pre-commit-config.yaml
 repos:
   - repo: https://github.com/CosmoLabs-org/cosmo-smoke
-    rev: v0.6.0
+    rev: v0.12.0
     hooks:
       - id: smoke
 ```
@@ -212,9 +212,82 @@ smoke version
 | `Cargo.toml` | Rust | build, test |
 | `Dockerfile` | Docker | docker build |
 
+## CI/CD Integration
+
+### GitHub Actions (Reusable Workflow)
+
+Reference the reusable workflow from any repo:
+
+```yaml
+jobs:
+  smoke:
+    uses: CosmoLabs-org/cosmo-smoke/.github/workflows/smoke.yml@v1
+    with:
+      smoke-version: "latest"       # or pin: "v0.12.0"
+      working-directory: "."         # dir containing .smoke.yaml
+      tags: "smoke"                  # optional tag filter
+      fail-fast: true
+```
+
+Results are uploaded as a `smoke-results` artifact (JSON) on every run, even on failure.
+
+### GitLab CI
+
+```yaml
+smoke:
+  stage: test
+  image: golang:1.23
+  before_script:
+    - go install github.com/CosmoLabs-org/cosmo-smoke@latest
+  script:
+    - smoke run --format junit > smoke-junit.xml
+    - smoke run --format json > smoke-results.json
+  artifacts:
+    when: always
+    reports:
+      junit: smoke-junit.xml
+    paths:
+      - smoke-results.json
+```
+
+### Docker-based CI (Any Platform)
+
+```dockerfile
+FROM golang:1.23 AS smoke
+RUN go install github.com/CosmoLabs-org/cosmo-smoke@latest
+WORKDIR /app
+COPY . .
+CMD ["smoke", "run", "--fail-fast"]
+```
+
+### Centralized Result Collection
+
+Push results to a dashboard endpoint:
+
+```bash
+smoke run --format json --report-url https://dashboard.example.com/api/results --report-api-key $API_KEY
+```
+
+### Exit Code Semantics
+
+| Code | Meaning | CI Behavior |
+|------|---------|-------------|
+| `0` | All tests passed | Pipeline continues |
+| `1` | One or more tests failed | Pipeline fails |
+| `2` | Config error or invalid arguments | Pipeline fails |
+
+### JUnit for CI Ingestion
+
+```bash
+smoke run --format junit  # writes smoke-junit.xml
+```
+
+Most CI platforms (GitHub Actions, GitLab CI, Jenkins, CircleCI) natively ingest JUnit XML for test result visualization.
+
 ## Output Formats
 
 `smoke run --format X` supports: `terminal` (default), `json`, `junit`, `tap`, `prometheus`.
+Comma-separated for multiple: `--format terminal,json`.
 
 ## Exit Codes
 
