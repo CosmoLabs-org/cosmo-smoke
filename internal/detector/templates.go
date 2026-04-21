@@ -31,6 +31,9 @@ func hasPkgScript(dir, script string) bool {
 	return ok
 }
 
+// boolPtr returns a pointer to a bool literal.
+func boolPtr(b bool) *bool { return &b }
+
 // GenerateConfig creates a SmokeConfig from detected project types.
 // projectName is derived from the directory name.
 func GenerateConfig(dir string, types []ProjectType) *schema.SmokeConfig {
@@ -156,6 +159,24 @@ func GenerateConfig(dir string, types []ProjectType) *schema.SmokeConfig {
 					},
 				},
 			)
+		case ReactNative:
+			cfg.Tests = append(cfg.Tests, schema.Test{
+				Name: "Deep link scheme configured",
+				Expect: schema.Expect{DeepLink: &schema.DeepLinkCheck{
+					URL:  filepath.Base(dir) + "://test",
+					Tier: "config-only",
+				}},
+			})
+		case Flutter, IOS, Android:
+			cfg.Tests = append(cfg.Tests, schema.Test{
+				Name: "Universal link config valid",
+				Expect: schema.Expect{DeepLink: &schema.DeepLinkCheck{
+					URL:              "https://" + filepath.Base(dir) + ".com",
+					CheckAssetlinks: boolPtr(true),
+					CheckAASA:       boolPtr(true),
+					Tier:            "auto",
+				}},
+			})
 		}
 	}
 
