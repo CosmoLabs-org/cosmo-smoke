@@ -419,3 +419,41 @@ tests:
 		t.Errorf("min_spans = %d, want 1", cfg.Tests[0].Expect.OTelTrace.MinSpans)
 	}
 }
+
+func TestDeepLinkAssertionParsing(t *testing.T) {
+	yaml := `
+version: 1
+tests:
+  - name: deep link test
+    run: "true"
+    expect:
+      deep_link:
+        url: "myapp://product/123"
+        android_package: "com.myapp"
+        ios_bundle_id: "com.myapp"
+        tier: auto
+`
+	cfg, err := Parse([]byte(yaml))
+	if err != nil {
+		t.Fatal(err)
+	}
+	if len(cfg.Tests) != 1 {
+		t.Fatalf("expected 1 test, got %d", len(cfg.Tests))
+	}
+	dl := cfg.Tests[0].Expect.DeepLink
+	if dl == nil {
+		t.Fatal("expected deep_link to be parsed")
+	}
+	if dl.URL != "myapp://product/123" {
+		t.Errorf("url = %q, want myapp://product/123", dl.URL)
+	}
+	if dl.AndroidPackage != "com.myapp" {
+		t.Errorf("android_package = %q, want com.myapp", dl.AndroidPackage)
+	}
+	if dl.IOSBundleID != "com.myapp" {
+		t.Errorf("ios_bundle_id = %q, want com.myapp", dl.IOSBundleID)
+	}
+	if dl.Tier != "auto" {
+		t.Errorf("tier = %q, want auto", dl.Tier)
+	}
+}

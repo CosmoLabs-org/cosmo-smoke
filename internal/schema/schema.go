@@ -112,6 +112,7 @@ type Expect struct {
 	OTelTrace        *OTelTraceCheck        `yaml:"otel_trace,omitempty"`
 	Credential       *CredentialCheck       `yaml:"credential_check,omitempty"`
 	GraphQL          *GraphQLCheck          `yaml:"graphql,omitempty"`
+	DeepLink         *DeepLinkCheck         `yaml:"deep_link,omitempty"`
 }
 
 // PortCheck defines parameters for checking if a port is open and listening.
@@ -258,6 +259,18 @@ type GraphQLCheck struct {
 	ExpectTypes    []string `yaml:"expect_types,omitempty"`     // types that must exist in schema
 	ExpectContains string   `yaml:"expect_contains,omitempty"`  // response body must contain substring
 	Timeout        Duration `yaml:"timeout,omitempty"`          // HTTP client timeout
+}
+
+// DeepLinkCheck verifies mobile deep link / universal link configuration.
+// Two-tier: Tier 1 uses HTTP/config checks (zero-dep); Tier 2 uses adb/xcrun when available.
+type DeepLinkCheck struct {
+	URL                  string   `yaml:"url"`
+	AndroidPackage       string   `yaml:"android_package,omitempty"`
+	IOSBundleID          string   `yaml:"ios_bundle_id,omitempty"`
+	IOSAssociatedDomains []string `yaml:"ios_associated_domains,omitempty"`
+	CheckAssetlinks      *bool    `yaml:"check_assetlinks,omitempty"`
+	CheckAASA            *bool    `yaml:"check_aasa,omitempty"`
+	Tier                 string   `yaml:"tier,omitempty"` // auto (default) | config-only | full-resolve
 }
 
 // Duration wraps time.Duration for YAML unmarshaling from strings like "5s".
