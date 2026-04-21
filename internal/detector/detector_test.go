@@ -298,3 +298,87 @@ func TestGenerateConfig_Empty(t *testing.T) {
 		t.Errorf("tests: want 0, got %d", len(cfg.Tests))
 	}
 }
+
+func TestDetect_ReactNative(t *testing.T) {
+	dir := t.TempDir()
+	os.WriteFile(filepath.Join(dir, "app.json"), []byte(`{"name":"MyApp"}`), 0644)
+	os.WriteFile(filepath.Join(dir, "package.json"), []byte(`{"dependencies":{"react-native":"^0.72"}}`), 0644)
+	types := Detect(dir)
+	found := false
+	for _, tp := range types {
+		if tp == ReactNative {
+			found = true
+		}
+	}
+	if !found {
+		t.Errorf("expected ReactNative type detected, got %v", types)
+	}
+}
+
+func TestDetect_Flutter(t *testing.T) {
+	dir := t.TempDir()
+	os.WriteFile(filepath.Join(dir, "pubspec.yaml"), []byte("name: myapp\ndependencies:\n  flutter:\n    sdk: flutter\n"), 0644)
+	types := Detect(dir)
+	found := false
+	for _, tp := range types {
+		if tp == Flutter {
+			found = true
+		}
+	}
+	if !found {
+		t.Errorf("expected Flutter type detected, got %v", types)
+	}
+}
+
+func TestDetect_IOS(t *testing.T) {
+	dir := t.TempDir()
+	os.Mkdir(filepath.Join(dir, "MyApp.xcodeproj"), 0755)
+	types := Detect(dir)
+	found := false
+	for _, tp := range types {
+		if tp == IOS {
+			found = true
+		}
+	}
+	if !found {
+		t.Errorf("expected IOS type detected, got %v", types)
+	}
+}
+
+func TestDetect_Android(t *testing.T) {
+	dir := t.TempDir()
+	os.WriteFile(filepath.Join(dir, "build.gradle"), []byte("apply plugin: 'com.android.application'\n"), 0644)
+	types := Detect(dir)
+	found := false
+	for _, tp := range types {
+		if tp == Android {
+			found = true
+		}
+	}
+	if !found {
+		t.Errorf("expected Android type detected, got %v", types)
+	}
+}
+
+func TestDetect_FlutterTakesPrecedenceOverAndroid(t *testing.T) {
+	dir := t.TempDir()
+	os.WriteFile(filepath.Join(dir, "pubspec.yaml"), []byte("name: myapp\ndependencies:\n  flutter:\n    sdk: flutter\n"), 0644)
+	os.WriteFile(filepath.Join(dir, "build.gradle"), []byte("apply plugin: 'com.android.application'\n"), 0644)
+	types := Detect(dir)
+	hasFlutter := false
+	hasAndroid := false
+	for _, tp := range types {
+		if tp == Flutter {
+			hasFlutter = true
+		}
+		if tp == Android {
+			hasAndroid = true
+		}
+	}
+	if !hasFlutter {
+		t.Error("expected Flutter detected")
+	}
+	if hasAndroid {
+		t.Error("Android should not be detected for Flutter project (Flutter takes precedence)")
+	}
+}
