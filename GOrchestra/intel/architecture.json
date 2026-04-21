@@ -1,10 +1,10 @@
 {
   "version": "1.0",
-  "generated_at": "2026-04-20T19:27:21.183851-03:00",
+  "generated_at": "2026-04-21T01:41:06.734666-03:00",
   "generated_by": "GLM-4.7",
-  "expires_at": "2026-04-21T19:27:21.183851-03:00",
-  "last_analyzed_commit": "70b5145b9987df639fc2e894815841e0f4e7ef9d",
-  "summary": "A Go-based test runner and schema validation tool with MCP integration and Goss migration capabilities.",
+  "expires_at": "2026-04-22T01:41:06.734666-03:00",
+  "last_analyzed_commit": "372d9906514ceda97fe0946675f6c91348585589",
+  "summary": "A Go-based CLI tool featuring a test runner, Goss migration translator, and MCP handlers, heavily extended by orchestrated agent-generated tests.",
   "architecture": "monolith",
   "primary_language": "Go",
   "hot_files": [
@@ -15,19 +15,22 @@
     "internal/runner/assertion_test.go"
   ],
   "patterns": [
-    "Test-Driven Development",
-    "MCP (Model Context Protocol) Handler",
-    "Goss Migration/Translation",
-    "Modular Internal Packaging"
+    "MCP (Model Context Protocol) handler pattern",
+    "Goss-to-custom schema migration/translation",
+    "Test-driven development with extensive extra tests",
+    "Command-line interface (CLI) pattern via cmd/",
+    "Agent-based orchestration (GOrchestra)"
   ],
   "concerns": [
-    "Build failure in tap.go due to undefined TestResult type",
-    "High volume of AI-generated test files (glm-agents) may introduce flaky or redundant tests",
-    "Deep nested directory structures for agent-generated tests add complexity"
+    "High volume of archived/orphaned GOrchestra agent test directories polluting the repository",
+    "Untracked files in git status indicating potential configuration drift",
+    "Heavy reliance on build ignore tags to manage archived code instead of proper removal",
+    "Potential test maintenance burden from numerous *_extra_test.go files"
   ],
   "suggestions": [
-    "Fix the undefined TestResul... compilation error in internal/reporter/tap",
-    "Consolidate or archive the numerous glm-agents test directories to reduce repository bloat",
-    "Verify the quality and necessity of the 782+ tests to ensure they provide actual value"
+    "Clean up archived GOrchestra agent directories to reduce repository clutter",
+    "Resolve the untracked file to maintain a clean working tree",
+    "Consolidate extra test files into standard test files where appropriate",
+    "Review watch mode config reload logic for edge cases after recent fixes"
   ]
 }
