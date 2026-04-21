@@ -1,36 +1,34 @@
 {
   "version": "1.0",
-  "generated_at": "2026-04-21T01:41:06.734666-03:00",
+  "generated_at": "2026-04-21T02:03:14.646263-03:00",
   "generated_by": "GLM-4.7",
-  "expires_at": "2026-04-22T01:41:06.734666-03:00",
-  "last_analyzed_commit": "372d9906514ceda97fe0946675f6c91348585589",
-  "summary": "A Go-based CLI tool featuring a test runner, Goss migration translator, and MCP handlers, heavily extended by orchestrated agent-generated tests.",
+  "expires_at": "2026-04-22T02:03:14.646263-03:00",
+  "last_analyzed_commit": "35bf4c491beccdae6b642fd37580faccf104e2c2",
+  "summary": "A Go-based test runner and schema validation framework with MCP integration and Goss migration capabilities.",
   "architecture": "monolith",
   "primary_language": "Go",
   "hot_files": [
     "internal/runner/runner.go",
     "internal/mcp/handlers.go",
     "internal/schema/schema_extra_test.go",
-    "internal/migrate/goss/translator.go",
-    "internal/runner/assertion_test.go"
+    "internal/runner/assertion_test.go",
+    "internal/migrate/goss/translator.go"
   ],
   "patterns": [
-    "MCP (Model Context Protocol) handler pattern",
-    "Goss-to-custom schema migration/translation",
-    "Test-driven development with extensive extra tests",
-    "Command-line interface (CLI) pattern via cmd/",
-    "Agent-based orchestration (GOrchestra)"
+    "Test-Driven Development (TDD)",
+    "MCP (Model Context Protocol) Handler",
+    "Goss Migration/Translation",
+    "Assertion Pipeline",
+    "Smoke Test Generation"
   ],
   "concerns": [
-    "High volume of archived/orphaned GOrchestra agent test directories polluting the repository",
-    "Untracked files in git status indicating potential configuration drift",
-    "Heavy reliance on build ignore tags to manage archived code instead of proper removal",
-    "Potential test maintenance burden from numerous *_extra_test.go files"
+    "High volume of agent-generated extra tests (0005-0025) suggests potential test flakiness or coverage gaps",
+    "Staged but uncommitted changes alongside active agent commits could cause merge conflicts",
+    "Deep coupling between runner execution and assertion types may hinder future extensibility"
   ],
   "suggestions": [
-    "Clean up archived GOrchestra agent directories to reduce repository clutter",
-    "Resolve the untracked file to maintain a clean working tree",
-    "Consolidate extra test files into standard test files where appropriate",
-    "Review watch mode config reload logic for edge cases after recent fixes"
+    "Consolidate or prune redundant agent-generated extra tests to reduce maintenance burden",
+    "Commit or stash the staged changes to align with the active GOrchestra workflow",
+    "Review the deep_link assertion integration for edge cases in mobile project detection"
   ]
 }
