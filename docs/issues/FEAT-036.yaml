@@ -1,0 +1,22 @@
+id: FEAT-036
+type: feature
+created_at: 2026-04-22T03:20:12.435512-03:00
+updated_at: 2026-04-22T03:20:12.437132-03:00
+source: local
+priority: 70
+status: open
+origin:
+    session: 2027
+title: v1.0 Release Readiness
+description: |-
+    Project maturity indicators suggest v1.0 readiness. Pre-release checklist:
+
+    1. README Polish - badges, update pre-commit ref from v0.12.0 to v0.14.0, fix duplicate Exit Codes section
+    2. API Stability Review - audit all 39 assertion YAML schemas for breaking-change risk
+    3. Semver Guarantee - document stability guarantees, deprecation policy
+    4. Distribution - consider Homebrew tap, GitHub binary releases, published Docker image
+
+    Current: 39 assertion types, 912+ tests, 31 project types, 76/76 roadmap, 5 output formats.
+affected_files:
+    - README.md
+    - CLAUDE.md
