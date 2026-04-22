@@ -94,6 +94,24 @@ Questions for the user:
 - Any breaking changes needed before v1.0?
 - Should README get polish (badges, installation quickstart) first?
 
+## Outstanding Items
+
+Completed this session:
+- Command docs update (run.md, serve.md, init.md) -- DONE
+- .gitignore sync -- DONE (was already current)
+
+Still outstanding:
+- **234 unpushed commits** accumulated on master
+- **FEAT-036** (v1.0 Release Readiness) -- open issue, needs brainstorm/planning
+- **5 pending prompts** in `docs/prompts/`: ldap-auth, seven-assertions, universal-detector, session-handoff, post-chaining
+- **8 commands still missing** from CLAUDE.md/README per doc-audit
+
+## Potential Next Steps
+
+- Run `/run-continuation` on `ldap-auth-and-v1-planning-handoff` for v1.0 planning and LDAP authenticated bind
+- Address **FEAT-036** with brainstorm/planning session for v1.0 release readiness
+- Push accumulated commits (`git push origin master --tags`)
+
 ## Technical Context
 
 - **910 tests** passing on master, 11 packages
