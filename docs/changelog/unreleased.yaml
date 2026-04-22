@@ -4,31 +4,7 @@
 
 version: pending
 entries:
-    added:
-        - description: |-
-            # FEAT-013: Mobile deep link assertion
-
-            **Type**: feature
-            **Status**: closed
-            **Created**: 2026-04-21
-
-            ## Description
-
-            Two-tier progressive deep link assertion for Android, iOS, React Native, Flutter. Tier 1: zero-dep HTTP/config checks. Tier 2: adb/xcrun resolution when available. Design: docs/brainstorming/2026-04-21-mobile-deep-link-assertion.md
-          source: manual
-          date: 2026-04-21T12:58:35.502849-03:00
-        - description: Add 22 project types for universal auto-detection (Java, .NET, Ruby, PHP, Deno, Terraform, Helm, Kustomize, Serverless, Zig, Elixir, Scala, Swift, Dart, Hugo, Astro, Jekyll, Make, CMake, Haskell, Lua)
-          source: manual
-          date: 2026-04-21T19:35:48.040547-03:00
-        - description: Add DNS resolution assertion (dns_resolve) supporting A, AAAA, TXT, MX, CNAME records
-          source: manual
-          date: 2026-04-21T19:35:48.196703-03:00
-        - description: Add SMTP ping assertion (smtp_ping) with EHLO handshake verification
-          source: manual
-          date: 2026-04-21T19:35:48.412218-03:00
-        - description: Add Docker Compose health assertion (docker_compose_healthy) for service status checks
-          source: manual
-          date: 2026-04-21T19:35:48.470734-03:00
+    added: []
     fixed: []
     changed: []
     deprecated: []

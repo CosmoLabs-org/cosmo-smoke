@@ -6,7 +6,7 @@ Universal smoke test runner. Standalone Go binary that reads `.smoke.yaml` and r
 
 **Repository**: `github.com/CosmoLabs-org/cosmo-smoke`
 **Company**: CosmoLabs
-**Version**: 0.11.0
+**Version**: 0.13.0
 
 ## Architecture
 
