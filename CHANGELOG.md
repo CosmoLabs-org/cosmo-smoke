@@ -7,6 +7,23 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [v0.13.0] - 2026-04-21
+
+### Added
+- # FEAT-013: Mobile deep link assertion
+
+**Type**: feature
+**Status**: closed
+**Created**: 2026-04-21
+
+## Description
+
+Two-tier progressive deep link assertion for Android, iOS, React Native, Flutter. Tier 1: zero-dep HTTP/config checks. Tier 2: adb/xcrun resolution when available. Design: docs/brainstorming/2026-04-21-mobile-deep-link-assertion.md
+- Add 22 project types for universal auto-detection (Java, .NET, Ruby, PHP, Deno, Terraform, Helm, Kustomize, Serverless, Zig, Elixir, Scala, Swift, Dart, Hugo, Astro, Jekyll, Make, CMake, Haskell, Lua)
+- Add DNS resolution assertion (dns_resolve) supporting A, AAAA, TXT, MX, CNAME records
+- Add SMTP ping assertion (smtp_ping) with EHLO handshake verification
+- Add Docker Compose health assertion (docker_compose_healthy) for service status checks
+
 ## [0.12.0] - 2026-04-21
 
 ### Added
