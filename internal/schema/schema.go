@@ -116,6 +116,13 @@ type Expect struct {
 	DNS              *DNSCheck              `yaml:"dns_resolve,omitempty"`
 	SMTP             *SMTPCheck             `yaml:"smtp_ping,omitempty"`
 	DockerCompose    *DockerComposeCheck    `yaml:"docker_compose_healthy,omitempty"`
+	Ping             *PingCheck             `yaml:"ping,omitempty"`
+	Mongo            *MongoCheck            `yaml:"mongo_ping,omitempty"`
+	Kafka            *KafkaCheck            `yaml:"kafka_broker,omitempty"`
+	LDAP             *LDAPCheck             `yaml:"ldap_bind,omitempty"`
+	MQTT             *MQTTCheck             `yaml:"mqtt_ping,omitempty"`
+	NTP              *NTPCheck              `yaml:"ntp_check,omitempty"`
+	K8sResource      *K8sResourceCheck      `yaml:"k8s_resource,omitempty"`
 }
 
 // PortCheck defines parameters for checking if a port is open and listening.
@@ -296,6 +303,64 @@ type DockerComposeCheck struct {
 	ComposeFile string   `yaml:"compose_file,omitempty"`
 	Services    []string `yaml:"services,omitempty"`
 	Timeout     Duration `yaml:"timeout,omitempty"`
+}
+
+// PingCheck verifies a host responds to ICMP echo requests.
+type PingCheck struct {
+	Host    string   `yaml:"host"`
+	Count   int      `yaml:"count,omitempty"`
+	Timeout Duration `yaml:"timeout,omitempty"`
+}
+
+// MongoCheck verifies a MongoDB server responds to the isMaster command.
+type MongoCheck struct {
+	Host        string `yaml:"host,omitempty"`
+	Port        int    `yaml:"port,omitempty"`
+	Username    string `yaml:"username,omitempty"`
+	PasswordEnv string `yaml:"password_env,omitempty"`
+}
+
+// KafkaCheck verifies a Kafka broker responds to a metadata request.
+type KafkaCheck struct {
+	Brokers []string `yaml:"brokers"`
+	Topic   string   `yaml:"topic,omitempty"`
+	Timeout Duration `yaml:"timeout,omitempty"`
+}
+
+// LDAPCheck verifies an LDAP server accepts bind requests.
+type LDAPCheck struct {
+	Host        string   `yaml:"host"`
+	Port        int      `yaml:"port,omitempty"`
+	BindDN      string   `yaml:"bind_dn,omitempty"`
+	PasswordEnv string   `yaml:"password_env,omitempty"`
+	UseTLS      bool     `yaml:"use_tls,omitempty"`
+	Timeout     Duration `yaml:"timeout,omitempty"`
+}
+
+// MQTTCheck verifies an MQTT broker accepts connections.
+type MQTTCheck struct {
+	Broker      string   `yaml:"broker"`
+	ClientID    string   `yaml:"client_id,omitempty"`
+	Username    string   `yaml:"username,omitempty"`
+	PasswordEnv string   `yaml:"password_env,omitempty"`
+	Timeout     Duration `yaml:"timeout,omitempty"`
+}
+
+// NTPCheck verifies an NTP server responds with valid time data.
+type NTPCheck struct {
+	Server       string   `yaml:"server,omitempty"`
+	MaxOffsetMs  int      `yaml:"max_offset_ms,omitempty"`
+	Timeout      Duration `yaml:"timeout,omitempty"`
+}
+
+// K8sResourceCheck verifies a Kubernetes resource exists and optionally meets a condition.
+type K8sResourceCheck struct {
+	Context   string   `yaml:"context,omitempty"`
+	Namespace string   `yaml:"namespace"`
+	Kind      string   `yaml:"kind"`
+	Name      string   `yaml:"name"`
+	Condition string   `yaml:"condition,omitempty"`
+	Timeout   Duration `yaml:"timeout,omitempty"`
 }
 
 // Duration wraps time.Duration for YAML unmarshaling from strings like "5s".

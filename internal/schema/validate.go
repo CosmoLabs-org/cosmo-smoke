@@ -140,8 +140,39 @@ func Validate(cfg *SmokeConfig) error {
 				errs = append(errs, fmt.Sprintf("%s: otel_trace.min_spans must be >= 0", prefix))
 			}
 		}
-	}
 
+		if e := t.Expect.Ping; e != nil {
+			if e.Host == "" {
+				errs = append(errs, fmt.Sprintf("%s: ping.host is required", prefix))
+			}
+		}
+		if e := t.Expect.Kafka; e != nil {
+			if len(e.Brokers) == 0 {
+				errs = append(errs, fmt.Sprintf("%s: kafka_broker.brokers is required", prefix))
+			}
+		}
+		if e := t.Expect.LDAP; e != nil {
+			if e.Host == "" {
+				errs = append(errs, fmt.Sprintf("%s: ldap_bind.host is required", prefix))
+			}
+		}
+		if e := t.Expect.MQTT; e != nil {
+			if e.Broker == "" {
+				errs = append(errs, fmt.Sprintf("%s: mqtt_ping.broker is required", prefix))
+			}
+		}
+		if e := t.Expect.K8sResource; e != nil {
+			if e.Namespace == "" {
+				errs = append(errs, fmt.Sprintf("%s: k8s_resource.namespace is required", prefix))
+			}
+			if e.Kind == "" {
+				errs = append(errs, fmt.Sprintf("%s: k8s_resource.kind is required", prefix))
+			}
+			if e.Name == "" {
+				errs = append(errs, fmt.Sprintf("%s: k8s_resource.name is required", prefix))
+			}
+		}
+	}
 	if cfg.OTel.Enabled && cfg.OTel.JaegerURL == "" {
 		errs = append(errs, "otel.jaeger_url is required when otel is enabled")
 	}
@@ -179,5 +210,12 @@ func hasStandaloneAssertions(e Expect) bool {
 		e.GraphQL != nil ||
 		e.DNS != nil ||
 		e.SMTP != nil ||
-		e.DockerCompose != nil
+		e.DockerCompose != nil ||
+		e.Ping != nil ||
+		e.Mongo != nil ||
+		e.Kafka != nil ||
+		e.LDAP != nil ||
+		e.MQTT != nil ||
+		e.NTP != nil ||
+		e.K8sResource != nil
 }

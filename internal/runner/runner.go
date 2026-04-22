@@ -609,6 +609,62 @@ func (r *Runner) runTestOnce(t schema.Test, opts RunOptions) TestResult {
 		}
 	}
 
+	if t.Expect.Ping != nil {
+		a := CheckPing(t.Expect.Ping)
+		assertions = append(assertions, a)
+		if !a.Passed {
+			allPassed = false
+		}
+	}
+
+	if t.Expect.Mongo != nil {
+		a := CheckMongoPing(t.Expect.Mongo)
+		assertions = append(assertions, a)
+		if !a.Passed {
+			allPassed = false
+		}
+	}
+
+	if t.Expect.Kafka != nil {
+		a := CheckKafkaBroker(t.Expect.Kafka)
+		assertions = append(assertions, a)
+		if !a.Passed {
+			allPassed = false
+		}
+	}
+
+	if t.Expect.LDAP != nil {
+		a := CheckLDAPBind(t.Expect.LDAP)
+		assertions = append(assertions, a)
+		if !a.Passed {
+			allPassed = false
+		}
+	}
+
+	if t.Expect.MQTT != nil {
+		a := CheckMQTTPing(t.Expect.MQTT)
+		assertions = append(assertions, a)
+		if !a.Passed {
+			allPassed = false
+		}
+	}
+
+	if t.Expect.NTP != nil {
+		a := CheckNTP(t.Expect.NTP)
+		assertions = append(assertions, a)
+		if !a.Passed {
+			allPassed = false
+		}
+	}
+
+	if t.Expect.K8sResource != nil {
+		a := CheckK8sResource(t.Expect.K8sResource)
+		assertions = append(assertions, a)
+		if !a.Passed {
+			allPassed = false
+		}
+	}
+
 	duration := time.Since(start)
 
 	if t.Expect.ResponseTimeMs != nil {
