@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"os"
 	"path/filepath"
+	"slices"
 	"strings"
 )
 
@@ -58,12 +59,7 @@ func hasGlob(dir, pattern string) bool {
 
 // hasType checks if a specific type is already in the list.
 func hasType(types []ProjectType, want ProjectType) bool {
-	for _, t := range types {
-		if t == want {
-			return true
-		}
-	}
-	return false
+	return slices.Contains(types, want)
 }
 
 // hasDepInPackageJSON checks if package.json has a specific dependency.
