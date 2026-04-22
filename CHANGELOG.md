@@ -7,6 +7,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.14.0] - 2026-04-22
+
+### Added
+- ICMP, MongoDB, Kafka, LDAP, MQTT, NTP, and K8s assertion types (39 total)
+- add ICMP, MongoDB, Kafka, LDAP, MQTT, NTP, and K8s checks (commit:bba9d052)
+- add DNS, SMTP, and Docker Compose health checks (commit:be61e35b)
+- add 22 project types for universal auto-detection (commit:d4e67c9c)
+
+### Changed
+- Replaced 29 manual loops with slices.Contains in detector tests
+- replace manual loops with slices.Contains (commit:4f4f94b0)
+
 ## [v0.13.0] - 2026-04-21
 
 ### Added
