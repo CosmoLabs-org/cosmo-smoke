@@ -306,6 +306,80 @@ func TestCheckLDAPBind_DefaultPortTLS(t *testing.T) {
 	}
 }
 
+func TestCheckLDAPBind_AuthenticatedBind(t *testing.T) {
+	ln, err := net.Listen("tcp", "127.0.0.1:0")
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer ln.Close()
+
+	go func() {
+		conn, err := ln.Accept()
+		if err != nil {
+			return
+		}
+		defer conn.Close()
+
+		buf := make([]byte, 4096)
+		conn.SetReadDeadline(time.Now().Add(2 * time.Second))
+		n, _ := conn.Read(buf)
+		if n < 8 {
+			return
+		}
+
+		// Verify the bind request contains non-empty auth (password sent)
+		// Find 0x80 tag in the request — the simple auth choice
+		hasPassword := false
+		for i := 0; i < n-1; i++ {
+			if buf[i] == 0x80 && buf[i+1] > 0 {
+				hasPassword = true
+				break
+			}
+		}
+		if !hasPassword {
+			return // don't respond — test will fail on timeout
+		}
+
+		msgID := buf[4+1+1]
+		innerSeq := []byte{0x0a, 0x01, 0x00, 0x04, 0x00, 0x04, 0x00}
+		bindResp := append([]byte{0x61, byte(len(innerSeq))}, innerSeq...)
+		msgBody := append([]byte{0x02, 0x01, msgID}, bindResp...)
+		resp := append([]byte{0x30, byte(len(msgBody))}, msgBody...)
+
+		conn.Write(resp)
+	}()
+
+	addr := ln.Addr().String()
+	host := "127.0.0.1"
+	port := addr[len(host)+1:]
+
+	t.Setenv("LDAP_TEST_PASS", "s3cret")
+	result := CheckLDAPBind(&schema.LDAPCheck{
+		Host:        host,
+		Port:        mustParsePort(t, port),
+		BindDN:      "cn=admin,dc=example,dc=com",
+		PasswordEnv: "LDAP_TEST_PASS",
+	})
+	if !result.Passed {
+		t.Errorf("expected authenticated LDAP bind to pass, got: %s", result.Actual)
+	}
+}
+
+func TestCheckLDAPBind_PasswordEnvNotSet(t *testing.T) {
+	// PasswordEnv specified but env var doesn't exist → explicit failure, not silent fallback
+	result := CheckLDAPBind(&schema.LDAPCheck{
+		Host:        "nonexistent",
+		BindDN:      "cn=admin,dc=example,dc=com",
+		PasswordEnv: "LDAP_NONEXISTENT_VAR_" + t.Name(),
+	})
+	if result.Passed {
+		t.Error("expected failure when password_env references unset variable")
+	}
+	if result.Actual != `password_env "LDAP_NONEXISTENT_VAR_TestCheckLDAPBind_PasswordEnvNotSet" not set` {
+		t.Errorf("unexpected actual: %s", result.Actual)
+	}
+}
+
 // --- MQTT wire protocol tests ---
 
 func TestCheckMQTTPing_Success(t *testing.T) {

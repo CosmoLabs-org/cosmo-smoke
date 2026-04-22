@@ -3,6 +3,7 @@ package runner
 import (
 	"fmt"
 	"net"
+	"os"
 	"time"
 
 	"github.com/CosmoLabs-org/cosmo-smoke/internal/schema"
@@ -25,6 +26,16 @@ func CheckLDAPBind(check *schema.LDAPCheck) AssertionResult {
 		timeout = 5 * time.Second
 	}
 
+	// Validate password_env early — fail before connecting.
+	var password []byte
+	if check.PasswordEnv != "" {
+		envVal, ok := os.LookupEnv(check.PasswordEnv)
+		if !ok {
+			return AssertionResult{Type: "ldap_bind", Expected: addr, Actual: fmt.Sprintf("password_env %q not set", check.PasswordEnv), Passed: false}
+		}
+		password = []byte(envVal)
+	}
+
 	proto := "tcp"
 	conn, err := net.DialTimeout(proto, addr, timeout)
 	if err != nil {
@@ -33,14 +44,30 @@ func CheckLDAPBind(check *schema.LDAPCheck) AssertionResult {
 	defer conn.Close()
 	conn.SetDeadline(time.Now().Add(timeout))
 
-	// LDAP BindRequest (ASN.1 BER encoded)
-	// Currently supports anonymous bind only. PasswordEnv is accepted in schema
-	// for forward compatibility but not yet wired into the BER payload.
-
 	bindDN := check.BindDN
 
-	// Authentication: simple [0] empty (anonymous)
-	authChoice := []byte{0x80, 0x00} // context-0 (simple), length 0
+	// Authentication: simple [0] (context tag 0x80) + password bytes
+	authLen := len(password)
+	var authChoice []byte
+	if authLen <= 127 {
+		authChoice = make([]byte, 2+authLen)
+		authChoice[0] = 0x80
+		authChoice[1] = byte(authLen)
+		copy(authChoice[2:], password)
+	} else if authLen <= 255 {
+		authChoice = make([]byte, 3+authLen)
+		authChoice[0] = 0x80
+		authChoice[1] = 0x81
+		authChoice[2] = byte(authLen)
+		copy(authChoice[3:], password)
+	} else {
+		authChoice = make([]byte, 4+authLen)
+		authChoice[0] = 0x80
+		authChoice[1] = 0x82
+		authChoice[2] = byte(authLen >> 8)
+		authChoice[3] = byte(authLen)
+		copy(authChoice[4:], password)
+	}
 
 	// BindRequest name
 	nameBytes := []byte(bindDN)
