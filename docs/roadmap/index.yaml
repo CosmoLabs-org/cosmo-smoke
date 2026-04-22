@@ -1,8 +1,43 @@
 version: "1.0"
 project: cosmo-smoke
-last_updated: 2026-04-21T18:54:56.508214-03:00
-next_id: 70
+last_updated: 2026-04-22T01:26:38.440099-03:00
+next_id: 77
 items:
+    - id: ROAD-076
+      title: Kubernetes resource assertion
+      status: completed
+      completed_in: v0.13.0
+      created_at: 2026-04-22T01:26:27.614581-03:00
+    - id: ROAD-075
+      title: NTP sync assertion
+      status: completed
+      completed_in: v0.13.0
+      created_at: 2026-04-22T01:26:27.220918-03:00
+    - id: ROAD-074
+      title: MQTT ping assertion
+      status: completed
+      completed_in: v0.13.0
+      created_at: 2026-04-22T01:26:26.808647-03:00
+    - id: ROAD-073
+      title: LDAP bind assertion
+      status: completed
+      completed_in: v0.13.0
+      created_at: 2026-04-22T01:26:26.388662-03:00
+    - id: ROAD-072
+      title: Kafka broker assertion
+      status: completed
+      completed_in: v0.13.0
+      created_at: 2026-04-22T01:26:26.056088-03:00
+    - id: ROAD-071
+      title: MongoDB ping assertion
+      status: completed
+      completed_in: v0.13.0
+      created_at: 2026-04-22T01:26:25.653364-03:00
+    - id: ROAD-070
+      title: ICMP ping assertion
+      status: completed
+      completed_in: v0.13.0
+      created_at: 2026-04-22T01:26:10.859564-03:00
     - id: ROAD-069
       title: Docker compose health assertion
       status: completed

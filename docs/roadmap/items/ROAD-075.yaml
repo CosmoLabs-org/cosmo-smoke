@@ -1,0 +1,10 @@
+id: ROAD-075
+created_at: 2026-04-22T01:26:27.220918-03:00
+updated_at: 2026-04-22T01:26:38.353792-03:00
+title: NTP sync assertion
+description: 'ntp_check: {server?, max_offset_ms?, timeout?} — NTP time sync verification (UDP)'
+status: completed
+completed_in: v0.13.0
+completed_at: 2026-04-22T01:26:38.353783-03:00
+origin:
+    session: 2027

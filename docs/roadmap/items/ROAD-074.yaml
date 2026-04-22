@@ -1,0 +1,10 @@
+id: ROAD-074
+created_at: 2026-04-22T01:26:26.808647-03:00
+updated_at: 2026-04-22T01:26:38.29952-03:00
+title: MQTT ping assertion
+description: 'mqtt_ping: {broker, client_id?, username?, password_env?, timeout?} — MQTT CONNECT/CONNACK wire protocol'
+status: completed
+completed_in: v0.13.0
+completed_at: 2026-04-22T01:26:38.299509-03:00
+origin:
+    session: 2027

@@ -1,0 +1,10 @@
+id: ROAD-076
+created_at: 2026-04-22T01:26:27.614581-03:00
+updated_at: 2026-04-22T01:26:38.439505-03:00
+title: Kubernetes resource assertion
+description: 'k8s_resource: {context?, namespace, kind, name, condition?, timeout?} — K8s resource state via kubectl'
+status: completed
+completed_in: v0.13.0
+completed_at: 2026-04-22T01:26:38.439497-03:00
+origin:
+    session: 2027

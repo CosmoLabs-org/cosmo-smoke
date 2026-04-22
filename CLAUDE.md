@@ -21,7 +21,7 @@ cmd/
 internal/
 ├── schema/          # SmokeConfig structs, YAML parsing, validation
 ├── baseline/        # Performance baseline storage and comparison
-├── runner/          # Assertion engine (29 types), prereq runner, test execution
+├── runner/          # Assertion engine (39 types), prereq runner, test execution
 ├── reporter/        # Terminal (Lipgloss) + JSON + Push reporters
 ├── monorepo/        # Sub-config discovery for monorepo projects
 ├── dashboard/       # Portfolio dashboard (SQLite storage, API handlers, embedded UI)
@@ -46,7 +46,7 @@ internal/
 
 ```bash
 go build ./...                    # Build
-go test ./...                     # Run all tests (782 total)
+go test ./...                     # Run all tests (877 total)
 smoke run                         # Self-smoke (6 tests)
 go build -ldflags "-s -w -X github.com/CosmoLabs-org/cosmo-smoke/cmd.Version=X.Y.Z" -o smoke .
 ```
@@ -98,6 +98,13 @@ smoke version
 | dns_resolve | `{hostname, record_type?, expected_ip?, timeout?}` | DNS resolution check (A, AAAA, TXT, MX, CNAME) |
 | smtp_ping | `{host, port?, timeout?}` | SMTP server connectivity + EHLO handshake |
 | docker_compose_healthy | `{compose_file?, services?, timeout?}` | Docker Compose service health check |
+| ping | `{host, count?, timeout?}` | ICMP echo via system ping command |
+| mongo_ping | `{host?, port?, username?, password_env?}` | MongoDB isMaster wire protocol check |
+| kafka_broker | `{brokers, topic?, timeout?}` | Kafka metadata request wire protocol check |
+| ldap_bind | `{host, port?, bind_dn?, password_env?, use_tls?, timeout?}` | LDAP bind request (ASN.1 BER) |
+| mqtt_ping | `{broker, client_id?, username?, password_env?, timeout?}` | MQTT CONNECT/CONNACK wire protocol check |
+| ntp_check | `{server?, max_offset_ms?, timeout?}` | NTP time sync verification (UDP) |
+| k8s_resource | `{context?, namespace, kind, name, condition?, timeout?}` | Kubernetes resource state via kubectl |
 
 Plus `allow_failure: true` on Test for flaky/allowed-failure tests.
 

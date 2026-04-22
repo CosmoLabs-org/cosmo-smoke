@@ -1,0 +1,10 @@
+id: ROAD-071
+created_at: 2026-04-22T01:26:25.653364-03:00
+updated_at: 2026-04-22T01:26:38.114163-03:00
+title: MongoDB ping assertion
+description: 'mongo_ping: {host?, port?, username?, password_env?} — MongoDB isMaster wire protocol check'
+status: completed
+completed_in: v0.13.0
+completed_at: 2026-04-22T01:26:38.114158-03:00
+origin:
+    session: 2027

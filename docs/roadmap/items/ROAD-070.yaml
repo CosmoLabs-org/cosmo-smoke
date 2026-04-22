@@ -1,0 +1,10 @@
+id: ROAD-070
+created_at: 2026-04-22T01:26:10.859564-03:00
+updated_at: 2026-04-22T01:26:38.042878-03:00
+title: ICMP ping assertion
+description: 'ping: {host, count?, timeout?} — ICMP echo via system ping command'
+status: completed
+completed_in: v0.13.0
+completed_at: 2026-04-22T01:26:38.042871-03:00
+origin:
+    session: 2027

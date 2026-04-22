@@ -155,6 +155,11 @@ All assertions are optional and combinable within a single `expect` block.
 | Memcached | `memcached_version: {host?, port?}` | Memcached `version` returns VERSION |
 | PostgreSQL | `postgres_ping: {host?, port?}` | Postgres SSLRequest handshake valid |
 | MySQL | `mysql_ping: {host?, port?}` | MySQL v10 handshake packet valid |
+| MongoDB | `mongo_ping: {host?, port?, username?, password_env?}` | MongoDB isMaster wire protocol check |
+| Kafka | `kafka_broker: {brokers, topic?, timeout?}` | Kafka metadata request wire protocol |
+| LDAP | `ldap_bind: {host, port?, bind_dn?, password_env?, use_tls?, timeout?}` | LDAP bind request (ASN.1 BER) |
+| MQTT | `mqtt_ping: {broker, client_id?, username?, password_env?, timeout?}` | MQTT CONNECT/CONNACK wire protocol |
+| NTP | `ntp_check: {server?, max_offset_ms?, timeout?}` | NTP time sync verification (UDP) |
 
 ### Storage & Docker
 
@@ -163,6 +168,9 @@ All assertions are optional and combinable within a single `expect` block.
 | S3 bucket | `s3_bucket: {bucket, region?, endpoint?}` | S3-compatible bucket accessibility (anonymous HEAD) |
 | Docker container | `docker_container_running: {name}` | Named Docker container is running |
 | Docker image | `docker_image_exists: {image}` | Docker image exists locally |
+| Docker Compose | `docker_compose_healthy: {compose_file?, services?, timeout?}` | Docker Compose service health |
+| ICMP ping | `ping: {host, count?, timeout?}` | ICMP echo via system ping command |
+| Kubernetes | `k8s_resource: {context?, namespace, kind, name, condition?, timeout?}` | K8s resource state via kubectl |
 
 ### Tool Verification
 
