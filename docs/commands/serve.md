@@ -1,6 +1,6 @@
 # smoke serve
 
-Start an HTTP health endpoint that runs smoke tests on each request. Designed for container liveness/readiness probes.
+Start an HTTP health endpoint that runs smoke tests on each request. Designed for container liveness/readiness probes. Supports optional dashboard mode for portfolio-wide test aggregation.
 
 ## Usage
 
@@ -15,6 +15,9 @@ smoke serve [flags]
 | `-p, --port` | `8080` | Port to listen on |
 | `--path` | `/healthz` | Health endpoint path |
 | `-f, --file` | `.smoke.yaml` | Config file path |
+| `--dashboard` | `false` | Enable dashboard aggregation mode |
+| `--api-key` | (none) | API key for `POST /api/results` (`X-API-Key` header) |
+| `--db-path` | `smoke-dashboard.db` | SQLite database path for dashboard storage |
 
 ## Response
 
@@ -37,6 +40,17 @@ Each request runs the full smoke suite and returns JSON:
 - Config error → `500 Internal Server Error`
 
 Graceful shutdown on SIGINT/SIGTERM with a 5s timeout.
+
+## Dashboard Mode
+
+With `--dashboard`, serve enables additional endpoints for portfolio-wide test aggregation:
+
+- `POST /api/results` — Accept test results from remote smoke runs (requires `--api-key`)
+- `GET /dashboard` — Embedded web dashboard showing historical results
+
+Results are stored in a SQLite database (configurable with `--db-path`).
+
+## Examples
 
 ## Examples
 

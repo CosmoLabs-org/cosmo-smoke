@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.15.0] - 2026-04-22
+
+### Added
+- LDAP authenticated bind with password_env support
+- implement LDAP authenticated bind with password_env (commit:2948921a)
+
 ## [0.14.0] - 2026-04-22
 
 ### Added
